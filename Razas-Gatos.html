@@ -129,7 +129,7 @@ function CatPhoto({ breed, large }) {
   return (
     <div className={cls}>
       {!err
-        ? <img src={`fotos-razas-gatos/${breed.id}.jpg`} alt={breed.name} onError={()=>setErr(true)}/>
+        ? <img src={`fotos-razas-gatos/${breed.id}.png`} alt={breed.name} onError={()=>setErr(true)}/>
         : <div className={large?'modal-photo-ph':'bcard-photo-ph'} style={{fontSize:large?40:28,fontWeight:700,fontFamily:'var(--display)',color:'var(--cat-purple)',opacity:.35}}>{(breed.es||breed.name).charAt(0)}</div>}
       {!large && (
         <div className="bcard-badges">
