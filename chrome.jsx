@@ -7,8 +7,18 @@ const LANG_OPTIONS = [
   ['zh-CN','中文'],['ja','日本語'],['ko','한국어'],['ar','العربية'],
   ['ru','Русский'],['hi','हिन्दी'],['tr','Türkçe'],['th','ไทย'],['vi','Tiếng Việt'],
 ];
+// Short display codes for the toggle button
+const GT_SHORT = {
+  'fr':'FR','pt':'PT','de':'DE','it':'IT','zh-CN':'ZH',
+  'ja':'JA','ko':'KO','ar':'AR','ru':'RU','hi':'HI','tr':'TR','th':'TH','vi':'VI',
+};
+// Browser navigator.language → GT code
+const GT_BROWSER = {
+  'fr':'fr','pt':'pt','de':'de','it':'it','zh':'zh-CN',
+  'ja':'ja','ko':'ko','ar':'ar','ru':'ru','hi':'hi','tr':'tr','th':'th','vi':'vi',
+};
 
-function GlobeDropdown() {
+function GlobeDropdown({ isOverDark, onLangSelect }) {
   const [open, setOpen] = useState(false);
   const ref = useRef();
   useEffect(() => {
@@ -16,22 +26,38 @@ function GlobeDropdown() {
     document.addEventListener('mousedown', close);
     return () => document.removeEventListener('mousedown', close);
   }, []);
+
+  const iconColor  = isOverDark ? 'rgba(255,255,255,0.92)' : 'var(--ink-2)';
+  const hoverBg    = isOverDark ? 'rgba(255,255,255,0.15)' : 'rgba(45,36,33,0.07)';
+  const activeBg   = isOverDark ? 'rgba(255,255,255,0.22)' : 'rgba(45,36,33,0.1)';
+
+  const select = (code) => { onLangSelect && onLangSelect(code); setOpen(false); };
+
   return (
     <div ref={ref} style={{ position:'relative' }}>
       <button
         onClick={() => setOpen(o => !o)}
-        title="More languages"
-        style={{ display:'flex', alignItems:'center', gap:4, padding:'5px 8px', borderRadius:999, background: open ? 'rgba(45,36,33,0.1)' : 'none', border:'none', cursor:'pointer', color:'var(--ink-2)', fontFamily:'inherit', fontWeight:700, fontSize:11, letterSpacing:'0.04em', transition:'background .15s' }}
-        onMouseEnter={e => { if (!open) e.currentTarget.style.background = 'rgba(45,36,33,0.07)'; }}
+        title="Más idiomas"
+        style={{ display:'flex', alignItems:'center', gap:4, padding:'6px 9px', borderRadius:999, background: open ? activeBg : 'none', border:'none', cursor:'pointer', color:iconColor, fontFamily:'inherit', fontWeight:700, fontSize:11, letterSpacing:'0.04em', transition:'background .15s, color .3s' }}
+        onMouseEnter={e => { if (!open) e.currentTarget.style.background = hoverBg; }}
         onMouseLeave={e => { if (!open) e.currentTarget.style.background = 'none'; }}>
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       </button>
       {open && (
-        <div style={{ position:'fixed', top:'auto', right:160, marginTop:8, background:'var(--paper,#fff)', border:'1px solid var(--line,#ebe7e3)', borderRadius:14, boxShadow:'0 12px 32px -8px rgba(0,0,0,0.15)', padding:8, minWidth:160, zIndex:300 }}>
-          <div style={{ position:'absolute', top:-1, right:0, width:'100%', height:8 }}/>
+        <div style={{ position:'fixed', top:'auto', right:80, marginTop:8, background:'var(--paper,#fff)', border:'1px solid var(--line,#ebe7e3)', borderRadius:14, boxShadow:'0 12px 32px -8px rgba(0,0,0,0.18)', padding:8, minWidth:180, zIndex:300 }}>
+          <div style={{ padding:'4px 12px 6px', fontSize:10, fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--orange)' }}>Volver a</div>
+          {[['es','🇪🇸  Español (original)'],['en','🇬🇧  English']].map(([code, label]) => (
+            <button key={code} onClick={() => select(code)}
+              style={{ display:'block', width:'100%', textAlign:'left', padding:'8px 12px', border:'none', background:'none', borderRadius:8, fontFamily:'inherit', fontSize:13, fontWeight:700, color:'var(--ink)', cursor:'pointer' }}
+              onMouseEnter={e => e.currentTarget.style.background = 'var(--bg,#f8f5f2)'}
+              onMouseLeave={e => e.currentTarget.style.background = 'none'}>
+              {label}
+            </button>
+          ))}
+          <div style={{ height:1, background:'var(--line,#ebe7e3)', margin:'6px 8px' }}/>
+          <div style={{ padding:'4px 12px 6px', fontSize:10, fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--ink-soft,#aaa)' }}>Otros idiomas</div>
           {LANG_OPTIONS.map(([code, label]) => (
-            <button key={code}
-              onClick={() => { if (window.bpTriggerTranslate) window.bpTriggerTranslate(code); setOpen(false); }}
+            <button key={code} onClick={() => select(code)}
               style={{ display:'block', width:'100%', textAlign:'left', padding:'8px 12px', border:'none', background:'none', borderRadius:8, fontFamily:'inherit', fontSize:13, fontWeight:500, color:'var(--ink)', cursor:'pointer' }}
               onMouseEnter={e => e.currentTarget.style.background = 'var(--bg,#f8f5f2)'}
               onMouseLeave={e => e.currentTarget.style.background = 'none'}>
@@ -66,6 +92,8 @@ function Header({ overDark }) {
   const t = useT();
   const { lang, setLang } = useLang();
   const [scrolled, setScrolled] = useState(false);
+  const [gtLang,  setGtLang]  = useState(() => localStorage.getItem('bpuppy-gt-lang')  || null);
+  const [gtLabel, setGtLabel] = useState(() => localStorage.getItem('bpuppy-gt-label') || null);
 
   // ── Page visibility from SitePublish ──────────────────────────────────────
   const getVis = () => {
@@ -88,6 +116,51 @@ function Header({ overDark }) {
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
+
+  // ── Auto-detect browser language (first visit only) ───────────────────────
+  useEffect(() => {
+    if (localStorage.getItem('bpuppy-lang') || localStorage.getItem('bpuppy-gt-lang')) return;
+    const navLang = (navigator.language || '').split('-')[0].toLowerCase();
+    const gtCode  = GT_BROWSER[navLang];
+    if (!gtCode) return;
+    const label = GT_SHORT[gtCode] || navLang.toUpperCase();
+    setGtLang(gtCode); setGtLabel(label);
+    localStorage.setItem('bpuppy-gt-lang', gtCode);
+    localStorage.setItem('bpuppy-gt-label', label);
+    setTimeout(() => { if (window.bpTriggerTranslate) window.bpTriggerTranslate(gtCode); }, 1800);
+  }, []); // eslint-disable-line
+
+  const applyGtCode = (code) => {
+    const label = GT_SHORT[code] || code.toUpperCase();
+    setGtLang(code); setGtLabel(label);
+    localStorage.setItem('bpuppy-gt-lang', code);
+    localStorage.setItem('bpuppy-gt-label', label);
+    if (window.bpTriggerTranslate) window.bpTriggerTranslate(code);
+  };
+
+  const clearGtCode = () => {
+    setGtLang(null); setGtLabel(null);
+    localStorage.removeItem('bpuppy-gt-lang');
+    localStorage.removeItem('bpuppy-gt-label');
+    const sel = document.querySelector('.goog-te-combo');
+    if (sel) { sel.value = 'es'; sel.dispatchEvent(new Event('change')); }
+  };
+
+  const handleGtSelect = (code) => {
+    if (code === 'es') { clearGtCode(); setLang('es'); return; }
+    if (code === 'en') { clearGtCode(); setLang('en'); return; }
+    applyGtCode(code);
+  };
+
+  const handleLeftClick  = () => {
+    if (gtLang) { if (window.bpTriggerTranslate) window.bpTriggerTranslate(gtLang); }
+    else { clearGtCode(); setLang('es'); }
+  };
+  const handleRightClick = () => { clearGtCode(); setLang('en'); };
+
+  const leftLabel  = gtLabel || 'ES';
+  const leftActive = !!gtLang || (!gtLang && lang === 'es');
+  const rightActive = lang === 'en' && !gtLang;
 
   const klass = `hdr ${scrolled ? 'scrolled' : ''} ${overDark && !scrolled ? 'over-dark' : ''}`;
 
@@ -115,15 +188,15 @@ function Header({ overDark }) {
       <div className="container hdr-row">
         <a href="#top" className="hdr-logo" aria-label="BPuppy">
           <img src={overDark && !scrolled ? 'assets/logo-clean-light.png' : 'assets/logo-clean.png'} alt="BPuppy logo" />
-          <span className="wm">Bright Puppy</span>
+          <span className="wm notranslate">Bright Puppy</span>
         </a>
         <nav className="nav">
           <a href="Home.html">{t(['Inicio', 'Home'])}</a>
           {pv['Cachorros'] !== false && <NavItem label={t(STRINGS.nav.puppies)} href="Cachorros.html" items={cachItems}/>}
           {pv['Gatos']     !== false && <NavItem label={t(['Gatos','Cats'])} href="Gatos.html" items={gatosItems}/>}
           {pv['Tienda']    !== false && <a href="Tienda.html">{t(['Tienda','Shop'])}</a>}
-          {pv['Grooming']  !== false && <a href="Grooming.html">{t(['Grooming','Grooming'])}</a>}
-          <NavItem label={t(['Media','Media'])} href="Media.html" items={mediaItems.length > 1 ? mediaItems : undefined}/>
+          {pv['Grooming']  !== false && <a href="Grooming.html"><span className="notranslate">Grooming</span></a>}
+          <NavItem label={<span className="notranslate">Media</span>} href="Media.html" items={mediaItems.length > 1 ? mediaItems : undefined}/>
           {pv['Nosotros']  !== false && <NavItem label={t(['Nosotros','About'])} href="Nosotros.html" items={[
             { label: t(['Nuestra Historia','Our Story']),    href:'Nosotros.html' },
             { label: t(['Impacto Social','Social Impact']),  href:'Nosotros.html' },
@@ -136,10 +209,10 @@ function Header({ overDark }) {
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" /></svg>
           </a>
           <div className="lang" role="group" aria-label="Language">
-            <button data-active={lang === 'es'} onClick={() => setLang('es')}>ES</button>
-            <button data-active={lang === 'en'} onClick={() => setLang('en')}>EN</button>
+            <button data-active={leftActive} onClick={handleLeftClick}><span className="notranslate">{leftLabel}</span></button>
+            <button data-active={rightActive} onClick={handleRightClick}><span className="notranslate">EN</span></button>
           </div>
-          <GlobeDropdown />
+          <GlobeDropdown isOverDark={overDark && !scrolled} onLangSelect={handleGtSelect} />
           <a href="Cachorros.html" className="hdr-cta">{t(STRINGS.hdr.cta)}</a>
         </div>
       </div>
@@ -157,7 +230,7 @@ function Footer() {
   }, []);
   return (
     <>
-    <footer className="foot">
+    <footer className="foot notranslate" translate="no">
       <div className="container foot-row">
         <div className="foot-logo">
           <img src="assets/logo-clean.png" alt="" />

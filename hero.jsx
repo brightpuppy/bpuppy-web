@@ -2,9 +2,12 @@
 
 function Hero() {
   const t = useT();
+  const videoRef = React.useRef();
+  React.useEffect(() => { if (videoRef.current) videoRef.current.muted = true; }, []);
   return (
     <section className="hero" id="top">
       <video
+        ref={videoRef}
         className="hero-video"
         aria-hidden="true"
         autoPlay
