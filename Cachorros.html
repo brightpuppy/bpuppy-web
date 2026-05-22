@@ -1,0 +1,705 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BPuppy — Cachorros Disponibles</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="styles.css">
+<script src="site-publish.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+@keyframes spin { to { transform: rotate(360deg); } }
+.pup-spinner { width:36px; height:36px; border:3px solid var(--line); border-top-color:var(--orange); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 16px; }
+</style>
+<style>
+.page-hero { background: var(--dark-sec, #5C4F48); color: var(--ink, #2D2421); padding: 140px 0 80px; position: relative; overflow: hidden; }
+.page-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(70% 80% at 80% 20%, rgba(245,130,32,0.06), transparent 60%); pointer-events:none; }
+.page-hero .container { position: relative; z-index: 2; }
+.page-hero .back { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color: var(--ink-soft, rgba(45,36,33,0.62)); margin-bottom:28px; transition:color .2s; }
+.page-hero .back:hover { color: var(--ink); }
+.page-hero h1 { font-family:var(--display); font-size:clamp(42px,7vw,88px); font-weight:600; letter-spacing:-0.03em; line-height:0.95; margin:0 0 20px; }
+.page-hero h1 em { font-family:var(--serif); font-style:italic; color: var(--orange); font-weight:400; }
+.page-hero p { color: var(--ink-2, #6B5A4E); font-size:18px; max-width:56ch; line-height:1.55; margin:0; }
+
+/* Dog decorative silhouette */
+.dog-deco { position: absolute; z-index: 1; opacity: 0.05; pointer-events: none; color: #fff; }
+.dog-deco-1 { top: 12%; right: 4%; width: 260px; height: 260px; animation: dogPlay 8s ease-in-out infinite; }
+.dog-deco-2 { bottom: -2%; left: 6%; width: 160px; height: 160px; animation: dogPlay 10s ease-in-out infinite reverse; }
+@keyframes dogPlay { 0%,100% { transform: translateY(0) scaleX(1); } 25% { transform: translateY(-8px) scaleX(1.02); } 75% { transform: translateY(4px) scaleX(0.98); } }
+
+/* Section links */
+.sec-links { padding: 40px 0 0; background: var(--bg); }
+.links-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
+.link-card {
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 28px; border-radius: 999px;
+  background: var(--paper); border: 1.5px solid var(--line);
+  font-size: 15px; font-weight: 600; color: var(--ink);
+  transition: all .25s; text-decoration: none;
+}
+.link-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); border-color: var(--orange); }
+.link-card .lc-emoji { font-size: 24px; }
+.link-card .lc-arrow { color: var(--ink-soft); transition: transform .2s; }
+.link-card:hover .lc-arrow { transform: translateX(3px); color: var(--orange); }
+
+/* Puppy grid */
+.pup-sec { padding: 80px 0; background: var(--bg); position: relative; overflow: hidden; }
+.pup-sec::before {
+  content: ""; position: absolute; top: 40%; left: -100px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, var(--accent-2) 0%, transparent 70%);
+  opacity: 0.3; pointer-events: none;
+}
+.pup-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:22px; position: relative; z-index: 1; }
+.pup-card { border-radius:22px; background:var(--paper); border:1px solid var(--line); overflow:hidden; transition:transform .35s, box-shadow .35s; cursor:pointer; position: relative; }
+.pup-card:hover { transform:translateY(-6px); box-shadow: 0 20px 50px -15px rgba(245,130,32,0.06); }
+.pup-card-img { aspect-ratio:4/3; background: linear-gradient(135deg, var(--accent-2), var(--bg-2)); display:grid; place-items:center; position:relative; overflow: hidden; }
+.pup-card-img .ph { font-size:48px; z-index: 1; filter: drop-shadow(0 4px 12px rgba(45,36,33,0.1)); }
+.pup-card-img .badge { position:absolute; top:14px; left:14px; padding:5px 12px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:0.04em; z-index: 2; }
+.badge-new { background:var(--orange); color:#fff; }
+.badge-reserved { background:var(--ink); color:#fff; }
+
+/* Dog silhouette playing behind cards */
+.pup-card-img::after {
+  content: "";
+  position: absolute; bottom: 6px; right: 10px; width: 90px; height: 65px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 65'%3E%3Cpath d='M18 55 Q10 42 15 28 Q18 18 28 25 Q30 14 38 10 Q42 18 40 26 Q48 18 56 22 Q60 28 58 35 Q68 30 76 38 Q82 48 72 55 Z' fill='%23F58220' opacity='0.07'/%3E%3Ccircle cx='70' cy='46' r='5' fill='%23F58220' opacity='0.05'/%3E%3Ccircle cx='62' cy='52' r='3' fill='%23F58220' opacity='0.04'/%3E%3C/svg%3E");
+  background-size: contain; background-repeat: no-repeat; opacity: 0.8;
+  transition: transform .4s ease;
+}
+.pup-card:hover .pup-card-img::after { transform: translateX(4px) scale(1.08); }
+
+.pup-card-body { padding:22px; }
+.pup-card-body h3 { font-family:var(--display); font-size:22px; font-weight:600; letter-spacing:-0.015em; margin:0 0 4px; }
+.pup-card-body .breed { font-size:13px; color:var(--orange); font-weight:600; }
+.pup-card-body .meta { font-size:13px; color:var(--ink-soft); margin-top:8px; display:flex; gap:14px; }
+
+/* Breeds section */
+.breeds-sec { padding: 80px 0; background: var(--paper); border-top: 1px solid var(--line); }
+.breed-chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; justify-content: center; }
+.breed-chip {
+  padding: 12px 22px; border-radius: 999px;
+  background: var(--bg); border: 1.5px solid var(--line);
+  font-size: 14px; font-weight: 600; color: var(--ink-2);
+  display: flex; align-items: center; gap: 8px; transition: all .25s;
+}
+.breed-chip:hover { background: var(--orange); color: #fff; border-color: var(--orange); transform: translateY(-2px); }
+
+.back-cta { padding: 80px 0; text-align: center; background: var(--bg); border-top: 1px solid var(--line); }
+
+/* Filter bar */
+.pup-filter-bar {
+  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  background: #fff; border: 1px solid var(--line); border-radius: 12px;
+  padding: 14px 18px; margin-bottom: 28px; position: relative; z-index: 2;
+}
+.pf-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); flex-shrink: 0; }
+.pf-select {
+  padding: 8px 30px 8px 12px; border: 1.5px solid var(--line); border-radius: 8px;
+  font-family: inherit; font-size: 13px; font-weight: 600; color: var(--ink);
+  background: #fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23F58220' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
+  -webkit-appearance: none; appearance: none; cursor: pointer;
+}
+.pf-select:focus { border-color: var(--orange); outline: none; }
+.pf-search {
+  flex: 1; min-width: 180px; display: flex; align-items: center; gap: 8px;
+  background: #FFF5EB; border-radius: 8px; padding: 8px 12px;
+}
+.pf-search input { flex: 1; border: none; background: none; outline: none; font-family: inherit; font-size: 13px; color: var(--ink); }
+.pf-search input::placeholder { color: var(--ink-soft); }
+.pf-clear { background: none; border: 1.5px solid var(--line); color: var(--ink-2); padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit; transition: all .15s; }
+.pf-clear:hover { border-color: var(--orange); color: var(--orange); }
+.pf-count { font-size: 12px; font-weight: 700; color: var(--orange); white-space: nowrap; }
+
+/* Breed autocomplete */
+.pf-autocomplete { position:relative; }
+.pf-ac-input { padding:8px 28px 8px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink); background:#fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23F58220' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 8px center; min-width:160px; outline:none; cursor:pointer; }
+.pf-ac-input:focus { border-color:var(--orange); }
+.pf-ac-input.has-value { border-color:var(--orange); background-color:rgba(245,130,32,0.06); color:var(--orange); }
+.pf-ac-drop { position:absolute; top:calc(100% + 4px); left:0; min-width:220px; max-height:240px; overflow-y:auto; background:#fff; border:1.5px solid var(--line); border-radius:10px; box-shadow:0 8px 24px -8px rgba(45,36,33,0.18); z-index:999; display:none; }
+.pf-ac-drop.open { display:block; }
+.pf-ac-opt { padding:9px 14px; font-size:13px; font-weight:500; color:var(--ink); cursor:pointer; transition:background .1s; }
+.pf-ac-opt:hover, .pf-ac-opt.selected { background:rgba(245,130,32,0.08); color:var(--orange); font-weight:700; }
+
+/* Color filter */
+.pf-color-btn { padding:8px 14px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink-2); background:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all .15s; white-space:nowrap; }
+.pf-color-btn.active { border-color:var(--orange); color:var(--orange); background:rgba(245,130,32,0.06); }
+.pf-color-panel { display:none; background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px 20px; margin-bottom:10px; }
+.pf-color-panel.open { display:block; }
+.pf-color-group-label { font-size:10px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); margin:14px 0 8px; }
+.pf-color-group-label:first-child { margin-top:0; }
+.pf-color-swatches { display:flex; flex-wrap:wrap; gap:10px; }
+.pf-color-swatch { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; transition:transform .15s; user-select:none; }
+.pf-color-swatch:hover { transform:translateY(-2px); }
+.pf-color-dot { width:34px; height:34px; border-radius:50%; border:2.5px solid rgba(45,36,33,0.12); transition:all .15s; position:relative; }
+.pf-color-swatch.sel .pf-color-dot { border-color:var(--orange); box-shadow:0 0 0 3px rgba(245,130,32,0.22); transform:scale(1.12); }
+.pf-color-dot::after { content:'✓'; position:absolute; inset:0; display:none; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.55); }
+.pf-color-swatch.sel .pf-color-dot::after { display:flex; }
+.pf-color-label { font-size:10px; font-weight:600; color:var(--ink-2); text-align:center; max-width:54px; line-height:1.3; }
+.pf-color-swatch.sel .pf-color-label { color:var(--orange); font-weight:700; }
+
+@media (max-width:900px) { .pup-grid { grid-template-columns: 1fr 1fr; } }
+@media (max-width:540px) { .pup-grid { grid-template-columns: 1fr; } }
+
+/* Lang toggle */
+.lang { display: flex; align-items: center; padding: 4px; border-radius: 999px; background: rgba(45,36,33,0.06); }
+.lang button { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-2); transition: all .2s; border: 0; background: none; cursor: pointer; font-family: inherit; }
+.lang button[data-active="true"] { background: var(--ink); color: var(--bg); }
+</style>
+<script src="shared-header.js"></script>
+</head>
+<body>
+<site-header></site-header>
+
+<!-- Hero -->
+<section class="page-hero">
+  <div class="dog-deco dog-deco-1">
+    <svg viewBox="0 0 200 200"><path d="M50 170 Q25 130 40 90 Q48 65 65 75 Q70 50 85 40 Q95 55 90 72 Q105 52 120 60 Q128 72 122 88 Q145 78 162 92 Q175 110 165 135 Q155 155 135 162 Q110 170 85 168 Z" fill="currentColor"/><circle cx="148" cy="125" r="10" fill="currentColor"/><circle cx="135" cy="140" r="6" fill="currentColor"/></svg>
+  </div>
+  <div class="dog-deco dog-deco-2">
+    <svg viewBox="0 0 120 120"><ellipse cx="60" cy="72" rx="28" ry="22" fill="currentColor"/><ellipse cx="32" cy="48" rx="12" ry="16" fill="currentColor"/><ellipse cx="88" cy="48" rx="12" ry="16" fill="currentColor"/><ellipse cx="42" cy="28" rx="10" ry="14" fill="currentColor"/><ellipse cx="78" cy="28" rx="10" ry="14" fill="currentColor"/></svg>
+  </div>
+  <div class="container">
+    <h1>Nuestros <em>cachorros</em></h1>
+    <p>Cachorros de raza criados en familia, con garantía de salud, vacunas al día y acompañamiento de por vida. Encuentra tu próximo mejor amigo.</p>
+  </div>
+</section>
+
+<!-- Puppies -->
+<section class="pup-sec">
+  <div class="container">
+    <div class="sec-head" style="margin-bottom: 36px;">
+      <div>
+        <div class="eyebrow">Disponibles esta semana</div>
+        <h2 class="display" style="font-size: clamp(32px,4vw,56px); margin: 12px 0 0;">Cachorros listos <em class="serif-italic">para ti.</em></h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
+        <p style="color: var(--ink-2); max-width: 40ch;">Cada cachorro viene con garantía de salud, vacunas al día y nuestro acompañamiento de por vida.</p>
+        <button onclick="openIntlShipping()" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:none;border:1.5px solid var(--line);border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--line)';this.style.color='var(--ink-2)'">
+          ✈️ Solicitar envío internacional
+        </button>
+      </div>
+    </div>
+    <div>
+      <div class="pup-filter-bar">
+        <span class="pf-label">Filtrar:</span>
+        <div id="pf-breed-wrap" class="pf-autocomplete">
+          <input id="pf-breed-input" class="pf-ac-input" type="text" placeholder="Todas las razas…" autocomplete="off">
+          <div id="pf-breed-drop" class="pf-ac-drop"></div>
+        </div>
+        <select id="pf-sex" class="pf-select">
+          <option value="">Todos los sexos</option>
+          <option value="female">♀ Hembra</option>
+          <option value="male">♂ Macho</option>
+        </select>
+        <select id="pf-age" class="pf-select">
+          <option value="">Todas las edades</option>
+          <option value="0-8">0–8 semanas</option>
+          <option value="8-12">8–12 semanas</option>
+          <option value="12-16">12–16 semanas</option>
+          <option value="16+">16+ semanas</option>
+        </select>
+        <div id="pf-color-wrap">
+          <button id="pf-color-btn" class="pf-color-btn">🎨 Color</button>
+        </div>
+        <div class="pf-search">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+          <input id="pf-search" type="text" placeholder="Buscar por nombre o raza…">
+        </div>
+        <button id="pf-clear" class="pf-clear">× Limpiar</button>
+        <span id="pf-count" class="pf-count"></span>
+      </div>
+      <div id="pf-color-panel" class="pf-color-panel"></div>
+    </div>
+    <div class="pup-grid" id="pup-grid">
+      <div id="pup-loading" style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--ink-soft)">
+        <div class="pup-spinner"></div>
+        <p style="font-size:15px;font-weight:600">Cargando cachorros disponibles…</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Breeds -->
+<section class="breeds-sec">
+  <div class="container" style="text-align: center;">
+    <div class="eyebrow">Razas que trabajamos</div>
+    <h2 class="display" style="font-size: clamp(28px,4vw,42px); margin: 12px 0 0;">Encuentra la raza <em class="serif-italic">perfecta.</em></h2>
+    <div class="breed-chips">
+      <div class="breed-chip">🦮 Golden Retriever</div>
+      <div class="breed-chip">🐕 French Bulldog</div>
+      <div class="breed-chip">🐾 Pomeranian</div>
+      <div class="breed-chip">🐩 Poodle (Caniche)</div>
+      <div class="breed-chip">🐕‍🦺 Labrador Retriever</div>
+      <div class="breed-chip">🦊 Mini Schnauzer</div>
+      <div class="breed-chip">🐺 Husky Siberiano</div>
+      <div class="breed-chip">🐶 Cavalier King Charles</div>
+      <div class="breed-chip">🐕 Border Collie</div>
+      <div class="breed-chip">🦴 Beagle</div>
+      <div class="breed-chip">🐾 Yorkshire Terrier</div>
+      <div class="breed-chip">✨ Y más...</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="back-cta">
+  <div class="container">
+    <h2 class="display" style="font-size: clamp(32px,5vw,56px); margin: 0 0 16px;">¿Necesitas ayuda <em class="serif-italic">eligiendo?</em></h2>
+    <p style="color: var(--ink-2); max-width: 44ch; margin: 0 auto 28px;">Nuestro equipo te guía para encontrar el compañero perfecto para tu hogar y estilo de vida.</p>
+    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://wa.me/18084928294" target="_blank" rel="noreferrer" class="btn btn-primary">Escríbenos por WhatsApp</a>
+      <a href="tel:+18084928294" class="btn btn-outline">Llámanos · (808) 492-8294</a>
+      <a href="Home.html#quiz" class="btn btn-outline">Hacer el quiz</a>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="container foot-row">
+    <div class="foot-logo"><img src="assets/logo-clean.png" alt=""><span>BPuppy</span></div>
+    <p>© 2026 BPuppy · Cachorros criados con amor en hogares de familia.</p>
+    <div class="foot-links"><a href="Home.html">Inicio</a><a href="Gatos.html">Gatos</a><a href="Adopciones.html">Adopciones</a><a href="Social.html">Social</a><a href="Garantia.html">Garantía</a></div>
+  </div>
+</footer>
+
+
+<script src="site-animations.js"></script>
+<script>
+// Back to top — Cachorros
+(function(){
+  var btn=document.createElement('button');
+  btn.innerHTML='↑';btn.setAttribute('aria-label','Volver arriba');
+  btn.style.cssText='position:fixed;bottom:24px;right:24px;z-index:998;width:44px;height:44px;border-radius:50%;background:var(--orange,#F58220);color:#fff;border:none;cursor:pointer;font-size:18px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(245,130,32,0.4);';
+  document.body.appendChild(btn);
+  window.addEventListener('scroll',function(){btn.style.display=window.scrollY>400?'flex':'none';},{passive:true});
+  btn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+})();
+</script>
+<script>
+// ── Supabase puppy loader ─────────────────────────────────────────────────────
+(function() {
+  var SUPA_URL = 'https://oqqwmcplljirbreowrll.supabase.co';
+  var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+  var sb = supabase.createClient(SUPA_URL, SUPA_KEY);
+  var ALL_PUPPIES = [], allBreeds = [], selectedBreed = '', selectedColors = [];
+
+  var MASTER_BREEDS = [
+    'Affenpinscher','Akita','Alaskan Klee Kai','Malamute de Alaska','American Bully',
+    'American Cocker Spaniel','Basenji','Basset Hound','Beagle','Bedlington Terrier',
+    'Bernés de la Montaña','Bichón Frisé','Bichón Maltés','Bloodhound','Border Collie',
+    'Boston Terrier','Boykin Spaniel','Bracco Italiano','Bull Terrier','Bulldog Francés',
+    'Bulldog Inglés','Bullmastiff','Cairn Terrier','Cane Corso',
+    'Poodle (Caniche)','Poodle Miniatura (Caniche)','Poodle Toy (Caniche)','Carlino / Pug','Cavapoo','Cavalier King Charles',
+    'Chihuahua','Chow Chow','Cockapoo','Cocker Spaniel Americano','Cocker Spaniel Inglés',
+    'Collie','Corgi Galés de Pembroke','Corgi Galés de Cardigan','Dachshund / Salchicha',
+    'Dálmata','Doberman Pinscher','Dogo Argentino','Dogo de Burdeos',
+    'English Springer Spaniel','Fox Terrier','Galgo Español','Galgo Italiano',
+    'Golden Retriever','Goldendoodle','Gran Danés','Gran Pirineo','Greyhound',
+    'Havanés','Husky Siberiano','Jack Russell Terrier','Keeshond',
+    'Labradoodle','Labrador Retriever','Leonberger','Lhasa Apso',
+    'Malinois Belga','Maltipoo','Mastín','Mastín Napolitano','Mastín del Pirineo',
+    'Maltés','Morkie','Newfoundland / Terranova','Old English Sheepdog',
+    'Papillón','Pastor Alemán','Pastor Australiano','Pastor Belga',
+    'Pastor de Shetland','Pechinés / Pekingese','Pinscher Miniatura',
+    'Pitbull / American Pit Bull','Plott Hound','Pointer','Pomerania',
+    'Pomsky','Portuguese Water Dog','Rhodesian Ridgeback','Rottweiler',
+    'Samoyedo','San Bernardo','Schnauzer Gigante','Schnauzer Miniatura',
+    'Schnauzer Estándar','Scottish Terrier','Setter Irlandés','Shar Pei',
+    'Shiba Inu','Shih Tzu','Soft Coated Wheaten Terrier','Spitz Alemán',
+    'Staffordshire Bull Terrier','Teddy Bear','Tibetan Mastiff','Vizsla',
+    'Weimaraner','West Highland White Terrier','Whippet','Xoloitzcuintli',
+    'Yorkshire Terrier',
+  ];
+
+  var SWATCHES = [
+    {l:'Negro',      v:'negro',      g:'c', hex:'#1C1C1C'},
+    {l:'Blanco',     v:'blanco',     g:'c', hex:'#F0EDE0', bd:true},
+    {l:'Crema',      v:'crema',      g:'c', hex:'#E8D090'},
+    {l:'Apricot',    v:'apricot',    g:'c', hex:'#E8A878'},
+    {l:'Dorado',     v:'dorado',     g:'c', hex:'#C8920A'},
+    {l:'Marrón',     v:'marron',     g:'c', hex:'#7B3F25'},
+    {l:'Chocolate',  v:'chocolate',  g:'c', hex:'#4A2515'},
+    {l:'Gris/Plata', v:'gris',       g:'c', hex:'#909090'},
+    {l:'Canela/Rojo',v:'canela',     g:'c', hex:'#BF5A2A'},
+    {l:'Merle',      v:'merle',      g:'m', hex:'lg135,#8090a8,#b8c8d8 30%,#606878 60%,#a0b0c0'},
+    {l:'Merle Azul', v:'merle_azul', g:'m', hex:'rg35,#c0d8f0,#7090b8 45%,#405878'},
+    {l:'Merle Rojo', v:'merle_rojo', g:'m', hex:'rg35,#e8b090,#b07058 45%,#784030'},
+    {l:'Tricolor',   v:'tricolor',   g:'e', hex:'conic,#1C1C1C 120deg,#F0EDE0 240deg,#C8920A 360deg'},
+    {l:'Atigrado',   v:'atigrado',   g:'e', hex:'rep45,#7B3F25 4px,#BF5A2A 10px'},
+    {l:'Phantom',    v:'phantom',    g:'e', hex:'#1E1228'},
+    {l:'Harlequin',  v:'harlequin',  g:'e', hex:'conic,#fff 90deg,#1C1C1C 180deg,#fff 270deg,#1C1C1C 360deg'},
+  ];
+
+  var COLOR_TERMS = {
+    apricot:['apricot','albaricoque','melocotón','albicocca'],
+    negro:['negro','black'], blanco:['blanco','white'], crema:['crema','cream'],
+    dorado:['dorado','golden','gold'], marron:['marrón','marron','brown','cafe'],
+    chocolate:['chocolate'], gris:['gris','gray','grey','plata','silver'],
+    canela:['canela','rojo','red','copper'], merle:['merle'],
+    merle_azul:['merle azul','blue merle'], merle_rojo:['merle rojo','red merle'],
+    tricolor:['tricolor','tri-color','tri '], atigrado:['atigrado','brindle'],
+    phantom:['phantom'], harlequin:['harlequin','arlequín'],
+  };
+
+  function dotBg(sw) {
+    var h = sw.hex;
+    if (h.startsWith('lg135,')) return 'background:linear-gradient(135deg,' + h.slice(6) + ')';
+    if (h.startsWith('rg35,'))  return 'background:radial-gradient(circle at 35% 35%,' + h.slice(5) + ')';
+    if (h.startsWith('conic,')) return 'background:conic-gradient(from 0deg,' + h.slice(6) + ')';
+    if (h.startsWith('rep45,')) return 'background:repeating-linear-gradient(45deg,' + h.slice(6) + ')';
+    return 'background:' + h;
+  }
+
+  function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
+
+  function getPhoto(p) {
+    if (Array.isArray(p.photos) && p.photos.length) return p.photos[0];
+    return p.photo_url || null;
+  }
+
+  function getAge(p) {
+    var w = p.age_weeks || (p.birth_date ? Math.floor((Date.now() - new Date(p.birth_date)) / 604800000) : 0);
+    if (!w) return '';
+    return w < 16 ? w + ' semanas' : Math.floor(w / 4) + ' meses';
+  }
+
+  function renderCard(p) {
+    var photo = getPhoto(p), age = getAge(p);
+    var sex = p.gender === 'female' ? 'Hembra' : p.gender === 'male' ? 'Macho' : '';
+    var reserved = p.status === 'reserved';
+    var imgHTML = photo
+      ? '<img src="' + esc(photo) + '" alt="' + esc(p.name) + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display=\'none\'">'
+      : '<div class="ph">🐶</div>';
+    var priceHTML = p.price
+      ? '<div style="position:absolute;bottom:14px;right:14px;background:rgba(45,36,33,0.88);color:#fff;padding:6px 12px;border-radius:999px;font-weight:700;font-size:13px;backdrop-filter:blur(4px)">$' + Number(p.price).toLocaleString() + '</div>'
+      : '';
+    var meta = [age, sex, p.color].filter(Boolean).map(function(s){ return '<span>' + esc(s) + '</span>'; }).join('');
+    return '<a class="pup-card" href="Puppy-Detalle.html?id=' + esc(p.id) + '" style="text-decoration:none;color:inherit;display:block">'
+      + '<div class="pup-card-img" style="position:relative">'
+      + (reserved ? '<span class="badge badge-reserved">Reservado</span>' : '<span class="badge badge-new">Disponible</span>')
+      + imgHTML + priceHTML + '</div>'
+      + '<div class="pup-card-body"><h3>' + esc(p.name || 'Sin nombre') + '</h3>'
+      + '<div class="breed">' + esc(p.breed || '') + '</div>'
+      + (meta ? '<div class="meta">' + meta + '</div>' : '')
+      + '</div></a>';
+  }
+
+  function populateFilters(puppies) {
+    var dbBreeds = puppies.map(function(p){ return p.breed; }).filter(Boolean);
+    var merged = [...new Set([...MASTER_BREEDS, ...dbBreeds])].sort(function(a,b){ return a.localeCompare(b, 'es'); });
+    allBreeds = merged;
+  }
+
+  function applyFilters() {
+    var sex    = document.getElementById('pf-sex').value;
+    var age    = document.getElementById('pf-age').value;
+    var search = (document.getElementById('pf-search').value || '').toLowerCase().trim();
+    var filtered = ALL_PUPPIES.filter(function(p) {
+      if (selectedBreed && p.breed !== selectedBreed) return false;
+      if (sex && p.gender !== sex) return false;
+      if (selectedColors.length > 0) {
+        var pc = (p.color || '').toLowerCase();
+        var match = selectedColors.some(function(v) {
+          return (COLOR_TERMS[v] || [v]).some(function(t){ return pc.includes(t); });
+        });
+        if (!match) return false;
+      }
+      if (search) { var hay = ((p.name||'')+' '+(p.breed||'')).toLowerCase(); if (!hay.includes(search)) return false; }
+      if (age) {
+        var w = p.age_weeks || (p.birth_date ? Math.floor((Date.now()-new Date(p.birth_date))/604800000) : 0);
+        if (age==='0-8'   && w > 8)          return false;
+        if (age==='8-12'  && (w<8  || w>12)) return false;
+        if (age==='12-16' && (w<12 || w>16)) return false;
+        if (age==='16+'   && w < 16)          return false;
+      }
+      return true;
+    });
+    var grid  = document.getElementById('pup-grid');
+    var count = document.getElementById('pf-count');
+    if (count) count.textContent = filtered.length + (filtered.length === 1 ? ' disponible' : ' disponibles');
+    if (filtered.length) {
+      grid.innerHTML = filtered.map(renderCard).join('');
+    } else {
+      var fs = [];
+      if (selectedBreed)       fs.push('Raza: ' + selectedBreed);
+      if (sex)                 fs.push(sex === 'female' ? 'Hembra' : 'Macho');
+      if (age)                 fs.push('Edad: ' + age + ' sem');
+      if (selectedColors.length) fs.push('Color: ' + selectedColors.map(function(v){ var s=SWATCHES.find(function(s){return s.v===v;}); return s?s.l:v; }).join(', '));
+      if (search)              fs.push('"' + search + '"');
+      var sumHTML = fs.length
+        ? '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0 20px">' + fs.map(function(f){ return '<span style="padding:4px 12px;border-radius:999px;background:rgba(245,130,32,0.1);color:var(--orange);font-size:12px;font-weight:700">' + f + '</span>'; }).join('') + '</div>'
+        : '';
+      grid.innerHTML = '<div style="grid-column:1/-1;padding:48px 24px"><div style="max-width:480px;margin:0 auto;text-align:center">'
+        + '<div style="font-size:40px;margin-bottom:16px">🐾</div>'
+        + '<h3 style="font-family:var(--display);font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:-0.02em;margin:0 0 8px;color:var(--ink)">¡Solicita el cachorro que buscas!</h3>'
+        + '<p style="color:var(--ink-2);font-size:14px;line-height:1.6;margin:0 0 4px">No encontramos resultados con esos filtros, pero puedes solicitar con nosotros el cachorro que buscas.</p>'
+        + sumHTML
+        + '<div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:24px;text-align:left;margin-top:8px"><div style="display:flex;flex-direction:column;gap:10px">'
+        + '<input id="pr-breed" placeholder="Raza que buscas *" value="' + esc(selectedBreed) + '" required style="width:100%;padding:10px 14px;border:1.5px solid var(--orange);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none;background:rgba(245,130,32,0.05);font-weight:600"/>'
+        + '<input id="pr-name" placeholder="Tu nombre *" required style="width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none"/>'
+        + '<input id="pr-email" type="email" placeholder="Email *" required style="width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none"/>'
+        + '<input id="pr-phone" type="tel" placeholder="Teléfono / WhatsApp *" required style="width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none"/>'
+        + '<textarea id="pr-notes" rows="2" placeholder="Algo más sobre el cachorro que buscas..." style="width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;resize:vertical;box-sizing:border-box;outline:none"></textarea>'
+        + '<button onclick="submitPuppyRequest(\'' + fs.join(', ') + '\')" style="width:100%;padding:13px 20px;background:var(--orange);color:#fff;border:none;border-radius:999px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px -8px rgba(245,130,32,0.4)">🐾 Solicitar este cachorro</button>'
+        + '</div></div>'
+        + '<button onclick="clearFilters()" style="margin-top:16px;background:none;border:none;color:var(--ink-2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Ver todos los disponibles</button>'
+        + '</div></div>';
+    }
+  }
+
+  function updateColorBtn() {
+    var btn = document.getElementById('pf-color-btn');
+    if (!btn) return;
+    if (selectedColors.length === 0) {
+      btn.innerHTML = '🎨 Color';
+      btn.className = 'pf-color-btn';
+    } else {
+      btn.innerHTML = '🎨 Color <span style="background:var(--orange);color:#fff;border-radius:999px;padding:1px 7px;font-size:11px;margin-left:2px">' + selectedColors.length + '</span>';
+      btn.className = 'pf-color-btn active';
+    }
+  }
+
+  function initBreedAutocomplete() {
+    var input = document.getElementById('pf-breed-input');
+    var drop  = document.getElementById('pf-breed-drop');
+    if (!input || !drop) return;
+    function render(q) {
+      var list = allBreeds.filter(function(b){ return !q || b.toLowerCase().includes(q.toLowerCase()); });
+      drop.innerHTML = (q ? '' : '<div class="pf-ac-opt" data-v="">Todas las razas</div>')
+        + (list.length ? list.map(function(b){ return '<div class="pf-ac-opt' + (b===selectedBreed?' selected':'') + '" data-v="' + esc(b) + '">' + esc(b) + '</div>'; }).join('') : '<div class="pf-ac-opt" style="color:var(--ink-soft)">Sin resultados</div>');
+    }
+    input.addEventListener('focus', function(){ render(input.value); drop.classList.add('open'); });
+    input.addEventListener('input', function(){ render(input.value); drop.classList.add('open'); });
+    document.addEventListener('click', function(e){ if (!e.target.closest('#pf-breed-wrap')) drop.classList.remove('open'); });
+    drop.addEventListener('mousedown', function(e) {
+      var opt = e.target.closest('.pf-ac-opt');
+      if (!opt) return;
+      e.preventDefault();
+      selectedBreed = opt.dataset.v || '';
+      input.value   = selectedBreed;
+      input.className = selectedBreed ? 'pf-ac-input has-value' : 'pf-ac-input';
+      drop.classList.remove('open');
+      applyFilters();
+    });
+  }
+
+  function initColorSwatches() {
+    var panel = document.getElementById('pf-color-panel');
+    var btn   = document.getElementById('pf-color-btn');
+    if (!panel || !btn) return;
+    var groups = [{k:'c',l:'Colores comunes'},{k:'m',l:'Merle'},{k:'e',l:'Colores exóticos'}];
+    var exoticVals = SWATCHES.filter(function(s){ return s.g==='e'; }).map(function(s){ return s.v; });
+
+    panel.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">'
+      + '<button id="pf-color-any" style="padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-family:inherit;font-size:12px;font-weight:700;color:var(--ink-2);cursor:pointer;transition:all .15s">Cualquier color</button>'
+      + '<button id="pf-color-exotic" style="padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-family:inherit;font-size:12px;font-weight:700;color:var(--ink-2);cursor:pointer;transition:all .15s">✨ Todos los exóticos</button>'
+      + '</div>'
+      + groups.map(function(g) {
+        var sw = SWATCHES.filter(function(s){ return s.g === g.k; });
+        return '<div class="pf-color-group-label">' + g.l + '</div>'
+          + '<div class="pf-color-swatches">'
+          + sw.map(function(s){
+            return '<div class="pf-color-swatch" data-v="' + s.v + '" title="' + s.l + '">'
+              + '<div class="pf-color-dot" style="' + dotBg(s) + (s.bd ? ';border-color:rgba(45,36,33,0.25)' : '') + '"></div>'
+              + '<span class="pf-color-label">' + s.l + '</span></div>';
+          }).join('') + '</div>';
+      }).join('');
+
+    // "Cualquier color" — clears all
+    document.getElementById('pf-color-any').addEventListener('click', function() {
+      selectedColors = [];
+      panel.querySelectorAll('.pf-color-swatch.sel').forEach(function(el){ el.classList.remove('sel'); });
+      updateColorBtn();
+      applyFilters();
+    });
+
+    // "Todos los exóticos" — toggle all exotic colors
+    document.getElementById('pf-color-exotic').addEventListener('click', function() {
+      var allSelected = exoticVals.every(function(v){ return selectedColors.indexOf(v) !== -1; });
+      if (allSelected) {
+        // deselect all exotics
+        exoticVals.forEach(function(v){
+          var idx = selectedColors.indexOf(v); if (idx !== -1) selectedColors.splice(idx, 1);
+          var el = panel.querySelector('[data-v="' + v + '"]'); if (el) el.classList.remove('sel');
+        });
+      } else {
+        // select all exotics
+        exoticVals.forEach(function(v){
+          if (selectedColors.indexOf(v) === -1) selectedColors.push(v);
+          var el = panel.querySelector('[data-v="' + v + '"]'); if (el) el.classList.add('sel');
+        });
+      }
+      updateColorBtn();
+      applyFilters();
+    });
+
+    btn.addEventListener('click', function(e){ e.stopPropagation(); panel.classList.toggle('open'); });
+    document.addEventListener('click', function(e){
+      if (!e.target.closest('#pf-color-wrap') && !e.target.closest('#pf-color-panel')) panel.classList.remove('open');
+    });
+    panel.addEventListener('click', function(e) {
+      var sw = e.target.closest('.pf-color-swatch');
+      if (!sw) return;
+      var v = sw.dataset.v, idx = selectedColors.indexOf(v);
+      if (idx === -1) { selectedColors.push(v); sw.classList.add('sel'); }
+      else            { selectedColors.splice(idx, 1); sw.classList.remove('sel'); }
+      updateColorBtn();
+      applyFilters();
+    });
+  }
+
+  async function submitPuppyRequest(filterDesc) {
+    var breed = (document.getElementById('pr-breed') || {}).value || '';
+    var name  = (document.getElementById('pr-name')  || {}).value || '';
+    var email = (document.getElementById('pr-email') || {}).value || '';
+    var phone = (document.getElementById('pr-phone') || {}).value || '';
+    var notes = (document.getElementById('pr-notes') || {}).value || '';
+    if (!breed || !name || !email || !phone) { alert('Por favor completa la raza, tu nombre, email y teléfono.'); return; }
+    try {
+      await sb.from('website_leads').insert({ full_name:name, email:email, phone:phone,
+        message:'SOLICITUD DE CACHORRO\nRaza: '+breed+'\nFiltros: '+filterDesc+'\nNotas: '+notes, source:'puppy_request' });
+      var grid = document.getElementById('pup-grid');
+      if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 24px"><div style="font-size:52px;margin-bottom:16px">🎉</div><h3 style="font-family:var(--display);font-size:24px;font-weight:700;color:var(--ink);margin:0 0 10px">¡Solicitud recibida!</h3><p style="color:var(--ink-2);font-size:15px">Te contactaremos cuando tengamos el cachorro perfecto para ti.</p></div>';
+    } catch(err) { alert('Error al enviar. Por favor escríbenos por WhatsApp: +1 (808) 492-8294'); }
+  }
+  window.submitPuppyRequest = submitPuppyRequest;
+
+  function clearFilters() {
+    selectedBreed = ''; selectedColors = [];
+    ['pf-sex','pf-age'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+    var s = document.getElementById('pf-search'); if (s) s.value = '';
+    var bi = document.getElementById('pf-breed-input');
+    if (bi) { bi.value = ''; bi.className = 'pf-ac-input'; }
+    document.querySelectorAll('.pf-color-swatch.sel').forEach(function(el){ el.classList.remove('sel'); });
+    updateColorBtn();
+    applyFilters();
+  }
+  window.clearFilters = clearFilters;
+
+  async function load() {
+    var grid    = document.getElementById('pup-grid');
+    var loading = document.getElementById('pup-loading');
+    try {
+      var res = await sb.from('puppies').select('*').in('status', ['available','reserved']).order('created_at', { ascending: false });
+      if (res.error) throw res.error;
+      ALL_PUPPIES = res.data || [];
+      if (loading) loading.remove();
+      populateFilters(ALL_PUPPIES);
+      initBreedAutocomplete();
+      initColorSwatches();
+      applyFilters();
+      ['pf-sex','pf-age'].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener('change', applyFilters); });
+      var si = document.getElementById('pf-search'); if (si) si.addEventListener('input', applyFilters);
+      var cl = document.getElementById('pf-clear');  if (cl) cl.addEventListener('click', clearFilters);
+    } catch(e) {
+      if (loading) loading.innerHTML = '<p style="color:var(--ink-soft);font-size:15px">Error al cargar. Por favor recarga la página.</p>';
+      console.error('Supabase error:', e);
+    }
+  }
+
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', load); }
+  else { load(); }
+})();
+</script>
+<script>
+// International shipping modal
+function openIntlShipping() {
+  var existing = document.getElementById('__intl-modal');
+  if (existing) { existing.style.display = 'flex'; return; }
+  var ov = document.createElement('div');
+  ov.id = '__intl-modal';
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(45,36,33,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;font-family:Plus Jakarta Sans,sans-serif';
+  ov.onclick = function(e){ if(e.target===ov) ov.style.display='none'; };
+  ov.innerHTML = '<div style="background:#FFFCF6;border-radius:22px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;position:relative;padding:28px">'
+    + '<button onclick="document.getElementById(\'__intl-modal\').style.display=\'none\'" style="position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(45,36,33,0.12);background:none;cursor:pointer;font-size:18px;display:grid;place-items:center;color:#6B5A4E">×</button>'
+    + '<div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#F58220;margin-bottom:6px">Envío Internacional</div>'
+    + '<div style="font-family:Bricolage Grotesque,sans-serif;font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px;color:#2D2421">Llevamos tu cachorro donde estés</div>'
+    + '<p style="font-size:13px;color:#6B5A4E;margin-bottom:16px;line-height:1.65">Cuéntanos tu destino y te enviamos una cotización con todos los requisitos para importar tu mascota.</p>'
+    + '<div style="background:#FFF5EB;border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:#6B5A4E;line-height:1.6">'
+    + '<div style="font-weight:700;color:#F58220;margin-bottom:8px">✓ Requisitos generales</div>'
+    + '✓ Certificado de salud veterinario (≤10 días antes del vuelo)<br>'
+    + '✓ Microchip ISO 11784/11785<br>'
+    + '✓ Vacuna antirrábica vigente<br>'
+    + '✓ Endoso USDA APHIS del certificado<br>'
+    + '✓ Permiso de importación del país destino (si aplica)<br>'
+    + '<em style="font-size:11px">* Los requisitos varían por país. Te informamos al contactarte.</em>'
+    + '</div>'
+    + '<div style="display:flex;flex-direction:column;gap:10px">'
+    + '<input id="is-country" placeholder="País de destino *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none;background:#FFF5EB">'
+    + '<input id="is-name" placeholder="Tu nombre *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">'
+    + '<input id="is-email" type="email" placeholder="Email *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">'
+    + '<input id="is-phone" type="tel" placeholder="Teléfono / WhatsApp *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">'
+    + '<button onclick="submitIntlShipping()" style="width:100%;padding:13px;background:#F58220;color:#fff;border:none;border-radius:999px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer">✈️ Solicitar cotización</button>'
+    + '</div></div>';
+  document.body.appendChild(ov);
+}
+window.openIntlShipping = openIntlShipping;
+
+async function submitIntlShipping() {
+  var SUPA_URL='https://oqqwmcplljirbreowrll.supabase.co';
+  var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+  var g = function(id){ var e=document.getElementById(id); return e?e.value.trim():''; };
+  if (!g('is-country') || !g('is-name') || !g('is-email') || !g('is-phone')) { alert('Por favor completa todos los campos obligatorios.'); return; }
+  try {
+    var sb2 = supabase.createClient(SUPA_URL, SUPA_KEY);
+    await sb2.from('website_leads').insert({ full_name:g('is-name'), email:g('is-email'), phone:g('is-phone'), message:'ENVÍO INTERNACIONAL - País: '+g('is-country'), source:'intl_shipping' });
+    var modal = document.getElementById('__intl-modal');
+    if (modal) modal.querySelector('div').innerHTML = '<div style="text-align:center;padding:40px 20px"><div style="font-size:52px;margin-bottom:16px">✈️</div><div style="font-family:Bricolage Grotesque,sans-serif;font-size:22px;font-weight:700;color:#2D2421;margin-bottom:8px">¡Solicitud recibida!</div><p style="color:#6B5A4E;font-size:14px;line-height:1.65">Te enviaremos la cotización y los requisitos para '+g('is-country')+' en breve.</p><button onclick="document.getElementById(\'__intl-modal\').style.display=\'none\'" style="margin-top:20px;background:#F58220;color:#fff;border:none;padding:12px 24px;border-radius:999px;font-weight:700;cursor:pointer;font-family:inherit">Cerrar</button></div>';
+  } catch(err) { alert('Error al enviar. Escríbenos por WhatsApp: +1 (808) 492-8294'); }
+}
+window.submitIntlShipping = submitIntlShipping;
+</script>
+<script>
+// SitePublish visibility — Cachorros
+(function(){
+  var PAGE = 'Cachorros';
+  var SECTIONS = { hero: '.page-hero', listado: '.pup-sec' };
+  var OVERLAY_ID = '__bp-cs';
+
+  function comingSoonHTML(name) {
+    return '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 40px;min-height:calc(100vh - 80px)">'
+      + '<div style="font-family:Bricolage Grotesque,sans-serif;font-size:clamp(72px,14vw,140px);font-weight:800;letter-spacing:-0.04em;color:transparent;-webkit-text-stroke:2px rgba(45,36,33,0.07);line-height:1;margin-bottom:24px;user-select:none">Pronto</div>'
+      + '<div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#FF5520;margin-bottom:14px">En preparación</div>'
+      + '<h1 style="font-family:Bricolage Grotesque,sans-serif;font-size:clamp(22px,3.5vw,38px);font-weight:700;letter-spacing:-0.02em;margin:0 0 14px;color:#2D2421">' + name + ' llega pronto</h1>'
+      + '<p style="color:#6B5A4E;line-height:1.65;margin-bottom:32px;max-width:38ch;font-size:15px">Estamos trabajando para traerte la mejor experiencia. Gracias por tu paciencia.</p>'
+      + '<a href="Home.html" style="display:inline-flex;align-items:center;gap:8px;background:#FF5520;color:#fff;font-weight:700;font-size:14px;padding:13px 26px;border-radius:999px;text-decoration:none;box-shadow:0 8px 24px -8px rgba(255,85,32,0.38)">← Volver al inicio</a>'
+      + '</div>';
+  }
+
+  function apply() {
+    var SP = window.SitePublish;
+    if (!SP) return;
+    var ov = document.getElementById(OVERLAY_ID);
+    if (!SP.isPageLive(PAGE)) {
+      if (!ov) {
+        ov = document.createElement('div');
+        ov.id = OVERLAY_ID;
+        ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#FAFAF8;overflow-y:auto;padding-top:80px;font-family:Plus Jakarta Sans,sans-serif';
+        ov.innerHTML = comingSoonHTML('Cachorros');
+        document.body.appendChild(ov);
+      }
+    } else {
+      if (ov) ov.remove();
+      Object.keys(SECTIONS).forEach(function(id) {
+        var el = document.querySelector(SECTIONS[id]);
+        if (el) el.style.display = SP.isSectionLive(PAGE, id) ? '' : 'none';
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', apply); }
+  else { apply(); }
+  window.addEventListener('bpuppy:publish', apply);
+})();
+</script>
+
+
+<script src="claude-bridge.js"></script>
+<script type="text/babel" src="chat-widget.jsx"></script>
+</body>
+</html>

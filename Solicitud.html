@@ -1,0 +1,357 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Encuentra tu compañero ideal — BPuppy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="styles.css">
+<script src="site-publish.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="i18n.jsx"></script>
+<script type="text/babel" src="chrome.jsx"></script>
+<script type="text/babel">
+
+const SQ_URL = 'https://oqqwmcplljirbreowrll.supabase.co';
+const SQ_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+const sqSb = (() => { try { return supabase.createClient(SQ_URL, SQ_KEY); } catch(e) { return null; } })();
+
+// ── Option chip ───────────────────────────────────────────────────────────────
+function Chip({ label, icon, selected, onClick }) {
+  return (
+    <button type="button" onClick={onClick} style={{
+      display:'flex', alignItems:'center', gap:8, padding:'11px 18px',
+      borderRadius:999, border: selected ? '2px solid var(--orange)' : '1.5px solid var(--line)',
+      background: selected ? 'rgba(245,130,32,0.08)' : '#fff',
+      fontFamily:'var(--body)', fontSize:14, fontWeight:600,
+      color: selected ? 'var(--orange)' : 'var(--ink)', cursor:'pointer',
+      transition:'all .15s',
+    }}>
+      {icon && <span style={{ fontSize:18 }}>{icon}</span>}
+      {label}
+    </button>
+  );
+}
+
+// ── Field ─────────────────────────────────────────────────────────────────────
+function Field({ label, children }) {
+  return (
+    <div style={{ marginBottom:24 }}>
+      <div style={{ fontSize:12, fontWeight:700, color:'var(--ink-2)', letterSpacing:'0.04em', marginBottom:10 }}>{label}</div>
+      {children}
+    </div>
+  );
+}
+
+// ── Steps data ────────────────────────────────────────────────────────────────
+const STEPS = ['Tu mascota ideal', 'Tu estilo de vida', 'Tus datos'];
+
+// ── Main form ─────────────────────────────────────────────────────────────────
+function SolicitudForm() {
+  const [step, setStep]   = React.useState(0);
+  const [done, setDone]   = React.useState(false);
+  const [loading, setLoad] = React.useState(false);
+
+  const [form, setForm] = React.useState({
+    // Step 1
+    species:   '',
+    breed:     '',
+    size:      '',
+    coat:      '',
+    gender:    '',
+    age_pref:  '',
+    // Step 2
+    living:    '',
+    kids:      '',
+    other_pets:'',
+    energy:    '',
+    // Step 3
+    name:  '', email: '', phone: '', notes: '',
+  });
+
+  function set(key, val) { setForm(function(f){ return Object.assign({}, f, {[key]: val}); }); }
+  function toggle(key, val) { set(key, form[key] === val ? '' : val); }
+
+  // ── Validation ────────────────────────────────────────────────────────────
+  function canNext() {
+    if (step === 0) return !!form.species;
+    if (step === 1) return !!form.living;
+    if (step === 2) return form.name && form.email && form.phone;
+    return false;
+  }
+
+  async function submit() {
+    setLoad(true);
+    const msg = [
+      'SOLICITUD DE MASCOTA IDEAL',
+      `Especie: ${form.species}`,
+      form.breed      && `Raza: ${form.breed}`,
+      form.size       && `Tamaño: ${form.size}`,
+      form.coat       && `Pelaje: ${form.coat}`,
+      form.gender     && `Género: ${form.gender}`,
+      form.age_pref   && `Edad preferida: ${form.age_pref}`,
+      `Vive en: ${form.living}`,
+      form.kids       && `Niños: ${form.kids}`,
+      form.other_pets && `Otras mascotas: ${form.other_pets}`,
+      form.energy     && `Energía: ${form.energy}`,
+      form.notes      && `Notas: ${form.notes}`,
+    ].filter(Boolean).join('\n');
+
+    try {
+      await sqSb.from('website_leads').insert({
+        full_name: form.name, email: form.email, phone: form.phone,
+        message: msg, source: 'solicitud_ideal',
+      });
+      setDone(true);
+    } catch(e) {
+      alert('Error al enviar. Por favor escríbenos por WhatsApp: +1 (808) 492-8294');
+    } finally { setLoad(false); }
+  }
+
+  // ── Done screen ───────────────────────────────────────────────────────────
+  if (done) return (
+    <div style={{ minHeight:'60vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:'60px 24px', textAlign:'center' }}>
+      <div style={{ fontSize:72 }}>🎉</div>
+      <h2 style={{ fontFamily:'var(--display)', fontSize:'clamp(28px,5vw,52px)', fontWeight:800, letterSpacing:'-0.04em', color:'var(--ink)', margin:0 }}>
+        ¡Solicitud enviada!
+      </h2>
+      <p style={{ fontSize:16, color:'var(--ink-2)', lineHeight:1.7, maxWidth:'44ch', margin:0 }}>
+        Hemos recibido tu solicitud. Nuestro equipo buscará la mascota perfecta para ti y te contactará pronto con opciones disponibles.
+      </p>
+      <div style={{ display:'flex', gap:12, flexWrap:'wrap', justifyContent:'center', marginTop:8 }}>
+        <a href="Cachorros.html" style={{ padding:'13px 24px', background:'var(--orange)', color:'#fff', borderRadius:999, fontWeight:700, fontSize:14, textDecoration:'none' }}>Ver disponibles ahora</a>
+        <a href="Home.html" style={{ padding:'13px 24px', background:'var(--bg)', color:'var(--ink)', borderRadius:999, fontWeight:700, fontSize:14, textDecoration:'none', border:'1.5px solid var(--line)' }}>Volver al inicio</a>
+      </div>
+    </div>
+  );
+
+  return (
+    <div style={{ background:'var(--bg)', minHeight:'60vh', padding:'clamp(40px,6vw,80px) clamp(20px,5vw,80px)' }}>
+      <div style={{ maxWidth:600, margin:'0 auto' }}>
+
+        {/* Progress */}
+        <div style={{ display:'flex', gap:8, marginBottom:40 }}>
+          {STEPS.map(function(s, i) {
+            const done = i < step, active = i === step;
+            return (
+              <div key={i} style={{ flex:1 }}>
+                <div style={{ height:4, borderRadius:999, background: done || active ? 'var(--orange)' : 'var(--line)', transition:'background .3s' }}/>
+                <div style={{ fontSize:11, fontWeight:600, color: active ? 'var(--orange)' : 'var(--ink-2)', marginTop:6, letterSpacing:'0.03em' }}>{s}</div>
+              </div>
+            );
+          })}
+        </div>
+
+        {/* Step 1 */}
+        {step === 0 && (
+          <div>
+            <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>Paso 1 de 3</div>
+            <h1 style={{ fontFamily:'var(--display)', fontSize:'clamp(28px,5vw,52px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.95, margin:'0 0 8px', color:'var(--ink)' }}>
+              ¿Qué tipo de<br/><em style={{ fontFamily:'var(--serif)', fontStyle:'italic', color:'var(--orange)' }}>compañero</em> buscas?
+            </h1>
+            <p style={{ fontSize:15, color:'var(--ink-2)', lineHeight:1.65, margin:'0 0 36px' }}>Cuéntanos sobre la mascota ideal para tu hogar. Todo es opcional excepto la especie.</p>
+
+            <Field label="¿Perro o gato? *">
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+                {[['🐶','Perro','dog'],['🐱','Gato','cat']].map(function(o){
+                  return <Chip key={o[2]} icon={o[0]} label={o[1]} selected={form.species===o[2]} onClick={function(){ toggle('species',o[2]); }}/>;
+                })}
+              </div>
+            </Field>
+
+            <Field label="Raza (opcional — déjalo en blanco si no tienes preferencia)">
+              <input value={form.breed} onChange={function(e){ set('breed', e.target.value); }}
+                placeholder="Ej. Golden Retriever, Poodle, Maine Coon…"
+                style={{ width:'100%', padding:'12px 16px', border:'1.5px solid var(--line)', borderRadius:10, fontFamily:'var(--body)', fontSize:14, color:'var(--ink)', background:'#fff', outline:'none', boxSizing:'border-box' }}/>
+            </Field>
+
+            <Field label="Tamaño">
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+                {[['🐾','Pequeño','small'],['🐕','Mediano','medium'],['🦮','Grande','large'],['Sin preferencia','','any']].map(function(o){
+                  return <Chip key={o[2]} icon={o[0]||null} label={o[1]||o[0]} selected={form.size===o[2]} onClick={function(){ toggle('size',o[2]); }}/>;
+                })}
+              </div>
+            </Field>
+
+            <Field label="Tipo de pelaje">
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+                {[['✂️','Pelo corto','short'],['🐕‍🦺','Pelo largo','long'],['💨','Hipoalergénico','hypo'],['Sin preferencia','any']].map(function(o){
+                  return <Chip key={o[2]||o[1]} icon={o.length===3?o[0]:null} label={o.length===3?o[1]:o[0]} selected={form.coat===(o[2]||o[1])} onClick={function(){ toggle('coat',o[2]||o[1]); }}/>;
+                })}
+              </div>
+            </Field>
+
+            <Field label="Género">
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+                {[['♀️','Hembra','female'],['♂️','Macho','male'],['Sin preferencia','any']].map(function(o){
+                  return <Chip key={o[2]||o[1]} icon={o.length===3?o[0]:null} label={o.length===3?o[1]:o[0]} selected={form.gender===(o[2]||o[1])} onClick={function(){ toggle('gender',o[2]||o[1]); }}/>;
+                })}
+              </div>
+            </Field>
+
+            <Field label="Edad preferida">
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+                {[['🍼','Cachorro','puppy'],['🐾','Adulto','adult'],['Sin preferencia','any']].map(function(o){
+                  return <Chip key={o[2]||o[1]} icon={o.length===3?o[0]:null} label={o.length===3?o[1]:o[0]} selected={form.age_pref===(o[2]||o[1])} onClick={function(){ toggle('age_pref',o[2]||o[1]); }}/>;
+                })}
+              </div>
+            </Field>
+          </div>
+        )}
+
+        {/* Step 2 */}
+        {step === 1 && (
+          <div>
+            <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>Paso 2 de 3</div>
+            <h1 style={{ fontFamily:'var(--display)', fontSize:'clamp(28px,5vw,52px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.95, margin:'0 0 8px', color:'var(--ink)' }}>
+              Cuéntanos de<br/><em style={{ fontFamily:'var(--serif)', fontStyle:'italic', color:'var(--orange)' }}>tu hogar</em>
+            </h1>
+            <p style={{ fontSize:15, color:'var(--ink-2)', lineHeight:1.65, margin:'0 0 36px' }}>Esto nos ayuda a encontrar la mascota perfecta para tu estilo de vida.</p>
+
+            <Field label="¿Dónde vives? *">
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+                {[['🏢','Apartamento','apartment'],['🏡','Casa con jardín','house'],['🌳','Casa de campo','rural'],['🛋️','Espacio reducido','small']].map(function(o){
+                  return <Chip key={o[2]} icon={o[0]} label={o[1]} selected={form.living===o[2]} onClick={function(){ toggle('living',o[2]); }}/>;
+                })}
+              </div>
+            </Field>
+
+            <Field label="¿Tienes niños en casa?">
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+                {[['👶','Sí, bebés/niños pequeños','babies'],['🧒','Niños mayores de 6','older'],['🚫','No','no']].map(function(o){
+                  return <Chip key={o[2]} icon={o[0]} label={o[1]} selected={form.kids===o[2]} onClick={function(){ toggle('kids',o[2]); }}/>;
+                })}
+              </div>
+            </Field>
+
+            <Field label="¿Tienes otras mascotas?">
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+                {[['🐕','Sí, perros','dogs'],['🐈','Sí, gatos','cats'],['🐾','Sí, mixto','mixed'],['🚫','No','no']].map(function(o){
+                  return <Chip key={o[2]} icon={o[0]} label={o[1]} selected={form.other_pets===o[2]} onClick={function(){ toggle('other_pets',o[2]); }}/>;
+                })}
+              </div>
+            </Field>
+
+            <Field label="Nivel de actividad que buscas">
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+                {[['😴','Tranquilo y relajado','low'],['🚶','Moderado','medium'],['🏃','Muy activo','high']].map(function(o){
+                  return <Chip key={o[2]} icon={o[0]} label={o[1]} selected={form.energy===o[2]} onClick={function(){ toggle('energy',o[2]); }}/>;
+                })}
+              </div>
+            </Field>
+          </div>
+        )}
+
+        {/* Step 3 */}
+        {step === 2 && (
+          <div>
+            <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>Paso 3 de 3</div>
+            <h1 style={{ fontFamily:'var(--display)', fontSize:'clamp(28px,5vw,52px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.95, margin:'0 0 8px', color:'var(--ink)' }}>
+              ¿Cómo te<br/><em style={{ fontFamily:'var(--serif)', fontStyle:'italic', color:'var(--orange)' }}>contactamos?</em>
+            </h1>
+            <p style={{ fontSize:15, color:'var(--ink-2)', lineHeight:1.65, margin:'0 0 36px' }}>Revisaremos tu solicitud y te escribiremos con las mejores opciones disponibles.</p>
+
+            {/* Summary */}
+            <div style={{ background:'#fff', border:'1px solid var(--line)', borderRadius:14, padding:'16px 18px', marginBottom:28 }}>
+              <div style={{ fontSize:11, fontWeight:700, color:'var(--orange)', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:10 }}>Tu solicitud</div>
+              <div style={{ display:'flex', gap:8, flexWrap:'wrap' }}>
+                {[
+                  form.species && (form.species==='dog'?'🐶 Perro':'🐱 Gato'),
+                  form.breed,
+                  form.size && form.size!=='any' && form.size,
+                  form.coat && form.coat!=='any' && form.coat,
+                  form.gender && form.gender!=='any' && (form.gender==='female'?'♀ Hembra':'♂ Macho'),
+                  form.living && form.living,
+                  form.energy && form.energy,
+                ].filter(Boolean).map(function(t, i){
+                  return <span key={i} style={{ fontSize:12, padding:'4px 12px', borderRadius:999, background:'rgba(245,130,32,0.1)', color:'var(--orange)', fontWeight:600 }}>{t}</span>;
+                })}
+              </div>
+            </div>
+
+            <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
+              {[['name','Tu nombre completo *','text'],['email','Email *','email'],['phone','Teléfono / WhatsApp *','tel']].map(function(f){
+                return (
+                  <div key={f[0]}>
+                    <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>{f[1]}</label>
+                    <input type={f[2]} value={form[f[0]]} onChange={function(e){ set(f[0], e.target.value); }}
+                      style={{ width:'100%', padding:'12px 16px', border:'1.5px solid var(--line)', borderRadius:10, fontFamily:'var(--body)', fontSize:14, color:'var(--ink)', background:'#fff', outline:'none', boxSizing:'border-box' }}/>
+                  </div>
+                );
+              })}
+              <div>
+                <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>Algo más que debamos saber</label>
+                <textarea rows="3" value={form.notes} onChange={function(e){ set('notes', e.target.value); }}
+                  placeholder="Presupuesto, fechas, preguntas específicas…"
+                  style={{ width:'100%', padding:'12px 16px', border:'1.5px solid var(--line)', borderRadius:10, fontFamily:'var(--body)', fontSize:14, color:'var(--ink)', background:'#fff', resize:'vertical', outline:'none', boxSizing:'border-box' }}/>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {/* Nav buttons */}
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginTop:40, gap:12 }}>
+          <button type="button" onClick={function(){ setStep(function(s){ return s-1; }); }}
+            disabled={step===0}
+            style={{ padding:'12px 22px', background:'none', border:'1.5px solid var(--line)', borderRadius:999, fontFamily:'var(--body)', fontWeight:600, fontSize:14, cursor: step===0 ? 'not-allowed' : 'pointer', color:'var(--ink-2)', opacity: step===0 ? 0 : 1 }}>
+            ← Atrás
+          </button>
+
+          {step < 2 ? (
+            <button type="button" onClick={function(){ setStep(function(s){ return s+1; }); }}
+              disabled={!canNext()}
+              style={{ padding:'13px 28px', background: canNext() ? 'var(--orange)' : 'var(--line)', color:'#fff', border:'none', borderRadius:999, fontFamily:'var(--body)', fontWeight:700, fontSize:15, cursor: canNext() ? 'pointer' : 'not-allowed', boxShadow: canNext() ? '0 8px 24px -8px rgba(245,130,32,0.4)' : 'none', transition:'all .2s' }}>
+              Siguiente →
+            </button>
+          ) : (
+            <button type="button" onClick={submit}
+              disabled={!canNext() || loading}
+              style={{ padding:'13px 28px', background: canNext() ? 'var(--orange)' : 'var(--line)', color:'#fff', border:'none', borderRadius:999, fontFamily:'var(--body)', fontWeight:700, fontSize:15, cursor: canNext() ? 'pointer' : 'not-allowed', boxShadow: canNext() ? '0 8px 24px -8px rgba(245,130,32,0.4)' : 'none', transition:'all .2s', opacity: loading ? 0.7 : 1 }}>
+              {loading ? 'Enviando…' : '🐾 Enviar solicitud'}
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SolicitudRoot() {
+  return (
+    <LangContext.Provider value={{ lang:'es', setLang:function(){} }}>
+      <Header overDark={false}/>
+      <main>
+        {/* Hero */}
+        <section style={{ background:'var(--dark-sec)', padding:'110px clamp(20px,5vw,80px) 56px', position:'relative', overflow:'hidden' }}>
+          <div style={{ position:'absolute', inset:0, backgroundImage:'radial-gradient(70% 80% at 80% 20%, rgba(245,130,32,0.07), transparent 60%)', pointerEvents:'none' }}/>
+          <div style={{ maxWidth:700, position:'relative', zIndex:1 }}>
+            <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.16em', textTransform:'uppercase', color:'var(--orange)', marginBottom:14 }}>BPuppy · Solicitud</div>
+            <h1 style={{ fontFamily:'var(--display)', fontSize:'clamp(40px,7vw,88px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.93, margin:'0 0 20px', color:'var(--ink)' }}>
+              Encuentra tu<br/><em style={{ fontFamily:'var(--serif)', fontStyle:'italic', color:'var(--orange)' }}>compañero ideal.</em>
+            </h1>
+            <p style={{ fontSize:17, color:'var(--ink-2)', lineHeight:1.65, maxWidth:'48ch', margin:0 }}>
+              Si no encontraste lo que buscas en el listado, cuéntanos qué quieres — te avisamos cuando tengamos al compañero perfecto para ti.
+            </p>
+          </div>
+        </section>
+        <SolicitudForm/>
+      </main>
+      <Footer/>
+    </LangContext.Provider>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<SolicitudRoot/>);
+</script>
+<script src="site-animations.js"></script>
+</body>
+</html>

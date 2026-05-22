@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Meet Your New Companion — B Puppy</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"DM Sans",sans-serif;color:#1A1A2E;background:#FFFFFF;line-height:1.5}
+.wrap{max-width:1200px;margin:0 auto;padding:24px}
+
+/* ═══════════════════════════════════════════════════
+   BREADCRUMB / BACK LINK
+   ═══════════════════════════════════════════════════ */
+.back-link{display:inline-flex;align-items:center;gap:6px;color:#64748B;text-decoration:none;font-size:13px;font-weight:600;margin-bottom:20px;padding:8px 14px;border-radius:50px;background:#F8FAFC;border:1px solid #E2E8F0;transition:all 0.15s}
+.back-link:hover{background:#FFF3ED;color:#FF6B1A;border-color:#FFD5BC}
+
+/* ═══════════════════════════════════════════════════
+   HERO — gallery + info side by side
+   ═══════════════════════════════════════════════════ */
+.hero-grid{display:grid;grid-template-columns:1.2fr 1fr;gap:32px;margin-bottom:48px}
+.gallery{position:relative}
+.main-photo-wrap{position:relative;aspect-ratio:1.05;background:linear-gradient(135deg,#FFF3ED 0%,#FFE4D0 100%);border-radius:18px;overflow:hidden;cursor:zoom-in;box-shadow:0 8px 24px rgba(15,23,42,0.06)}
+.main-photo{width:100%;height:100%;object-fit:cover;transition:transform 0.4s}
+.main-photo-wrap:hover .main-photo{transform:scale(1.03)}
+.main-photo-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:140px;color:#FFD5BC}
+.gallery-status{position:absolute;top:18px;left:18px;background:#10B981;color:white;padding:8px 16px;border-radius:50px;font-size:11px;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;box-shadow:0 4px 12px rgba(16,185,129,0.3)}
+.gallery-status.reserved{background:#F59E0B}
+.gallery-status.sold{background:#94A3B8}
+.thumbs{display:flex;gap:8px;margin-top:12px;overflow-x:auto;padding-bottom:6px}
+.thumb{flex:0 0 80px;height:80px;border-radius:10px;overflow:hidden;cursor:pointer;border:3px solid transparent;transition:all 0.15s;position:relative;background:#F1F5F9}
+.thumb img{width:100%;height:100%;object-fit:cover}
+.thumb.active{border-color:#FF6B1A}
+.thumb.video::after{content:"▶";position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:white;background:rgba(0,0,0,0.4);font-size:22px}
+.video-frame{width:100%;aspect-ratio:1.05;border-radius:18px;background:#000;display:none}
+.video-frame.show{display:block}
+
+.info-card{display:flex;flex-direction:column}
+.puppy-name{font-family:"Nunito",sans-serif;font-weight:900;font-size:42px;line-height:1.1;color:#0F172A;margin-bottom:8px;letter-spacing:-1px}
+.puppy-tagline{color:#FF6B1A;font-weight:700;font-size:14px;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:18px}
+.puppy-quick-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.qtag{padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;background:#F1F5F9;color:#475569}
+.qtag.female{background:#FCE7F3;color:#BE185D}
+.qtag.male{background:#DBEAFE;color:#1D4ED8}
+.qtag.pedigree{background:#FEF3C7;color:#92400E}
+
+.story-block{background:linear-gradient(135deg,#FFF3ED 0%,#FFFFFF 100%);border:1.5px solid #FFD5BC;border-radius:14px;padding:18px;margin-bottom:20px}
+.story-block p{color:#334155;font-size:15px;line-height:1.7}
+
+.price-box{background:white;border:2px solid #FF6B1A;border-radius:14px;padding:20px;margin-bottom:20px;display:flex;justify-content:space-between;align-items:center}
+.price-amount{font-family:"Nunito",sans-serif;font-weight:900;font-size:38px;color:#FF6B1A;line-height:1}
+.price-note{color:#64748B;font-size:12px;margin-top:4px}
+.price-includes{font-size:11px;color:#10B981;font-weight:700;margin-top:6px}
+
+.cta-row{display:flex;flex-direction:column;gap:10px;margin-bottom:18px}
+.btn-primary-big{width:100%;background:linear-gradient(135deg,#FF6B1A 0%,#FF8C4A 100%);color:white;border:none;padding:18px 24px;border-radius:14px;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 20px rgba(255,107,26,0.25)}
+.btn-primary-big:hover{transform:translateY(-2px);box-shadow:0 10px 28px rgba(255,107,26,0.35)}
+.btn-secondary-big{width:100%;background:white;color:#1A1A2E;border:1.5px solid #E2E8F0;padding:14px 24px;border-radius:14px;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;transition:all 0.15s}
+.btn-secondary-big:hover{border-color:#FF6B1A;color:#FF6B1A}
+
+.share-row{display:flex;gap:8px;justify-content:center;padding-top:14px;border-top:1px solid #F1F5F9;margin-top:14px}
+.share-btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:50px;background:#F8FAFC;border:1px solid #E2E8F0;color:#64748B;text-decoration:none;font-size:12px;font-weight:600;cursor:pointer;transition:all 0.15s}
+.share-btn:hover{background:#FFF3ED;color:#FF6B1A;border-color:#FFD5BC}
+
+/* ═══════════════════════════════════════════════════
+   SECTION HEADERS
+   ═══════════════════════════════════════════════════ */
+.section{margin-bottom:56px}
+.section-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:28px;color:#0F172A;margin-bottom:6px;letter-spacing:-0.5px}
+.section-sub{color:#64748B;font-size:14px;margin-bottom:24px}
+
+/* ═══════════════════════════════════════════════════
+   ABOUT THE BREED
+   ═══════════════════════════════════════════════════ */
+.breed-grid{display:grid;grid-template-columns:1fr 1fr;gap:32px}
+.breed-text p{margin-bottom:14px;color:#334155;font-size:15px;line-height:1.75}
+.breed-text strong{color:#0F172A}
+
+.breed-stats{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.stat-card{background:white;border:1.5px solid #F1F5F9;border-radius:14px;padding:16px;transition:border-color 0.15s}
+.stat-card:hover{border-color:#FFD5BC}
+.stat-icon{font-size:22px;margin-bottom:4px}
+.stat-label{font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:3px}
+.stat-value{font-weight:800;color:#0F172A;font-size:14px}
+
+.ratings{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:24px}
+.rating-row{display:flex;align-items:center;gap:10px}
+.rating-label{flex:1;font-size:13px;font-weight:600;color:#475569}
+.rating-bar{flex:0 0 90px;height:6px;background:#F1F5F9;border-radius:3px;overflow:hidden}
+.rating-fill{height:100%;background:linear-gradient(90deg,#FF6B1A,#FF8C4A);border-radius:3px}
+.rating-num{flex:0 0 28px;font-weight:800;color:#FF6B1A;font-size:13px;text-align:right}
+
+.trait-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
+.trait{padding:6px 12px;border-radius:50px;font-size:11px;font-weight:700;background:#F1F5F9;color:#475569;display:inline-flex;align-items:center;gap:5px}
+.trait.yes{background:#D1FAE5;color:#065F46}
+.trait.no{background:#FEE2E2;color:#991B1B}
+
+/* ═══════════════════════════════════════════════════
+   FAMILY (parents + siblings)
+   ═══════════════════════════════════════════════════ */
+.family-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.parent-card{background:white;border:1.5px solid #F1F5F9;border-radius:18px;overflow:hidden;transition:all 0.2s}
+.parent-card:hover{box-shadow:0 12px 24px rgba(0,0,0,0.06);border-color:#FFD5BC}
+.parent-photo{width:100%;aspect-ratio:1.4;object-fit:cover;background:#FFF3ED}
+.parent-photo-fallback{width:100%;aspect-ratio:1.4;display:flex;align-items:center;justify-content:center;font-size:60px;color:#FFD5BC;background:linear-gradient(135deg,#FFF3ED 0%,#FFE4D0 100%)}
+.parent-info{padding:16px}
+.parent-role{font-size:11px;font-weight:800;color:#FF6B1A;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:4px}
+.parent-name{font-family:"Nunito",sans-serif;font-weight:800;font-size:20px;color:#0F172A;margin-bottom:4px}
+.parent-detail{font-size:12px;color:#64748B}
+.parent-pedigree{display:inline-block;margin-top:8px;padding:3px 10px;background:#FEF3C7;color:#92400E;border-radius:50px;font-size:10px;font-weight:700}
+
+/* New: side-by-side family + financing layout */
+.family-fin-layout{display:grid;grid-template-columns:1fr 1.2fr;gap:24px;align-items:start}
+.family-column{display:flex;flex-direction:column;gap:14px}
+.financing-column{position:sticky;top:20px}
+
+/* Compact horizontal parent cards */
+.parent-card-h{background:white;border:1.5px solid #F1F5F9;border-radius:14px;overflow:hidden;display:flex;align-items:stretch;transition:all 0.2s}
+.parent-card-h:hover{box-shadow:0 8px 20px rgba(0,0,0,0.06);border-color:#FFD5BC}
+.parent-photo-h{width:120px;height:120px;flex-shrink:0;object-fit:cover;background:#FFF3ED;cursor:zoom-in}
+.parent-photo-h-fallback{width:120px;height:120px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:38px;color:#FFD5BC;background:linear-gradient(135deg,#FFF3ED 0%,#FFE4D0 100%)}
+.parent-info-h{padding:12px 14px;flex:1;min-width:0}
+.parent-role-h{font-size:10px;font-weight:800;color:#FF6B1A;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:2px}
+.parent-name-h{font-family:"Nunito",sans-serif;font-weight:800;font-size:17px;color:#0F172A;margin-bottom:3px;line-height:1.2}
+.parent-detail-h{font-size:11px;color:#64748B;line-height:1.45}
+.parent-pedigree-h{display:inline-block;margin-top:6px;padding:2px 9px;background:#FEF3C7;color:#92400E;border-radius:50px;font-size:9px;font-weight:700;letter-spacing:0.2px}
+
+.siblings-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:14px}
+.sibling-card{background:white;border:1.5px solid #F1F5F9;border-radius:14px;overflow:hidden;cursor:pointer;transition:all 0.2s;text-decoration:none;color:inherit}
+.sibling-card:hover{transform:translateY(-3px);box-shadow:0 10px 20px rgba(0,0,0,0.06);border-color:#FFD5BC}
+.sibling-photo{width:100%;aspect-ratio:1;object-fit:cover}
+.sibling-photo-fallback{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:40px;color:#FFD5BC;background:#FFF3ED}
+.sibling-info{padding:12px}
+.sibling-name{font-weight:800;font-size:14px;color:#0F172A;margin-bottom:2px}
+.sibling-detail{font-size:11px;color:#64748B}
+
+/* ═══════════════════════════════════════════════════
+   FINANCING CALCULATOR (advanced)
+   ═══════════════════════════════════════════════════ */
+.financing{background:linear-gradient(135deg,#FFF3ED 0%,#FFFFFF 100%);border:1.5px solid #FFD5BC;border-radius:18px;padding:28px}
+.financing-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:22px;color:#0F172A;margin-bottom:6px}
+.financing-sub{color:#64748B;font-size:13px;margin-bottom:20px}
+
+.fin-block{background:white;border:1.5px solid #E2E8F0;border-radius:12px;padding:14px;margin-bottom:14px}
+.fin-block-label{font-size:11px;font-weight:700;color:#64748B;text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px}
+.fin-price-row{display:flex;align-items:center;gap:6px}
+.fin-currency{font-size:20px;font-weight:800;color:#0F172A}
+.fin-currency-sm{font-size:15px;font-weight:700;color:#64748B}
+.fin-price-input{flex:1;border:none;outline:none;font-family:inherit;font-size:22px;font-weight:800;color:#0F172A;background:transparent;-moz-appearance:textfield;appearance:textfield}
+.fin-price-input::-webkit-outer-spin-button,.fin-price-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.fin-dp-row{display:flex;align-items:center;gap:6px;margin-top:8px}
+.fin-dp-input{flex:1;border:none;outline:none;font-family:inherit;font-size:16px;font-weight:700;color:#0F172A;background:transparent;-moz-appearance:textfield}
+.fin-dp-input::-webkit-outer-spin-button,.fin-dp-input::-webkit-inner-spin-button{-webkit-appearance:none;margin:0}
+.fin-slider{width:100%;-webkit-appearance:none;appearance:none;height:6px;background:#FFE4D0;border-radius:3px;outline:none;margin:6px 0}
+.fin-slider::-webkit-slider-thumb{-webkit-appearance:none;appearance:none;width:20px;height:20px;background:#FF6B1A;border-radius:50%;cursor:pointer;box-shadow:0 2px 6px rgba(255,107,26,0.3)}
+.fin-slider::-moz-range-thumb{width:20px;height:20px;background:#FF6B1A;border-radius:50%;cursor:pointer;border:none}
+
+.fin-section-label{font-size:12px;font-weight:800;color:#FF6B1A;text-transform:uppercase;letter-spacing:0.6px;margin:18px 0 10px}
+
+.fin-plan{background:white;border:1.5px solid #E2E8F0;border-radius:12px;padding:12px 14px;margin-bottom:8px;cursor:pointer;transition:all 0.15s}
+.fin-plan:hover{border-color:#FFD5BC;background:#FFFAF6}
+.fin-plan-sel{border-color:#FF6B1A;background:#FFF3ED;box-shadow:0 4px 12px rgba(255,107,26,0.1)}
+.fin-plan-disabled{opacity:0.45;cursor:not-allowed}
+.fin-plan-disabled:hover{border-color:#E2E8F0;background:white}
+.fin-plan-top{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.fin-plan-name{font-size:14px;font-weight:800;color:#0F172A;display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.fin-plan-label{font-size:11px;color:#64748B;margin-top:2px;font-weight:600}
+.fin-plan-amount{font-size:18px;font-weight:900;color:#FF6B1A;text-align:right;flex-shrink:0}
+
+.fin-badge{display:inline-block;font-size:9px;font-weight:800;padding:2px 7px;border-radius:50px;letter-spacing:0.4px}
+.fin-badge-green{background:#D1FAE5;color:#065F46}
+.fin-badge-gray{background:#F1F5F9;color:#64748B}
+
+.fin-summary{background:white;border:1px solid #E2E8F0;border-radius:12px;padding:14px;margin:14px 0;font-size:13px}
+.fin-summary-row{display:flex;justify-content:space-between;align-items:center;padding:5px 0;color:#475569}
+.fin-summary-row span:last-child{font-weight:700;color:#0F172A}
+.fin-summary-highlight{border-top:1px solid #F1F5F9;margin-top:6px;padding-top:10px;font-size:14px}
+.fin-summary-highlight span:first-child{color:#FF6B1A;font-weight:800}
+.fin-summary-highlight span:last-child{color:#FF6B1A;font-weight:900;font-size:16px}
+
+.fin-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:18px 0 12px}
+
+/* Compact action buttons (3-up: WhatsApp / Email / Apply) */
+.fin-actions-compact{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:16px 0 10px}
+.fin-btn-mini{display:flex;align-items:center;justify-content:center;gap:5px;padding:10px 8px;border-radius:10px;font-family:inherit;font-size:12px;font-weight:800;cursor:pointer;text-decoration:none;border:1.5px solid transparent;transition:all 0.15s;white-space:nowrap}
+.fin-btn-mini:hover{transform:translateY(-2px);box-shadow:0 6px 16px rgba(0,0,0,0.12)}
+.fin-btn-wa{background:#25D366;color:white}
+.fin-btn-email{background:white;color:#0F172A;border-color:#E2E8F0}
+.fin-btn-email:hover{border-color:#FF6B1A;color:#FF6B1A}
+.fin-btn-apply{background:linear-gradient(135deg,#FF6B1A 0%,#FF8C4A 100%);color:white}
+
+/* Brand logo pill in plan cards */
+.fin-brand-logo{display:inline-block;padding:3px 10px;border-radius:50px;font-size:10px;font-weight:900;letter-spacing:0.3px;line-height:1.2;margin-right:4px;vertical-align:middle}
+.fin-note{font-size:11px;color:#94A3B8;text-align:center;font-style:italic;margin-top:8px}
+
+/* ═══════════════════════════════════════════════════
+   VIDEOS
+   ═══════════════════════════════════════════════════ */
+.videos-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:18px}
+.video-card{position:relative;aspect-ratio:16/9;border-radius:14px;overflow:hidden;cursor:pointer;background:#000;transition:all 0.2s}
+.video-card:hover{transform:translateY(-3px);box-shadow:0 12px 24px rgba(0,0,0,0.15)}
+.video-thumb{width:100%;height:100%;object-fit:cover}
+.video-overlay{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.25);transition:background 0.2s}
+.video-card:hover .video-overlay{background:rgba(0,0,0,0.05)}
+.video-play{width:64px;height:64px;border-radius:50%;background:rgba(255,107,26,0.95);color:white;display:flex;align-items:center;justify-content:center;font-size:24px;box-shadow:0 6px 20px rgba(0,0,0,0.3)}
+
+/* ═══════════════════════════════════════════════════
+   SIMILAR PUPPIES
+   ═══════════════════════════════════════════════════ */
+.similar-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:18px}
+
+/* ═══════════════════════════════════════════════════
+   REQUEST INFO MODAL
+   ═══════════════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s}
+.modal-overlay.show{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:white;border-radius:24px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{padding:24px 24px 12px;display:flex;justify-content:space-between;align-items:flex-start}
+.modal-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:24px;color:#0F172A;line-height:1.2}
+.modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:#64748B;padding:0;line-height:1}
+.modal-close:hover{color:#FF6B1A}
+.modal-body{padding:0 24px 24px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:6px}
+.form-input,.form-textarea{width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-family:inherit;font-size:14px;color:#0F172A;background:white;transition:border-color 0.15s;outline:none}
+.form-input:focus,.form-textarea:focus{border-color:#FF6B1A}
+.form-textarea{resize:vertical;min-height:80px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-success{padding:24px;text-align:center;color:#0F172A}
+.form-success-icon{font-size:54px;margin-bottom:12px}
+.form-success-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:20px;color:#10B981;margin-bottom:8px}
+.form-success-text{color:#64748B;font-size:14px;line-height:1.6}
+
+/* ═══════════════════════════════════════════════════
+   LIGHTBOX (full screen photo)
+   ═══════════════════════════════════════════════════ */
+.lightbox{position:fixed;inset:0;background:rgba(0,0,0,0.95);z-index:300;display:none;align-items:center;justify-content:center;padding:40px;cursor:zoom-out}
+.lightbox.show{display:flex}
+.lightbox-img{max-width:100%;max-height:100%;object-fit:contain}
+.lightbox-close{position:absolute;top:20px;right:20px;background:rgba(255,255,255,0.1);border:none;color:white;width:44px;height:44px;border-radius:50%;font-size:20px;cursor:pointer;backdrop-filter:blur(10px)}
+.lightbox-arrow{position:absolute;top:50%;transform:translateY(-50%);background:rgba(255,255,255,0.1);border:none;color:white;width:54px;height:54px;border-radius:50%;font-size:24px;cursor:pointer;backdrop-filter:blur(10px)}
+.lightbox-arrow.prev{left:20px}
+.lightbox-arrow.next{right:20px}
+.lightbox-arrow:hover,.lightbox-close:hover{background:rgba(255,255,255,0.2)}
+.lightbox-counter{position:absolute;bottom:20px;left:50%;transform:translateX(-50%);color:white;font-size:13px;font-weight:600;background:rgba(0,0,0,0.5);padding:6px 14px;border-radius:50px}
+
+/* ═══════════════════════════════════════════════════
+   LOADING / EMPTY / ERROR STATES
+   ═══════════════════════════════════════════════════ */
+.loading-page{padding:80px 24px;text-align:center;color:#64748B}
+.spinner{width:40px;height:40px;border:3px solid #FFF3ED;border-top-color:#FF6B1A;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.empty-message{padding:60px 24px;text-align:center;color:#64748B}
+.error-message{background:#FEE2E2;border:1.5px solid #FCA5A5;color:#991B1B;padding:20px;border-radius:14px;margin:24px 0;text-align:center}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media (max-width:900px){
+  .wrap{padding:18px}
+  .hero-grid{grid-template-columns:1fr;gap:24px}
+  .puppy-name{font-size:32px}
+  .breed-grid{grid-template-columns:1fr;gap:24px}
+  .family-grid{grid-template-columns:1fr}
+  .breed-stats{grid-template-columns:1fr 1fr}
+  .ratings{grid-template-columns:1fr}
+  .price-amount{font-size:32px}
+  .section-title{font-size:24px}
+}
+@media (max-width:700px){
+  .family-fin-layout{grid-template-columns:1fr;gap:18px}
+  .financing-column{position:static}
+}
+@media (max-width:560px){
+  .breed-stats{grid-template-columns:1fr}
+  .siblings-grid{grid-template-columns:repeat(2,1fr)}
+  .similar-grid{grid-template-columns:repeat(2,1fr)}
+  .videos-grid{grid-template-columns:1fr}
+  .form-row{grid-template-columns:1fr}
+  .fin-actions{grid-template-columns:1fr}
+  .financing{padding:18px}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="page-wrap">
+  <div class="loading-page" id="loading"><div class="spinner"></div><div>Loading…</div></div>
+</div>
+
+<!-- REQUEST INFO MODAL -->
+<div class="modal-overlay" id="request-modal" onclick="if(event.target===this)closeRequestModal()">
+  <div class="modal" id="request-modal-body"></div>
+</div>
+
+<!-- LIGHTBOX -->
+<div class="lightbox" id="lightbox" onclick="closeLightbox()">
+  <button class="lightbox-close" onclick="event.stopPropagation();closeLightbox()">✕</button>
+  <button class="lightbox-arrow prev" onclick="event.stopPropagation();lbPrev()">‹</button>
+  <img class="lightbox-img" id="lightbox-img" alt="">
+  <button class="lightbox-arrow next" onclick="event.stopPropagation();lbNext()">›</button>
+  <div class="lightbox-counter" id="lightbox-counter"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// SUPABASE
+// ═══════════════════════════════════════════════════
+const SUPABASE_URL='https://oqqwmcplljirbreowrll.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+
+// 🔧 EDIT THIS: URL of your Wix Payments / financing application page
+const FINANCING_URL='https://www.bpuppy.us/financing';
+
+// 🔧 EDIT THIS: URL of the Puppy Finder page (for "back" link and sibling/similar links)
+const PUPPY_FINDER_URL='https://www.bpuppy.us/puppyfinder';
+
+let sb=null;
+try{sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}catch(e){console.error('Supabase init:',e);}
+
+// State
+let PUPPY=null;
+let BREED=null;
+let MOM=null,DAD=null;
+let SIBLINGS=[];
+let SIMILAR=[];
+let BREED_VIDEOS=[];
+let MEDIA=[]; // unified gallery: photos + videos
+let CUR_MEDIA_IDX=0;
+
+// Helpers
+function esc(s){return String(s||'').replace(/[<>"&]/g,c=>({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));}
+function fmtDateEN(dateStr){
+  if(!dateStr)return '';
+  const months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const parts=dateStr.split('-');
+  if(parts.length<3)return dateStr;
+  const y=parseInt(parts[0]),m=parseInt(parts[1])-1,d=parseInt(parts[2]);
+  if(isNaN(y)||isNaN(m)||isNaN(d)||m<0||m>11)return dateStr;
+  return `${months[m]} ${d}, ${y}`;
+}
+function calcAgeWeeks(dob){if(!dob)return null;const d=new Date(dob);if(isNaN(d))return null;return Math.max(0,Math.floor((Date.now()-d.getTime())/(1000*60*60*24*7)));}
+function fmtAge(p){
+  const w=p.birth_date?calcAgeWeeks(p.birth_date):p.age_weeks;
+  if(!w&&w!==0)return '? weeks';
+  if(w<8)return w+' weeks old';
+  if(w<52){const m=Math.floor(w/4.345);return w+' weeks ('+m+' months)';}
+  return Math.floor(w/52)+' years';
+}
+function getPuppyId(){
+  let id='';
+  // Strategy 1: own hash (#id=xxx) — works if Wix passes hash to iframe
+  if(window.location.hash){
+    const m=window.location.hash.match(/id=([^&]+)/);
+    if(m){id=decodeURIComponent(m[1]);return id;}
+  }
+  // Strategy 2: own search (?id=xxx)
+  if(window.location.search){
+    const params=new URLSearchParams(window.location.search);
+    if(params.get('id')){return params.get('id');}
+  }
+  // Strategy 3: referrer (Wix may include it)
+  if(document.referrer){
+    let m=document.referrer.match(/[?&#]id=([^&]+)/);
+    if(m){return decodeURIComponent(m[1]);}
+  }
+  // Strategy 4: parent location (often blocked cross-origin, but try)
+  try{
+    const ph=window.parent.location.href;
+    let m=ph.match(/[?&#]id=([^&]+)/);
+    if(m){return decodeURIComponent(m[1]);}
+  }catch(e){/* blocked */}
+  // Strategy 5: top location
+  try{
+    const th=window.top.location.href;
+    let m=th.match(/[?&#]id=([^&]+)/);
+    if(m){return decodeURIComponent(m[1]);}
+  }catch(e){/* blocked */}
+  return '';
+}
+
+// Strategy 6: postMessage from parent (Wix Velo can send the ID this way)
+window.addEventListener('message',function(ev){
+  if(ev.data&&typeof ev.data==='object'&&ev.data.puppyId){
+    if(!PUPPY||PUPPY.id!==ev.data.puppyId){
+      // Manually trigger load with this ID
+      window._receivedPuppyId=ev.data.puppyId;
+      load();
+    }
+  }
+});
+
+// ═══════════════════════════════════════════════════
+// MAIN LOAD
+// ═══════════════════════════════════════════════════
+async function load(){
+  const id=window._receivedPuppyId||getPuppyId();
+  if(!id){
+    // Show a "waiting for ID" message — Velo on the parent page should send the ID via postMessage
+    document.getElementById('page-wrap').innerHTML=`
+      <div class="loading-page">
+        <div class="spinner"></div>
+        <div style="margin-top:12px">Loading puppy details…</div>
+        <div style="font-size:11px;color:#94A3B8;margin-top:24px;max-width:400px;margin-left:auto;margin-right:auto">If this message stays for more than a few seconds, the page may not be configured correctly. Please <a href="${PUPPY_FINDER_URL}" style="color:#FF6B1A">go back to all puppies</a>.</div>
+      </div>
+    `;
+    return;
+  }
+  if(!sb){
+    document.getElementById('page-wrap').innerHTML='<div class="error-message">Connection unavailable. Please refresh.</div>';
+    return;
+  }
+  try{
+    const{data:p,error}=await sb.from('puppies').select('*').eq('id',id).single();
+    if(error||!p)throw new Error(error?.message||'Puppy not found');
+    PUPPY=p;
+    document.title=`Meet ${p.name||'this puppy'} — B Puppy`;
+
+    // Fire parallel loads
+    const tasks=[];
+    if(p.breed)tasks.push(sb.from('breeds').select('*').ilike('name',p.breed).maybeSingle().then(r=>{BREED=r.data;}));
+    if(p.mom_id)tasks.push(sb.from('parent_dogs').select('*').eq('id',p.mom_id).maybeSingle().then(r=>{MOM=r.data;}));
+    if(p.dad_id)tasks.push(sb.from('parent_dogs').select('*').eq('id',p.dad_id).maybeSingle().then(r=>{DAD=r.data;}));
+    if(p.litter_id&&p.siblings_visible!==false){
+      tasks.push(sb.from('puppies').select('*').eq('litter_id',p.litter_id).neq('id',id).then(r=>{SIBLINGS=r.data||[];}));
+    }
+    // Similar puppies (same breed, available, exclude this one)
+    tasks.push(sb.from('puppies').select('*').eq('breed',p.breed).neq('id',id).in('status',['available','reserved']).limit(8).then(r=>{SIMILAR=r.data||[];}));
+    await Promise.all(tasks);
+
+    // Breed videos (after BREED loaded)
+    if(BREED&&BREED.id){
+      const{data:vids}=await sb.from('breed_videos').select('*').eq('breed_id',BREED.id).order('display_order');
+      BREED_VIDEOS=vids||[];
+    }
+
+    // Build unified media gallery: puppy photos + puppy videos (NOT breed videos — those are separate)
+    MEDIA=[];
+    const photos=Array.isArray(p.photos)&&p.photos.length?p.photos:(p.photo_url?[p.photo_url]:[]);
+    photos.forEach(u=>MEDIA.push({type:'photo',url:u}));
+    if(Array.isArray(p.videos)){
+      p.videos.forEach(v=>MEDIA.push({type:'video',...v}));
+    }
+
+    render();
+  }catch(e){
+    console.error(e);
+    document.getElementById('page-wrap').innerHTML=`<div class="error-message">Could not load this puppy: ${esc(e.message)}</div>`;
+  }
+}
+
+// ═══════════════════════════════════════════════════
+// RENDER
+// ═══════════════════════════════════════════════════
+function render(){
+  const p=PUPPY;
+  const wrap=document.getElementById('page-wrap');
+  const isAvail=p.status==='available';
+  const isReserved=p.status==='reserved';
+  const isSold=p.status==='sold';
+
+  // Build the page
+  wrap.innerHTML=`
+    <a class="back-link" href="${PUPPY_FINDER_URL}" target="_top">← Back to all puppies</a>
+
+    <!-- HERO -->
+    <div class="hero-grid">
+      <div class="gallery">
+        <div class="main-photo-wrap" id="main-photo-wrap">
+          ${renderMainMedia()}
+          <div class="gallery-status ${isReserved?'reserved':''}${isSold?' sold':''}">${isAvail?'Ready to welcome home':isReserved?'Reserved':isSold?'Found their family ❤️':p.status}</div>
+        </div>
+        ${MEDIA.length>1?'<div class="thumbs">'+MEDIA.map((m,i)=>{
+          const thumbSrc=m.type==='video'?(m.thumb||''):m.url;
+          return `<div class="thumb ${m.type==='video'?'video':''} ${i===0?'active':''}" onclick="setMedia(${i})" data-idx="${i}">
+            ${thumbSrc?`<img src="${esc(thumbSrc)}" alt="" onerror="this.style.background='#FCE8E8'">`:'<div style="width:100%;height:100%;background:#0369A1;display:flex;align-items:center;justify-content:center;color:white;font-size:18px">▶</div>'}
+          </div>`;
+        }).join('')+'</div>':''}
+      </div>
+
+      <div class="info-card">
+        <div class="puppy-name">${esc(p.name||'Beautiful Puppy')}</div>
+        <div class="puppy-tagline">${esc(p.breed||'Mixed Breed')}</div>
+        <div class="puppy-quick-tags">
+          ${p.gender?`<span class="qtag ${p.gender}">${p.gender==='female'?'♀ Female':'♂ Male'}</span>`:''}
+          <span class="qtag">${fmtAge(p)}</span>
+          ${p.color?`<span class="qtag">${esc(p.color)}</span>`:''}
+          ${p.weight_lbs?`<span class="qtag">${p.weight_lbs} lbs</span>`:''}
+          ${p.pedigree_org?`<span class="qtag pedigree">📜 ${esc(p.pedigree_org)}</span>`:''}
+          ${p.vaccinated?'<span class="qtag" style="background:#D1FAE5;color:#065F46">✓ Vaccinated</span>':''}
+          ${p.health_cert?'<span class="qtag" style="background:#D1FAE5;color:#065F46">✓ Health Cert</span>':''}
+        </div>
+
+        ${p.description?`<div class="story-block"><p>${esc(p.description)}</p></div>`:''}
+        ${!p.description&&p.name?`<div class="story-block"><p>${esc(p.name)} is waiting for a loving family. Raised at home as part of the family — not in a kennel — with all the love and socialization a puppy deserves.</p></div>`:''}
+
+        ${p.price?`<div class="price-box">
+          <div>
+            <div class="price-amount">$${Number(p.price).toLocaleString()}</div>
+            <div class="price-note">Total — bring your puppy home</div>
+            <div class="price-includes">✓ Health guarantee · ✓ Up-to-date shots · ✓ Travel-ready</div>
+          </div>
+        </div>`:''}
+
+        <div class="cta-row">
+          ${isAvail?`<button class="btn-primary-big" onclick="openRequestModal()">📩 Request info about ${esc(p.name||'this puppy')}</button>`:isReserved?`<button class="btn-primary-big" onclick="openRequestModal()" style="background:#F59E0B">⏰ Join the waitlist</button>`:`<button class="btn-secondary-big" onclick="window.top.location.href='${PUPPY_FINDER_URL}'">🐾 See available puppies</button>`}
+          <button class="btn-secondary-big" onclick="document.getElementById('financing-section').scrollIntoView({behavior:'smooth'})">💳 Calculate financing</button>
+        </div>
+
+        <div class="share-row">
+          <button class="share-btn" onclick="shareWA()">💚 WhatsApp</button>
+          <button class="share-btn" onclick="shareEmail()">✉️ Email</button>
+          <button class="share-btn" onclick="copyLink()">🔗 Copy link</button>
+        </div>
+      </div>
+    </div>
+
+    ${BREED?renderBreedSection():''}
+    ${(MOM||DAD)?renderFamilySection():''}
+    ${SIBLINGS.length?renderSiblingsSection():''}
+    ${BREED_VIDEOS.length?renderBreedVideosSection():''}
+    ${(!MOM&&!DAD)?renderFinancingSection():''}
+    ${SIMILAR.length?renderSimilarSection():''}
+
+    <!-- BACK TO ALL PUPPIES (footer) -->
+    <div style="text-align:center;padding:32px 16px 16px;border-top:1px solid #F1F5F9;margin-top:24px">
+      <a href="${PUPPY_FINDER_URL}" target="_top" class="btn-secondary-big" style="display:inline-block;text-decoration:none;max-width:340px;margin:0 auto">← Back to all puppies</a>
+    </div>
+  `;
+
+  // Build financing plan cards now that the DOM is ready
+  if(typeof finBuildPlans==='function'){
+    setTimeout(finBuildPlans,30);
+  }
+}
+
+function renderMainMedia(){
+  if(!MEDIA.length){
+    return '<div class="main-photo-fallback">🐾</div>';
+  }
+  const m=MEDIA[CUR_MEDIA_IDX];
+  if(m.type==='photo'){
+    return `<img class="main-photo" id="main-photo" src="${esc(m.url)}" alt="${esc(PUPPY.name||'')}" onclick="openLightbox(${CUR_MEDIA_IDX})" onerror="this.outerHTML='<div class=&quot;main-photo-fallback&quot;>🐾</div>'">`;
+  }else{
+    return `<iframe class="video-frame show" src="${esc(m.embed||m.url)}" frameborder="0" allow="autoplay;encrypted-media" allowfullscreen></iframe>`;
+  }
+}
+
+function setMedia(idx){
+  if(idx<0||idx>=MEDIA.length)return;
+  CUR_MEDIA_IDX=idx;
+  document.getElementById('main-photo-wrap').innerHTML=renderMainMedia()+`<div class="gallery-status ${PUPPY.status==='reserved'?'reserved':''}${PUPPY.status==='sold'?' sold':''}">${PUPPY.status==='available'?'Ready to welcome home':PUPPY.status==='reserved'?'Reserved':PUPPY.status==='sold'?'Found their family ❤️':PUPPY.status}</div>`;
+  document.querySelectorAll('.thumb').forEach((t,i)=>t.classList.toggle('active',i===idx));
+}
+window.setMedia=setMedia;
+
+// ═══════════════════════════════════════════════════
+// BREED SECTION
+// ═══════════════════════════════════════════════════
+function renderBreedSection(){
+  const b=BREED;
+  return `
+  <div class="section">
+    <div class="section-title">About the ${esc(b.name)}</div>
+    <div class="section-sub">Get to know the breed your puppy belongs to</div>
+
+    <div class="breed-grid">
+      <div class="breed-text">
+        ${b.short_description?`<p><strong>${esc(b.short_description)}</strong></p>`:''}
+        ${b.history?`<p>${esc(b.history)}</p>`:''}
+        ${b.temperament?`<p><strong>Temperament.</strong> ${esc(b.temperament)}</p>`:''}
+        ${b.exercise_needs?`<p><strong>Exercise.</strong> ${esc(b.exercise_needs)}</p>`:''}
+        ${b.care?`<p><strong>Grooming & Care.</strong> ${esc(b.care)}</p>`:''}
+        ${b.training?`<p><strong>Training.</strong> ${esc(b.training)}</p>`:''}
+        ${b.health_notes?`<p><strong>Health.</strong> ${esc(b.health_notes)}</p>`:''}
+      </div>
+
+      <div>
+        <div class="breed-stats">
+          ${b.weight_min_lbs&&b.weight_max_lbs?`<div class="stat-card"><div class="stat-icon">⚖️</div><div class="stat-label">Adult Weight</div><div class="stat-value">${b.weight_min_lbs}–${b.weight_max_lbs} lbs</div></div>`:''}
+          ${b.height_min_in&&b.height_max_in?`<div class="stat-card"><div class="stat-icon">📏</div><div class="stat-label">Adult Height</div><div class="stat-value">${b.height_min_in}–${b.height_max_in} in</div></div>`:''}
+          ${b.lifespan_min&&b.lifespan_max?`<div class="stat-card"><div class="stat-icon">⏳</div><div class="stat-label">Lifespan</div><div class="stat-value">${b.lifespan_min}–${b.lifespan_max} years</div></div>`:''}
+          ${b.coat_type?`<div class="stat-card"><div class="stat-icon">✨</div><div class="stat-label">Coat</div><div class="stat-value" style="text-transform:capitalize">${esc(b.coat_type)}</div></div>`:''}
+          ${b.best_for_home?`<div class="stat-card" style="grid-column:span 2"><div class="stat-icon">🏠</div><div class="stat-label">Best for</div><div class="stat-value">${esc(b.best_for_home)}</div></div>`:''}
+        </div>
+
+        <div class="ratings">
+          ${ratingRow('Family','👨‍👩‍👧',b.rating_family)}
+          ${ratingRow('With kids','🧒',b.rating_kids)}
+          ${ratingRow('Other pets','🐈',b.rating_other_pets)}
+          ${ratingRow('Energy','⚡',b.rating_energy)}
+          ${ratingRow('Trainability','🎓',b.rating_trainability)}
+          ${ratingRow('Apartment OK','🏢',b.rating_apartment)}
+        </div>
+
+        <div class="trait-tags">
+          ${b.hypoallergenic?'<span class="trait yes">✓ Hypoallergenic</span>':'<span class="trait no">✗ Not hypoallergenic</span>'}
+          ${b.good_for_first_time?'<span class="trait yes">✓ Great for first-time owners</span>':'<span class="trait no">⚠ Better for experienced owners</span>'}
+        </div>
+      </div>
+    </div>
+  </div>`;
+}
+
+function ratingRow(label,icon,n){
+  if(!n&&n!==0)return '';
+  const pct=Math.max(0,Math.min(100,(n/5)*100));
+  return `<div class="rating-row">
+    <div class="rating-label">${icon} ${label}</div>
+    <div class="rating-bar"><div class="rating-fill" style="width:${pct}%"></div></div>
+    <div class="rating-num">${n}/5</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// FAMILY (parents)
+// ═══════════════════════════════════════════════════
+function renderFamilySection(){
+  // Two-column layout: parents (left, vertical) + financing (right)
+  return `<div class="section">
+    <div class="section-title">Meet ${esc(PUPPY.name||'their')}'s parents & explore financing</div>
+    <div class="section-sub">Both parents are loving family members, raised at home with care. Financing options below to bring ${esc(PUPPY.name||'them')} home.</div>
+    <div class="family-fin-layout">
+      <div class="family-column">
+        ${MOM?parentCard(MOM,'Mom'):''}
+        ${DAD?parentCard(DAD,'Dad'):''}
+      </div>
+      <div class="financing-column" id="financing-section">
+        ${renderFinancingInline()}
+      </div>
+    </div>
+  </div>`;
+}
+
+function parentCard(par,roleLabel){
+  return `<div class="parent-card-h">
+    ${par.photo_url?`<img class="parent-photo-h" src="${esc(par.photo_url)}" alt="${esc(par.name)}" onclick="openLightboxUrl('${esc(par.photo_url)}')" onerror="this.outerHTML='<div class=&quot;parent-photo-h-fallback&quot;>${par.role==='mom'?'👩':'👨'}</div>'">`:`<div class="parent-photo-h-fallback">${par.role==='mom'?'👩':'👨'}</div>`}
+    <div class="parent-info-h">
+      <div class="parent-role-h">${roleLabel}</div>
+      <div class="parent-name-h">${esc(par.name)}</div>
+      <div class="parent-detail-h">${[par.breed,par.color,par.weight_lbs?par.weight_lbs+' lbs':''].filter(Boolean).join(' · ')}</div>
+      ${par.description?`<div class="parent-detail-h" style="margin-top:6px;font-style:italic;font-size:11px">"${esc(par.description)}"</div>`:''}
+      ${par.pedigree_org?`<div class="parent-pedigree-h">📜 ${esc(par.pedigree_org)}${par.pedigree_number?' · '+esc(par.pedigree_number):''}</div>`:''}
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// SIBLINGS
+// ═══════════════════════════════════════════════════
+function renderSiblingsSection(){
+  return `<div class="section">
+    <div class="section-title">Siblings from the same litter</div>
+    <div class="section-sub">${SIBLINGS.length} ${SIBLINGS.length===1?'brother or sister':'brothers and sisters'} also looking for families</div>
+    <div class="siblings-grid">
+      ${SIBLINGS.map(s=>siblingCard(s)).join('')}
+    </div>
+  </div>`;
+}
+
+function siblingCard(s){
+  const photo=s.photo_url||(s.photos&&s.photos[0])||'';
+  return `<a class="sibling-card" href="https://www.bpuppy.us/puppy-detail?id=${s.id}" target="_top">
+    ${photo?`<img class="sibling-photo" src="${esc(photo)}" alt="" onerror="this.outerHTML='<div class=&quot;sibling-photo-fallback&quot;>🐾</div>'">`:'<div class="sibling-photo-fallback">🐾</div>'}
+    <div class="sibling-info">
+      <div class="sibling-name">${esc(s.name||'Unnamed')}</div>
+      <div class="sibling-detail">${s.gender==='female'?'♀':'♂'} · ${esc(s.color||'')} · ${s.status==='available'?'Available':s.status}</div>
+    </div>
+  </a>`;
+}
+
+// ═══════════════════════════════════════════════════
+// BREED VIDEOS
+// ═══════════════════════════════════════════════════
+function renderBreedVideosSection(){
+  return `<div class="section">
+    <div class="section-title">${esc(BREED.name)} in action</div>
+    <div class="section-sub">Get a feel for what life with this breed looks like</div>
+    <div class="videos-grid">
+      ${BREED_VIDEOS.map((v,i)=>`<div class="video-card" onclick="openVideoFrame('${esc(v.url)}')">
+        ${v.thumbnail_url?`<img class="video-thumb" src="${esc(v.thumbnail_url)}" alt="${esc(v.title||'')}">`:'<div class="video-thumb" style="background:linear-gradient(135deg,#FFF3ED,#FFE4D0);display:flex;align-items:center;justify-content:center;font-size:60px">🎬</div>'}
+        <div class="video-overlay"><div class="video-play">▶</div></div>
+      </div>`).join('')}
+    </div>
+  </div>`;
+}
+
+function openVideoFrame(url){
+  // Parse YouTube / Vimeo
+  let embed=url;
+  let m=url.match(/(?:youtube\.com\/(?:watch\?v=|embed\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+  if(m)embed=`https://www.youtube.com/embed/${m[1]}?autoplay=1`;
+  else{
+    m=url.match(/vimeo\.com\/(\d+)/);
+    if(m)embed=`https://player.vimeo.com/video/${m[1]}?autoplay=1`;
+  }
+  // Open in new tab as the simplest reliable way
+  window.open(url,'_blank');
+}
+window.openVideoFrame=openVideoFrame;
+
+// ═══════════════════════════════════════════════════
+// FINANCING CALCULATOR
+// ═══════════════════════════════════════════════════
+function renderFinancingSection(){
+  // Standalone version (when no parents — renders full-width section)
+  return `<div class="section" id="financing-section">
+    ${renderFinancingInline()}
+  </div>`;
+}
+
+function renderFinancingInline(){
+  const price=PUPPY.price||2500;
+  // Init state
+  if(!window._finState){
+    window._finState={price:price,downPmt:0,selPlanId:'k4'};
+  }else{
+    window._finState.price=price;
+  }
+  return `<div class="financing">
+    <div class="financing-title">💳 Make ${esc(PUPPY.name||'this puppy')} fit your life</div>
+    <div class="financing-sub">We have options to help you welcome love into your home — sooner than you'd think.</div>
+
+    <!-- Price + Down Payment -->
+    <div class="fin-block">
+      <div class="fin-block-label">Puppy price</div>
+      <div class="fin-price-row">
+        <span class="fin-currency">$</span>
+        <input type="number" class="fin-price-input" id="fin-price" value="${price}" min="0" oninput="finSyncPrice('input')">
+      </div>
+    </div>
+
+    <div class="fin-block">
+      <div class="fin-block-label">Down payment <span id="fin-dp-pct" style="float:right;color:#FF6B1A;font-weight:700">0%</span></div>
+      <input type="range" class="fin-slider" id="fin-dp-slider" min="0" max="${price}" step="50" value="0" oninput="finSyncDP('s')">
+      <div class="fin-dp-row">
+        <span class="fin-currency-sm">$</span>
+        <input type="number" class="fin-dp-input" id="fin-dp-input" value="0" min="0" oninput="finSyncDP('i')">
+      </div>
+    </div>
+
+    <!-- Plans -->
+    <div class="fin-section-label">Choose a payment plan</div>
+    <div id="fin-plans"></div>
+
+    <!-- Summary -->
+    <div class="fin-summary" id="fin-summary"></div>
+
+    <!-- Action buttons (compact) -->
+    <div class="fin-actions-compact">
+      <a id="fin-wa-btn" class="fin-btn-mini fin-btn-wa" target="_blank" rel="noopener">
+        <span style="font-size:14px">💬</span><span>WhatsApp</span>
+      </a>
+      <a id="fin-email-btn" class="fin-btn-mini fin-btn-email">
+        <span style="font-size:13px">✉️</span><span>Email</span>
+      </a>
+      <a id="fin-apply-btn" class="fin-btn-mini fin-btn-apply" target="_blank" rel="noopener">
+        <span style="font-size:13px">✓</span><span>Apply</span>
+      </a>
+    </div>
+
+    <div class="fin-note">* Estimates only. Final terms depend on plan provider & credit approval.</div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// FINANCING CALCULATOR — advanced (Klarna, Affirm, PayPal, Afterpay)
+// ═══════════════════════════════════════════════════
+const FIN_PLANS=[
+  {id:"k4",  name:"Klarna Pay in 4",  count:4,  months:0,  apr:0,     label:"0% interest",  type:"split", brand:"Klarna",   bg:"#FFA8CD", fg:"#0E0E0F"},
+  {id:"ap4", name:"Afterpay × 4",     count:4,  months:0,  apr:0,     label:"0% interest",  type:"split", max:2000, brand:"Afterpay", bg:"#B2FCE4", fg:"#0E0E0F"},
+  {id:"pp6", name:"PayPal × 6",       count:6,  months:0,  apr:0,     label:"0% for 6 mo.", type:"split", brand:"PayPal",   bg:"#003087", fg:"#FFFFFF"},
+  {id:"af12",name:"Affirm 12 mo.",    count:12, months:12, apr:15,    label:"~15% APR",     type:"loan",  brand:"Affirm",   bg:"#0FA0EA", fg:"#FFFFFF"},
+  {id:"af24",name:"Affirm 24 mo.",    count:24, months:24, apr:18,    label:"~18% APR",     type:"loan",  brand:"Affirm",   bg:"#0FA0EA", fg:"#FFFFFF"},
+  {id:"kl12",name:"Klarna 12 mo.",    count:12, months:12, apr:19.99, label:"~19.99% APR",  type:"loan",  brand:"Klarna",   bg:"#FFA8CD", fg:"#0E0E0F"}
+];
+const FIN_FMT=n=>n.toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});
+
+function finCalcPmt(fin,plan){
+  if(fin<=0)return{monthly:0,total:0};
+  const r=plan.apr/100/12,n=plan.months;
+  if(plan.type==='split'){
+    const m=fin/plan.count;
+    return{monthly:m,total:fin,perPaymentLabel:'per payment'};
+  }
+  const m=r===0?fin/n:fin*r/(1-Math.pow(1+r,-n));
+  return{monthly:m,total:m*n,perPaymentLabel:'/month'};
+}
+
+function finSyncPrice(){
+  const inp=document.getElementById('fin-price');
+  if(!inp)return;
+  const v=Math.max(0,+inp.value||0);
+  window._finState.price=v;
+  // Adjust down payment if higher than price
+  const dpInp=document.getElementById('fin-dp-input');
+  const dpSlider=document.getElementById('fin-dp-slider');
+  if(window._finState.downPmt>v){
+    window._finState.downPmt=v;
+    dpInp.value=v;
+  }
+  if(dpSlider){dpSlider.max=v;dpSlider.value=window._finState.downPmt;}
+  finBuildPlans();
+}
+window.finSyncPrice=finSyncPrice;
+
+function finSyncDP(src){
+  const sl=document.getElementById('fin-dp-slider');
+  const inp=document.getElementById('fin-dp-input');
+  const price=window._finState.price;
+  let v;
+  if(src==='s'){v=Math.min(+sl.value,price);inp.value=v;}
+  else{v=Math.max(0,Math.min(+inp.value||0,price));inp.value=v;sl.value=v;}
+  window._finState.downPmt=v;
+  // Update percentage label
+  const pct=price>0?Math.round((v/price)*100):0;
+  const pctEl=document.getElementById('fin-dp-pct');
+  if(pctEl)pctEl.textContent=pct+'%';
+  finBuildPlans();
+}
+window.finSyncDP=finSyncDP;
+
+function finBuildPlans(){
+  const wrap=document.getElementById('fin-plans');
+  if(!wrap)return;
+  const fin=Math.max(0,window._finState.price-window._finState.downPmt);
+  wrap.innerHTML=FIN_PLANS.map(plan=>{
+    const sel=plan.id===window._finState.selPlanId;
+    const zero=plan.apr===0;
+    const over=plan.max&&fin>plan.max;
+    const{monthly,total,perPaymentLabel}=finCalcPmt(fin,plan);
+    let badge='';
+    if(zero&&!over)badge='<span class="fin-badge fin-badge-green">0%</span>';
+    if(over)badge='<span class="fin-badge fin-badge-gray">Max $'+plan.max+'</span>';
+    const logo=`<span class="fin-brand-logo" style="background:${plan.bg};color:${plan.fg}">${esc(plan.brand)}</span>`;
+    return `<div class="fin-plan ${sel?'fin-plan-sel':''} ${over?'fin-plan-disabled':''}" onclick="${over?'':'finSelectPlan(\''+plan.id+'\')'}">
+      <div class="fin-plan-top">
+        <div style="flex:1;min-width:0">
+          <div class="fin-plan-name">${logo}${plan.type==='split'?' Pay in '+plan.count:' '+plan.months+' mo'} ${badge}</div>
+          <div class="fin-plan-label">${plan.label}</div>
+        </div>
+        <div class="fin-plan-amount">$${FIN_FMT(monthly)}<span style="font-size:10px;color:#64748B;font-weight:500"> ${perPaymentLabel}</span></div>
+      </div>
+    </div>`;
+  }).join('');
+  finUpdateSummary(fin);
+  finUpdateLinks();
+}
+window.finBuildPlans=finBuildPlans;
+
+function finSelectPlan(id){
+  window._finState.selPlanId=id;
+  finBuildPlans();
+}
+window.finSelectPlan=finSelectPlan;
+
+function finUpdateSummary(fin){
+  const summary=document.getElementById('fin-summary');
+  if(!summary)return;
+  const plan=FIN_PLANS.find(p=>p.id===window._finState.selPlanId);
+  if(!plan){summary.innerHTML='';return;}
+  const{monthly,total}=finCalcPmt(fin,plan);
+  const totalCost=window._finState.downPmt+total;
+  summary.innerHTML=`
+    <div class="fin-summary-row"><span>Puppy price</span><span>$${FIN_FMT(window._finState.price)}</span></div>
+    <div class="fin-summary-row"><span>Down payment</span><span>−$${FIN_FMT(window._finState.downPmt)}</span></div>
+    <div class="fin-summary-row"><span>Financed amount</span><span>$${FIN_FMT(fin)}</span></div>
+    <div class="fin-summary-row fin-summary-highlight"><span>${plan.name}</span><span>$${FIN_FMT(monthly)}${plan.type==='split'?' × '+plan.count:'/mo × '+plan.months}</span></div>
+    ${plan.type==='loan'?`<div class="fin-summary-row" style="font-size:11px;color:#94A3B8"><span>Total cost</span><span>$${FIN_FMT(totalCost)}</span></div>`:''}
+  `;
+}
+
+function finBuildMessage(intent){
+  const fin=Math.max(0,window._finState.price-window._finState.downPmt);
+  const plan=FIN_PLANS.find(p=>p.id===window._finState.selPlanId);
+  const{monthly,total}=finCalcPmt(fin,plan);
+  const puppyName=PUPPY.name||'a puppy';
+  const puppyBreed=PUPPY.breed||'';
+  let msg='';
+  if(intent==='apply'){
+    msg=`Hi! I'd like to APPLY for financing for ${puppyName}`;
+    if(puppyBreed)msg+=` (${puppyBreed})`;
+    msg+=`. Please send me the payment link!\n\n`;
+  }else{
+    msg=`Hi! I'm interested in ${puppyName}`;
+    if(puppyBreed)msg+=` (${puppyBreed})`;
+    msg+=` and I'd love to learn more about financing.\n\n`;
+  }
+  msg+=`💰 Price: $${FIN_FMT(window._finState.price)}\n`;
+  msg+=`📥 Down payment: $${FIN_FMT(window._finState.downPmt)}\n`;
+  msg+=`💳 Plan: ${plan.name}\n`;
+  if(plan.type==='split'){
+    msg+=`📅 ${plan.count} payments of $${FIN_FMT(monthly)}\n`;
+  }else{
+    msg+=`📅 ${plan.months} months at $${FIN_FMT(monthly)}/mo\n`;
+  }
+  if(intent==='apply'){
+    msg+=`\nReady to bring ${puppyName} home! 🐾`;
+  }else{
+    msg+=`\nCan you help me get started?`;
+  }
+  return msg;
+}
+
+function finUpdateLinks(){
+  const msgInfo=encodeURIComponent(finBuildMessage('info'));
+  const msgApply=encodeURIComponent(finBuildMessage('apply'));
+  const waBtn=document.getElementById('fin-wa-btn');
+  const emailBtn=document.getElementById('fin-email-btn');
+  const applyBtn=document.getElementById('fin-apply-btn');
+  if(waBtn)waBtn.href=`https://wa.me/14079683477?text=${msgInfo}`;
+  if(emailBtn){
+    const subj=encodeURIComponent('Financing inquiry — '+(PUPPY.name||'puppy'));
+    emailBtn.href=`mailto:hello@bpuppy.us?subject=${subj}&body=${msgInfo}`;
+  }
+  if(applyBtn){
+    // Apply also goes to WhatsApp but with explicit "I want to apply" message
+    applyBtn.href=`https://wa.me/14079683477?text=${msgApply}`;
+  }
+}
+
+// Build plans after render
+setTimeout(()=>{if(document.getElementById('fin-plans'))finBuildPlans();},100);
+
+// ═══════════════════════════════════════════════════
+// SIMILAR PUPPIES
+// ═══════════════════════════════════════════════════
+function renderSimilarSection(){
+  return `<div class="section">
+    <div class="section-title">More ${esc(PUPPY.breed||'puppies')} looking for families</div>
+    <div class="section-sub">Other puppies you might also love</div>
+    <div class="similar-grid">
+      ${SIMILAR.map(s=>siblingCard(s)).join('')}
+    </div>
+  </div>`;
+}
+
+// ═══════════════════════════════════════════════════
+// REQUEST INFO MODAL
+// ═══════════════════════════════════════════════════
+function openRequestModal(){
+  const ov=document.getElementById('request-modal');
+  const body=document.getElementById('request-modal-body');
+  body.innerHTML=`
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Request info about ${esc(PUPPY.name||'this puppy')}</div>
+        <div style="font-size:13px;color:#64748B;margin-top:4px">We'll reach out within business hours.</div>
+      </div>
+      <button class="modal-close" onclick="closeRequestModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="lead-form" onsubmit="submitLead(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">First & last name *</label>
+            <input class="form-input" id="lead-name" required placeholder="Maria Lopez">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone *</label>
+            <input class="form-input" id="lead-phone" type="tel" required placeholder="+1 305 555 0123">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input class="form-input" id="lead-email" type="email" required placeholder="maria@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ZIP code</label>
+            <input class="form-input" id="lead-zip" placeholder="33101">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Tell us about your home</label>
+          <textarea class="form-textarea" id="lead-message" placeholder="Family size, other pets, experience with the breed, your timeline…"></textarea>
+        </div>
+        <button type="submit" class="btn-primary-big" id="lead-submit">📩 Send request</button>
+      </form>
+    </div>
+  `;
+  ov.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+window.openRequestModal=openRequestModal;
+
+function closeRequestModal(){
+  document.getElementById('request-modal').classList.remove('show');
+  document.body.style.overflow='';
+}
+window.closeRequestModal=closeRequestModal;
+
+async function submitLead(ev){
+  ev.preventDefault();
+  const v=id=>document.getElementById(id).value.trim();
+  const btn=document.getElementById('lead-submit');
+  btn.disabled=true;
+  btn.textContent='Sending…';
+  const lead={
+    full_name:v('lead-name'),
+    email:v('lead-email'),
+    phone:v('lead-phone'),
+    zip_code:v('lead-zip'),
+    message:v('lead-message'),
+    puppy_id:PUPPY.id,
+    puppy_name:PUPPY.name||null,
+    puppy_breed:PUPPY.breed||null,
+    source:'puppy_finder',
+    user_agent:navigator.userAgent
+  };
+  try{
+    const{error}=await sb.from('website_leads').insert(lead);
+    if(error)throw error;
+    document.getElementById('request-modal-body').innerHTML=`
+      <div class="form-success">
+        <div class="form-success-icon">🎉</div>
+        <div class="form-success-title">Request received!</div>
+        <div class="form-success-text">Thank you for your interest in ${esc(PUPPY.name||'this puppy')}. One of our family advisors will reach out to you very soon during business hours.</div>
+        <button class="btn-primary-big" onclick="closeRequestModal()" style="margin-top:18px">Close</button>
+      </div>
+    `;
+  }catch(e){
+    btn.disabled=false;
+    btn.textContent='📩 Send request';
+    alert('Could not send: '+(e.message||e)+'\n\nPlease try again or contact us directly.');
+  }
+}
+window.submitLead=submitLead;
+
+// ═══════════════════════════════════════════════════
+// SHARE
+// ═══════════════════════════════════════════════════
+function shareWA(){
+  const txt=`Look at this puppy I found on B Puppy! ${PUPPY.name||PUPPY.breed} — ${window.location.href}`;
+  window.open(`https://wa.me/?text=${encodeURIComponent(txt)}`,'_blank');
+}
+window.shareWA=shareWA;
+
+function shareEmail(){
+  const subj=`Check out ${PUPPY.name||PUPPY.breed} from B Puppy`;
+  const body=`I thought you might love this puppy:\n\n${PUPPY.name||PUPPY.breed}\n${window.location.href}`;
+  window.location.href=`mailto:?subject=${encodeURIComponent(subj)}&body=${encodeURIComponent(body)}`;
+}
+window.shareEmail=shareEmail;
+
+function copyLink(){
+  navigator.clipboard.writeText(window.location.href).then(()=>{
+    alert('Link copied to clipboard!');
+  }).catch(()=>{
+    prompt('Copy this link:',window.location.href);
+  });
+}
+window.copyLink=copyLink;
+
+// ═══════════════════════════════════════════════════
+// LIGHTBOX
+// ═══════════════════════════════════════════════════
+let LB_PHOTOS=[]; let LB_IDX=0;
+function openLightbox(startIdx){
+  // Build photo list from MEDIA (skip videos)
+  LB_PHOTOS=MEDIA.filter(m=>m.type==='photo').map(m=>m.url);
+  LB_IDX=Math.min(startIdx||0,LB_PHOTOS.length-1);
+  if(!LB_PHOTOS.length)return;
+  showLb();
+  document.getElementById('lightbox').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+window.openLightbox=openLightbox;
+
+function openLightboxUrl(url){
+  LB_PHOTOS=[url];
+  LB_IDX=0;
+  showLb();
+  document.getElementById('lightbox').classList.add('show');
+  document.body.style.overflow='hidden';
+}
+window.openLightboxUrl=openLightboxUrl;
+
+function closeLightbox(){
+  document.getElementById('lightbox').classList.remove('show');
+  document.body.style.overflow='';
+}
+window.closeLightbox=closeLightbox;
+
+function lbPrev(){LB_IDX=(LB_IDX-1+LB_PHOTOS.length)%LB_PHOTOS.length;showLb();}
+function lbNext(){LB_IDX=(LB_IDX+1)%LB_PHOTOS.length;showLb();}
+window.lbPrev=lbPrev; window.lbNext=lbNext;
+
+function showLb(){
+  document.getElementById('lightbox-img').src=LB_PHOTOS[LB_IDX];
+  document.getElementById('lightbox-counter').textContent=(LB_IDX+1)+' / '+LB_PHOTOS.length;
+}
+
+// Keyboard navigation in lightbox
+document.addEventListener('keydown',(e)=>{
+  if(!document.getElementById('lightbox').classList.contains('show'))return;
+  if(e.key==='ArrowLeft')lbPrev();
+  if(e.key==='ArrowRight')lbNext();
+  if(e.key==='Escape')closeLightbox();
+});
+
+// ═══════════════════════════════════════════════════
+// AUTO-RESIZE — send actual content height to parent (Wix)
+// so the iframe resizes dynamically (no fixed height needed)
+// ═══════════════════════════════════════════════════
+function sendHeightToParent(){
+  try{
+    const h=Math.max(
+      document.body.scrollHeight,
+      document.body.offsetHeight,
+      document.documentElement.scrollHeight,
+      document.documentElement.offsetHeight
+    );
+    window.parent.postMessage({type:'resize',height:h},'*');
+  }catch(e){/* parent inaccessible */}
+}
+// Send height every time the DOM changes
+const _resizeObserver=new ResizeObserver(()=>sendHeightToParent());
+_resizeObserver.observe(document.body);
+// Also send periodically (in case ResizeObserver misses)
+setInterval(sendHeightToParent,800);
+// Send on load
+window.addEventListener('load',sendHeightToParent);
+
+// Init
+load();
+</script>
+</body>
+</html>

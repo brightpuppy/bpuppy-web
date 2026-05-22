@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Find Your Perfect Companion — B Puppy</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"DM Sans",sans-serif;color:#1A1A2E;background:#FFFFFF;line-height:1.5}
+
+/* ═══════════════════════════════════════════════════
+   HERO BANNER — White & Modern
+   ═══════════════════════════════════════════════════ */
+.hero{background:#FFFFFF;border-bottom:1px solid #F1F5F9;padding:24px 24px 18px;position:relative;overflow:hidden}
+.hero-inner{max-width:1280px;margin:0 auto;position:relative;z-index:1;text-align:center}
+.hero-tagline{display:block;font-size:13px;font-weight:800;color:#FF6B1A;letter-spacing:1.2px;text-transform:uppercase;margin-bottom:10px}
+.hero-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:clamp(28px,3.8vw,42px);line-height:1.1;color:#0F172A;margin-bottom:10px;letter-spacing:-1px}
+.hero-title .accent{color:#FF6B1A;display:inline-block;position:relative}
+.hero-title .accent::after{content:"";position:absolute;bottom:4px;left:0;right:0;height:7px;background:rgba(255,107,26,0.18);z-index:-1;border-radius:2px}
+.hero-subtitle{font-size:15px;color:#475569;max-width:680px;margin:0 auto 16px;font-weight:400;line-height:1.55}
+
+/* CTA buttons row (Take Quiz, etc.) */
+.hero-ctas{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-bottom:18px}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;padding:12px 22px;border-radius:50px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;text-decoration:none;border:1.5px solid transparent;transition:all 0.18s}
+.hero-cta-primary{background:linear-gradient(135deg,#FF6B1A 0%,#FF8C4A 100%);color:white;box-shadow:0 6px 16px rgba(255,107,26,0.25)}
+.hero-cta-primary:hover{transform:translateY(-2px);box-shadow:0 10px 22px rgba(255,107,26,0.35)}
+.hero-cta-ghost{background:white;color:#1E40AF;border-color:#1E40AF}
+.hero-cta-ghost:hover{background:#1E40AF;color:white}
+
+.hero-pills{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:1100px;margin:0 auto}
+.hero-pill{display:inline-flex;align-items:center;gap:6px;background:#FFFFFF;border:1.5px solid #1E40AF;color:#1E40AF;padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;transition:all 0.2s}
+.hero-pill:hover{background:#1E40AF;color:#FFFFFF;transform:translateY(-1px);box-shadow:0 4px 12px rgba(30,64,175,0.18)}
+.hero-pill::before{content:"✓";font-weight:900;font-size:13px}
+
+/* ═══════════════════════════════════════════════════
+   FILTER BAR
+   ═══════════════════════════════════════════════════ */
+.filter-bar{background:#FFFFFF;border-bottom:1px solid #F1F5F9;padding:18px 24px;position:sticky;top:0;z-index:50;backdrop-filter:blur(8px);background:rgba(255,255,255,0.96)}
+.filter-inner{max-width:1280px;margin:0 auto;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.filter-label{font-weight:800;color:#FF6B1A;font-size:13px;letter-spacing:0.5px}
+.filter-select{background:#FFFFFF;border:1.5px solid #E2E8F0;border-radius:10px;padding:10px 36px 10px 14px;font-family:inherit;font-size:14px;font-weight:600;color:#1A1A2E;cursor:pointer;appearance:none;background-image:url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23FF6B1A' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;transition:all 0.15s;min-width:130px}
+.filter-select:hover,.filter-select:focus{border-color:#FF6B1A;outline:none}
+.filter-search{flex:1;min-width:220px;display:flex;align-items:center;gap:8px;background:#FFF3ED;border:1.5px solid transparent;border-radius:10px;padding:9px 14px;transition:all 0.15s}
+.filter-search:focus-within{border-color:#FF6B1A;background:#FFFFFF}
+.filter-search input{flex:1;border:none;background:none;outline:none;font-family:inherit;font-size:14px;color:#1A1A2E}
+.filter-search input::placeholder{color:#94A3B8}
+.btn-clear{background:none;border:1.5px solid #E2E8F0;color:#64748B;padding:9px 16px;border-radius:10px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;transition:all 0.15s;display:inline-flex;align-items:center;gap:5px}
+.btn-clear:hover{border-color:#EF4444;color:#EF4444}
+.count-badge{background:#FFF3ED;color:#FF6B1A;padding:7px 14px;border-radius:50px;font-size:13px;font-weight:700;white-space:nowrap}
+
+/* ═══════════════════════════════════════════════════
+   PUPPY GRID
+   ═══════════════════════════════════════════════════ */
+.puppies-section{padding:40px 24px 80px;background:linear-gradient(180deg,#FAFBFC 0%,#FFFFFF 100%);min-height:60vh}
+.puppies-inner{max-width:1280px;margin:0 auto}
+.puppy-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:24px}
+
+.puppy-card{background:#FFFFFF;border-radius:18px;overflow:hidden;box-shadow:0 1px 3px rgba(0,0,0,0.05);border:1px solid #F1F5F9;transition:all 0.25s cubic-bezier(0.4,0,0.2,1);cursor:pointer;position:relative}
+.puppy-card:hover{transform:translateY(-6px);box-shadow:0 20px 40px rgba(255,107,26,0.12);border-color:transparent}
+
+.puppy-image-wrap{position:relative;aspect-ratio:1.1;overflow:hidden;background:#FFF3ED}
+.puppy-image{width:100%;height:100%;object-fit:cover;transition:transform 0.5s}
+.puppy-card:hover .puppy-image{transform:scale(1.06)}
+.puppy-image-fallback{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:80px;background:linear-gradient(135deg,#FFF3ED 0%,#FFE4D0 100%)}
+
+.puppy-badge{position:absolute;top:14px;left:14px;background:#10B981;color:white;padding:6px 12px;border-radius:50px;font-size:10px;font-weight:800;letter-spacing:0.6px;text-transform:uppercase;box-shadow:0 4px 12px rgba(16,185,129,0.3)}
+.puppy-badge.reserved{background:#F59E0B;box-shadow:0 4px 12px rgba(245,158,11,0.3)}
+.puppy-price{position:absolute;bottom:14px;right:14px;background:rgba(15,23,42,0.92);color:white;padding:8px 14px;border-radius:50px;font-weight:800;font-size:15px;backdrop-filter:blur(4px)}
+
+.puppy-info{padding:20px}
+.puppy-name{font-family:"Nunito",sans-serif;font-weight:800;font-size:22px;color:#0F172A;margin-bottom:4px}
+.puppy-breed{color:#64748B;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:14px}
+.puppy-tags{display:flex;flex-wrap:wrap;gap:6px}
+.puppy-tag{padding:5px 12px;border-radius:50px;font-size:11px;font-weight:700;letter-spacing:0.2px}
+.puppy-tag.female{background:#FCE7F3;color:#BE185D}
+.puppy-tag.male{background:#DBEAFE;color:#1D4ED8}
+.puppy-tag.neutral{background:#F1F5F9;color:#475569}
+
+.empty-state{grid-column:1/-1;text-align:center;padding:80px 24px;color:#64748B}
+.empty-state-icon{font-size:64px;margin-bottom:16px;opacity:0.4}
+.empty-state-title{font-family:"Nunito",sans-serif;font-weight:800;font-size:22px;color:#0F172A;margin-bottom:8px}
+.empty-state-text{font-size:14px;color:#64748B}
+.loading-state{grid-column:1/-1;text-align:center;padding:80px 24px}
+.spinner{width:40px;height:40px;border:3px solid #FFF3ED;border-top-color:#FF6B1A;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══════════════════════════════════════════════════
+   REQUEST A BREED SECTION
+   ═══════════════════════════════════════════════════ */
+.request-section{background:linear-gradient(135deg,#FFF3ED 0%,#FFFFFF 100%);border-top:1px solid #FFD5BC;padding:50px 24px}
+.request-inner{max-width:680px;margin:0 auto;text-align:center}
+.request-icon{font-size:42px;margin-bottom:14px;display:inline-block}
+.request-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:clamp(24px,3.5vw,34px);color:#0F172A;margin-bottom:10px;letter-spacing:-0.5px}
+.request-sub{font-size:15px;color:#475569;line-height:1.7;margin-bottom:22px;max-width:560px;margin-left:auto;margin-right:auto}
+
+/* Form fields shared (used by breed request modal) */
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:6px}
+.form-input,.form-textarea,.form-select{width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-family:inherit;font-size:14px;color:#0F172A;background:white;transition:border-color 0.15s;outline:none}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:#FF6B1A}
+.form-textarea{resize:vertical;min-height:70px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-success{padding:30px 24px;text-align:center}
+.form-success-icon{font-size:54px;margin-bottom:12px}
+.form-success-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:22px;color:#10B981;margin-bottom:8px}
+.form-success-text{color:#64748B;font-size:14px;line-height:1.7}
+.btn-form{width:100%;background:linear-gradient(135deg,#FF6B1A 0%,#FF8C4A 100%);color:white;border:none;padding:16px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 18px rgba(255,107,26,0.3);margin-top:6px}
+.btn-form:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(255,107,26,0.4)}
+.btn-form:disabled{background:#E2E8F0;color:#94A3B8;box-shadow:none;cursor:not-allowed;transform:none}
+.modal-header{padding:24px 24px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.modal-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:22px;color:#0F172A;line-height:1.2}
+.modal-sub{font-size:13px;color:#64748B;margin-top:4px}
+.modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:#64748B;padding:0;line-height:1;flex-shrink:0}
+.modal-close:hover{color:#FF6B1A}
+.modal-body{padding:0 24px 24px}
+
+/* ═══════════════════════════════════════════════════
+   PUPPY DETAIL MODAL
+   ═══════════════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(8px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px;animation:fadeIn 0.2s}
+.modal-overlay.show{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:white;border-radius:24px;width:100%;max-width:760px;max-height:92vh;overflow-y:auto;position:relative;animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-close{position:absolute;top:16px;right:16px;background:rgba(255,255,255,0.95);border:none;width:38px;height:38px;border-radius:50%;font-size:18px;cursor:pointer;z-index:5;box-shadow:0 4px 12px rgba(0,0,0,0.1);display:flex;align-items:center;justify-content:center;transition:all 0.15s}
+.modal-close:hover{background:#FF6B1A;color:white;transform:rotate(90deg)}
+.modal-photos{position:relative;background:#FFF3ED}
+.modal-main-photo{width:100%;height:380px;object-fit:cover}
+.modal-main-photo.fallback{display:flex;align-items:center;justify-content:center;font-size:120px;background:linear-gradient(135deg,#FFF3ED 0%,#FFE4D0 100%)}
+.modal-thumbs{display:flex;gap:8px;padding:12px;background:white;overflow-x:auto}
+.modal-thumb{width:64px;height:64px;border-radius:8px;overflow:hidden;cursor:pointer;flex-shrink:0;border:2.5px solid transparent;transition:all 0.15s}
+.modal-thumb img{width:100%;height:100%;object-fit:cover}
+.modal-thumb.active{border-color:#FF6B1A}
+.modal-body{padding:32px}
+.modal-name{font-family:"Nunito",sans-serif;font-weight:900;font-size:32px;color:#0F172A;margin-bottom:6px}
+.modal-breed{color:#FF6B1A;font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:24px}
+.modal-tags{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:24px}
+.modal-tag{padding:7px 14px;border-radius:50px;font-size:12px;font-weight:700;background:#F1F5F9;color:#475569}
+.modal-price-row{display:flex;align-items:baseline;justify-content:space-between;padding:20px 0;border-top:1px solid #F1F5F9;border-bottom:1px solid #F1F5F9;margin-bottom:24px}
+.modal-price{font-family:"Nunito",sans-serif;font-weight:900;font-size:36px;color:#FF6B1A}
+.modal-price-note{color:#64748B;font-size:13px}
+.modal-description{color:#334155;font-size:15px;line-height:1.7;margin-bottom:24px}
+.modal-features{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:28px}
+.feature{display:flex;align-items:center;gap:10px;padding:12px;background:#FAFBFC;border-radius:10px}
+.feature-icon{font-size:18px}
+.feature-text{font-size:13px;font-weight:600;color:#334155}
+.feature.yes .feature-icon{color:#10B981}
+.feature.no{opacity:0.4}
+.modal-cta{display:flex;gap:12px;flex-wrap:wrap}
+.btn-primary{flex:1;background:linear-gradient(135deg,#FF6B1A 0%,#FF8C4A 100%);color:white;border:none;padding:16px 24px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.2s;box-shadow:0 4px 16px rgba(255,107,26,0.3);min-width:200px}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,26,0.4)}
+.btn-secondary{flex:1;background:white;color:#1A1A2E;border:1.5px solid #E2E8F0;padding:16px 24px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;transition:all 0.15s;min-width:160px}
+.btn-secondary:hover{border-color:#FF6B1A;color:#FF6B1A}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media (max-width:768px){
+  .hero{padding:40px 18px 36px}
+  .hero-title{font-size:36px;letter-spacing:-1px}
+  .hero-subtitle{font-size:15px}
+  .hero-pill{font-size:11px;padding:7px 14px}
+  .filter-bar{padding:14px}
+  .filter-inner{gap:8px}
+  .filter-select{font-size:13px;min-width:auto;padding:9px 30px 9px 12px}
+  .puppies-section{padding:24px 16px 80px}
+  .puppy-grid{grid-template-columns:1fr 1fr;gap:14px}
+  .puppy-card{border-radius:14px}
+  .puppy-info{padding:14px}
+  .puppy-name{font-size:17px}
+  .puppy-breed{font-size:10px;margin-bottom:10px}
+  .puppy-tag{padding:4px 9px;font-size:10px}
+  .puppy-price{font-size:13px;padding:6px 11px;bottom:10px;right:10px}
+  .puppy-badge{top:10px;left:10px;font-size:9px;padding:5px 10px}
+  .modal{border-radius:18px}
+  .modal-main-photo{height:280px}
+  .modal-body{padding:22px}
+  .modal-name{font-size:26px}
+  .modal-price{font-size:28px}
+  .modal-features{grid-template-columns:1fr;gap:8px}
+}
+@media (max-width:420px){
+  .puppy-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════════════════════
+     HERO (compact)
+     ═══════════════════════════════════════════════════ -->
+<section class="hero">
+  <div class="hero-inner">
+    <span class="hero-tagline">🐾 13+ Years Connecting Families</span>
+    <h1 class="hero-title">Find Your <span class="accent">Perfect</span> Companion</h1>
+    <p class="hero-subtitle">Loving puppies raised as family members — not in kennels — by our trusted home breeder network across the USA.</p>
+    <div class="hero-ctas">
+      <a class="hero-cta hero-cta-primary" href="https://www.bpuppy.us/find-your-match" target="_top">✨ Take the Quiz — find your match</a>
+      <a class="hero-cta hero-cta-ghost" href="#request-section">📩 Request a specific breed</a>
+    </div>
+    <div class="hero-pills">
+      <span class="hero-pill">Home-Raised, Not Kennel-Raised</span>
+      <span class="hero-pill">Nationwide Delivery — All 50 States</span>
+      <span class="hero-pill">Breeder Network Across the USA</span>
+      <span class="hero-pill">Breed-Matched for Your Lifestyle</span>
+      <span class="hero-pill">We Also Support Adoption</span>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     FILTER BAR
+     ═══════════════════════════════════════════════════ -->
+<section class="filter-bar">
+  <div class="filter-inner">
+    <span class="filter-label">FILTER:</span>
+    <select class="filter-select" id="f-breed"><option value="">All Breeds</option></select>
+    <select class="filter-select" id="f-sex"><option value="">All Sexes</option><option value="female">Female</option><option value="male">Male</option></select>
+    <select class="filter-select" id="f-age"><option value="">All Ages</option><option value="0-8">Up to 8 wks</option><option value="8-12">8 – 12 wks</option><option value="12-16">12 – 16 wks</option><option value="16+">16+ wks</option></select>
+    <select class="filter-select" id="f-color"><option value="">All Colors</option></select>
+    <div class="filter-search"><span>🔍</span><input type="text" id="f-search" placeholder="Search name or breed…"></div>
+    <button class="btn-clear" id="btn-clear">✕ Clear</button>
+    <span class="count-badge" id="count-badge">0 companions available</span>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     PUPPY GRID
+     ═══════════════════════════════════════════════════ -->
+<section class="puppies-section">
+  <div class="puppies-inner">
+    <div class="puppy-grid" id="puppy-grid">
+      <div class="loading-state"><div class="spinner"></div><div>Loading available puppies…</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════════════════════════════════════
+     REQUEST A BREED SECTION
+     ═══════════════════════════════════════════════════ -->
+<section class="request-section" id="request-section">
+  <div class="request-inner">
+    <div class="request-icon">🐾</div>
+    <h2 class="request-title">Looking for a specific breed?</h2>
+    <p class="request-sub">Don't see your dream puppy here? Tell us what you're looking for — we have a network of trusted breeders across the USA and we'll work to find your perfect match.</p>
+    <button class="hero-cta hero-cta-primary" onclick="openBreedRequestModal()">📩 Request a breed</button>
+  </div>
+</section>
+
+<!-- BREED REQUEST MODAL -->
+<div class="modal-overlay" id="breed-request-modal" onclick="if(event.target===this)closeBreedRequestModal()">
+  <div class="modal" id="breed-request-body"></div>
+</div>
+
+<!-- ═══════════════════════════════════════════════════
+     DETAIL MODAL
+     ═══════════════════════════════════════════════════ -->
+<div class="modal-overlay" id="modal-overlay" onclick="if(event.target===this)closeModal()">
+  <div class="modal" id="modal-body"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// SUPABASE CONNECTION
+// ═══════════════════════════════════════════════════
+const SUPABASE_URL='https://oqqwmcplljirbreowrll.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+let sb=null;
+try{sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}catch(e){console.warn('Supabase init:',e);}
+
+let ALL_PUPPIES=[];
+let FILTERED_PUPPIES=[];
+
+async function loadPuppies(){
+  const grid=document.getElementById('puppy-grid');
+  if(!sb){
+    grid.innerHTML='<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Connection not configured</div><div class="empty-state-text">Please update SUPABASE_URL and SUPABASE_ANON_KEY in the page code.</div></div>';
+    return;
+  }
+  try{
+    const{data,error}=await sb.from('puppies').select('*').in('status',['available','reserved']).order('created_at',{ascending:false});
+    if(error)throw error;
+    ALL_PUPPIES=data||[];
+    populateFilters();
+    applyFilters();
+  }catch(e){
+    grid.innerHTML='<div class="empty-state"><div class="empty-state-icon">⚠️</div><div class="empty-state-title">Could not load puppies</div><div class="empty-state-text">'+(e.message||e)+'</div></div>';
+  }
+}
+
+function populateFilters(){
+  const breeds=[...new Set(ALL_PUPPIES.map(p=>p.breed).filter(Boolean))].sort();
+  const colors=[...new Set(ALL_PUPPIES.map(p=>p.color).filter(Boolean))].sort();
+  const breedSel=document.getElementById('f-breed');
+  const colorSel=document.getElementById('f-color');
+  breedSel.innerHTML='<option value="">All Breeds</option>'+breeds.map(b=>`<option value="${b}">${b}</option>`).join('');
+  colorSel.innerHTML='<option value="">All Colors</option>'+colors.map(c=>`<option value="${c}">${c}</option>`).join('');
+}
+
+function applyFilters(){
+  const breed=document.getElementById('f-breed').value;
+  const sex=document.getElementById('f-sex').value;
+  const age=document.getElementById('f-age').value;
+  const color=document.getElementById('f-color').value;
+  const search=document.getElementById('f-search').value.toLowerCase().trim();
+
+  FILTERED_PUPPIES=ALL_PUPPIES.filter(p=>{
+    if(breed&&p.breed!==breed)return false;
+    if(sex&&p.gender!==sex)return false;
+    if(color&&p.color!==color)return false;
+    if(search){
+      const hay=((p.name||'')+' '+(p.breed||'')+' '+(p.color||'')).toLowerCase();
+      if(!hay.includes(search))return false;
+    }
+    if(age){
+      const w=p.age_weeks||(p.birth_date?Math.floor((Date.now()-new Date(p.birth_date).getTime())/(1000*60*60*24*7)):0);
+      if(age==='0-8'&&w>8)return false;
+      if(age==='8-12'&&(w<8||w>12))return false;
+      if(age==='12-16'&&(w<12||w>16))return false;
+      if(age==='16+'&&w<16)return false;
+    }
+    return true;
+  });
+  renderGrid();
+}
+
+function getAge(p){
+  if(p.birth_date){
+    const w=Math.floor((Date.now()-new Date(p.birth_date).getTime())/(1000*60*60*24*7));
+    return w+' wks';
+  }
+  return (p.age_weeks||'?')+' wks';
+}
+
+function getPhoto(p){
+  if(p.photo_url)return p.photo_url;
+  if(Array.isArray(p.photos)&&p.photos.length)return p.photos[0];
+  return null;
+}
+
+function esc(s){return String(s||'').replace(/[<>"&]/g,c=>({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));}
+
+function renderGrid(){
+  const grid=document.getElementById('puppy-grid');
+  const badge=document.getElementById('count-badge');
+  badge.textContent=FILTERED_PUPPIES.length+' companion'+(FILTERED_PUPPIES.length===1?'':'s')+' available';
+  if(!FILTERED_PUPPIES.length){
+    grid.innerHTML='<div class="empty-state"><div class="empty-state-icon">🐕</div><div class="empty-state-title">No matches found</div><div class="empty-state-text">Try clearing the filters or check back soon — new puppies arrive weekly.</div></div>';
+    return;
+  }
+  grid.innerHTML=FILTERED_PUPPIES.map(p=>{
+    const photo=getPhoto(p);
+    const photoEl=photo?`<img class="puppy-image" src="${esc(photo)}" alt="${esc(p.name)}" onerror="this.outerHTML='<div class=puppy-image-fallback>🐾</div>'">`:'<div class="puppy-image-fallback">🐾</div>';
+    const reserved=p.status==='reserved';
+    const sexTag=p.gender==='female'?'<span class="puppy-tag female">♀ Female</span>':p.gender==='male'?'<span class="puppy-tag male">♂ Male</span>':'';
+    const colorTag=p.color?`<span class="puppy-tag neutral">${esc(p.color)}</span>`:'';
+    const weightTag=p.weight_lbs?`<span class="puppy-tag neutral">${p.weight_lbs} lbs</span>`:'';
+    return `<a class="puppy-card" href="https://www.bpuppy.us/puppy-detail?id=${p.id}" target="_top" style="text-decoration:none;color:inherit;display:block">
+      <div class="puppy-image-wrap">
+        ${photoEl}
+        <div class="puppy-badge ${reserved?'reserved':''}">${reserved?'Reserved':'Ready to Welcome Home'}</div>
+        ${p.price?`<div class="puppy-price">$${Number(p.price).toLocaleString()}</div>`:''}
+      </div>
+      <div class="puppy-info">
+        <div class="puppy-name">${esc(p.name||'Unnamed')}</div>
+        <div class="puppy-breed">${esc(p.breed||'')}</div>
+        <div class="puppy-tags">
+          ${sexTag}
+          <span class="puppy-tag neutral">${getAge(p)}</span>
+          ${colorTag}
+          ${weightTag}
+        </div>
+      </div>
+    </a>`;
+  }).join('');
+}
+
+// ═══════════════════════════════════════════════════
+// DETAIL MODAL
+// ═══════════════════════════════════════════════════
+function openModal(id){
+  const p=ALL_PUPPIES.find(x=>x.id===id);
+  if(!p)return;
+  const ov=document.getElementById('modal-overlay');
+  const body=document.getElementById('modal-body');
+  const photos=Array.isArray(p.photos)&&p.photos.length?p.photos:(p.photo_url?[p.photo_url]:[]);
+  const mainPhoto=photos[0]||'';
+
+  body.innerHTML=`
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div class="modal-photos">
+      ${mainPhoto?`<img class="modal-main-photo" id="m-main" src="${esc(mainPhoto)}" alt="${esc(p.name)}">`:'<div class="modal-main-photo fallback">🐾</div>'}
+      ${photos.length>1?`<div class="modal-thumbs">${photos.map((u,i)=>`<div class="modal-thumb ${i===0?'active':''}" onclick="document.getElementById('m-main').src='${esc(u)}';document.querySelectorAll('.modal-thumb').forEach(t=>t.classList.remove('active'));this.classList.add('active')"><img src="${esc(u)}"></div>`).join('')}</div>`:''}
+    </div>
+    <div class="modal-body">
+      <div class="modal-name">${esc(p.name||'Unnamed')}</div>
+      <div class="modal-breed">${esc(p.breed||'')}</div>
+      <div class="modal-tags">
+        ${p.gender?`<span class="modal-tag">${p.gender==='female'?'♀ Female':'♂ Male'}</span>`:''}
+        <span class="modal-tag">${getAge(p)}</span>
+        ${p.color?`<span class="modal-tag">${esc(p.color)}</span>`:''}
+        ${p.weight_lbs?`<span class="modal-tag">${p.weight_lbs} lbs</span>`:''}
+        ${p.pedigree_org?`<span class="modal-tag">📜 ${esc(p.pedigree_org)}</span>`:''}
+      </div>
+      ${p.price?`<div class="modal-price-row"><div class="modal-price">$${Number(p.price).toLocaleString()}</div><div class="modal-price-note">Includes health guarantee</div></div>`:''}
+      ${p.description?`<div class="modal-description">${esc(p.description)}</div>`:''}
+      <div class="modal-features">
+        <div class="feature ${p.vaccinated?'yes':'no'}"><span class="feature-icon">${p.vaccinated?'✓':'·'}</span><span class="feature-text">Vaccinated</span></div>
+        <div class="feature ${p.health_cert?'yes':'no'}"><span class="feature-icon">${p.health_cert?'✓':'·'}</span><span class="feature-text">Health Certificate</span></div>
+        <div class="feature yes"><span class="feature-icon">✓</span><span class="feature-text">Home-Raised</span></div>
+        <div class="feature yes"><span class="feature-icon">✓</span><span class="feature-text">Nationwide Delivery</span></div>
+      </div>
+      <div class="modal-cta">
+        <button class="btn-primary" onclick="contactBreeder('${p.id}','${esc(p.name||'this puppy')}')">📩 Reserve ${esc(p.name||'')}</button>
+        <button class="btn-secondary" onclick="closeModal()">Keep Browsing</button>
+      </div>
+    </div>
+  `;
+  ov.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+
+function closeModal(){
+  document.getElementById('modal-overlay').classList.remove('show');
+  document.body.style.overflow='';
+}
+
+function contactBreeder(id,name){
+  // TODO: hook into Wix contact form / email
+  alert("To reserve "+name+", we'll connect you with the breeder. Please contact us via the Contact page or call us directly. (Hook this button to your contact form.)");
+}
+
+// ═══════════════════════════════════════════════════
+// EVENT WIRING
+// ═══════════════════════════════════════════════════
+['f-breed','f-sex','f-age','f-color'].forEach(id=>document.getElementById(id).addEventListener('change',applyFilters));
+document.getElementById('f-search').addEventListener('input',applyFilters);
+document.getElementById('btn-clear').addEventListener('click',()=>{
+  ['f-breed','f-sex','f-age','f-color'].forEach(id=>document.getElementById(id).value='');
+  document.getElementById('f-search').value='';
+  applyFilters();
+});
+
+// Listen for messages from Wix Velo (parent page)
+window.addEventListener('message',(e)=>{
+  if(e.data&&e.data.type==='puppies'&&Array.isArray(e.data.data)){
+    ALL_PUPPIES=e.data.data;
+    populateFilters();
+    applyFilters();
+  }
+});
+
+// Init
+loadPuppies();
+
+// ═══════════════════════════════════════════════════
+// BREED REQUEST MODAL
+// ═══════════════════════════════════════════════════
+function openBreedRequestModal(){
+  const ov=document.getElementById('breed-request-modal');
+  const body=document.getElementById('breed-request-body');
+  body.innerHTML=`
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Request a specific breed</div>
+        <div class="modal-sub">Tell us what you're looking for and we'll work with our breeder network to find your perfect match.</div>
+      </div>
+      <button class="modal-close" onclick="closeBreedRequestModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="brq-form" onsubmit="submitBreedRequest(event)">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full name *</label>
+            <input class="form-input" id="brq-name" required placeholder="Maria Lopez">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone *</label>
+            <input class="form-input" id="brq-phone" type="tel" required placeholder="+1 305 555 0123">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input class="form-input" id="brq-email" type="email" required placeholder="maria@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ZIP code</label>
+            <input class="form-input" id="brq-zip" placeholder="33101">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Breed you want *</label>
+          <input class="form-input" id="brq-breed" required placeholder="Golden Retriever, Maltipoo, Frenchie...">
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Gender preference</label>
+            <select class="form-select" id="brq-gender">
+              <option value="any">No preference</option>
+              <option value="female">Female ♀</option>
+              <option value="male">Male ♂</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">When are you ready?</label>
+            <select class="form-select" id="brq-timing">
+              <option value="now">Ready now</option>
+              <option value="1-3_months">1-3 months</option>
+              <option value="3-6_months">3-6 months</option>
+              <option value="exploring">Just exploring</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Other preferences (color, size, etc.)</label>
+          <textarea class="form-textarea" id="brq-message" placeholder="Specific color, size, temperament..."></textarea>
+        </div>
+        <button type="submit" class="btn-form" id="brq-submit">📩 Submit request</button>
+      </form>
+    </div>
+  `;
+  ov.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+window.openBreedRequestModal=openBreedRequestModal;
+
+function closeBreedRequestModal(){
+  document.getElementById('breed-request-modal').classList.remove('show');
+  document.body.style.overflow='';
+}
+window.closeBreedRequestModal=closeBreedRequestModal;
+
+async function submitBreedRequest(ev){
+  ev.preventDefault();
+  const v=id=>document.getElementById(id).value.trim();
+  const btn=document.getElementById('brq-submit');
+  btn.disabled=true;
+  btn.textContent='Sending…';
+
+  const req={
+    full_name:v('brq-name'),
+    email:v('brq-email'),
+    phone:v('brq-phone'),
+    zip_code:v('brq-zip'),
+    desired_breed:v('brq-breed'),
+    gender_preference:v('brq-gender'),
+    timing:v('brq-timing'),
+    message:v('brq-message'),
+    source:'puppy_finder',
+    user_agent:navigator.userAgent
+  };
+
+  try{
+    // 1. Save to Supabase
+    const{error}=await sb.from('puppy_requests').insert(req);
+    if(error)throw error;
+
+    // 2. Open mailto with details pre-filled
+    const subj=encodeURIComponent(`New breed request — ${req.desired_breed}`);
+    let body=`New puppy request from website:\n\n`;
+    body+=`Name: ${req.full_name}\n`;
+    body+=`Email: ${req.email}\n`;
+    body+=`Phone: ${req.phone}\n`;
+    if(req.zip_code)body+=`ZIP: ${req.zip_code}\n`;
+    body+=`\nBreed: ${req.desired_breed}\n`;
+    body+=`Gender preference: ${req.gender_preference}\n`;
+    body+=`Timing: ${req.timing}\n`;
+    if(req.message)body+=`\nNotes: ${req.message}\n`;
+    body+=`\nSubmitted via: Puppy Finder\nTime: ${new Date().toLocaleString()}\n`;
+
+    setTimeout(()=>{
+      window.open(`mailto:hello@bpuppy.us?subject=${subj}&body=${encodeURIComponent(body)}`);
+    },300);
+
+    document.getElementById('breed-request-body').innerHTML=`
+      <div class="form-success">
+        <div class="form-success-icon">🎉</div>
+        <div class="form-success-title">Request received!</div>
+        <div class="form-success-text">Thank you for your interest in a <strong>${req.desired_breed}</strong> puppy. We've sent the details to our team and one of our family advisors will reach out very soon.</div>
+        <button class="btn-form" onclick="closeBreedRequestModal()" style="margin-top:18px">Close</button>
+      </div>
+    `;
+  }catch(e){
+    console.error(e);
+    btn.disabled=false;
+    btn.textContent='📩 Submit request';
+    alert('Could not send: '+(e.message||e)+'\n\nPlease try again or contact us directly.');
+  }
+}
+window.submitBreedRequest=submitBreedRequest;
+</script>
+</body>
+</html>

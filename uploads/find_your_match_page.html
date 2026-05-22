@@ -1,0 +1,665 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Find Your Perfect Match — B Puppy</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:"DM Sans",sans-serif;color:#1A1A2E;background:#FFFFFF;line-height:1.5}
+.wrap{max-width:900px;margin:0 auto;padding:32px 20px 60px}
+
+/* ═══════════════════════════════════════════════════
+   HERO
+   ═══════════════════════════════════════════════════ */
+.hero{text-align:center;margin-bottom:36px;padding:20px 16px}
+.hero-badge{display:inline-flex;align-items:center;gap:8px;background:#FFF3ED;color:#FF6B1A;padding:8px 18px;border-radius:50px;font-size:13px;font-weight:700;margin-bottom:16px;letter-spacing:0.3px}
+.hero-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:clamp(30px,4.2vw,46px);line-height:1.1;color:#0F172A;margin-bottom:14px;letter-spacing:-1px}
+.hero-title .accent{color:#FF6B1A}
+.hero-sub{font-size:16px;color:#475569;max-width:580px;margin:0 auto;line-height:1.7}
+
+/* ═══════════════════════════════════════════════════
+   PROGRESS BAR
+   ═══════════════════════════════════════════════════ */
+.progress-bar{background:#F1F5F9;height:8px;border-radius:4px;margin:20px auto 30px;max-width:540px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,#FF6B1A,#FF8C4A);border-radius:4px;transition:width 0.4s cubic-bezier(0.4,0,0.2,1);width:20%}
+.progress-text{text-align:center;font-size:12px;color:#64748B;font-weight:600;margin-bottom:18px}
+
+/* ═══════════════════════════════════════════════════
+   QUESTION CARD
+   ═══════════════════════════════════════════════════ */
+.question-card{background:white;border:1.5px solid #F1F5F9;border-radius:24px;padding:32px 28px;max-width:680px;margin:0 auto;box-shadow:0 8px 30px rgba(15,23,42,0.04);animation:slideIn 0.35s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes slideIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+
+.question-num{font-size:11px;font-weight:800;color:#FF6B1A;text-transform:uppercase;letter-spacing:0.8px;margin-bottom:6px}
+.question-text{font-family:"Nunito",sans-serif;font-weight:900;font-size:clamp(20px,3vw,28px);color:#0F172A;line-height:1.25;margin-bottom:8px}
+.question-help{font-size:13px;color:#64748B;margin-bottom:24px}
+
+.options{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:24px}
+.option{background:white;border:2px solid #F1F5F9;border-radius:14px;padding:18px 16px;cursor:pointer;text-align:left;transition:all 0.18s;display:flex;align-items:center;gap:12px;font-family:inherit}
+.option:hover{border-color:#FFD5BC;background:#FFFAF6;transform:translateY(-2px)}
+.option.selected{border-color:#FF6B1A;background:#FFF3ED;box-shadow:0 6px 18px rgba(255,107,26,0.15)}
+.option-icon{font-size:26px;flex-shrink:0;line-height:1}
+.option-text{font-weight:700;font-size:14px;color:#0F172A;line-height:1.3}
+
+.btn-row{display:flex;gap:10px;justify-content:space-between;align-items:center;margin-top:22px}
+.btn-quiz{padding:14px 28px;border-radius:12px;font-family:inherit;font-size:14px;font-weight:800;cursor:pointer;border:1.5px solid transparent;transition:all 0.18s;text-decoration:none;display:inline-flex;align-items:center;gap:8px}
+.btn-quiz-primary{background:linear-gradient(135deg,#FF6B1A 0%,#FF8C4A 100%);color:white;box-shadow:0 6px 18px rgba(255,107,26,0.3)}
+.btn-quiz-primary:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(255,107,26,0.4)}
+.btn-quiz-primary:disabled{background:#E2E8F0;color:#94A3B8;cursor:not-allowed;box-shadow:none;transform:none}
+.btn-quiz-ghost{background:transparent;color:#64748B;border-color:#E2E8F0}
+.btn-quiz-ghost:hover{border-color:#FF6B1A;color:#FF6B1A}
+
+/* ═══════════════════════════════════════════════════
+   RESULTS
+   ═══════════════════════════════════════════════════ */
+.results-hero{text-align:center;padding:30px 16px 24px}
+.results-emoji{font-size:62px;margin-bottom:10px;display:block;animation:bounce 1s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes bounce{0%{transform:scale(0)}100%{transform:scale(1)}}
+.results-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:clamp(28px,4vw,42px);color:#0F172A;margin-bottom:10px;letter-spacing:-0.8px}
+.results-sub{font-size:15px;color:#475569;max-width:560px;margin:0 auto;line-height:1.7}
+
+.match-list{display:flex;flex-direction:column;gap:24px;margin:36px 0}
+.match-card{background:white;border:1.5px solid #F1F5F9;border-radius:20px;overflow:hidden;transition:all 0.2s}
+.match-card:hover{box-shadow:0 12px 30px rgba(15,23,42,0.06);border-color:#FFD5BC}
+.match-rank{position:absolute;top:14px;left:14px;background:#FF6B1A;color:white;width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-weight:900;font-size:14px;box-shadow:0 4px 12px rgba(255,107,26,0.3);z-index:2}
+.match-rank.gold{background:linear-gradient(135deg,#FFB800,#FFA000)}
+.match-rank.silver{background:linear-gradient(135deg,#94A3B8,#64748B)}
+.match-rank.bronze{background:linear-gradient(135deg,#D97706,#92400E)}
+.match-header{position:relative;padding:22px 24px 16px;background:linear-gradient(135deg,#FFF3ED 0%,#FFFFFF 100%);border-bottom:1px solid #F1F5F9}
+.match-name{font-family:"Nunito",sans-serif;font-weight:900;font-size:24px;color:#0F172A;margin-left:46px;line-height:1.15;margin-bottom:4px}
+.match-score{margin-left:46px;font-size:12px;color:#FF6B1A;font-weight:800;text-transform:uppercase;letter-spacing:0.5px}
+.match-body{padding:18px 24px}
+.match-desc{color:#475569;font-size:14px;line-height:1.65;margin-bottom:14px}
+.match-stats{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px}
+.match-stat{padding:5px 12px;background:#F8FAFC;border:1px solid #E2E8F0;border-radius:50px;font-size:11px;color:#475569;font-weight:600}
+
+.available-section{padding:14px 24px 24px;background:#FAFBFC;border-top:1px solid #F1F5F9}
+.available-label{font-size:11px;font-weight:800;color:#10B981;text-transform:uppercase;letter-spacing:0.6px;margin-bottom:10px}
+.available-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px;margin-bottom:14px}
+.available-card{background:white;border:1.5px solid #E2E8F0;border-radius:10px;overflow:hidden;text-decoration:none;color:inherit;transition:all 0.18s}
+.available-card:hover{transform:translateY(-2px);box-shadow:0 6px 14px rgba(0,0,0,0.08);border-color:#FFD5BC}
+.available-photo{width:100%;aspect-ratio:1;object-fit:cover;background:#FFF3ED;display:block}
+.available-photo-fallback{width:100%;aspect-ratio:1;display:flex;align-items:center;justify-content:center;font-size:30px;color:#FFD5BC;background:#FFF3ED}
+.available-info{padding:8px 10px}
+.available-name{font-weight:800;font-size:13px;color:#0F172A;margin-bottom:1px}
+.available-meta{font-size:10px;color:#64748B}
+.no-available{padding:14px;background:white;border:1.5px dashed #E2E8F0;border-radius:10px;text-align:center;font-size:13px;color:#64748B;margin-bottom:14px}
+.request-link{display:inline-flex;align-items:center;gap:6px;color:#FF6B1A;font-weight:700;font-size:13px;cursor:pointer;text-decoration:none}
+.request-link:hover{text-decoration:underline}
+
+.results-cta{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;margin-top:24px}
+
+/* ═══════════════════════════════════════════════════
+   REQUEST FORM MODAL
+   ═══════════════════════════════════════════════════ */
+.modal-overlay{position:fixed;inset:0;background:rgba(15,23,42,0.6);backdrop-filter:blur(6px);z-index:200;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-overlay.show{display:flex;animation:fadeIn 0.2s}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.modal{background:white;border-radius:24px;width:100%;max-width:520px;max-height:92vh;overflow-y:auto;animation:slideUp 0.3s cubic-bezier(0.34,1.56,0.64,1)}
+@keyframes slideUp{from{transform:translateY(40px);opacity:0}to{transform:translateY(0);opacity:1}}
+.modal-header{padding:24px 24px 12px;display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.modal-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:22px;color:#0F172A;line-height:1.2}
+.modal-sub{font-size:13px;color:#64748B;margin-top:4px}
+.modal-close{background:none;border:none;font-size:24px;cursor:pointer;color:#64748B;padding:0;line-height:1;flex-shrink:0}
+.modal-close:hover{color:#FF6B1A}
+.modal-body{padding:0 24px 24px}
+.form-group{margin-bottom:14px}
+.form-label{display:block;font-size:12px;font-weight:700;color:#475569;margin-bottom:6px}
+.form-input,.form-textarea,.form-select{width:100%;padding:12px 14px;border:1.5px solid #E2E8F0;border-radius:10px;font-family:inherit;font-size:14px;color:#0F172A;background:white;transition:border-color 0.15s;outline:none}
+.form-input:focus,.form-textarea:focus,.form-select:focus{border-color:#FF6B1A}
+.form-textarea{resize:vertical;min-height:70px}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.form-success{padding:30px 24px;text-align:center}
+.form-success-icon{font-size:54px;margin-bottom:12px}
+.form-success-title{font-family:"Nunito",sans-serif;font-weight:900;font-size:22px;color:#10B981;margin-bottom:8px}
+.form-success-text{color:#64748B;font-size:14px;line-height:1.7}
+
+.btn-form{width:100%;background:linear-gradient(135deg,#FF6B1A 0%,#FF8C4A 100%);color:white;border:none;padding:16px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;transition:all 0.2s;box-shadow:0 6px 18px rgba(255,107,26,0.3);margin-top:6px}
+.btn-form:hover{transform:translateY(-2px);box-shadow:0 10px 24px rgba(255,107,26,0.4)}
+.btn-form:disabled{background:#E2E8F0;color:#94A3B8;box-shadow:none;cursor:not-allowed;transform:none}
+
+/* ═══════════════════════════════════════════════════
+   LOADING / ERROR
+   ═══════════════════════════════════════════════════ */
+.loading-page{padding:80px 24px;text-align:center;color:#64748B}
+.spinner{width:40px;height:40px;border:3px solid #FFF3ED;border-top-color:#FF6B1A;border-radius:50%;animation:spin 0.8s linear infinite;margin:0 auto 16px}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* ═══════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════ */
+@media (max-width:560px){
+  .wrap{padding:20px 14px 40px}
+  .hero{margin-bottom:24px}
+  .question-card{padding:22px 18px}
+  .options{grid-template-columns:1fr}
+  .option{padding:14px 14px}
+  .btn-row{flex-direction:column-reverse;gap:8px}
+  .btn-row .btn-quiz{width:100%;justify-content:center}
+  .form-row{grid-template-columns:1fr}
+  .available-grid{grid-template-columns:repeat(2,1fr)}
+  .match-name{margin-left:0;margin-top:30px}
+  .match-score{margin-left:0}
+}
+</style>
+</head>
+<body>
+
+<div class="wrap" id="page-wrap">
+  <div class="loading-page" id="loading"><div class="spinner"></div><div>Loading…</div></div>
+</div>
+
+<!-- REQUEST FORM MODAL -->
+<div class="modal-overlay" id="request-modal" onclick="if(event.target===this)closeRequestModal()">
+  <div class="modal" id="request-modal-body"></div>
+</div>
+
+<script>
+// ═══════════════════════════════════════════════════
+// SUPABASE
+// ═══════════════════════════════════════════════════
+const SUPABASE_URL='https://oqqwmcplljirbreowrll.supabase.co';
+const SUPABASE_ANON_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+
+const PUPPY_FINDER_URL='https://www.bpuppy.us/puppyfinder';
+const PUPPY_DETAIL_URL='https://www.bpuppy.us/puppy-detail';
+
+let sb=null;
+try{sb=supabase.createClient(SUPABASE_URL,SUPABASE_ANON_KEY);}catch(e){console.error(e);}
+
+// ═══════════════════════════════════════════════════
+// QUIZ DATA
+// ═══════════════════════════════════════════════════
+const QUESTIONS=[
+  {
+    id:'living_space',
+    text:'Where will your new puppy live?',
+    help:'This helps us match breeds to your space.',
+    options:[
+      {id:'apartment',icon:'🏢',text:'Apartment / small space'},
+      {id:'house_no_yard',icon:'🏠',text:'House without yard'},
+      {id:'house_yard',icon:'🏡',text:'House with yard'},
+      {id:'large',icon:'🌳',text:'Large property / land'}
+    ]
+  },
+  {
+    id:'family',
+    text:"Who's at home?",
+    help:'We want to make sure your puppy fits perfectly.',
+    options:[
+      {id:'alone_couple',icon:'👤',text:'Just me / couple'},
+      {id:'young_kids',icon:'👨‍👩‍👧',text:'Family with young kids'},
+      {id:'older_kids',icon:'👨‍👩‍👧‍👦',text:'Family with teens'},
+      {id:'senior',icon:'👵',text:'Senior household'}
+    ]
+  },
+  {
+    id:'activity',
+    text:'How active is your lifestyle?',
+    help:'Every breed has different energy needs.',
+    options:[
+      {id:'calm',icon:'😴',text:'Calm & cuddly'},
+      {id:'moderate',icon:'🚶',text:'Daily walks'},
+      {id:'active',icon:'🏃',text:'Very active'}
+    ]
+  },
+  {
+    id:'allergies',
+    text:'Any allergies in the home?',
+    help:"We'll prioritize hypoallergenic breeds if needed.",
+    options:[
+      {id:'none',icon:'✅',text:'No allergies'},
+      {id:'yes',icon:'🤧',text:'Yes — need hypoallergenic'},
+      {id:'unsure',icon:'🤔',text:'Not sure'}
+    ]
+  },
+  {
+    id:'other_pets',
+    text:'Any other pets at home?',
+    help:'Some breeds get along better with others.',
+    options:[
+      {id:'none',icon:'🐾',text:'No other pets'},
+      {id:'cats',icon:'🐈',text:'Cats'},
+      {id:'dogs',icon:'🐕',text:'Other dogs'},
+      {id:'multiple',icon:'🐾🐾',text:'Multiple pets'}
+    ]
+  }
+];
+
+// State
+let CUR_Q=0;
+let ANSWERS={};
+let BREEDS=[];
+let MATCHES=[];
+
+// Helpers
+function esc(s){return String(s||'').replace(/[<>"&]/g,c=>({'<':'&lt;','>':'&gt;','"':'&quot;','&':'&amp;'}[c]));}
+function fmtAge(p){
+  let w=p.age_weeks;
+  if(p.birth_date){const d=new Date(p.birth_date);if(!isNaN(d))w=Math.max(0,Math.floor((Date.now()-d.getTime())/(1000*60*60*24*7)));}
+  if(!w&&w!==0)return '?';
+  if(w<8)return w+'w';
+  if(w<52){const m=Math.floor(w/4.345);return m+'mo';}
+  return Math.floor(w/52)+'y';
+}
+
+// ═══════════════════════════════════════════════════
+// INIT
+// ═══════════════════════════════════════════════════
+async function init(){
+  if(!sb){
+    document.getElementById('page-wrap').innerHTML='<div class="error-message">Connection unavailable. Please refresh.</div>';
+    return;
+  }
+  try{
+    const{data}=await sb.from('breeds').select('*');
+    BREEDS=data||[];
+  }catch(e){console.error(e);}
+  renderHero();
+  renderQuestion();
+}
+
+function renderHero(){
+  const wrap=document.getElementById('page-wrap');
+  wrap.innerHTML=`
+    <div class="hero">
+      <div class="hero-badge">🐾 Quick 5-question quiz</div>
+      <h1 class="hero-title">Find your <span class="accent">perfect</span> companion</h1>
+      <p class="hero-sub">Answer 5 short questions and we'll match you with the breeds that fit your lifestyle — and show you puppies available right now.</p>
+    </div>
+    <div id="quiz-container"></div>
+  `;
+}
+
+// ═══════════════════════════════════════════════════
+// QUIZ FLOW
+// ═══════════════════════════════════════════════════
+function renderQuestion(){
+  const q=QUESTIONS[CUR_Q];
+  const total=QUESTIONS.length;
+  const pct=((CUR_Q+1)/total)*100;
+  const selected=ANSWERS[q.id];
+  const c=document.getElementById('quiz-container');
+  c.innerHTML=`
+    <div class="progress-text">Question ${CUR_Q+1} of ${total}</div>
+    <div class="progress-bar"><div class="progress-fill" style="width:${pct}%"></div></div>
+
+    <div class="question-card">
+      <div class="question-num">Step ${CUR_Q+1}</div>
+      <div class="question-text">${q.text}</div>
+      <div class="question-help">${q.help}</div>
+
+      <div class="options">
+        ${q.options.map(o=>`
+          <button class="option ${selected===o.id?'selected':''}" onclick="selectOption('${q.id}','${o.id}')">
+            <span class="option-icon">${o.icon}</span>
+            <span class="option-text">${esc(o.text)}</span>
+          </button>
+        `).join('')}
+      </div>
+
+      <div class="btn-row">
+        ${CUR_Q>0?'<button class="btn-quiz btn-quiz-ghost" onclick="prevQ()">← Back</button>':'<div></div>'}
+        <button class="btn-quiz btn-quiz-primary" id="next-btn" ${selected?'':'disabled'} onclick="nextQ()">
+          ${CUR_Q===total-1?'See my matches →':'Next →'}
+        </button>
+      </div>
+    </div>
+  `;
+}
+
+function selectOption(qid,opt){
+  ANSWERS[qid]=opt;
+  renderQuestion();
+}
+window.selectOption=selectOption;
+
+function prevQ(){if(CUR_Q>0){CUR_Q--;renderQuestion();}}
+window.prevQ=prevQ;
+
+function nextQ(){
+  const q=QUESTIONS[CUR_Q];
+  if(!ANSWERS[q.id])return;
+  if(CUR_Q<QUESTIONS.length-1){
+    CUR_Q++;
+    renderQuestion();
+    window.scrollTo({top:0,behavior:'smooth'});
+  }else{
+    computeMatches();
+    renderResults();
+  }
+}
+window.nextQ=nextQ;
+
+// ═══════════════════════════════════════════════════
+// MATCHING ALGORITHM
+// ═══════════════════════════════════════════════════
+function computeMatches(){
+  const a=ANSWERS;
+  const scored=BREEDS.map(b=>{
+    let score=0;
+    let max=0;
+
+    // Living space — apartment_rating
+    if(a.living_space==='apartment'){
+      max+=20;
+      if(b.rating_apartment){score+=(b.rating_apartment/5)*20;}
+    }else if(a.living_space==='house_no_yard'){
+      max+=15;
+      if(b.rating_apartment){score+=(b.rating_apartment/5)*10+5;}
+    }else if(a.living_space==='house_yard'){
+      max+=10;
+      score+=10; // most breeds OK
+    }else if(a.living_space==='large'){
+      max+=10;
+      score+=10; // most breeds OK
+    }
+
+    // Family — kids rating
+    if(a.family==='young_kids'){
+      max+=20;
+      if(b.rating_kids){score+=(b.rating_kids/5)*20;}
+    }else if(a.family==='older_kids'){
+      max+=15;
+      if(b.rating_kids){score+=(b.rating_kids/5)*10;}
+      if(b.rating_family){score+=(b.rating_family/5)*5;}
+    }else if(a.family==='senior'){
+      max+=15;
+      if(b.rating_apartment){score+=(b.rating_apartment/5)*8;}
+      if(b.rating_energy){score+=((5-b.rating_energy)/5)*7;} // calmer = better
+    }else{
+      max+=10;
+      if(b.rating_family){score+=(b.rating_family/5)*10;}
+    }
+
+    // Activity — energy
+    if(a.activity==='calm'){
+      max+=20;
+      if(b.rating_energy){score+=((5-b.rating_energy)/5)*20;}
+    }else if(a.activity==='moderate'){
+      max+=15;
+      if(b.rating_energy){
+        // Sweet spot is energy=3 (moderate)
+        const distance=Math.abs(b.rating_energy-3);
+        score+=((3-distance)/3)*15;
+      }
+    }else if(a.activity==='active'){
+      max+=15;
+      if(b.rating_energy){score+=(b.rating_energy/5)*15;}
+    }
+
+    // Allergies — hypoallergenic
+    if(a.allergies==='yes'){
+      max+=25;
+      if(b.hypoallergenic){score+=25;}
+    }else{
+      max+=5;
+      score+=5; // not a constraint
+    }
+
+    // Other pets
+    if(a.other_pets==='cats'||a.other_pets==='dogs'||a.other_pets==='multiple'){
+      max+=15;
+      if(b.rating_other_pets){score+=(b.rating_other_pets/5)*15;}
+    }else{
+      max+=5;
+      score+=5;
+    }
+
+    return{breed:b,score:max>0?(score/max)*100:0};
+  });
+
+  scored.sort((x,y)=>y.score-x.score);
+  MATCHES=scored.slice(0,3);
+}
+
+// ═══════════════════════════════════════════════════
+// RESULTS
+// ═══════════════════════════════════════════════════
+async function renderResults(){
+  const wrap=document.getElementById('page-wrap');
+  wrap.innerHTML=`
+    <div class="results-hero">
+      <div class="results-emoji">🎉</div>
+      <h1 class="results-title">Your perfect matches</h1>
+      <p class="results-sub">Based on your answers, here are the top 3 breeds for your family — plus the puppies available right now.</p>
+    </div>
+    <div class="loading-page" id="results-list"><div class="spinner"></div><div>Finding available puppies…</div></div>
+    <div class="results-cta">
+      <button class="btn-quiz btn-quiz-ghost" onclick="restart()">↻ Take quiz again</button>
+      <a class="btn-quiz btn-quiz-primary" href="${PUPPY_FINDER_URL}" target="_top">See all puppies →</a>
+    </div>
+  `;
+  window.scrollTo({top:0,behavior:'smooth'});
+
+  // Fetch available puppies for matched breeds
+  const breedNames=MATCHES.map(m=>m.breed.name);
+  let availableByBreed={};
+  if(sb&&breedNames.length){
+    try{
+      const{data}=await sb.from('puppies').select('*').eq('status','available').in('breed',breedNames);
+      (data||[]).forEach(p=>{
+        if(!availableByBreed[p.breed])availableByBreed[p.breed]=[];
+        availableByBreed[p.breed].push(p);
+      });
+    }catch(e){console.error(e);}
+  }
+
+  const list=document.getElementById('results-list');
+  list.classList.remove('loading-page');
+  list.innerHTML=`<div class="match-list">${MATCHES.map((m,i)=>renderMatchCard(m,i,availableByBreed[m.breed.name]||[])).join('')}</div>`;
+}
+
+function renderMatchCard(match,idx,available){
+  const b=match.breed;
+  const rankClass=['gold','silver','bronze'][idx]||'';
+  const rankNum=idx+1;
+  const stats=[
+    b.weight_min_lbs&&b.weight_max_lbs?`⚖️ ${b.weight_min_lbs}-${b.weight_max_lbs} lbs`:'',
+    b.lifespan_min&&b.lifespan_max?`⏳ ${b.lifespan_min}-${b.lifespan_max} yrs`:'',
+    b.coat_type?`✨ ${b.coat_type} coat`:'',
+    b.hypoallergenic?'✓ Hypoallergenic':'',
+    b.good_for_first_time?'✓ Great first dog':''
+  ].filter(Boolean);
+
+  const availableHtml=available.length
+    ? `<div class="available-grid">${available.slice(0,4).map(p=>{
+        const photo=p.photo_url||(p.photos&&p.photos[0])||'';
+        return `<a class="available-card" href="${PUPPY_DETAIL_URL}?id=${p.id}" target="_top">
+          ${photo?`<img class="available-photo" src="${esc(photo)}" alt="" onerror="this.outerHTML='<div class=&quot;available-photo-fallback&quot;>🐾</div>'">`:'<div class="available-photo-fallback">🐾</div>'}
+          <div class="available-info">
+            <div class="available-name">${esc(p.name||'Available')}</div>
+            <div class="available-meta">${p.gender==='female'?'♀':'♂'} · ${fmtAge(p)}${p.price?' · $'+Number(p.price).toLocaleString():''}</div>
+          </div>
+        </a>`;
+      }).join('')}</div>
+      ${available.length>4?`<a class="request-link" href="${PUPPY_FINDER_URL}" target="_top">See all ${available.length} available →</a>`:''}`
+    : `<div class="no-available">No ${esc(b.name)} puppies available right now</div>
+       <a class="request-link" onclick="openRequestModal('${esc(b.name)}')">📩 Request a ${esc(b.name)} puppy →</a>`;
+
+  return `<div class="match-card">
+    <div class="match-header">
+      <div class="match-rank ${rankClass}">${rankNum}</div>
+      <div class="match-name">${esc(b.name)}</div>
+      <div class="match-score">${Math.round(match.score)}% match</div>
+    </div>
+    <div class="match-body">
+      ${b.short_description?`<div class="match-desc">${esc(b.short_description)}</div>`:''}
+      ${stats.length?`<div class="match-stats">${stats.map(s=>`<span class="match-stat">${s}</span>`).join('')}</div>`:''}
+    </div>
+    <div class="available-section">
+      <div class="available-label">${available.length?'Available right now':'Currently between litters'}</div>
+      ${availableHtml}
+    </div>
+  </div>`;
+}
+
+function restart(){
+  CUR_Q=0;ANSWERS={};MATCHES=[];
+  renderHero();
+  renderQuestion();
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+window.restart=restart;
+
+// ═══════════════════════════════════════════════════
+// REQUEST FORM
+// ═══════════════════════════════════════════════════
+function openRequestModal(breedName){
+  const ov=document.getElementById('request-modal');
+  const body=document.getElementById('request-modal-body');
+  body.innerHTML=`
+    <div class="modal-header">
+      <div>
+        <div class="modal-title">Request a ${esc(breedName)} puppy</div>
+        <div class="modal-sub">Tell us what you're looking for and we'll work with our breeder network to find your perfect match.</div>
+      </div>
+      <button class="modal-close" onclick="closeRequestModal()">✕</button>
+    </div>
+    <div class="modal-body">
+      <form id="request-form" onsubmit="submitRequest(event,'${esc(breedName)}','quiz')">
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Full name *</label>
+            <input class="form-input" id="rq-name" required placeholder="Maria Lopez">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Phone *</label>
+            <input class="form-input" id="rq-phone" type="tel" required placeholder="+1 305 555 0123">
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Email *</label>
+            <input class="form-input" id="rq-email" type="email" required placeholder="maria@example.com">
+          </div>
+          <div class="form-group">
+            <label class="form-label">ZIP code</label>
+            <input class="form-input" id="rq-zip" placeholder="33101">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label">Gender preference</label>
+            <select class="form-select" id="rq-gender">
+              <option value="any">No preference</option>
+              <option value="female">Female ♀</option>
+              <option value="male">Male ♂</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label">When are you ready?</label>
+            <select class="form-select" id="rq-timing">
+              <option value="now">Ready now</option>
+              <option value="1-3_months">1-3 months</option>
+              <option value="3-6_months">3-6 months</option>
+              <option value="exploring">Just exploring</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label">Additional preferences (color, size, etc.)</label>
+          <textarea class="form-textarea" id="rq-message" placeholder="Any specific color, size, or other preferences..."></textarea>
+        </div>
+
+        <button type="submit" class="btn-form" id="rq-submit">📩 Submit request</button>
+      </form>
+    </div>
+  `;
+  ov.classList.add('show');
+  document.body.style.overflow='hidden';
+}
+window.openRequestModal=openRequestModal;
+
+function closeRequestModal(){
+  document.getElementById('request-modal').classList.remove('show');
+  document.body.style.overflow='';
+}
+window.closeRequestModal=closeRequestModal;
+
+async function submitRequest(ev,breedName,source){
+  ev.preventDefault();
+  const v=id=>document.getElementById(id).value.trim();
+  const btn=document.getElementById('rq-submit');
+  btn.disabled=true;
+  btn.textContent='Sending…';
+
+  const req={
+    full_name:v('rq-name'),
+    email:v('rq-email'),
+    phone:v('rq-phone'),
+    zip_code:v('rq-zip'),
+    desired_breed:breedName,
+    gender_preference:v('rq-gender'),
+    timing:v('rq-timing'),
+    message:v('rq-message'),
+    source:source||'quiz',
+    quiz_results:Object.keys(ANSWERS).length?ANSWERS:null,
+    user_agent:navigator.userAgent
+  };
+
+  try{
+    // 1. Save to Supabase
+    const{error}=await sb.from('puppy_requests').insert(req);
+    if(error)throw error;
+
+    // 2. Open mailto with same info pre-filled to hello@bpuppy.us
+    const subj=encodeURIComponent(`New puppy request — ${breedName}`);
+    let body=`New puppy request from website:\n\n`;
+    body+=`Name: ${req.full_name}\n`;
+    body+=`Email: ${req.email}\n`;
+    body+=`Phone: ${req.phone}\n`;
+    if(req.zip_code)body+=`ZIP: ${req.zip_code}\n`;
+    body+=`\nBreed: ${req.desired_breed}\n`;
+    body+=`Gender preference: ${req.gender_preference}\n`;
+    body+=`Timing: ${req.timing}\n`;
+    if(req.message)body+=`\nNotes: ${req.message}\n`;
+    body+=`\nSubmitted via: ${req.source}\n`;
+    body+=`Time: ${new Date().toLocaleString()}\n`;
+
+    // Open mailto in a new window
+    setTimeout(()=>{
+      window.open(`mailto:hello@bpuppy.us?subject=${subj}&body=${encodeURIComponent(body)}`);
+    },300);
+
+    // 3. Show success
+    document.getElementById('request-modal-body').innerHTML=`
+      <div class="form-success">
+        <div class="form-success-icon">🎉</div>
+        <div class="form-success-title">Request received!</div>
+        <div class="form-success-text">Thank you for your interest in a <strong>${esc(breedName)}</strong> puppy. We've sent the details to our team and one of our family advisors will reach out very soon.</div>
+        <button class="btn-form" onclick="closeRequestModal()" style="margin-top:18px">Close</button>
+      </div>
+    `;
+  }catch(e){
+    console.error(e);
+    btn.disabled=false;
+    btn.textContent='📩 Submit request';
+    alert('Could not send: '+(e.message||e)+'\n\nPlease try again or contact us directly.');
+  }
+}
+window.submitRequest=submitRequest;
+
+// ═══════════════════════════════════════════════════
+// AUTO-RESIZE iframe
+// ═══════════════════════════════════════════════════
+function sendHeightToParent(){
+  try{
+    const h=Math.max(document.body.scrollHeight,document.documentElement.scrollHeight);
+    window.parent.postMessage({type:'resize',height:h},'*');
+  }catch(e){}
+}
+new ResizeObserver(()=>sendHeightToParent()).observe(document.body);
+setInterval(sendHeightToParent,800);
+window.addEventListener('load',sendHeightToParent);
+
+// Init
+init();
+</script>
+</body>
+</html>

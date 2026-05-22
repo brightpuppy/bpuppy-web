@@ -1,0 +1,152 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Cachorros Entregados — BPuppy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="styles.css">
+<script src="site-publish.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  @keyframes bpSpin { to { transform:rotate(360deg); } }
+  .bp-spinner { width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--orange);border-radius:50%;animation:bpSpin .8s linear infinite; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="i18n.jsx"></script>
+<script type="text/babel" src="chrome.jsx"></script>
+<script type="text/babel">
+const CE_SUPA_URL = 'https://oqqwmcplljirbreowrll.supabase.co';
+const CE_SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+const ceSb = (() => { try { return supabase.createClient(CE_SUPA_URL, CE_SUPA_KEY); } catch(e) { return null; } })();
+
+function getAge(p) {
+  const w = p.age_weeks || (p.birth_date ? Math.floor((Date.now() - new Date(p.birth_date)) / 604800000) : null);
+  if (!w) return null;
+  return w < 16 ? w + ' semanas' : Math.floor(w / 4) + ' meses';
+}
+
+function DeliveredCard({ p }) {
+  const ph = (Array.isArray(p.photos) && p.photos[0]) || p.photo_url || null;
+  const age = getAge(p);
+  return (
+    <div style={{ borderRadius:'var(--r)', overflow:'hidden', background:'var(--paper)', border:'1px solid var(--line)', position:'relative' }}>
+      <div style={{ aspectRatio:'1/1', background:'var(--bg-2)', overflow:'hidden', position:'relative' }}>
+        {ph
+          ? <img src={ph} alt={p.name} style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
+          : <div style={{ width:'100%', height:'100%', display:'flex', alignItems:'center', justifyContent:'center', fontSize:64 }}>🐶</div>
+        }
+        <div style={{ position:'absolute', top:12, left:12, background:'var(--ink)', color:'#fff', fontSize:10, fontWeight:700, letterSpacing:'0.06em', textTransform:'uppercase', padding:'4px 12px', borderRadius:999 }}>
+          En su hogar ❤️
+        </div>
+      </div>
+      <div style={{ padding:'16px 18px' }}>
+        <div style={{ fontFamily:'var(--display)', fontSize:20, fontWeight:700, color:'var(--ink)', marginBottom:3 }}>{p.name || 'Sin nombre'}</div>
+        <div style={{ fontSize:12, color:'var(--orange)', fontWeight:600, marginBottom:8 }}>{p.breed}</div>
+        {(age || p.gender || p.color) && (
+          <div style={{ display:'flex', gap:6, flexWrap:'wrap' }}>
+            {age && <span style={{ fontSize:11, padding:'3px 10px', borderRadius:999, background:'var(--bg)', color:'var(--ink-2)', fontWeight:600 }}>{age}</span>}
+            {p.gender && <span style={{ fontSize:11, padding:'3px 10px', borderRadius:999, background:'var(--bg)', color:'var(--ink-2)', fontWeight:600 }}>{p.gender === 'female' ? '♀ Hembra' : '♂ Macho'}</span>}
+          </div>
+        )}
+        {p.delivered_to && <div style={{ fontSize:12, color:'var(--ink-2)', marginTop:8 }}>📍 {p.delivered_to}</div>}
+      </div>
+    </div>
+  );
+}
+
+function CachorrosEntregados() {
+  const [puppies, setPuppies] = React.useState([]);
+  const [status, setStatus]   = React.useState('loading');
+
+  React.useEffect(() => {
+    if (!ceSb) { setStatus('error'); return; }
+    ceSb.from('puppies').select('*').eq('status', 'sold').order('updated_at', { ascending: false })
+      .then(({ data, error }) => {
+        if (error) { setStatus('error'); return; }
+        setPuppies(data || []);
+        setStatus('ok');
+      });
+  }, []);
+
+  return (
+    <div style={{ background:'var(--bg)', minHeight:'60vh' }}>
+      {/* Hero */}
+      <section style={{ background:'var(--dark-sec)', padding:'120px clamp(20px,5vw,80px) 64px', position:'relative', overflow:'hidden' }}>
+        <div style={{ position:'absolute', inset:0, backgroundImage:'radial-gradient(70% 80% at 80% 20%, rgba(245,130,32,0.08), transparent 60%)', pointerEvents:'none' }}/>
+        <div style={{ maxWidth:800, position:'relative', zIndex:1 }}>
+          <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.16em', textTransform:'uppercase', color:'var(--orange)', marginBottom:14 }}>BPuppy · Historias</div>
+          <h1 style={{ fontFamily:'var(--display)', fontSize:'clamp(40px,7vw,88px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.93, margin:'0 0 20px', color:'var(--ink)' }}>
+            Ya en su<br/><em style={{ fontFamily:'var(--serif)', fontStyle:'italic', color:'var(--orange)' }}>hogar.</em>
+          </h1>
+          <p style={{ fontSize:17, color:'var(--ink-2)', lineHeight:1.65, maxWidth:'48ch', margin:0 }}>
+            Cada cachorro que entregamos lleva nuestro corazón. Aquí celebramos a las familias que ya encontraron a su compañero perfecto.
+          </p>
+        </div>
+      </section>
+
+      {/* Grid */}
+      <section style={{ padding:'clamp(48px,6vw,80px) clamp(20px,5vw,80px)' }}>
+        <div style={{ maxWidth:1100, margin:'0 auto' }}>
+          {status === 'loading' && (
+            <div style={{ display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:'80px 0' }}>
+              <div className="bp-spinner"/>
+              <p style={{ color:'var(--ink-2)', fontSize:15 }}>Cargando historias…</p>
+            </div>
+          )}
+          {status === 'error' && (
+            <div style={{ textAlign:'center', padding:'80px 24px', color:'var(--ink-2)' }}>
+              <div style={{ fontSize:48, marginBottom:16 }}>🐾</div>
+              <p style={{ fontSize:16 }}>No se pudieron cargar los cachorros entregados.</p>
+            </div>
+          )}
+          {status === 'ok' && puppies.length === 0 && (
+            <div style={{ textAlign:'center', padding:'80px 24px', color:'var(--ink-2)' }}>
+              <div style={{ fontSize:56, marginBottom:16 }}>🐶</div>
+              <h2 style={{ fontFamily:'var(--display)', fontSize:28, fontWeight:700, marginBottom:12 }}>Pronto habrá historias aquí</h2>
+              <p style={{ fontSize:15 }}>Estamos construyendo esta sección. ¡Vuelve pronto!</p>
+              <a href="Cachorros.html" style={{ display:'inline-block', marginTop:24, background:'var(--orange)', color:'#fff', padding:'12px 24px', borderRadius:999, fontWeight:700, textDecoration:'none' }}>Ver disponibles</a>
+            </div>
+          )}
+          {status === 'ok' && puppies.length > 0 && (
+            <>
+              <div style={{ marginBottom:32 }}>
+                <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:8 }}>{puppies.length} cachorros entregados</div>
+                <h2 style={{ fontFamily:'var(--display)', fontSize:'clamp(28px,4vw,48px)', fontWeight:700, letterSpacing:'-0.03em', color:'var(--ink)', margin:0 }}>
+                  Familias que confiaron en nosotros
+                </h2>
+              </div>
+              <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(240px,1fr))', gap:20 }}>
+                {puppies.map(p => <DeliveredCard key={p.id} p={p}/>)}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+    </div>
+  );
+}
+
+function EntregadosRoot() {
+  return (
+    <LangContext.Provider value={{ lang:'es', setLang:function(){} }}>
+      <Header overDark={false}/>
+      <main><CachorrosEntregados/></main>
+      <Footer/>
+    </LangContext.Provider>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<EntregadosRoot/>);
+</script>
+<script src="site-animations.js"></script>
+</body>
+</html>

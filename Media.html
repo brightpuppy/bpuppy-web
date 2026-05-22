@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>B Media — BPuppy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  @keyframes mediaTicker { 0%{transform:translateX(0)} 100%{transform:translateX(-50%)} }
+  @keyframes mediaPulse  { 0%,100%{box-shadow:0 0 0 3px rgba(255,85,32,0.2)} 50%{box-shadow:0 0 0 6px rgba(255,85,32,0.06)} }
+  @keyframes floatA      { 0%,100%{transform:translateY(0px) rotate(-1deg)} 50%{transform:translateY(-26px) rotate(1.5deg)} }
+  @keyframes floatB      { 0%,100%{transform:translateY(0px) rotate(1.2deg)} 50%{transform:translateY(22px) rotate(-1.2deg)} }
+  @keyframes charFloat   { 0%,100%{transform:translateY(0px)} 50%{transform:translateY(-12px)} }
+  @keyframes orbA        { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(80px,-55px) scale(1.18)} }
+  @keyframes orbB        { 0%,100%{transform:translate(0,0) scale(1)} 50%{transform:translate(-55px,38px) scale(0.86)} }
+  @keyframes gradFlow    { 0%,100%{background-position:0% 50%} 50%{background-position:100% 50%} }
+  body { background:#FAFAF8; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script src="site-publish.js"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="i18n.jsx"></script>
+<script type="text/babel" src="chrome.jsx"></script>
+<script type="text/babel" src="media-views.jsx"></script>
+<script type="text/babel">
+// Read section visibility from SitePublish (shared localStorage config)
+function getSectionVis() {
+  if (!window.SitePublish) return { hero:true, videos:true, podcast:true, entrevistas:true, cta:true };
+  const SP = window.SitePublish;
+  return {
+    hero:        SP.isSectionLive('Media', 'hero'),
+    videos:      SP.isSectionLive('Media', 'videos'),
+    podcast:     SP.isSectionLive('Media', 'podcast'),
+    entrevistas: SP.isSectionLive('Media', 'entrevistas'),
+    cta:         SP.isSectionLive('Media', 'cta'),
+  };
+}
+
+function MediaRoot() {
+  const [lang, setLang] = React.useState('es');
+  const [vis, setVis]   = React.useState(getSectionVis);
+
+  // Sync when Publish.html or another tab changes visibility
+  React.useEffect(() => {
+    const h = () => setVis(getSectionVis());
+    window.addEventListener('bpuppy:publish', h);
+    return () => window.removeEventListener('bpuppy:publish', h);
+  }, []);
+
+  function toggleSection(key, val) {
+    setVis(prev => ({ ...prev, [key]: val }));
+    if (window.SitePublish) window.SitePublish.setSectionLive('Media', key, val);
+  }
+
+  React.useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+
+  return (
+    <LangContext.Provider value={{ lang, setLang }}>
+      <Header overDark={false}/>
+      <main><MediaApp visibility={vis}/></main>
+      <Footer/>
+      <TweaksPanel>
+        <TweakSection label="Secciones publicadas"/>
+        <TweakToggle label="Hero — B Media"  value={vis.hero}        onChange={v => toggleSection('hero', v)}/>
+        <TweakToggle label="Videos"          value={vis.videos}      onChange={v => toggleSection('videos', v)}/>
+        <TweakToggle label="Podcast — Bcast" value={vis.podcast}     onChange={v => toggleSection('podcast', v)}/>
+        <TweakToggle label="Entrevistas"     value={vis.entrevistas} onChange={v => toggleSection('entrevistas', v)}/>
+        <TweakToggle label="CTA Final"       value={vis.cta}         onChange={v => toggleSection('cta', v)}/>
+      </TweaksPanel>
+    </LangContext.Provider>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<MediaRoot/>);
+</script>
+<script src="site-animations.js"></script>
+</body>
+</html>

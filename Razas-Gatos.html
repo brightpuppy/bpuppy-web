@@ -1,0 +1,349 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>BPuppy — Razas de Gatos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+:root{--cat-purple:#7C5CBF;--cat-light:#F3EEFA;--cat-mid:#E8D5F0}
+.razas-hero{background:linear-gradient(135deg,#6B4FA8 0%,#4A3580 100%);color:#fff;padding:120px 0 60px;position:relative;overflow:hidden}
+.razas-hero h1{font-family:var(--display);font-size:clamp(40px,7vw,84px);font-weight:600;letter-spacing:-0.03em;line-height:.95;margin:0 0 16px;color:#fff}
+.razas-hero h1 em{font-family:var(--serif);font-style:italic;color:#E8D5F0;font-weight:400}
+.razas-hero p{color:rgba(255,255,255,.75);font-size:18px;max-width:50ch;line-height:1.55;margin:0}
+.filter-bar{position:sticky;top:60px;z-index:90;background:rgba(250,248,255,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);padding:16px 0}
+.filter-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
+.filter-row:last-child{margin-bottom:0}
+.filter-label{font-size:11px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-soft);min-width:64px}
+.fchip{padding:7px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:all .2s;white-space:nowrap}
+.fchip:hover{border-color:var(--cat-purple);color:var(--cat-purple)}
+.fchip.on{background:var(--cat-purple);border-color:var(--cat-purple);color:#fff}
+.fchip-toggle{padding:7px 14px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:all .2s}
+.fchip-toggle.on{background:var(--ink);border-color:var(--ink);color:var(--bg)}
+.mode-btn{padding:9px 20px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font-size:14px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:all .2s}
+.mode-btn.on{background:var(--cat-purple);border-color:var(--cat-purple);color:#fff}
+.search-input{padding:8px 16px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);font-size:14px;font-family:var(--body);color:var(--ink);outline:none;min-width:200px;transition:border-color .2s}
+.search-input:focus{border-color:var(--cat-purple)}
+.search-input::placeholder{color:var(--ink-soft)}
+.breed-section{padding:48px 0 100px}
+.results-bar{display:flex;align-items:center;justify-content:space-between;margin-bottom:28px;flex-wrap:wrap;gap:12px}
+.results-count{font-size:14px;font-weight:600;color:var(--ink-2)}
+.results-count strong{color:var(--cat-purple);font-size:18px}
+.clear-btn{font-size:13px;font-weight:600;color:var(--cat-purple);background:none;border:none;cursor:pointer;padding:0}
+.breed-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:18px}
+.bcard{border-radius:20px;background:var(--paper);border:1px solid var(--line);overflow:hidden;cursor:pointer;transition:transform .3s,box-shadow .3s}
+.bcard:hover{transform:translateY(-5px);box-shadow:0 20px 50px -15px rgba(124,92,191,.2)}
+.bcard-photo{aspect-ratio:4/3;background:linear-gradient(135deg,var(--cat-light),var(--cat-mid));display:grid;place-items:center;position:relative;overflow:hidden}
+.bcard-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.bcard-photo-ph{font-size:56px;filter:drop-shadow(0 4px 12px rgba(124,92,191,.15))}
+.bcard-badges{position:absolute;bottom:10px;left:10px;display:flex;gap:6px}
+.bcard-badge{padding:3px 10px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.04em;backdrop-filter:blur(8px)}
+.badge-small{background:rgba(101,182,143,.9);color:#fff}
+.badge-medium{background:rgba(124,92,191,.9);color:#fff}
+.badge-large{background:rgba(74,53,128,.9);color:#fff}
+.badge-hypo{background:rgba(91,124,250,.9);color:#fff}
+.bcard-body{padding:16px 18px}
+.bcard-name{font-family:var(--display);font-size:18px;font-weight:600;letter-spacing:-.015em;margin:0 0 2px;display:flex;align-items:center;gap:8px}
+.bcard-origin{font-size:12px;color:var(--ink-soft);margin-bottom:10px}
+.bcard-dots{display:flex;gap:4px;align-items:center;margin-bottom:4px}
+.bcard-dot{width:8px;height:8px;border-radius:50%;background:var(--cat-light)}
+.bcard-dot.filled{background:var(--cat-purple)}
+.bcard-stat-label{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
+.bcard-tags{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.bcard-tag{padding:3px 9px;border-radius:999px;font-size:11px;font-weight:600;background:var(--cat-light);color:var(--cat-purple)}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.5);z-index:500;display:flex;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(4px)}
+.modal{background:var(--paper);border-radius:28px;max-width:860px;width:100%;max-height:90vh;overflow-y:auto;position:relative;box-shadow:0 40px 100px -20px rgba(0,0,0,.4)}
+.modal-close{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:var(--bg);border:none;cursor:pointer;display:grid;place-items:center;font-size:18px;color:var(--ink-2);z-index:10;transition:background .2s}
+.modal-close:hover{background:var(--line)}
+.modal-grid{display:grid;grid-template-columns:1fr 1.4fr;min-height:400px}
+.modal-photo{background:linear-gradient(135deg,var(--cat-light),var(--cat-mid));border-radius:28px 0 0 28px;display:grid;place-items:center;min-height:320px;overflow:hidden}
+.modal-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.modal-photo-ph{font-size:100px;filter:drop-shadow(0 8px 24px rgba(124,92,191,.15))}
+.modal-body{padding:28px;overflow-y:auto}
+.modal-name{font-family:var(--display);font-size:clamp(24px,3vw,36px);font-weight:600;letter-spacing:-.025em;margin:0 0 4px}
+.modal-origin{font-size:13px;color:var(--ink-soft);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.modal-stats{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:20px}
+.mstat{background:var(--cat-light);border-radius:12px;padding:10px 12px;text-align:center}
+.mstat-val{font-family:var(--display);font-size:16px;font-weight:600;color:var(--cat-purple);letter-spacing:-.01em}
+.mstat-lbl{font-size:10px;text-transform:uppercase;letter-spacing:.07em;color:var(--ink-soft);margin-top:2px}
+.reg-badges{display:flex;gap:8px;margin-bottom:20px;flex-wrap:wrap}
+.reg-badge{padding:5px 12px;border-radius:8px;font-size:11px;font-weight:700;letter-spacing:.06em}
+.reg-tica{background:#7C5CBF;color:#fff}
+.reg-cfa{background:#c0392b;color:#fff}
+.rating-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.rating-lbl{font-size:12px;font-weight:600;color:var(--ink-2);min-width:100px}
+.rating-bar{flex:1;height:6px;border-radius:3px;background:var(--line);overflow:hidden}
+.rating-fill{height:100%;border-radius:3px;background:var(--cat-purple);transition:width .6s ease}
+.temperament-chips{display:flex;flex-wrap:wrap;gap:6px;margin:12px 0}
+.temp-chip{padding:5px 12px;border-radius:999px;background:var(--cat-light);border:1px solid var(--cat-mid);font-size:12px;font-weight:600;color:var(--cat-purple)}
+.section-title{font-family:var(--display);font-size:16px;font-weight:600;letter-spacing:-.01em;margin:18px 0 8px;color:var(--ink)}
+.bestfor-list{display:flex;flex-wrap:wrap;gap:6px}
+.bestfor-item{padding:5px 12px;border-radius:999px;background:rgba(101,182,143,.12);border:1px solid rgba(101,182,143,.25);font-size:12px;font-weight:600;color:#2d7a4f}
+.desc-text{font-size:14px;line-height:1.65;color:var(--ink-2);margin:0}
+.mixes-toggle{display:flex;align-items:center;gap:8px;padding:12px 16px;border-radius:12px;background:var(--cat-light);border:1px solid var(--cat-mid);cursor:pointer;font-size:14px;font-weight:600;color:var(--ink);margin-top:16px;transition:background .2s;width:100%;text-align:left}
+.mixes-toggle:hover{background:var(--cat-mid)}
+.mix-cards{display:grid;gap:10px;margin-top:12px}
+.mix-card{padding:12px 14px;border-radius:12px;background:var(--cat-light);border:1px solid var(--cat-mid)}
+.mix-card h5{font-family:var(--display);font-size:14px;font-weight:600;margin:0 0 2px;color:var(--ink)}
+.mix-card .mix-parents{font-size:11px;font-weight:600;color:var(--cat-purple);margin-bottom:4px;letter-spacing:.02em}
+.mix-card p{font-size:13px;color:var(--ink-2);margin:0;line-height:1.5}
+.mestizo-card{max-width:720px;margin:0 auto;background:var(--paper);border-radius:28px;border:1px solid var(--line);padding:48px;text-align:center}
+@media(max-width:700px){.modal-grid{grid-template-columns:1fr}.modal-photo{border-radius:28px 28px 0 0;min-height:220px}.breed-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}.filter-bar{top:55px}}
+</style>
+<script src="shared-header.js"></script>
+</head>
+<body>
+<site-header></site-header>
+<div id="root"></div>
+<script type="text/babel" src="cat-breed-data.jsx"></script>
+<script type="text/babel">
+const { useState, useMemo, useEffect } = React;
+const tl = (arr, l) => Array.isArray(arr) ? (l==='en' ? (arr[1]||arr[0]) : arr[0]) : arr;
+
+function RatingDots({ value, max=5 }) {
+  return (
+    <div className="bcard-dots">
+      {Array.from({length:max},(_,i)=><div key={i} className={`bcard-dot ${i<value?'filled':''}`}/>)}
+    </div>
+  );
+}
+function RatingBar({ label, value, max=5 }) {
+  return (
+    <div className="rating-row">
+      <span className="rating-lbl">{label}</span>
+      <div className="rating-bar"><div className="rating-fill" style={{width:`${(value/max)*100}%`}}/></div>
+      <span style={{fontSize:11,color:'var(--ink-soft)',minWidth:12}}>{value}</span>
+    </div>
+  );
+}
+function CatPhoto({ breed, large }) {
+  const [err, setErr] = useState(false);
+  const cls = large ? 'modal-photo' : 'bcard-photo';
+  return (
+    <div className={cls}>
+      {!err
+        ? <img src={`fotos-razas-gatos/${breed.id}.jpg`} alt={breed.name} onError={()=>setErr(true)}/>
+        : <div className={large?'modal-photo-ph':'bcard-photo-ph'} style={{fontSize:large?40:28,fontWeight:700,fontFamily:'var(--display)',color:'var(--cat-purple)',opacity:.35}}>{(breed.es||breed.name).charAt(0)}</div>}
+      {!large && (
+        <div className="bcard-badges">
+          <span className={`bcard-badge badge-${breed.size?.includes('large')?'large':breed.size?.includes('small')?'small':'medium'}`}>
+            {breed.size==='small'||breed.size==='small-medium'?'Pequeño':'Mediano-Grande'}
+          </span>
+          {breed.hypo && <span className="bcard-badge badge-hypo">Hipoalerg.</span>}
+        </div>
+      )}
+    </div>
+  );
+}
+function BreedCard({ breed, onClick, lang:l }) {
+  return (
+    <div className="bcard" onClick={()=>onClick(breed)}>
+      <CatPhoto breed={breed}/>
+      <div className="bcard-body">
+        <div className="bcard-name">{l==='en'?breed.name:breed.es} <span style={{fontSize:16}}>{breed.flag}</span></div>
+        <div className="bcard-origin">{l==='en'?breed.originEn:breed.origin}</div>
+        <div className="bcard-stat-label">{l==='en'?'Energy':'Energía'}</div>
+        <RatingDots value={breed.energy}/>
+        <div className="bcard-tags">
+          {breed.coat.map(c=><span key={c} className="bcard-tag">{c==='short'?'Corto':c==='long'?'Largo':c==='curly'?'Rizado':c==='hairless'?'Sin pelo':'Mixto'}</span>)}
+          {breed.tica && <span className="bcard-tag" style={{background:'rgba(124,92,191,.12)'}}>TICA</span>}
+          {breed.cfa && <span className="bcard-tag" style={{background:'rgba(192,57,43,.12)',color:'#c0392b'}}>CFA</span>}
+        </div>
+      </div>
+    </div>
+  );
+}
+function BreedModal({ breed, onClose, lang:l }) {
+  const [showMixes, setShowMixes] = useState(false);
+  useEffect(()=>{document.body.style.overflow='hidden';return()=>{document.body.style.overflow='';};},[]);
+  if (!breed) return null;
+  return (
+    <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
+      <div className="modal">
+        <button className="modal-close" onClick={onClose}>✕</button>
+        <div className="modal-grid">
+          <CatPhoto breed={breed} large/>
+          <div className="modal-body">
+            <div className="modal-name">{l==='en'?breed.name:breed.es}</div>
+            <div className="modal-origin"><span>{breed.flag}</span><span>{l==='en'?breed.originEn:breed.origin}</span></div>
+            <div className="modal-stats">
+              <div className="mstat"><div className="mstat-val">{breed.weight}</div><div className="mstat-lbl">{l==='en'?'Weight':'Peso'}</div></div>
+              <div className="mstat"><div className="mstat-val">{breed.lifespan}</div><div className="mstat-lbl">{l==='en'?'Lifespan':'Vida'}</div></div>
+            </div>
+            <div className="reg-badges">
+              {breed.tica && <span className="reg-badge reg-tica">TICA</span>}
+              {breed.cfa && <span className="reg-badge reg-cfa">CFA</span>}
+            </div>
+            <div className="section-title">{l==='en'?'Ratings':'Calificaciones'}</div>
+            <RatingBar label={l==='en'?'Family':'Familia'} value={breed.family}/>
+            <RatingBar label={l==='en'?'Kids':'Niños'} value={breed.kids}/>
+            <RatingBar label={l==='en'?'Energy':'Energía'} value={breed.energy}/>
+            <RatingBar label={l==='en'?'Vocal':'Vocal'} value={breed.vocal}/>
+            <RatingBar label={l==='en'?'Grooming':'Cuidado'} value={breed.grooming}/>
+            <RatingBar label={l==='en'?'Apartment':'Apartamento'} value={breed.apartment}/>
+            <div className="section-title">{l==='en'?'Temperament':'Temperamento'}</div>
+            <div className="temperament-chips">
+              {(l==='en'?breed.temperamentEn:breed.temperament).map(t2=><span key={t2} className="temp-chip">{t2}</span>)}
+            </div>
+            <div className="section-title">{l==='en'?'Ideal for':'Ideal para'}</div>
+            <div className="bestfor-list">
+              {(l==='en'?breed.bestForEn:breed.bestFor).map(b=><span key={b} className="bestfor-item">{b}</span>)}
+            </div>
+            <div className="section-title">{l==='en'?'Description':'Descripción'}</div>
+            <p className="desc-text">{l==='en'?breed.descEn:breed.desc}</p>
+            <div className="section-title">{l==='en'?'Care':'Cuidado'}</div>
+            <p className="desc-text">{l==='en'?breed.careEn:breed.care}</p>
+            <div className="section-title">{l==='en'?'Health':'Salud'}</div>
+            <p className="desc-text">{l==='en'?breed.healthEn:breed.health}</p>
+            {breed.mixes && breed.mixes.length > 0 && (
+              <>
+                <button className="mixes-toggle" onClick={()=>setShowMixes(s=>!s)}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d={showMixes?'M18 15l-6-6-6 6':'M6 9l6 6 6-6'}/></svg>
+                  {l==='en'?`Common mixes of ${breed.name}`:`Ver mixes de ${breed.es||breed.name}`}
+                  <span style={{marginLeft:'auto',background:'var(--cat-purple)',color:'#fff',borderRadius:'999px',padding:'2px 8px',fontSize:11}}>{breed.mixes.length}</span>
+                </button>
+                {showMixes && <div className="mix-cards">{breed.mixes.map(m=><div key={m.name} className="mix-card"><h5>{m.name}</h5><div className="mix-parents">{m.parents}</div><p>{m.desc}</p></div>)}</div>}
+              </>
+            )}
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function RazasGatosApp() {
+  const [lang, setLang] = useState(localStorage.getItem('bpuppy-lang') || 'es');
+  useEffect(() => {
+    const h = e => setLang(e.detail);
+    window.addEventListener('bpuppy-lang-change', h);
+    return () => window.removeEventListener('bpuppy-lang-change', h);
+  }, []);
+  const t = (arr) => tl(arr, lang);
+  const [mode, setMode] = useState('all');
+  const [sizes, setSizes] = useState([]);
+  const [coats, setCoats] = useState([]);
+  const [hypo, setHypo] = useState(false);
+  const [energy, setEnergy] = useState([]);
+  const [query, setQuery] = useState('');
+  const [selected, setSelected] = useState(null);
+
+  const toggle = (arr, set, v) => set(arr.includes(v)?arr.filter(x=>x!==v):[...arr,v]);
+  const hasFilters = sizes.length||coats.length||hypo||energy.length||query;
+  const clearAll = ()=>{setSizes([]);setCoats([]);setHypo(false);setEnergy([]);setQuery('');};
+
+  const filtered = useMemo(()=>{
+    let b = CAT_BREEDS;
+    if(sizes.length) b=b.filter(x=>sizes.some(s=>x.size.includes(s)));
+    if(coats.length) b=b.filter(x=>x.coat.some(c=>coats.includes(c)));
+    if(hypo) b=b.filter(x=>x.hypo);
+    if(energy.length) b=b.filter(x=>{
+      if(energy.includes('low')&&x.energy<=2) return true;
+      if(energy.includes('medium')&&x.energy===3) return true;
+      if(energy.includes('high')&&x.energy>=4) return true;
+      return false;
+    });
+    if(query){const q=query.toLowerCase();b=b.filter(x=>x.name.toLowerCase().includes(q)||x.es.toLowerCase().includes(q));}
+    return b;
+  },[sizes,coats,hypo,energy,query]);
+
+  const SIZES=[{v:'small',es:'Pequeño',en:'Small'},{v:'medium',es:'Mediano',en:'Medium'},{v:'large',es:'Grande',en:'Large'}];
+  const COATS=[{v:'short',es:'Corto',en:'Short'},{v:'long',es:'Largo',en:'Long'},{v:'curly',es:'Rizado',en:'Curly'},{v:'hairless',es:'Sin pelo',en:'Hairless'}];
+  const ENERGIES=[{v:'low',es:'Baja',en:'Low'},{v:'medium',es:'Moderada',en:'Medium'},{v:'high',es:'Alta',en:'High'}];
+
+  return (
+    <>
+
+      <section className="razas-hero">
+        <div className="container">
+          <a href="Gatos.html" style={{display:'inline-flex',alignItems:'center',gap:8,fontSize:13,fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase',color:'rgba(255,255,255,.6)',marginBottom:24}}>← {t(['Volver a gatos','Back to cats'])}</a>
+          <h1>{t(['Conoce las','Meet the'])} <em>{t(['razas de gatos','cat breeds'])}</em></h1>
+          <p>{t(['Explora más de 12 razas felinas con filtros, datos completos y los mixes más comunes de cada una.','Explore 12+ cat breeds with filters, complete data, and the most common mixes for each.'])}</p>
+          <div style={{display:'flex',gap:12,marginTop:24,flexWrap:'wrap'}}>
+            <div style={{background:'rgba(255,255,255,.12)',border:'1px solid rgba(255,255,255,.2)',borderRadius:12,padding:'10px 16px',fontSize:13,fontWeight:600,color:'#fff'}}><strong style={{fontFamily:'var(--display)',fontSize:20}}>{CAT_BREEDS.length}</strong> {t(['razas felinas','cat breeds'])}</div>
+          </div>
+        </div>
+      </section>
+
+      <div className="filter-bar">
+        <div className="container">
+          <div className="filter-row">
+            <input className="search-input" style={{flex:1,maxWidth:320}} placeholder={t(['Buscar raza por nombre...','Search breed by name...'])} value={query} onChange={e=>setQuery(e.target.value)}/>
+            <span style={{marginLeft:'auto',display:'flex',gap:8,flexWrap:'wrap'}}>
+              {[{v:'all',es:'Todas las razas',en:'All breeds'},{v:'mestizos',es:'Doméstico / Mestizo',en:'Domestic / Mixed'}].map(m=>(
+                <button key={m.v} className={`mode-btn ${mode===m.v?'on':''}`} onClick={()=>setMode(m.v)}>{t([m.es,m.en])}</button>
+              ))}
+            </span>
+          </div>
+          {mode==='all' && <>
+            <div style={{padding:'10px 0 4px',fontFamily:'var(--display)',fontSize:15,fontWeight:600,color:'var(--cat-purple)',letterSpacing:'-.01em'}}>
+              {t(['¡Encuentra la combinación perfecta!','Find your perfect match!'])}
+            </div>
+            <div className="filter-row">
+              <span className="filter-label">{t(['Tamaño','Size'])}</span>
+              {SIZES.map(s=><button key={s.v} className={`fchip ${sizes.includes(s.v)?'on':''}`} onClick={()=>toggle(sizes,setSizes,s.v)}>{t([s.es,s.en])}</button>)}
+            </div>
+            <div className="filter-row">
+              <span className="filter-label">{t(['Pelaje','Coat'])}</span>
+              {COATS.map(c=><button key={c.v} className={`fchip ${coats.includes(c.v)?'on':''}`} onClick={()=>toggle(coats,setCoats,c.v)}>{t([c.es,c.en])}</button>)}
+              <button className={`fchip-toggle ${hypo?'on':''}`} onClick={()=>setHypo(h=>!h)}>{t(['Hipoalergénico','Hypoallergenic'])}</button>
+              {hasFilters && <button className="clear-btn" style={{marginLeft:'auto'}} onClick={clearAll}>✕ {t(['Limpiar','Clear'])}</button>}
+            </div>
+            <div className="filter-row">
+              <span className="filter-label">{t(['Energía','Energy'])}</span>
+              {ENERGIES.map(e=><button key={e.v} className={`fchip ${energy.includes(e.v)?'on':''}`} onClick={()=>toggle(energy,setEnergy,e.v)}>{t([e.es,e.en])}</button>)}
+            </div>
+          </>}
+        </div>
+      </div>
+
+      <section className="breed-section">
+        <div className="container">
+          {mode==='all' && <>
+            <div className="results-bar">
+              <div className="results-count">{t(['Mostrando','Showing'])} <strong>{filtered.length}</strong> {t(['razas','breeds'])}</div>
+            </div>
+            {filtered.length===0
+              ? <div style={{textAlign:'center',padding:'60px 0',color:'var(--ink-soft)',fontSize:16}}>{t(['No hay razas con esos filtros.','No breeds match those filters.'])}</div>
+              : <div className="breed-grid">{filtered.map(b=><BreedCard key={b.id} breed={b} lang={lang} onClick={setSelected}/>)}</div>}
+          </>}
+          {mode==='mestizos' && (
+            <div className="mestizo-card">
+              <div style={{marginBottom:24,opacity:.25}}><svg width="72" height="72" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="17" rx="5" ry="4"/><ellipse cx="6" cy="11" rx="2" ry="3"/><ellipse cx="18" cy="11" rx="2" ry="3"/><ellipse cx="9" cy="7" rx="1.8" ry="2.5"/><ellipse cx="15" cy="7" rx="1.8" ry="2.5"/></svg></div>
+              <h2 className="display" style={{fontSize:'clamp(28px,4vw,44px)',margin:'0 0 16px'}}>{t(['Gatos','Cats'])} <em className="serif-italic" style={{color:'var(--cat-purple)'}}>{t(['Domésticos','Domestic'])}</em></h2>
+              <p style={{fontSize:17,lineHeight:1.65,color:'var(--ink-2)',margin:'0 0 28px'}}>{t(CAT_MESTIZO_INFO.desc)}</p>
+              <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
+                <a href="Adopciones.html" className="btn btn-primary" style={{background:'var(--cat-purple)',boxShadow:'0 8px 24px -8px rgba(124,92,191,.4)'}}>{t(['Ver refugios cercanos','Find nearby shelters'])}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
+                <a href="https://wa.me/18084928294" target="_blank" rel="noreferrer" className="btn btn-outline">{t(['Preguntar por un gatito','Ask about a kitten'])}</a>
+              </div>
+            </div>
+          )}
+        </div>
+      </section>
+
+      <footer className="foot">
+        <div className="container foot-row">
+          <div className="foot-logo"><img src="assets/logo-clean.png" alt=""/><span>BPuppy</span></div>
+          <p>© 2026 BPuppy · {t(['Criados con amor.','Raised with love.'])}</p>
+          <div className="foot-links"><a href="Home.html">{t(['Inicio','Home'])}</a><a href="Gatos.html">{t(['Gatos','Cats'])}</a><a href="Adopciones.html">{t(['Adopciones','Adoptions'])}</a><a href="Social.html">Social</a><a href="Garantia.html">{t(['Garantía','Guarantee'])}</a></div>
+        </div>
+      </footer>
+      {selected && <BreedModal breed={selected} onClose={()=>setSelected(null)} lang={lang}/>}
+    </>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<RazasGatosApp/>);
+</script>
+<script src="site-animations.js"></script>
+
+<script src="claude-bridge.js"></script>
+<script type="text/babel" src="chat-widget.jsx"></script>
+</body>
+</html>

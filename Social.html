@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>B Social — BrightPuppy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<script src="site-publish.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: #0d0d0d; }
+  #root { min-height: 100vh; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel" src="s-data.jsx"></script>
+<script type="text/babel" src="s-views.jsx"></script>
+<script type="text/babel" src="s-app.jsx"></script>
+<script>
+(function(){
+  var PAGE = 'Social';
+  var OVERLAY_ID = '__bp-cs';
+  function apply() {
+    var SP = window.SitePublish; if (!SP) return;
+    var ov = document.getElementById(OVERLAY_ID);
+    if (!SP.isPageLive(PAGE)) {
+      if (!ov) {
+        ov = document.createElement('div');
+        ov.id = OVERLAY_ID;
+        ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#0d0d0d;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:40px;font-family:Plus Jakarta Sans,sans-serif;color:#fff';
+        ov.innerHTML = '<div style="font-family:Bricolage Grotesque,sans-serif;font-size:clamp(72px,14vw,130px);font-weight:800;letter-spacing:-0.04em;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,0.08);line-height:1;margin-bottom:24px">Pronto</div>'
+          + '<div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#FF5520;margin-bottom:14px">En preparación</div>'
+          + '<h1 style="font-family:Bricolage Grotesque,sans-serif;font-size:clamp(22px,3.5vw,38px);font-weight:700;letter-spacing:-0.02em;margin:0 0 14px">Social llega pronto</h1>'
+          + '<p style="color:rgba(255,255,255,0.45);line-height:1.65;margin-bottom:32px;max-width:38ch;font-size:15px">Estamos preparando algo especial. Gracias por tu paciencia.</p>'
+          + '<a href="Home.html" style="display:inline-flex;align-items:center;gap:8px;background:#FF5520;color:#fff;font-weight:700;font-size:14px;padding:13px 26px;border-radius:999px;text-decoration:none">← Volver al inicio</a>';
+        document.body.appendChild(ov);
+      }
+    } else { if (ov) ov.remove(); }
+  }
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', apply); } else { apply(); }
+  window.addEventListener('bpuppy:publish', apply);
+})();
+</script>
+<script src="site-animations.js"></script>
+</body>
+</html>

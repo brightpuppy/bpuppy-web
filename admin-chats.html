@@ -1,0 +1,349 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>BPuppy · Admin — Chats</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --rose: #E85D75; --rose-light: #fff0f2;
+    --ink: #1a1a1a; --ink-2: #6b5a4e; --ink-soft: #aaa;
+    --bg: #f8f5f2; --paper: #fff; --line: #ece8e4;
+    --radius: 14px;
+  }
+  body { font-family: 'Plus Jakarta Sans', sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
+
+  /* ── Gate ── */
+  #gate {
+    min-height: 100vh; display: flex; align-items: center; justify-content: center;
+  }
+  .gate-card {
+    background: var(--paper); border-radius: 20px; padding: 40px 36px;
+    box-shadow: 0 12px 40px -12px rgba(0,0,0,0.14); width: 100%; max-width: 360px;
+    text-align: center;
+  }
+  .gate-card .logo { font-size: 32px; margin-bottom: 12px; }
+  .gate-card h1 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }
+  .gate-card p  { font-size: 13px; color: var(--ink-soft); margin-bottom: 24px; }
+  .gate-input {
+    width: 100%; padding: 12px 16px; border: 1.5px solid var(--line); border-radius: 12px;
+    font-family: inherit; font-size: 15px; outline: none; margin-bottom: 12px;
+    background: var(--bg); color: var(--ink); transition: border-color .2s;
+  }
+  .gate-input:focus { border-color: var(--rose); }
+  .gate-btn {
+    width: 100%; padding: 13px; border: none; border-radius: 12px; cursor: pointer;
+    background: linear-gradient(135deg, #E85D75, #C44A61); color: #fff;
+    font-family: inherit; font-size: 15px; font-weight: 700;
+    transition: opacity .2s;
+  }
+  .gate-btn:hover { opacity: .88; }
+  .gate-err { color: #c0392b; font-size: 12px; margin-top: 8px; }
+
+  /* ── App ── */
+  #app { display: none; }
+  .topbar {
+    background: var(--paper); border-bottom: 1px solid var(--line);
+    padding: 0 28px; height: 58px; display: flex; align-items: center;
+    justify-content: space-between; position: sticky; top: 0; z-index: 10;
+  }
+  .topbar-logo { display: flex; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
+  .topbar-logo span.dot { width: 8px; height: 8px; border-radius: 50%; background: #65E08F; }
+  .topbar-right { display: flex; align-items: center; gap: 14px; }
+  .topbar-right button {
+    padding: 7px 14px; border-radius: 8px; border: 1.5px solid var(--line);
+    background: var(--bg); font-family: inherit; font-size: 12px; font-weight: 600;
+    cursor: pointer; color: var(--ink-2); transition: all .15s;
+  }
+  .topbar-right button:hover { border-color: var(--rose); color: var(--rose); }
+  .main { display: flex; gap: 0; height: calc(100vh - 58px); }
+
+  /* ── Sidebar ── */
+  .sidebar {
+    width: 320px; flex-shrink: 0; border-right: 1px solid var(--line);
+    background: var(--paper); display: flex; flex-direction: column; overflow: hidden;
+  }
+  .sidebar-head {
+    padding: 16px 18px; border-bottom: 1px solid var(--line);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .sidebar-head h2 { font-size: 13px; font-weight: 700; color: var(--ink); }
+  .badge { background: var(--rose-light); color: var(--rose); padding: 2px 8px; border-radius: 999px; font-size: 11px; font-weight: 700; }
+  .search-wrap { padding: 10px 12px; border-bottom: 1px solid var(--line); }
+  .search-input {
+    width: 100%; padding: 8px 12px; border: 1.5px solid var(--line); border-radius: 10px;
+    font-family: inherit; font-size: 13px; outline: none; background: var(--bg); color: var(--ink);
+    transition: border-color .2s;
+  }
+  .search-input:focus { border-color: var(--rose); }
+  .session-list { overflow-y: auto; flex: 1; }
+  .session-item {
+    padding: 13px 18px; border-bottom: 1px solid var(--line); cursor: pointer;
+    transition: background .12s;
+  }
+  .session-item:hover { background: var(--bg); }
+  .session-item.active { background: var(--rose-light); border-left: 3px solid var(--rose); padding-left: 15px; }
+  .session-name { font-size: 13.5px; font-weight: 600; margin-bottom: 2px; }
+  .session-phone { font-size: 11px; color: var(--ink-soft); margin-bottom: 4px; }
+  .session-preview { font-size: 12px; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  .session-meta { font-size: 10.5px; color: var(--ink-soft); margin-top: 4px; display: flex; gap: 8px; }
+
+  /* ── Chat detail ── */
+  .detail { flex: 1; display: flex; flex-direction: column; overflow: hidden; }
+  .detail-head {
+    padding: 16px 24px; border-bottom: 1px solid var(--line); background: var(--paper);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .detail-name { font-size: 15px; font-weight: 700; }
+  .detail-info { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+  .detail-actions { display: flex; gap: 10px; align-items: center; }
+  .detail-actions a, .detail-actions button {
+    padding: 7px 14px; border-radius: 8px; border: 1.5px solid var(--line);
+    background: var(--bg); font-family: inherit; font-size: 12px; font-weight: 600;
+    cursor: pointer; color: var(--ink-2); text-decoration: none; display: inline-flex; align-items: center; gap: 5px;
+    transition: all .15s;
+  }
+  .detail-actions a:hover, .detail-actions button:hover { border-color: var(--rose); color: var(--rose); }
+  .messages-wrap { flex: 1; overflow-y: auto; padding: 20px 24px; display: flex; flex-direction: column; gap: 10px; }
+  .msg-row { display: flex; }
+  .msg-row.user  { justify-content: flex-end; }
+  .msg-row.assistant { justify-content: flex-start; }
+  .msg-bubble {
+    max-width: 72%; padding: 10px 14px; border-radius: 14px;
+    font-size: 13.5px; line-height: 1.6; word-break: break-word;
+  }
+  .msg-bubble.user      { background: linear-gradient(135deg,#E85D75,#C44A61); color: #fff; border-radius: 14px 14px 4px 14px; }
+  .msg-bubble.assistant { background: #f3f3f3; color: var(--ink); border-radius: 14px 14px 14px 4px; }
+  .detail-empty {
+    flex: 1; display: flex; align-items: center; justify-content: center;
+    flex-direction: column; gap: 12px; color: var(--ink-soft);
+  }
+  .detail-empty .icon { font-size: 40px; opacity: .4; }
+
+  /* ── Empty / Loading ── */
+  .loading { text-align: center; padding: 40px; color: var(--ink-soft); font-size: 14px; }
+  .stat-row { display: flex; gap: 16px; padding: 14px 18px; border-bottom: 1px solid var(--line); flex-shrink: 0; }
+  .stat-pill { background: var(--bg); border-radius: 8px; padding: 8px 14px; font-size: 12px; font-weight: 600; color: var(--ink-2); }
+  .stat-pill span { color: var(--ink); font-size: 16px; font-weight: 700; display: block; }
+
+  @media (max-width: 700px) {
+    .sidebar { width: 100%; }
+    .detail  { display: none; }
+    .main.has-detail .sidebar { display: none; }
+    .main.has-detail .detail  { display: flex; }
+  }
+</style>
+</head>
+<body>
+
+<!-- ── Gate ──────────────────────────────────────────────── -->
+<div id="gate">
+  <div class="gate-card">
+    <div class="logo">🐾</div>
+    <h1>BPuppy Admin</h1>
+    <p>Acceso interno — conversaciones de clientes</p>
+    <input id="pwd-input" class="gate-input" type="password" placeholder="Contraseña" autocomplete="current-password"/>
+    <button class="gate-btn" onclick="checkPwd()">Entrar</button>
+    <div class="gate-err" id="gate-err" style="display:none">Contraseña incorrecta</div>
+  </div>
+</div>
+
+<!-- ── App ───────────────────────────────────────────────── -->
+<div id="app">
+  <div class="topbar">
+    <div class="topbar-logo">
+      <span>🐾</span> BPuppy Admin
+      <span class="dot"></span>
+      <span style="font-size:12px;color:var(--ink-soft);font-weight:500">Chats de clientes</span>
+    </div>
+    <div class="topbar-right">
+      <button onclick="loadSessions()">↻ Actualizar</button>
+      <button onclick="logout()">Salir</button>
+    </div>
+  </div>
+
+  <div class="main" id="main">
+    <!-- Sidebar -->
+    <div class="sidebar">
+      <div class="stat-row" id="stats-row">
+        <div class="stat-pill"><span id="stat-total">—</span>Total chats</div>
+        <div class="stat-pill"><span id="stat-named">—</span>Con nombre</div>
+        <div class="stat-pill"><span id="stat-phone">—</span>Con teléfono</div>
+      </div>
+      <div class="sidebar-head">
+        <h2>Conversaciones</h2>
+        <span class="badge" id="sess-count">0</span>
+      </div>
+      <div class="search-wrap">
+        <input class="search-input" id="search-inp" placeholder="Buscar por nombre, teléfono..." oninput="filterSessions()"/>
+      </div>
+      <div class="session-list" id="session-list">
+        <div class="loading">Cargando conversaciones...</div>
+      </div>
+    </div>
+
+    <!-- Detail -->
+    <div class="detail" id="detail">
+      <div class="detail-empty">
+        <div class="icon">💬</div>
+        <div>Selecciona una conversación para verla</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── Config ──────────────────────────────────────────────────────────────────
+const SUPA_URL = 'https://oqqwmcplljirbreowrll.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+const ADMIN_PWD = 'bpuppy2026';  // ← cambia esto
+
+let supa = null;
+let allSessions = [];
+let activeKey   = null;
+
+// ── Auth ────────────────────────────────────────────────────────────────────
+function checkPwd() {
+  const val = document.getElementById('pwd-input').value;
+  if (val === ADMIN_PWD || sessionStorage.getItem('bp_admin') === '1') {
+    sessionStorage.setItem('bp_admin', '1');
+    document.getElementById('gate').style.display = 'none';
+    document.getElementById('app').style.display  = 'block';
+    initSupabase();
+  } else {
+    document.getElementById('gate-err').style.display = 'block';
+  }
+}
+document.getElementById('pwd-input').addEventListener('keydown', e => { if (e.key === 'Enter') checkPwd(); });
+
+function logout() {
+  sessionStorage.removeItem('bp_admin');
+  location.reload();
+}
+
+// Auto-login if session active
+if (sessionStorage.getItem('bp_admin') === '1') {
+  document.getElementById('gate').style.display = 'none';
+  document.getElementById('app').style.display  = 'block';
+  document.addEventListener('DOMContentLoaded', initSupabase);
+}
+
+// ── Supabase ────────────────────────────────────────────────────────────────
+function initSupabase() {
+  supa = window.supabase.createClient(SUPA_URL, SUPA_KEY);
+  loadSessions();
+}
+
+async function loadSessions() {
+  document.getElementById('session-list').innerHTML = '<div class="loading">Cargando...</div>';
+  try {
+    const { data, error } = await supa
+      .from('chat_sessions')
+      .select('*')
+      .order('updated_at', { ascending: false });
+    if (error) throw error;
+    allSessions = data || [];
+    renderStats(allSessions);
+    renderList(allSessions);
+  } catch(e) {
+    document.getElementById('session-list').innerHTML =
+      `<div class="loading" style="color:#c0392b">Error al cargar: ${e.message}<br><small>Asegúrate de haber creado la tabla chat_sessions en Supabase.</small></div>`;
+  }
+}
+
+function renderStats(sessions) {
+  document.getElementById('stat-total').textContent = sessions.length;
+  document.getElementById('stat-named').textContent = sessions.filter(s => s.client_name).length;
+  document.getElementById('stat-phone').textContent = sessions.filter(s => s.client_phone).length;
+  document.getElementById('sess-count').textContent = sessions.length;
+}
+
+function filterSessions() {
+  const q = document.getElementById('search-inp').value.trim().toLowerCase();
+  if (!q) { renderList(allSessions); return; }
+  renderList(allSessions.filter(s =>
+    (s.client_name  || '').toLowerCase().includes(q) ||
+    (s.client_phone || '').toLowerCase().includes(q) ||
+    (s.session_key  || '').toLowerCase().includes(q)
+  ));
+}
+
+function renderList(sessions) {
+  const list = document.getElementById('session-list');
+  if (!sessions.length) {
+    list.innerHTML = '<div class="loading">Sin resultados</div>';
+    return;
+  }
+  list.innerHTML = sessions.map(s => {
+    const msgs    = Array.isArray(s.messages) ? s.messages : [];
+    const lastMsg = msgs.filter(m => m.role === 'user').slice(-1)[0];
+    const date    = s.updated_at ? new Date(s.updated_at).toLocaleDateString('es', { day:'2-digit', month:'short', year:'numeric' }) : '—';
+    const time    = s.updated_at ? new Date(s.updated_at).toLocaleTimeString('es', { hour:'2-digit', minute:'2-digit' }) : '';
+    return `
+      <div class="session-item${s.session_key === activeKey ? ' active' : ''}" onclick="showDetail('${s.session_key}')">
+        <div class="session-name">${esc(s.client_name || 'Cliente anónimo')}</div>
+        ${s.client_phone ? `<div class="session-phone">📞 ${esc(s.client_phone)}</div>` : ''}
+        <div class="session-preview">${esc(lastMsg?.content || 'Sin mensajes')}</div>
+        <div class="session-meta">
+          <span>${date} ${time}</span>
+          <span>${msgs.length} mensaje${msgs.length !== 1 ? 's' : ''}</span>
+          ${s.lang ? `<span>${s.lang.toUpperCase()}</span>` : ''}
+        </div>
+      </div>`;
+  }).join('');
+}
+
+function showDetail(key) {
+  activeKey = key;
+  const session = allSessions.find(s => s.session_key === key);
+  if (!session) return;
+
+  // Highlight in sidebar
+  document.querySelectorAll('.session-item').forEach(el => el.classList.remove('active'));
+  const items = document.querySelectorAll('.session-item');
+  items.forEach(el => { if (el.onclick.toString().includes(`'${key}'`)) el.classList.add('active'); });
+
+  const msgs   = Array.isArray(session.messages) ? session.messages : [];
+  const date   = session.created_at ? new Date(session.created_at).toLocaleDateString('es', { weekday:'long', day:'numeric', month:'long', year:'numeric' }) : '—';
+  const detail = document.getElementById('detail');
+  document.getElementById('main').classList.add('has-detail');
+
+  detail.innerHTML = `
+    <div class="detail-head">
+      <div>
+        <div class="detail-name">${esc(session.client_name || 'Cliente anónimo')}</div>
+        <div class="detail-info">
+          ${session.client_phone ? `📞 ${esc(session.client_phone)} &nbsp;·&nbsp;` : ''}
+          ${date} &nbsp;·&nbsp; ${msgs.length} mensaje${msgs.length !== 1 ? 's' : ''}
+          ${session.lang ? ` &nbsp;·&nbsp; ${session.lang.toUpperCase()}` : ''}
+        </div>
+      </div>
+      <div class="detail-actions">
+        ${session.client_phone ? `<a href="tel:${esc(session.client_phone)}">📞 Llamar</a>` : ''}
+        ${session.client_phone ? `<a href="https://wa.me/${session.client_phone.replace(/\D/g,'')}" target="_blank">💬 WhatsApp</a>` : ''}
+        <button onclick="document.getElementById('main').classList.remove('has-detail');activeKey=null;" style="background:none;border:none;cursor:pointer;color:var(--ink-soft);font-size:18px;padding:4px;">←</button>
+      </div>
+    </div>
+    <div class="messages-wrap">
+      ${msgs.length === 0
+        ? '<div style="text-align:center;color:var(--ink-soft);padding:40px;font-size:13px;">Sin mensajes</div>'
+        : msgs.map(m => `
+          <div class="msg-row ${m.role}">
+            <div class="msg-bubble ${m.role}">${esc(m.content)}</div>
+          </div>`).join('')
+      }
+    </div>
+  `;
+}
+
+function esc(str) {
+  if (!str) return '';
+  return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+</script>
+</body>
+</html>

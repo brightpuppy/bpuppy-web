@@ -1,0 +1,580 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BPuppy — Adopciones</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="styles.css">
+<script src="site-publish.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+:root { --adopt-rose: #E85D75; --adopt-light: #FFF0F2; --adopt-mid: #FFDDE3; }
+
+/* Hero */
+.page-hero { background: linear-gradient(135deg, #D14B63 0%, #B83A52 100%); color: #fff; padding: 140px 0 80px; position: relative; overflow: hidden; }
+.page-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(60% 70% at 80% 20%, rgba(255,255,255,0.08), transparent 60%); pointer-events:none; }
+.page-hero .container { position: relative; z-index: 2; }
+.page-hero .back-link { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:rgba(255,255,255,0.6); margin-bottom:28px; transition:color .2s; }
+.page-hero .back-link:hover { color:#fff; }
+.page-hero h1 { font-family:var(--display); font-size:clamp(42px,7vw,88px); font-weight:600; letter-spacing:-0.03em; line-height:0.95; margin:0 0 20px; }
+.page-hero h1 em { font-family:var(--serif); font-style:italic; color:#FFDDE3; font-weight:400; }
+.page-hero p { color:rgba(255,255,255,0.75); font-size:18px; max-width:56ch; line-height:1.55; margin:0; }
+
+/* Paw deco */
+.paw-deco { position: absolute; z-index: 1; opacity: 0.06; pointer-events: none; }
+.paw-deco svg { fill: currentColor; }
+.paw-deco-1 { top: 15%; right: 8%; width: 180px; animation: pawBob 7s ease-in-out infinite; }
+.paw-deco-2 { bottom: 5%; left: 5%; width: 120px; animation: pawBob 9s ease-in-out infinite reverse; }
+@keyframes pawBob { 0%,100% { transform: translateY(0) rotate(0); } 50% { transform: translateY(-8px) rotate(5deg); } }
+
+/* Our story */
+.our-story { padding: 100px 0; background: var(--bg); }
+.story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; }
+.story-visual { aspect-ratio: 1; border-radius: 28px; overflow: hidden; box-shadow: var(--shadow-soft, 0 24px 60px -24px rgba(45,36,33,0.18)); }
+.story-visual img { width: 100%; height: 100%; object-fit: cover; display: block; }
+
+/* Disclaimer */
+.disclaimer-bar { padding: 48px 0; background: var(--paper); border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.disclaimer-inner { display: flex; gap: 24px; align-items: flex-start; max-width: 860px; margin: 0 auto; }
+.disclaimer-icon { flex-shrink: 0; width: 48px; height: 48px; border-radius: 14px; background: var(--adopt-light); display: grid; place-items: center; font-size: 22px; }
+.disclaimer-inner p { font-size: 15px; line-height: 1.65; color: var(--ink-2); margin: 0; }
+.disclaimer-inner strong { color: var(--ink); }
+
+/* Shelter finder */
+.shelter-finder { padding: 100px 0; background: var(--bg); }
+.finder-controls { display: flex; gap: 14px; flex-wrap: wrap; margin: 36px 0 0; }
+.finder-select {
+  padding: 14px 20px; border-radius: 14px;
+  background: var(--paper); border: 1.5px solid var(--line);
+  font-family: var(--body); font-size: 15px; font-weight: 500;
+  color: var(--ink); appearance: none;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%236B5A4E' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+  background-repeat: no-repeat; background-position: right 14px center;
+  padding-right: 42px; min-width: 220px;
+  cursor: pointer; transition: border-color .2s;
+}
+.finder-select:focus { outline: none; border-color: var(--adopt-rose); }
+.finder-city-filter {
+  padding: 14px 20px; border-radius: 14px;
+  background: var(--paper); border: 1.5px solid var(--line);
+  font-family: var(--body); font-size: 15px; font-weight: 500;
+  color: var(--ink); min-width: 200px; transition: border-color .2s;
+}
+.finder-city-filter:focus { outline: none; border-color: var(--adopt-rose); }
+.finder-city-filter::placeholder { color: var(--ink-soft); }
+
+/* Shelter cards */
+.shelter-results { margin-top: 32px; }
+.shelter-empty { text-align: center; padding: 60px 24px; color: var(--ink-soft); font-size: 16px; }
+.shelter-state-label { font-family: var(--display); font-size: 22px; font-weight: 600; letter-spacing: -0.015em; margin: 32px 0 16px; color: var(--ink); display: flex; align-items: center; gap: 12px; }
+.shelter-state-label:first-child { margin-top: 0; }
+.shelter-state-label::before { content: ""; width: 4px; height: 24px; border-radius: 4px; background: var(--adopt-rose); flex-shrink: 0; }
+.shelter-count { font-size: 13px; font-weight: 500; color: var(--ink-soft); background: var(--adopt-light); padding: 3px 10px; border-radius: 999px; }
+.shelter-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 14px; }
+.shelter-card {
+  display: flex; align-items: center; gap: 16px;
+  padding: 18px 22px; border-radius: 16px;
+  background: var(--paper); border: 1px solid var(--line);
+  text-decoration: none; color: inherit;
+  transition: transform .25s, box-shadow .25s, border-color .25s;
+}
+.shelter-card:hover { transform: translateY(-3px); box-shadow: 0 12px 32px -12px rgba(232,93,117,0.15); border-color: var(--adopt-rose); }
+.shelter-card-icon { flex-shrink: 0; width: 42px; height: 42px; border-radius: 12px; background: var(--adopt-light); display: grid; place-items: center; font-size: 18px; }
+.shelter-card-info { flex: 1; min-width: 0; }
+.shelter-card-info h4 { font-family: var(--display); font-size: 15px; font-weight: 600; letter-spacing: -0.01em; margin: 0 0 2px; color: var(--ink); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.shelter-card-info .shelter-city { font-size: 13px; color: var(--ink-2); }
+.shelter-card-info .shelter-phone { font-size: 12px; color: var(--ink-soft); margin-top: 2px; }
+.shelter-card-arrow { flex-shrink: 0; width: 32px; height: 32px; border-radius: 50%; background: var(--adopt-light); display: grid; place-items: center; color: var(--adopt-rose); transition: background .2s, color .2s; }
+.shelter-card:hover .shelter-card-arrow { background: var(--adopt-rose); color: #fff; }
+
+/* Coming soon */
+.coming-soon { padding: 80px 0; background: var(--adopt-light); }
+.coming-inner { text-align: center; max-width: 640px; margin: 0 auto; }
+.coming-badge { display: inline-flex; align-items: center; gap: 8px; padding: 8px 16px; border-radius: 999px; background: var(--adopt-mid); font-size: 13px; font-weight: 600; color: var(--adopt-rose); margin-bottom: 20px; }
+
+/* CTA */
+.adopt-cta { padding: 80px 0; text-align: center; background: linear-gradient(135deg, #D14B63 0%, #B83A52 100%); color: #fff; }
+.adopt-cta h2 { color: #fff; font-family: var(--display); font-size: clamp(32px,5vw,56px); font-weight: 600; letter-spacing: -0.03em; line-height: 0.95; margin: 0 0 16px; }
+.adopt-cta em { font-family: var(--serif); font-style: italic; color: #FFDDE3 !important; font-weight: 400; }
+.adopt-cta p { color: rgba(255,255,255,0.7); }
+
+/* Lang toggle */
+.lang { display: flex; align-items: center; padding: 4px; border-radius: 999px; background: rgba(45,36,33,0.06); }
+.lang button { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-2); transition: all .2s; border: 0; background: none; cursor: pointer; font-family: inherit; }
+.lang button[data-active="true"] { background: var(--ink); color: var(--bg); }
+
+@media (max-width:900px) { .story-grid { grid-template-columns: 1fr; } .shelter-grid { grid-template-columns: 1fr; } }
+@media (max-width:540px) { .finder-controls { flex-direction: column; } .finder-select, .finder-city-filter { width: 100%; } }
+
+/* ── Community Adoption Stories ── */
+.adopt-stories { padding: 100px 0; background: #fff; border-top: 1px solid var(--line); }
+.stories-header { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 48px; flex-wrap: wrap; }
+.stories-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; }
+.story-card { border-radius: 20px; overflow: hidden; background: var(--paper); border: 1px solid var(--line); transition: transform .3s, box-shadow .3s; }
+.story-card:hover { transform: translateY(-5px); box-shadow: 0 20px 50px -15px rgba(232,93,117,.15); }
+.story-card-photo { aspect-ratio: 4/3; background: var(--adopt-light); overflow: hidden; display: grid; place-items: center; }
+.story-card-photo img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.story-card-photo-ph { font-size: 64px; font-family: var(--display); font-weight: 700; color: var(--adopt-rose); opacity: .25; }
+.story-card-body { padding: 18px; }
+.story-card-pet { font-family: var(--display); font-size: 20px; font-weight: 600; letter-spacing: -.015em; margin: 0 0 6px; color: var(--ink); }
+.story-card-text { font-size: 14px; color: var(--ink-2); line-height: 1.6; margin: 0 0 12px; display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.story-card-meta { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--ink-soft); }
+.story-card-badge { padding: 2px 9px; border-radius: 999px; background: var(--adopt-light); color: var(--adopt-rose); font-weight: 600; font-size: 11px; }
+/* Upload modal */
+.upload-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); z-index: 500; display: flex; align-items: center; justify-content: center; padding: 20px; backdrop-filter: blur(4px); }
+.upload-modal { background: var(--paper); border-radius: 28px; max-width: 560px; width: 100%; padding: 36px; position: relative; box-shadow: 0 40px 100px -20px rgba(0,0,0,.35); }
+.upload-modal h3 { font-family: var(--display); font-size: 28px; font-weight: 600; letter-spacing: -.02em; margin: 0 0 6px; }
+.upload-modal p.sub { color: var(--ink-2); font-size: 15px; margin: 0 0 28px; }
+.upload-close { position: absolute; top: 16px; right: 16px; width: 36px; height: 36px; border-radius: 50%; background: var(--bg); border: none; cursor: pointer; display: grid; place-items: center; font-size: 18px; color: var(--ink-2); }
+.upload-close:hover { background: var(--line); }
+.upload-drop { border: 2px dashed var(--adopt-mid); border-radius: 16px; min-height: 160px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px; cursor: pointer; transition: border-color .2s, background .2s; margin-bottom: 20px; position: relative; overflow: hidden; }
+.upload-drop:hover, .upload-drop.over { border-color: var(--adopt-rose); background: var(--adopt-light); }
+.upload-drop img { width: 100%; height: 200px; object-fit: cover; border-radius: 14px; }
+.upload-drop-hint { font-size: 14px; color: var(--ink-soft); text-align: center; }
+.upload-drop-hint strong { color: var(--adopt-rose); }
+.upload-field { width: 100%; padding: 12px 16px; border-radius: 12px; border: 1.5px solid var(--line); font-family: var(--body); font-size: 15px; color: var(--ink); background: var(--bg); outline: none; transition: border-color .2s; margin-bottom: 12px; box-sizing: border-box; }
+.upload-field:focus { border-color: var(--adopt-rose); }
+.upload-anon { display: flex; align-items: center; gap: 10px; font-size: 14px; color: var(--ink-2); margin-bottom: 20px; cursor: pointer; }
+.upload-anon input[type=checkbox] { accent-color: var(--adopt-rose); width: 16px; height: 16px; }
+.upload-charcount { font-size: 12px; color: var(--ink-soft); text-align: right; margin-top: -8px; margin-bottom: 12px; }
+.upload-success { text-align: center; padding: 20px 0; }
+.upload-success .check { width: 64px; height: 64px; border-radius: 50%; background: var(--adopt-light); display: grid; place-items: center; margin: 0 auto 16px; font-size: 28px; }
+@media(max-width:540px){ .upload-modal { padding: 24px; } .stories-grid { grid-template-columns: 1fr; } }
+</style>
+<script src="shared-header.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.js"></script>
+</head>
+<body>
+<site-header></site-header>
+<div id="root"></div>
+<script type="text/babel" src="shelter-data.jsx"></script>
+<script type="text/babel">
+
+const { useState, useMemo, useEffect, useRef } = React;
+
+const T = {
+  hero_title: ['Adopta con', 'Adopt with'],
+  hero_em: ['corazón', 'heart'],
+  hero_p: ['En BPuppy creemos que cada mascota merece un hogar. Te conectamos con refugios locales de confianza en todo Estados Unidos para que encuentres a tu próximo compañero.',
+            'At BPuppy we believe every pet deserves a home. We connect you with trusted local shelters across the United States so you can find your next companion.'],
+  back: ['← Volver al inicio', '← Back to home'],
+  story_eye: ['Nuestra historia con el rescate', 'Our rescue story'],
+  story_h: ['Más de una década', 'Over a decade'],
+  story_em: ['rescatando vidas.', 'saving lives.'],
+  story_p1: ['A lo largo de nuestros 13+ años conectando familias con cachorros de raza, también hemos dedicado tiempo y recursos a rescatar mascotas en situación de abandono. Hemos colaborado con refugios en múltiples estados, ayudando a colocar perros y gatos en hogares amorosos.',
+              'Throughout our 13+ years connecting families with purebred puppies, we have also dedicated time and resources to rescuing abandoned pets. We have partnered with shelters in multiple states, helping place dogs and cats in loving homes.'],
+  story_p2: ['Nuestra labor ha sido y sigue siendo la de servir como puente entre las personas que buscan adoptar y los refugios que cuidan de estos animales. Conocemos de primera mano las necesidades de cada familia y eso nos permite orientarte hacia el refugio y la mascota que mejor se adapten a tu hogar.',
+              'Our role has been and continues to be serving as a bridge between people looking to adopt and the shelters that care for these animals. We understand each family\'s needs firsthand and can guide you to the right shelter and pet for your home.'],
+  story_p3: ['Hoy seguimos comprometidos con esa misión. Si rescatar es tu camino, estamos aquí para ayudarte a encontrar el lugar correcto.',
+              'Today we remain committed to that mission. If rescue is your path, we are here to help you find the right place.'],
+  disc: ['BPuppy actúa como colaborador dirigiendo a las personas hacia refugios locales de confianza. No somos responsables del proceso de adopción, las tarifas ni las condiciones de cada refugio. Cada organización establece sus propios requisitos, tarifas de adopción y procedimientos. Te recomendamos contactar directamente al refugio de tu interés para conocer los detalles.',
+         'BPuppy acts as a collaborator directing people to trusted local shelters. We are not responsible for the adoption process, fees, or conditions of each shelter. Each organization sets its own requirements, adoption fees, and procedures. We recommend contacting the shelter of interest directly for details.'],
+  disc_label: ['Nota importante:', 'Important note:'],
+  finder_eye: ['Directorio de refugios', 'Shelter directory'],
+  finder_h: ['Encuentra un refugio', 'Find a shelter'],
+  finder_em: ['cerca de ti.', 'near you.'],
+  finder_p: ['Hemos recopilado refugios de confianza en los 50 estados. Selecciona tu estado para ver las opciones disponibles, o busca por ciudad.',
+              'We\'ve compiled trusted shelters across all 50 states. Select your state to see available options, or search by city.'],
+  select_ph: ['Selecciona un estado...', 'Select a state...'],
+  select_all: ['Todos los estados', 'All states'],
+  city_ph: ['Buscar por ciudad...', 'Search by city...'],
+  empty: ['Selecciona un estado para ver refugios disponibles.', 'Select a state to see available shelters.'],
+  no_match: ['No se encontraron refugios con ese filtro.', 'No shelters found with that filter.'],
+  coming_badge: ['Próximamente', 'Coming soon'],
+  coming_h: ['Mascotas en adopción', 'Pets for adoption'],
+  coming_em: ['directamente aquí.', 'right here.'],
+  coming_p: ['Si en algún momento tenemos mascotas propias disponibles para adopción, las publicaremos en esta sección para que puedas conocerlas directamente. Mientras tanto, te invitamos a explorar los refugios listados arriba.',
+              'If we ever have our own pets available for adoption, we will publish them in this section so you can meet them directly. In the meantime, we invite you to explore the shelters listed above.'],
+  cta_h: ['¿Necesitas ayuda para', 'Need help'],
+  cta_em: ['encontrar un refugio?', 'finding a shelter?'],
+  cta_p: ['Escríbenos y te orientamos según tu ubicación y lo que buscas. Estamos para ayudarte a encontrar a tu próximo compañero.',
+           'Write to us and we\'ll guide you based on your location and what you\'re looking for. We\'re here to help you find your next companion.'],
+  wa: ['Escríbenos por WhatsApp', 'Write us on WhatsApp'],
+  call: ['Llámanos · (808) 492-8294', 'Call us · (808) 492-8294'],
+  nav_inicio: ['Inicio', 'Home'],
+  nav_cachorros: ['Cachorros', 'Puppies'],
+  nav_gatos: ['Gatos', 'Cats'],
+  nav_adopciones: ['Adopciones', 'Adoptions'],
+  nav_social: ['Social', 'Social'],
+  nav_cta: ['Ver disponibles', 'See available'],
+  foot: ['© 2026 BPuppy · Cachorros criados con amor en hogares de familia.', '© 2026 BPuppy · Puppies raised with love in family homes.'],
+};
+
+
+/* ─── Supabase client ───────────────────────────────────
+   SQL to run in Supabase SQL Editor before using this feature:
+   
+   CREATE TABLE IF NOT EXISTS adoptions (
+     id uuid primary key default gen_random_uuid(),
+     created_at timestamptz default now(),
+     pet_name text not null,
+     story text,
+     submitter_name text,
+     is_anonymous boolean default false,
+     photo_url text,
+     approved boolean default true
+   );
+   ALTER TABLE adoptions ENABLE ROW LEVEL SECURITY;
+   CREATE POLICY "public_read" ON adoptions FOR SELECT USING (approved = true);
+   CREATE POLICY "public_insert" ON adoptions FOR INSERT WITH CHECK (true);
+   
+   Also create a Storage bucket named "adoption-photos" set to Public.
+─────────────────────────────────────────────────────── */
+const SUPA_URL = 'https://oqqwmcplljirbreowrll.supabase.co';
+const SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+const supa = window.supabase ? window.supabase.createClient(SUPA_URL, SUPA_KEY) : null;
+
+/* ─── Placeholder stories (shown while Supabase table is empty) ─── */
+const PLACEHOLDER_STORIES = [
+  { id:'p1', pet_name:'Luna', story:'La encontramos en el refugio Miami Humane Society. Llegó tímida pero hoy es la reina de la casa.', submitter_name:null, is_anonymous:true, photo_url:null, created_at:'2026-03-10' },
+  { id:'p2', pet_name:'Milo', story:'Adoptamos a Milo de PAWS Chicago. No podemos imaginar la vida sin él. Tiene una sonrisa que ilumina todo.', submitter_name:'Familia González', is_anonymous:false, photo_url:null, created_at:'2026-04-02' },
+  { id:'p3', pet_name:'Bella', story:'Rescue de Austin Pets Alive! Bella llegó asustada. Hoy corre libre en el jardín cada mañana.', submitter_name:'Sarah M.', is_anonymous:false, photo_url:null, created_at:'2026-04-18' },
+];
+
+/* ─── Upload Modal ─────────────────────────────────────── */
+function UploadModal({ onClose, onSuccess, lang }) {
+  const tl2 = (es, en) => lang === 'en' ? en : es;
+  const [petName, setPetName] = useState('');
+  const [story, setStory] = useState('');
+  const [name, setName] = useState('');
+  const [anon, setAnon] = useState(false);
+  const [preview, setPreview] = useState(null);
+  const [file, setFile] = useState(null);
+  const [loading, setLoading] = useState(false);
+  const [success, setSuccess] = useState(false);
+  const [error, setError] = useState('');
+  const [drag, setDrag] = useState(false);
+  const fileRef = useRef();
+
+  const handleFile = (f) => {
+    if (!f || !f.type.startsWith('image/')) return;
+    setFile(f);
+    const reader = new FileReader();
+    reader.onload = e => setPreview(e.target.result);
+    reader.readAsDataURL(f);
+  };
+
+  const handleDrop = (e) => {
+    e.preventDefault(); setDrag(false);
+    handleFile(e.dataTransfer.files[0]);
+  };
+
+  const handleSubmit = async () => {
+    if (!petName.trim()) { setError(tl2('El nombre de tu mascota es requerido.','Pet name is required.')); return; }
+    setLoading(true); setError('');
+    try {
+      let photo_url = null;
+      if (file && supa) {
+        const ext = file.name.split('.').pop();
+        const path = `${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+        const { data: up, error: upErr } = await supa.storage.from('adoption-photos').upload(path, file, { cacheControl:'3600', upsert:false });
+        if (upErr) throw upErr;
+        const { data: pub } = supa.storage.from('adoption-photos').getPublicUrl(path);
+        photo_url = pub.publicUrl;
+      }
+      if (supa) {
+        const { error: insErr } = await supa.from('adoptions').insert({
+          pet_name: petName.trim(),
+          story: story.trim() || null,
+          submitter_name: anon ? null : (name.trim() || null),
+          is_anonymous: anon,
+          photo_url,
+          approved: true,
+        });
+        if (insErr) throw insErr;
+      }
+      setSuccess(true);
+      setTimeout(() => { onSuccess && onSuccess({ pet_name: petName, story, submitter_name: anon ? null : name, is_anonymous: anon, photo_url: preview, created_at: new Date().toISOString() }); onClose(); }, 2200);
+    } catch(e) {
+      setError(tl2('Error al enviar. Intenta de nuevo.','Error submitting. Please try again.'));
+    } finally { setLoading(false); }
+  };
+
+  return (
+    <div className="upload-overlay" onClick={e=>{ if(e.target===e.currentTarget) onClose(); }}>
+      <div className="upload-modal">
+        <button className="upload-close" onClick={onClose}>✕</button>
+        {success ? (
+          <div className="upload-success">
+            <div className="check">✓</div>
+            <h3 style={{fontFamily:'var(--display)',fontSize:24,fontWeight:600,letterSpacing:'-.02em',margin:'0 0 8px'}}>{tl2('¡Gracias por compartir!','Thank you for sharing!')}</h3>
+            <p style={{color:'var(--ink-2)',fontSize:15}}>{tl2('Tu historia ya es parte de nuestra comunidad.','Your story is now part of our community.')}</p>
+          </div>
+        ) : (
+          <>
+            <h3>{tl2('Comparte tu historia','Share your story')}</h3>
+            <p className="sub">{tl2('Inspira a otros mostrando a tu mascota adoptada. Puedes hacerlo de forma anónima.','Inspire others by showing your adopted pet. You can do it anonymously.')}</p>
+
+            <div className={`upload-drop ${drag?'over':''}`}
+              onClick={()=>fileRef.current.click()}
+              onDragOver={e=>{e.preventDefault();setDrag(true)}}
+              onDragLeave={()=>setDrag(false)}
+              onDrop={handleDrop}>
+              <input ref={fileRef} type="file" accept="image/*" style={{display:'none'}} onChange={e=>handleFile(e.target.files[0])}/>
+              {preview
+                ? <img src={preview} alt="preview"/>
+                : <div className="upload-drop-hint"><svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" style={{color:'var(--adopt-rose)',marginBottom:6}}><rect x="3" y="3" width="18" height="18" rx="4"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg><div><strong>{tl2('Sube la foto de tu mascota','Upload your pet photo')}</strong></div><div style={{fontSize:12,marginTop:4,color:'var(--ink-soft)'}}>{tl2('JPG, PNG — máx 5MB','JPG, PNG — max 5MB')}</div></div>}
+            </div>
+
+            <input className="upload-field" type="text" placeholder={tl2('Nombre de tu mascota *','Pet name *')} value={petName} onChange={e=>setPetName(e.target.value)} maxLength={50}/>
+            <textarea className="upload-field" style={{resize:'vertical',minHeight:90}} placeholder={tl2('Cuenta su historia (opcional)...','Tell their story (optional)...')} value={story} onChange={e=>setStory(e.target.value.slice(0,280))} maxLength={280}/>
+            <div className="upload-charcount">{story.length}/280</div>
+
+            <label className="upload-anon">
+              <input type="checkbox" checked={anon} onChange={e=>setAnon(e.target.checked)}/>
+              {tl2('Publicar de forma anónima','Post anonymously')}
+            </label>
+
+            {!anon && <input className="upload-field" type="text" placeholder={tl2('Tu nombre (opcional)','Your name (optional)')} value={name} onChange={e=>setName(e.target.value)} maxLength={60}/>}
+
+            {error && <p style={{color:'#c0392b',fontSize:13,marginBottom:12}}>{error}</p>}
+
+            <button className="btn btn-primary" style={{background:'var(--adopt-rose)',boxShadow:'0 8px 24px -8px rgba(232,93,117,.45)',width:'100%',justifyContent:'center'}} onClick={handleSubmit} disabled={loading}>
+              {loading ? tl2('Enviando...','Sending...') : tl2('Publicar mi historia','Post my story')}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
+/* ─── Community Stories section ─────────────────────────── */
+function CommunityStories({ lang }) {
+  const tl2 = (es, en) => lang === 'en' ? en : es;
+  const [stories, setStories] = useState(PLACEHOLDER_STORIES);
+  const [showModal, setShowModal] = useState(false);
+
+  useEffect(() => {
+    if (!supa) return;
+    supa.from('adoptions').select('*').eq('approved', true).order('created_at', { ascending: false }).limit(12)
+      .then(({ data }) => { if (data && data.length > 0) setStories(data); });
+  }, []);
+
+  const addStory = (s) => setStories(prev => [{ ...s, id: Date.now() }, ...prev]);
+  const fmtDate = (d) => new Date(d).toLocaleDateString(lang === 'en' ? 'en-US' : 'es-US', { month: 'short', year: 'numeric' });
+
+  return (
+    <section className="adopt-stories">
+      <div className="container">
+        <div className="stories-header">
+          <div>
+            <div className="eyebrow" style={{color:'var(--adopt-rose)'}}>{tl2('Comunidad','Community')}</div>
+            <h2 className="display" style={{fontSize:'clamp(32px,4vw,52px)',margin:'10px 0 0'}}>{tl2('Historias de','Stories of')} <em className="serif-italic" style={{color:'var(--adopt-rose)'}}>{tl2('adopción.','adoption.')}</em></h2>
+            <p style={{color:'var(--ink-2)',fontSize:16,marginTop:12,maxWidth:'48ch'}}>{tl2('Cada foto es una segunda oportunidad. Inspira a otros compartiendo a tu mascota adoptada.','Every photo is a second chance. Inspire others by sharing your adopted pet.')}</p>
+          </div>
+          <button className="btn btn-primary" style={{background:'var(--adopt-rose)',boxShadow:'0 8px 24px -8px rgba(232,93,117,.45)',flexShrink:0}} onClick={()=>setShowModal(true)}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+            {tl2('Comparte tu historia','Share your story')}
+          </button>
+        </div>
+
+        <div className="stories-grid">
+          {stories.map(s => (
+            <div key={s.id} className="story-card">
+              <div className="story-card-photo">
+                {s.photo_url
+                  ? <img src={s.photo_url} alt={s.pet_name} loading="lazy"/>
+                  : <div className="story-card-photo-ph">{s.pet_name.charAt(0)}</div>}
+              </div>
+              <div className="story-card-body">
+                <div className="story-card-pet">{s.pet_name}</div>
+                {s.story && <p className="story-card-text">{s.story}</p>}
+                <div className="story-card-meta">
+                  <span>{s.is_anonymous || !s.submitter_name ? tl2('Anónimo','Anonymous') : s.submitter_name}</span>
+                  <span>·</span>
+                  <span>{fmtDate(s.created_at)}</span>
+                  <span className="story-card-badge">{tl2('Adoptado','Adopted')}</span>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+      {showModal && <UploadModal onClose={()=>setShowModal(false)} onSuccess={addStory} lang={lang}/>}
+    </section>
+  );
+}
+
+function AdopcionesApp() {
+  const [lang, setLang] = useState(localStorage.getItem('bpuppy-lang') || 'es');
+  useEffect(() => {
+    const h = e => setLang(e.detail);
+    window.addEventListener('bpuppy-lang-change', h);
+    return () => window.removeEventListener('bpuppy-lang-change', h);
+  }, []);
+  const t = (arr) => Array.isArray(arr) ? (lang === 'en' ? (arr[1] || arr[0]) : arr[0]) : arr;
+
+  const DEFAULT_STATES = ['Florida','Texas','California','New York','Georgia','Illinois','North Carolina','Washington'];
+  const [state, setState] = useState('__default__');
+  const [cityFilter, setCityFilter] = useState('');
+
+  const filteredData = useMemo(() => {
+    let entries;
+    if (state === '__default__') {
+      entries = DEFAULT_STATES.map(s => [s, SHELTERS_BY_STATE[s] || []]);
+    } else if (state === '__all__') {
+      entries = US_STATES.map(s => [s, SHELTERS_BY_STATE[s]]);
+    } else if (state) {
+      entries = [[state, SHELTERS_BY_STATE[state] || []]];
+    } else {
+      entries = DEFAULT_STATES.map(s => [s, SHELTERS_BY_STATE[s] || []]);
+    }
+
+    if (cityFilter.trim()) {
+      const q = cityFilter.trim().toLowerCase();
+      entries = entries.map(([s, shelters]) => [s, shelters.filter(sh => sh.city.toLowerCase().includes(q) || sh.name.toLowerCase().includes(q))]).filter(([, shelters]) => shelters.length > 0);
+    }
+
+    return entries;
+  }, [state, cityFilter]);
+
+  return (
+    <>
+
+      {/* Hero */}
+      <section className="page-hero">
+        <div className="paw-deco paw-deco-1"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="72" rx="28" ry="22" fill="currentColor"/><ellipse cx="32" cy="48" rx="12" ry="16" fill="currentColor"/><ellipse cx="88" cy="48" rx="12" ry="16" fill="currentColor"/><ellipse cx="42" cy="28" rx="10" ry="14" fill="currentColor"/><ellipse cx="78" cy="28" rx="10" ry="14" fill="currentColor"/></svg></div>
+        <div className="paw-deco paw-deco-2"><svg viewBox="0 0 120 120"><ellipse cx="60" cy="72" rx="28" ry="22" fill="currentColor"/><ellipse cx="32" cy="48" rx="12" ry="16" fill="currentColor"/><ellipse cx="88" cy="48" rx="12" ry="16" fill="currentColor"/><ellipse cx="42" cy="28" rx="10" ry="14" fill="currentColor"/><ellipse cx="78" cy="28" rx="10" ry="14" fill="currentColor"/></svg></div>
+        <div className="container">
+          <a href="Home.html" className="back-link">{t(T.back)}</a>
+          <h1>{t(T.hero_title)} <em>{t(T.hero_em)}</em></h1>
+          <p>{t(T.hero_p)}</p>
+        </div>
+      </section>
+
+      {/* Our story */}
+      <section className="our-story">
+        <div className="container">
+          <div className="story-grid">
+            <div>
+              <div className="eyebrow" style={{ color: 'var(--adopt-rose)' }}>{t(T.story_eye)}</div>
+              <h2 className="display" style={{ fontSize: 'clamp(32px,4vw,48px)', margin: '12px 0 20px' }}>{t(T.story_h)} <em className="serif-italic" style={{ color: 'var(--adopt-rose)' }}>{t(T.story_em)}</em></h2>
+              <p style={{ fontSize: 17, lineHeight: 1.65, color: 'var(--ink-2)', margin: '0 0 16px' }}>{t(T.story_p1)}</p>
+              <p style={{ fontSize: 17, lineHeight: 1.65, color: 'var(--ink-2)', margin: '0 0 16px' }}>{t(T.story_p2)}</p>
+              <p style={{ fontSize: 17, lineHeight: 1.65, color: 'var(--ink-2)', margin: 0 }}>{t(T.story_p3)}</p>
+            </div>
+            <div className="story-visual">
+              <img src="uploads/Adopt.webp" alt="Familia con perro rescatado" />
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Disclaimer */}
+      <section className="disclaimer-bar">
+        <div className="container">
+          <div className="disclaimer-inner">
+            <div className="disclaimer-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div>
+            <p><strong>{t(T.disc_label)}</strong> {t(T.disc)}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* Shelter finder */}
+      <section className="shelter-finder">
+        <div className="container">
+          <div className="eyebrow" style={{ color: 'var(--adopt-rose)' }}>{t(T.finder_eye)}</div>
+          <h2 className="display" style={{ fontSize: 'clamp(32px,4vw,56px)', margin: '12px 0 8px' }}>{t(T.finder_h)} <em className="serif-italic" style={{ color: 'var(--adopt-rose)' }}>{t(T.finder_em)}</em></h2>
+          <p style={{ color: 'var(--ink-2)', maxWidth: '56ch', margin: 0, fontSize: 17, lineHeight: 1.55 }}>{t(T.finder_p)}</p>
+
+          <div className="finder-controls">
+            <select className="finder-select" value={state} onChange={e => { setState(e.target.value); setCityFilter(''); }}>
+              <option value="__default__">{lang === 'en' ? '8 main states' : '8 estados principales'}</option>
+              <option value="__all__">{t(T.select_all)}</option>
+              <option disabled="">──────────────</option>
+              {US_STATES.map(s => <option key={s} value={s}>{s}</option>)}
+            </select>
+            {state && (
+              <input className="finder-city-filter" type="text" placeholder={t(T.city_ph)} value={cityFilter} onChange={e => setCityFilter(e.target.value)} />
+            )}
+          </div>
+
+          <div className="shelter-results">
+            {filteredData && filteredData.length === 0 && (
+              <div className="shelter-empty">{t(T.no_match)}</div>
+            )}
+            {filteredData && filteredData.map(([stateName, shelters]) => (
+              <div key={stateName}>
+                <div className="shelter-state-label">
+                  {stateName}
+                  <span className="shelter-count">{shelters.length}</span>
+                </div>
+                <div className="shelter-grid">
+                  {shelters.map((sh, i) => (
+                    <a key={i} href={sh.url} target="_blank" rel="noreferrer" className="shelter-card">
+                      <div className="shelter-card-icon"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div>
+                      <div className="shelter-card-info">
+                        <h4>{sh.name}</h4>
+                        <span className="shelter-city">{sh.city}</span>
+                        {sh.phone && <div className="shelter-phone">{sh.phone}</div>}
+                      </div>
+                      <div className="shelter-card-arrow">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M7 17L17 7M17 7H7M17 7v10"/></svg>
+                      </div>
+                    </a>
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Community Adoption Stories */}
+      <CommunityStories lang={lang}/>
+
+      {/* Coming soon */}
+      <section className="coming-soon">
+        <div className="container">
+          <div className="coming-inner">
+            <div className="coming-badge">{t(T.coming_badge)}</div>
+            <h2 className="display" style={{ fontSize: 'clamp(28px,4vw,42px)', margin: '0 0 16px' }}>{t(T.coming_h)} <em className="serif-italic" style={{ color: 'var(--adopt-rose)' }}>{t(T.coming_em)}</em></h2>
+            <p style={{ color: 'var(--ink-2)', fontSize: 17, lineHeight: 1.6, margin: 0 }}>{t(T.coming_p)}</p>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA */}
+      <section className="adopt-cta">
+        <div className="container">
+          <h2>{t(T.cta_h)} <em>{t(T.cta_em)}</em></h2>
+          <p style={{ maxWidth: '48ch', margin: '0 auto 28px' }}>{t(T.cta_p)}</p>
+          <div style={{ display: 'flex', gap: 14, justifyContent: 'center', flexWrap: 'wrap' }}>
+            <a href="https://wa.me/18084928294" target="_blank" rel="noreferrer" className="btn btn-primary" style={{ background: 'var(--adopt-rose)', boxShadow: '0 8px 24px -8px rgba(232,93,117,0.5)' }}>{t(T.wa)}</a>
+            <a href="tel:+18084928294" className="btn" style={{ background: 'rgba(255,255,255,.15)', color: '#fff', border: '1px solid rgba(255,255,255,.3)' }}>{t(T.call)}</a>
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="foot">
+        <div className="container foot-row">
+          <div className="foot-logo"><img src="assets/logo-clean.png" alt="" /><span>BPuppy</span></div>
+          <p>{t(T.foot)}</p>
+          <div className="foot-links"><a href="Home.html">{t(T.nav_inicio)}</a><a href="Cachorros.html">{t(T.nav_cachorros)}</a><a href="Gatos.html">{t(T.nav_gatos)}</a><a href="Social.html">{t(T.nav_social)}</a><a href="Garantia.html">{t(['Garantía','Guarantee'])}</a></div>
+        </div>
+      </footer>
+    </>
+  );
+}
+
+function AdopcionesRoot() {
+  const isLive = useSitePublish('Adopciones');
+  if (!isLive) return <ComingSoon pageName="Adopciones"/>;
+  return <AdopcionesApp/>;
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<AdopcionesRoot/>);
+</script>
+
+<script src="site-animations.js"></script>
+<script src="claude-bridge.js"></script>
+<script type="text/babel" src="chat-widget.jsx"></script>
+</body>
+</html>

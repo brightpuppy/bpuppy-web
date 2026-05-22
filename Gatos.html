@@ -1,0 +1,394 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BPuppy — Gatitos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="styles.css">
+<script src="site-publish.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root { --cat-purple: #7C5CBF; --cat-light: #F3EEFA; --cat-mid: #E8D5F0; }
+
+/* Page hero */
+.page-hero { background: linear-gradient(135deg, #6B4FA8 0%, #4A3580 100%); color: #fff; padding: 140px 0 80px; position: relative; overflow: hidden; }
+.page-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(60% 70% at 80% 20%, rgba(255,255,255,0.08), transparent 60%); pointer-events:none; }
+.page-hero .container { position: relative; z-index: 2; }
+.page-hero .back { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:rgba(255,255,255,0.6); margin-bottom:28px; transition:color .2s; }
+.page-hero .back:hover { color:#fff; }
+.page-hero h1 { font-family:var(--display); font-size:clamp(42px,7vw,88px); font-weight:600; letter-spacing:-0.03em; line-height:0.95; margin:0 0 20px; }
+.page-hero h1 em { font-family:var(--serif); font-style:italic; color:#E8D5F0; font-weight:400; }
+.page-hero p { color:rgba(255,255,255,0.75); font-size:18px; max-width:54ch; line-height:1.55; margin:0; }
+
+/* Decorative cat silhouettes */
+.cat-deco { position: absolute; z-index: 1; opacity: 0.06; pointer-events: none; }
+.cat-deco svg { width: 100%; height: 100%; }
+.cat-deco-1 { top: 10%; right: 5%; width: 280px; height: 280px; animation: catFloat 8s ease-in-out infinite; }
+.cat-deco-2 { bottom: -5%; left: 8%; width: 200px; height: 200px; animation: catFloat 10s ease-in-out infinite reverse; }
+@keyframes catFloat { 0%,100% { transform: translateY(0) rotate(0deg); } 50% { transform: translateY(-12px) rotate(3deg); } }
+
+/* Cat grid */
+.cat-sec { padding: 80px 0; background: var(--bg); position: relative; overflow: hidden; }
+.cat-sec::before {
+  content: ""; position: absolute; top: 50%; right: -80px;
+  width: 400px; height: 400px; border-radius: 50%;
+  background: radial-gradient(circle, var(--cat-light) 0%, transparent 70%);
+  opacity: 0.6; pointer-events: none;
+}
+.cat-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:22px; margin-top:48px; position: relative; z-index: 1; }
+.cat-card { border-radius:22px; background:var(--paper); border:1px solid var(--line); overflow:hidden; transition:transform .35s, box-shadow .35s; cursor:pointer; position: relative; }
+.cat-card:hover { transform:translateY(-6px); box-shadow: 0 20px 50px -15px rgba(124,92,191,0.25); }
+.cat-card-img { aspect-ratio:4/3; background: linear-gradient(135deg, var(--cat-light), var(--cat-mid)); display:grid; place-items:center; position:relative; overflow: hidden; }
+.cat-card-img .ph { font-size:48px; z-index: 1; filter: drop-shadow(0 4px 12px rgba(124,92,191,0.2)); }
+.cat-card-img .badge { position:absolute; top:14px; left:14px; padding:5px 12px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:0.04em; background: var(--cat-purple); color:#fff; z-index: 2; }
+
+/* Cat shadow playing behind cards */
+.cat-card-img::after {
+  content: "";
+  position: absolute; bottom: 8px; right: 12px;
+  width: 80px; height: 60px;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 80 60'%3E%3Cpath d='M15 55 Q10 40 18 30 Q22 25 20 15 L25 8 Q28 14 30 18 L35 8 Q38 16 36 22 Q45 18 55 22 Q62 26 60 35 Q72 32 75 40 Q78 48 70 52 Q62 56 50 55 Z' fill='%237C5CBF' opacity='0.08'/%3E%3Ccircle cx='58' cy='50' r='4' fill='%237C5CBF' opacity='0.06'/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  opacity: 0.7;
+  transition: transform .4s ease;
+}
+.cat-card:hover .cat-card-img::after { transform: translateX(4px) scale(1.05); }
+
+.cat-card-body { padding:22px; }
+.cat-card-body h3 { font-family:var(--display); font-size:22px; font-weight:600; letter-spacing:-0.015em; margin:0 0 4px; }
+.cat-card-body .breed { font-size:13px; color:var(--cat-purple); font-weight:600; }
+.cat-card-body .meta { font-size:13px; color:var(--ink-soft); margin-top:8px; display:flex; gap:14px; }
+.cat-card-body .price { font-family:var(--display); font-size:18px; font-weight:600; color:var(--ink); margin-top:10px; }
+
+/* Info section */
+.cat-info { padding: 100px 0; background: var(--cat-light); position: relative; overflow: hidden; }
+.cat-info-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-top: 48px; }
+.cat-info-visual { aspect-ratio: 1; border-radius: 28px; background: linear-gradient(135deg, var(--cat-mid), #D4BFEE); display: grid; place-items: center; position: relative; overflow: hidden; }
+.cat-info-visual .big-emoji { font-size: 120px; filter: drop-shadow(0 8px 24px rgba(124,92,191,0.15)); animation: catFloat 6s ease-in-out infinite; }
+
+/* Breeds section */
+.breeds-sec { padding: 100px 0; background: var(--paper); border-top: 1px solid var(--line); }
+.breed-chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; justify-content: center; }
+.breed-chip {
+  padding: 14px 24px; border-radius: 999px;
+  background: var(--cat-light); border: 1.5px solid var(--cat-mid);
+  font-size: 15px; font-weight: 600; color: var(--cat-purple);
+  display: flex; align-items: center; gap: 10px;
+  transition: all .25s;
+}
+.breed-chip:hover { background: var(--cat-purple); color: #fff; border-color: var(--cat-purple); transform: translateY(-2px); }
+.breed-chip .chip-emoji { font-size: 20px; }
+
+.back-cta { padding: 80px 0; text-align: center; background: linear-gradient(135deg, #6B4FA8 0%, #4A3580 100%); color: #fff; }
+/* Filter bar */
+.pup-filter-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap;background:#fff;border:1px solid var(--line);border-radius:12px;padding:14px 18px;margin-bottom:28px;position:relative;z-index:2}
+.pf-label{font-size:11px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--cat-purple,#7C5CBF);flex-shrink:0}
+.pf-select{padding:8px 30px 8px 12px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink);background:#fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%237C5CBF' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;-webkit-appearance:none;appearance:none;cursor:pointer}
+.pf-select:focus{border-color:var(--cat-purple,#7C5CBF);outline:none}
+.pf-search{flex:1;min-width:180px;display:flex;align-items:center;gap:8px;background:#F3EEFA;border-radius:8px;padding:8px 12px}
+.pf-search input{flex:1;border:none;background:none;outline:none;font-family:inherit;font-size:13px;color:var(--ink)}
+.pf-search input::placeholder{color:var(--ink-soft)}
+.pf-clear{background:none;border:1.5px solid var(--line);color:var(--ink-2);padding:7px 14px;border-radius:8px;cursor:pointer;font-size:12px;font-weight:600;font-family:inherit;transition:all .15s}
+.pf-clear:hover{border-color:var(--cat-purple);color:var(--cat-purple)}
+.pf-count{font-size:12px;font-weight:700;color:var(--cat-purple,#7C5CBF);white-space:nowrap}
+.back-cta h2 { color: #fff; }
+.back-cta em { color: #E8D5F0 !important; }
+.back-cta p { color: rgba(255,255,255,0.7); }
+
+@media (max-width:900px) { .cat-grid { grid-template-columns: 1fr 1fr; } .cat-info-grid { grid-template-columns: 1fr; } }
+@media (max-width:540px) { .cat-grid { grid-template-columns: 1fr; } }
+
+/* Lang toggle */
+.lang { display: flex; align-items: center; padding: 4px; border-radius: 999px; background: rgba(45,36,33,0.06); }
+.lang button { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-2); transition: all .2s; border: 0; background: none; cursor: pointer; font-family: inherit; }
+.lang button[data-active="true"] { background: var(--ink); color: var(--bg); }
+</style>
+<script src="shared-header.js"></script>
+</head>
+<body>
+<site-header></site-header>
+
+<!-- Hero -->
+<section class="page-hero">
+  <div class="cat-deco cat-deco-1">
+    <svg viewBox="0 0 200 200"><path d="M60 180 Q30 140 45 100 Q50 80 42 50 L55 20 Q65 40 70 55 L85 20 Q95 45 88 70 Q110 55 140 65 Q165 80 155 110 Q180 100 190 120 Q195 145 175 160 Q155 175 130 175 Q100 185 80 180 Z" fill="currentColor"/><circle cx="155" cy="150" r="12" fill="currentColor"/></svg>
+  </div>
+  <div class="cat-deco cat-deco-2">
+    <svg viewBox="0 0 160 120"><ellipse cx="80" cy="70" rx="50" ry="35" fill="currentColor"/><ellipse cx="50" cy="45" rx="15" ry="20" fill="currentColor"/><ellipse cx="110" cy="45" rx="15" ry="20" fill="currentColor"/><circle cx="130" cy="90" r="8" fill="currentColor"/></svg>
+  </div>
+  <div class="container">
+    <h1>Gatitos <em>adorables</em></h1>
+    <p>Gatitos de raza criados con cariño en hogares de familia. Cada uno con su documentación, vacunas al día y nuestra garantía de salud.</p>
+  </div>
+</section>
+
+<!-- Cat Grid -->
+<section class="cat-sec">
+  <div class="container">
+    <div class="sec-head" style="margin-bottom: 12px;">
+      <div>
+        <div class="eyebrow" style="color: var(--cat-purple);">Disponibles esta semana</div>
+        <h2 class="display" style="font-size: clamp(32px,4vw,56px); margin: 12px 0 0;">Gatitos listos <em class="serif-italic" style="color: var(--cat-purple);">para ti.</em></h2>
+      </div>
+      <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
+        <p style="color: var(--ink-2); max-width: 40ch;">Cada gatito viene con garantía de salud, vacunas y nuestro acompañamiento.</p>
+        <button onclick="openIntlShippingCat()" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:none;border:1.5px solid rgba(124,92,191,0.3);border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;color:var(--cat-purple,#7C5CBF);cursor:pointer;transition:all .2s">
+          ✈️ Solicitar envío internacional
+        </button>
+      </div>
+    </div>
+    <div class="pup-filter-bar">
+      <span class="pf-label">Filtrar:</span>
+      <select id="pf-breed" class="pf-select"><option value="">Todas las razas</option></select>
+      <select id="pf-sex" class="pf-select">
+        <option value="">Todos los sexos</option>
+        <option value="female">♀ Hembra</option>
+        <option value="male">♂ Macho</option>
+      </select>
+      <select id="pf-age" class="pf-select">
+        <option value="">Todas las edades</option>
+        <option value="0-8">0–8 semanas</option>
+        <option value="8-16">8–16 semanas</option>
+        <option value="16+">16+ semanas</option>
+      </select>
+      <select id="pf-color" class="pf-select"><option value="">Todos los colores</option></select>
+      <div class="pf-search">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
+        <input id="pf-search" type="text" placeholder="Buscar por nombre o raza…">
+      </div>
+      <button id="pf-clear" class="pf-clear">× Limpiar</button>
+      <span id="pf-count" class="pf-count"></span>
+    </div>
+    <div class="cat-grid" id="cat-grid">
+      <div id="cat-loading" style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--ink-soft)">
+        <div style="width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--cat-purple);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto 16px"></div>
+        <p style="font-size:15px;font-weight:600">Cargando gatitos…</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Info -->
+<section class="cat-info">
+  <div class="container">
+    <div class="cat-info-grid">
+      <div>
+        <div class="eyebrow" style="color: var(--cat-purple);">¿Por qué un gatito de raza?</div>
+        <h2 class="display" style="font-size: clamp(32px,4vw,48px); margin: 12px 0 20px;">Temperamento <em class="serif-italic" style="color: var(--cat-purple);">predecible.</em></h2>
+        <p style="font-size: 17px; line-height: 1.65; color: var(--ink-2); margin: 0 0 16px;">Elegir un gato de raza te permite anticipar su personalidad, nivel de actividad y necesidades de cuidado. Un Ragdoll será tranquilo y cariñoso, un Siamés será vocal y juguetón, un British Shorthair será independiente y calmado.</p>
+        <p style="font-size: 17px; line-height: 1.65; color: var(--ink-2); margin: 0 0 16px;">Cada gatito viene con su documentación completa, vacunas al día y nuestra garantía de salud — la misma atención y cuidado que damos a nuestros cachorros.</p>
+        <a href="Garantia.html" class="btn btn-dark" style="margin-top: 12px;">
+          Ver nuestra garantía
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+      <div class="cat-info-visual">
+        <div class="big-emoji">🐈</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- Breeds -->
+<section class="breeds-sec">
+  <div class="container" style="text-align: center;">
+    <div class="eyebrow" style="color: var(--cat-purple);">Razas que trabajamos</div>
+    <h2 class="display" style="font-size: clamp(32px,4vw,48px); margin: 12px 0 0;">Encuentra tu <em class="serif-italic" style="color: var(--cat-purple);">compañero felino.</em></h2>
+    <div class="breed-chips">
+      <div class="breed-chip"><span class="chip-emoji">🐱</span> Persa</div>
+      <div class="breed-chip"><span class="chip-emoji">🇬🇧</span> British Shorthair</div>
+      <div class="breed-chip"><span class="chip-emoji">💙</span> Ragdoll</div>
+      <div class="breed-chip"><span class="chip-emoji">🦁</span> Maine Coon</div>
+      <div class="breed-chip"><span class="chip-emoji">🔷</span> Siamés</div>
+      <div class="breed-chip"><span class="chip-emoji">🏴󠁧󠁢󠁳󠁣󠁴󠁿</span> Scottish Fold</div>
+      <div class="breed-chip"><span class="chip-emoji">🐾</span> Bengal</div>
+      <div class="breed-chip"><span class="chip-emoji">✨</span> Sphynx</div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="back-cta">
+  <div class="container">
+    <h2 class="display" style="font-size: clamp(32px,5vw,56px); margin: 0 0 16px;">¿Te gustaría conocer <em class="serif-italic">a tu gatito?</em></h2>
+    <p style="max-width: 44ch; margin: 0 auto 28px;">Escríbenos y te contamos todo sobre los gatitos disponibles. Sin prisa, sin compromiso.</p>
+    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://wa.me/18084928294" target="_blank" rel="noreferrer" class="btn btn-primary" style="background: var(--cat-purple); box-shadow: 0 8px 24px -8px rgba(124,92,191,0.5);">Escríbenos por WhatsApp</a>
+      <a href="tel:+18084928294" class="btn" style="background: rgba(255,255,255,.15); color: #fff; border: 1px solid rgba(255,255,255,.3);">Llámanos · (808) 492-8294</a>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="container foot-row">
+    <div class="foot-logo"><img src="assets/logo-clean.png" alt=""><span>BPuppy</span></div>
+    <p>© 2026 BPuppy · Cachorros y gatitos criados con amor.</p>
+    <div class="foot-links"><a href="Home.html">Inicio</a><a href="Cachorros.html">Cachorros</a><a href="Adopciones.html">Adopciones</a><a href="Social.html">Social</a><a href="Garantia.html">Garantía</a></div>
+  </div>
+</footer>
+
+
+<script src="site-animations.js"></script>
+<style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+<script>
+// Gatos — Supabase loader + filters
+(function(){
+  var SUPA_URL='https://oqqwmcplljirbreowrll.supabase.co';
+  var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+  var sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+  var ALL=[]; function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;');}
+  function getAge(p){var w=p.age_weeks||(p.birth_date?Math.floor((Date.now()-new Date(p.birth_date))/604800000):0);if(!w)return '';return w<16?w+' semanas':Math.floor(w/4)+' meses';}
+  function renderCard(p){
+    var photo=(Array.isArray(p.photos)&&p.photos[0])||p.photo_url||null;
+    var reserved=p.status==='reserved';
+    var age=getAge(p);var sex=p.gender==='female'?'Hembra':p.gender==='male'?'Macho':'';
+    var meta=[age,sex,p.color].filter(Boolean).map(function(s){return '<span>'+esc(s)+'</span>';}).join('');
+    return '<a class="cat-card" href="Puppy-Detalle.html?id='+esc(p.id)+'" style="text-decoration:none;color:inherit;display:block">'
+      +'<div class="cat-card-img" style="position:relative">'
+      +(reserved?'<span class="badge">Reservado</span>':'<span class="badge">Disponible</span>')
+      +(photo?'<img src="'+esc(photo)+'" alt="'+esc(p.name)+'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display=\'none\'">'  :'<div class="ph">🐱</div>')
+      +(p.price?'<div style="position:absolute;bottom:14px;right:14px;background:rgba(74,53,128,0.9);color:#fff;padding:6px 12px;border-radius:999px;font-weight:700;font-size:13px">$'+Number(p.price).toLocaleString()+'</div>':'')
+      +'</div><div class="cat-card-body"><h3>'+esc(p.name||'Sin nombre')+'</h3><div class="breed">'+esc(p.breed||'')+'</div>'+(meta?'<div class="meta">'+meta+'</div>':'')+'</div></a>';
+  }
+  function populate(list){
+    var breeds=[...new Set(list.map(function(p){return p.breed;}).filter(Boolean))].sort();
+    var colors=[...new Set(list.map(function(p){return p.color;}).filter(Boolean))].sort();
+    var bs=document.getElementById('pf-breed'),cs=document.getElementById('pf-color');
+    breeds.forEach(function(b){var o=document.createElement('option');o.value=b;o.textContent=b;bs.appendChild(o);});
+    colors.forEach(function(c){var o=document.createElement('option');o.value=c;o.textContent=c;cs.appendChild(o);});
+  }
+  function applyFilters(){
+    var breed=document.getElementById('pf-breed').value;
+    var sex=document.getElementById('pf-sex').value;
+    var age=document.getElementById('pf-age').value;
+    var color=document.getElementById('pf-color').value;
+    var q=(document.getElementById('pf-search').value||'').toLowerCase().trim();
+    var filtered=ALL.filter(function(p){
+      if(breed&&p.breed!==breed)return false;
+      if(sex&&p.gender!==sex)return false;
+      if(color&&p.color!==color)return false;
+      if(q){var h=((p.name||'')+' '+(p.breed||'')).toLowerCase();if(!h.includes(q))return false;}
+      if(age){var w=p.age_weeks||(p.birth_date?Math.floor((Date.now()-new Date(p.birth_date))/604800000):0);if(age==='0-8'&&w>8)return false;if(age==='8-16'&&(w<8||w>16))return false;if(age==='16+'&&w<16)return false;}
+      return true;
+    });
+    var g=document.getElementById('cat-grid'),cnt=document.getElementById('pf-count');
+    if(cnt)cnt.textContent=filtered.length+(filtered.length===1?' disponible':' disponibles');
+    g.innerHTML=filtered.length?filtered.map(renderCard).join(''):'<div style="grid-column:1/-1;text-align:center;padding:60px 24px;color:var(--ink-soft)"><p style="font-size:16px;font-weight:600">Ningún gatito coincide. <button onclick="clearCatFilters()" style="margin-top:12px;background:#7C5CBF;color:#fff;border:none;padding:10px 20px;border-radius:999px;font-weight:700;cursor:pointer">Limpiar</button></p></div>';
+  }
+  function clearCatFilters(){['pf-breed','pf-sex','pf-age','pf-color'].forEach(function(id){var el=document.getElementById(id);if(el)el.value='';});var s=document.getElementById('pf-search');if(s)s.value='';applyFilters();}
+  window.clearCatFilters=clearCatFilters;
+  async function load(){
+    var g=document.getElementById('cat-grid'),l=document.getElementById('cat-loading');
+    try{
+      var res=await sb.from('cats').select('*').in('status',['available','reserved']).order('created_at',{ascending:false});
+      if(res.error)throw res.error;
+      ALL=res.data||[];if(l)l.remove();
+      populate(ALL);applyFilters();
+      ['pf-breed','pf-sex','pf-age','pf-color'].forEach(function(id){var el=document.getElementById(id);if(el)el.addEventListener('change',applyFilters);});
+      var si=document.getElementById('pf-search');if(si)si.addEventListener('input',applyFilters);
+      var cl=document.getElementById('pf-clear');if(cl)cl.addEventListener('click',clearCatFilters);
+    }catch(e){if(l)l.innerHTML='<p style="color:var(--ink-soft);font-size:15px">Error al cargar gatitos. Por favor recarga la página.</p>';console.error(e);}
+  }
+  if(document.readyState==='loading'){document.addEventListener('DOMContentLoaded',load);}else{load();}
+})();
+// Back to top
+(function(){
+  var btn=document.createElement('button');
+  btn.innerHTML='↑';btn.setAttribute('aria-label','Volver arriba');
+  btn.style.cssText='position:fixed;bottom:24px;right:24px;z-index:998;width:44px;height:44px;border-radius:50%;background:var(--cat-purple,#7C5CBF);color:#fff;border:none;cursor:pointer;font-size:18px;display:none;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(124,92,191,0.4);';
+  document.body.appendChild(btn);
+  window.addEventListener('scroll',function(){btn.style.display=window.scrollY>400?'flex':'none';},{passive:true});
+  btn.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'});});
+})();
+// International shipping
+function openIntlShippingCat(){
+  var ov=document.getElementById('__intl-cat');
+  if(ov){ov.style.display='flex';return;}
+  ov=document.createElement('div');ov.id='__intl-cat';
+  ov.style.cssText='position:fixed;inset:0;z-index:9998;background:rgba(45,36,33,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;font-family:Plus Jakarta Sans,sans-serif';
+  ov.onclick=function(e){if(e.target===ov)ov.style.display='none';};
+  ov.innerHTML='<div style="background:#FFFCF6;border-radius:22px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;position:relative;padding:28px">'
+    +'<button onclick="document.getElementById(\'__intl-cat\').style.display=\'none\'" style="position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(45,36,33,0.12);background:none;cursor:pointer;font-size:18px">&#x00d7;</button>'
+    +'<div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#7C5CBF;margin-bottom:6px">Envío Internacional</div>'
+    +'<div style="font-family:Bricolage Grotesque,sans-serif;font-size:22px;font-weight:700;margin-bottom:8px;color:#2D2421">Llevamos a tu gatito donde estés</div>'
+    +'<p style="font-size:13px;color:#6B5A4E;margin-bottom:16px;line-height:1.65">Cuéntanos tu destino y te enviamos cotización + requisitos completos.</p>'
+    +'<div style="background:#F3EEFA;border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:#6B5A4E;line-height:1.6">'
+    +'<div style="font-weight:700;color:#7C5CBF;margin-bottom:8px">✓ Requisitos generales para gatos</div>'
+    +'✓ Certificado de salud (≤10 días antes del vuelo)<br>✓ Microchip ISO 11784/11785<br>✓ Vacuna antirrábica vigente<br>✓ Endoso USDA APHIS<br>✓ Permiso de importación (si aplica)<br>'
+    +'<em style="font-size:11px">* Los requisitos varían por país.</em></div>'
+    +'<div style="display:flex;flex-direction:column;gap:10px">'
+    +'<input id="ic-country" placeholder="País de destino *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none;background:#F3EEFA">'
+    +'<input id="ic-name" placeholder="Tu nombre *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">'
+    +'<input id="ic-email" type="email" placeholder="Email *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">'
+    +'<input id="ic-phone" type="tel" placeholder="Teléfono / WhatsApp *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">'
+    +'<button onclick="submitIntlCat()" style="width:100%;padding:13px;background:#7C5CBF;color:#fff;border:none;border-radius:999px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer">✈️ Solicitar cotización</button>'
+    +'</div></div>';
+  document.body.appendChild(ov);
+}
+window.openIntlShippingCat=openIntlShippingCat;
+async function submitIntlCat(){
+  var SU='https://oqqwmcplljirbreowrll.supabase.co',SK='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+  var g=function(id){var e=document.getElementById(id);return e?e.value.trim():'';};
+  if(!g('ic-country')||!g('ic-name')||!g('ic-email')||!g('ic-phone')){alert('Completa todos los campos.');return;}
+  try{
+    var sb2=supabase.createClient(SU,SK);
+    await sb2.from('website_leads').insert({full_name:g('ic-name'),email:g('ic-email'),phone:g('ic-phone'),message:'ENVÍO INTERNACIONAL GATO - País: '+g('ic-country'),source:'intl_shipping_cat'});
+    var m=document.getElementById('__intl-cat');if(m)m.querySelector('div').innerHTML='<div style="text-align:center;padding:40px 20px"><div style="font-size:52px;margin-bottom:16px">✈️</div><div style="font-family:Bricolage Grotesque,sans-serif;font-size:22px;font-weight:700;color:#2D2421;margin-bottom:8px">¡Solicitud recibida!</div><p style="color:#6B5A4E;font-size:14px;line-height:1.65">Te enviamos la cotización para '+g('ic-country')+' pronto.</p><button onclick="document.getElementById(\'__intl-cat\').style.display=\'none\'" style="margin-top:20px;background:#7C5CBF;color:#fff;border:none;padding:12px 24px;border-radius:999px;font-weight:700;cursor:pointer;font-family:inherit">Cerrar</button></div>';
+  }catch(err){alert('Error. Escíbenos por WhatsApp: +1 (808) 492-8294');}
+}
+window.submitIntlCat=submitIntlCat;
+</script>
+<script>
+// SitePublish visibility — Gatos
+(function(){
+  var PAGE = 'Gatos';
+  var SECTIONS = { hero: '.page-hero', listado: '.cat-sec' };
+  var OVERLAY_ID = '__bp-cs';
+
+  function comingSoonHTML(name) {
+    return '<div style="display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:80px 24px 40px;min-height:calc(100vh - 80px)">'
+      + '<div style="font-family:Bricolage Grotesque,sans-serif;font-size:clamp(72px,14vw,140px);font-weight:800;letter-spacing:-0.04em;color:transparent;-webkit-text-stroke:2px rgba(45,36,33,0.07);line-height:1;margin-bottom:24px;user-select:none">Pronto</div>'
+      + '<div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#FF5520;margin-bottom:14px">En preparación</div>'
+      + '<h1 style="font-family:Bricolage Grotesque,sans-serif;font-size:clamp(22px,3.5vw,38px);font-weight:700;letter-spacing:-0.02em;margin:0 0 14px;color:#2D2421">' + name + ' llega pronto</h1>'
+      + '<p style="color:#6B5A4E;line-height:1.65;margin-bottom:32px;max-width:38ch;font-size:15px">Estamos trabajando para traerte la mejor experiencia. Gracias por tu paciencia.</p>'
+      + '<a href="Home.html" style="display:inline-flex;align-items:center;gap:8px;background:#FF5520;color:#fff;font-weight:700;font-size:14px;padding:13px 26px;border-radius:999px;text-decoration:none;box-shadow:0 8px 24px -8px rgba(255,85,32,0.38)">← Volver al inicio</a>'
+      + '</div>';
+  }
+
+  function apply() {
+    var SP = window.SitePublish;
+    if (!SP) return;
+    var ov = document.getElementById(OVERLAY_ID);
+    if (!SP.isPageLive(PAGE)) {
+      if (!ov) {
+        ov = document.createElement('div');
+        ov.id = OVERLAY_ID;
+        ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:#FAFAF8;overflow-y:auto;padding-top:80px;font-family:Plus Jakarta Sans,sans-serif';
+        ov.innerHTML = comingSoonHTML('Gatos');
+        document.body.appendChild(ov);
+      }
+    } else {
+      if (ov) ov.remove();
+      Object.keys(SECTIONS).forEach(function(id) {
+        var el = document.querySelector(SECTIONS[id]);
+        if (el) el.style.display = SP.isSectionLive(PAGE, id) ? '' : 'none';
+      });
+    }
+  }
+
+  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', apply); }
+  else { apply(); }
+  window.addEventListener('bpuppy:publish', apply);
+})();
+</script>
+
+
+<script src="claude-bridge.js"></script>
+<script type="text/babel" src="chat-widget.jsx"></script>
+</body>
+</html>

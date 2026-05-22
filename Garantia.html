@@ -1,0 +1,288 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BPuppy — Nuestra Garantía</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="styles.css">
+<style>
+.page-hero {
+  background: var(--dark-sec, #5C4F48); color: var(--ink, #2D2421); padding: 140px 0 80px;
+  position: relative; overflow: hidden;
+}
+.page-hero::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(70% 80% at 80% 20%, rgba(245,130,32,0.06), transparent 60%);
+  pointer-events: none;
+}
+.page-hero .container { position: relative; z-index: 1; }
+.page-hero .back {
+  display: inline-flex; align-items: center; gap: 8px;
+  font-size: 13px; font-weight: 600; letter-spacing: 0.06em;
+  text-transform: uppercase; color: var(--ink-soft, rgba(45,36,33,0.62));
+  margin-bottom: 28px; transition: color .2s;
+}
+.page-hero .back:hover { color: var(--ink); }
+.page-hero h1 {
+  font-family: var(--display); font-size: clamp(42px,7vw,88px);
+  font-weight: 600; letter-spacing: -0.03em; line-height: 0.95;
+  margin: 0 0 20px; max-width: 18ch;
+}
+.page-hero h1 em { font-family: var(--serif); font-style: italic; color: var(--orange); font-weight: 400; }
+.page-hero p { color: var(--ink-2, #6B5A4E); font-size: 18px; max-width: 56ch; line-height: 1.55; margin: 0; }
+
+/* Overview */
+.g-overview { padding: 100px 0; background: var(--bg); }
+.g-overview-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-top: 48px; }
+.g-overview-img {
+  aspect-ratio: 1; border-radius: 24px; background: var(--accent-2);
+  display: grid; place-items: center; overflow: hidden; position: relative;
+}
+.g-overview-img .ic-big {
+  font-size: 80px; opacity: 0.4;
+}
+.g-overview p { font-size: 17px; line-height: 1.65; color: var(--ink-2); margin: 0 0 16px; }
+
+/* Guarantee cards */
+.g-cards-sec { padding: 100px 0; background: var(--paper); border-top: 1px solid var(--line); }
+.g-cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: 56px; }
+.g-card-item {
+  padding: 32px 24px; border-radius: 20px;
+  background: var(--bg); border: 1px solid var(--line);
+  transition: transform .3s, box-shadow .3s;
+}
+.g-card-item:hover { transform: translateY(-4px); box-shadow: var(--shadow-soft); }
+.g-card-icon {
+  width: 56px; height: 56px; border-radius: 16px;
+  background: var(--orange); color: #fff;
+  display: grid; place-items: center; margin-bottom: 20px;
+}
+.g-card-item h3 {
+  font-family: var(--display); font-size: 20px; font-weight: 600;
+  letter-spacing: -0.015em; margin: 0 0 10px;
+}
+.g-card-item p { font-size: 14.5px; line-height: 1.6; color: var(--ink-2); margin: 0; }
+
+/* Contract section */
+.contract-sec { padding: 100px 0; background: var(--dark-sec, #EDE4DA); color: var(--ink); position: relative; overflow: hidden; }
+.contract-sec::before {
+  content: ""; position: absolute; inset: 0;
+  background: radial-gradient(50% 70% at 0% 100%, rgba(245,130,32,0.06), transparent 60%);
+  pointer-events: none;
+}
+.contract-sec .container { position: relative; z-index: 1; }
+.contract-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-top: 48px; }
+.contract-grid p { color: var(--ink-2); font-size: 16px; line-height: 1.65; margin: 0 0 16px; }
+.contract-visual {
+  padding: 40px; border-radius: 20px;
+  background: var(--paper); border: 1px solid var(--line);
+}
+.contract-visual h4 { font-family: var(--display); font-size: 18px; margin: 0 0 20px; color: var(--orange); }
+.contract-item {
+  display: flex; align-items: flex-start; gap: 14px; padding: 14px 0;
+  border-bottom: 1px solid var(--line);
+}
+.contract-item:last-child { border: 0; }
+.contract-check {
+  width: 24px; height: 24px; border-radius: 50%;
+  background: var(--orange); color: #fff; flex-shrink: 0;
+  display: grid; place-items: center; font-size: 13px; font-weight: 700;
+}
+.contract-item span { font-size: 14.5px; color: var(--ink-2); }
+
+/* Safe home */
+.safe-sec { padding: 100px 0; background: var(--bg); }
+.safe-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center; margin-top: 48px; }
+.safe-sec p { font-size: 17px; line-height: 1.65; color: var(--ink-2); margin: 0 0 16px; }
+
+.back-cta { padding: 80px 0; text-align: center; background: var(--paper); border-top: 1px solid var(--line); }
+
+@media (max-width: 900px) {
+  .g-overview-grid, .contract-grid, .safe-grid { grid-template-columns: 1fr; }
+  .g-cards { grid-template-columns: 1fr; }
+}
+
+/* Lang toggle */
+.lang { display: flex; align-items: center; padding: 4px; border-radius: 999px; background: rgba(45,36,33,0.06); }
+.lang button { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-2); transition: all .2s; border: 0; background: none; cursor: pointer; font-family: inherit; }
+.lang button[data-active="true"] { background: var(--ink); color: var(--bg); }
+</style>
+<script src="shared-header.js"></script>
+</head>
+<body>
+<!-- ── Header ── -->
+<site-header></site-header>
+
+<!-- ── Hero ── -->
+<section class="page-hero">
+  <div class="container">
+    <a href="Home.html" class="back">← Volver al inicio</a>
+    <h1>Nuestra <em>garantía</em></h1>
+    <p>Cada cachorro que entregamos viene respaldado por un compromiso real: salud verificada, documentación completa y un contrato que te protege.</p>
+  </div>
+</section>
+
+<!-- ── Overview ── -->
+<section class="g-overview">
+  <div class="container">
+    <div class="eyebrow">Tu tranquilidad es primero</div>
+    <h2 class="display" style="font-size: clamp(36px,5vw,64px); margin: 12px 0 0;">Salud verificada, <em class="serif-italic">sin atajos.</em></h2>
+    <div class="g-overview-grid">
+      <div>
+        <p>Sabemos que llevar un cachorro a tu hogar es una decisión importante. Por eso, cada cachorro pasa por un proceso riguroso de verificación antes de viajar. No es solo un papel firmado — es nuestra promesa de que el cachorro que recibes está sano, vacunado, revisado y listo para una vida larga y feliz contigo.</p>
+        <p>Trabajamos con veterinarios certificados que realizan exámenes completos. Si algo no está en orden, el cachorro no viaja. Así de simple. Preferimos retrasar una entrega antes que comprometer la salud.</p>
+      </div>
+      <div class="g-overview-img">
+        <div class="ic-big">🩺</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Guarantee Cards ── -->
+<section class="g-cards-sec">
+  <div class="container">
+    <div class="eyebrow" style="text-align:center;">Lo que cubre nuestra garantía</div>
+    <h2 class="display" style="text-align:center; font-size: clamp(36px,5vw,64px); margin: 12px 0 0;">Cada detalle <em class="serif-italic">importa.</em></h2>
+    <div class="g-cards">
+
+      <div class="g-card-item">
+        <div class="g-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 4h2a2 2 0 012 2v14a2 2 0 01-2 2H6a2 2 0 01-2-2V6a2 2 0 012-2h2"/><path d="M15 2H9a1 1 0 00-1 1v2a1 1 0 001 1h6a1 1 0 001-1V3a1 1 0 00-1-1z"/><path d="M12 11h4M12 16h4M8 11h.01M8 16h.01"/></svg>
+        </div>
+        <h3>Récord veterinario completo</h3>
+        <p>Cada cachorro llega con su expediente veterinario detallado: historial de visitas, resultados de exámenes y notas del veterinario. Todo en digital y en papel para que tengas la información completa desde el primer día.</p>
+      </div>
+
+      <div class="g-card-item">
+        <div class="g-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+        </div>
+        <h3>Vacunas al día</h3>
+        <p>El esquema de vacunación está completo y actualizado según la edad del cachorro. Incluimos certificado de cada vacuna aplicada, las fechas y el laboratorio. Te indicamos cuándo toca la próxima dosis.</p>
+      </div>
+
+      <div class="g-card-item">
+        <div class="g-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+        </div>
+        <h3>Desparasitación</h3>
+        <p>Protocolo completo de desparasitación interna y externa antes del viaje. Documentamos cada tratamiento aplicado con fechas y productos utilizados. Tu cachorro llega limpio y protegido.</p>
+      </div>
+
+      <div class="g-card-item">
+        <div class="g-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+        </div>
+        <h3>Verificación física de salud</h3>
+        <p>Examen físico completo antes del viaje: peso, ojos, oídos, piel, articulaciones, corazón y pulmones. Cualquier señal de alerta detiene la entrega hasta que todo esté en orden. No hay excepciones.</p>
+      </div>
+
+      <div class="g-card-item">
+        <div class="g-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4"/><path d="M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+        </div>
+        <h3>Garantía de pureza</h3>
+        <p>Te garantizamos la pureza de la raza que eliges. Conocemos a los padres, su linaje y su historial. En los casos donde aplica, entregamos documentos de pedigree o certificación de pureza racial.</p>
+      </div>
+
+      <div class="g-card-item">
+        <div class="g-card-icon">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>
+        </div>
+        <h3>Garantía genética</h3>
+        <p>Cubrimos condiciones genéticas hereditarias dentro del periodo establecido en el contrato. Si un problema genético es detectado dentro del plazo, activamos nuestro protocolo de garantía para protegerte.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ── Contract ── -->
+<section class="contract-sec">
+  <div class="container">
+    <div class="eyebrow" style="color: var(--orange);">Contrato de protección</div>
+    <h2 class="display" style="font-size: clamp(36px,5vw,64px); margin: 12px 0 0;">Un contrato que <em class="serif-italic">te protege.</em></h2>
+    <div class="contract-grid">
+      <div>
+        <p>Cada cachorro que entregamos viene acompañado de un contrato formal que detalla nuestras responsabilidades y tus derechos como nuevo dueño. No es letra pequeña — es un acuerdo claro, justo y diseñado para darte tranquilidad.</p>
+        <p>El contrato cubre la garantía de salud, las condiciones genéticas, los plazos de cobertura y los pasos a seguir si surge cualquier situación. Todo por escrito, todo transparente.</p>
+      </div>
+      <div class="contract-visual">
+        <h4>Lo que incluye tu contrato</h4>
+        <div class="contract-item"><div class="contract-check">✓</div><span>Garantía de salud con plazo definido</span></div>
+        <div class="contract-item"><div class="contract-check">✓</div><span>Cobertura de condiciones genéticas hereditarias</span></div>
+        <div class="contract-item"><div class="contract-check">✓</div><span>Expediente veterinario completo adjunto</span></div>
+        <div class="contract-item"><div class="contract-check">✓</div><span>Protocolo claro si surge un problema de salud</span></div>
+        <div class="contract-item"><div class="contract-check">✓</div><span>Derechos y responsabilidades del comprador</span></div>
+        <div class="contract-item"><div class="contract-check">✓</div><span>Acompañamiento post-entrega incluido</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── Safe Home ── -->
+<section class="safe-sec">
+  <div class="container">
+    <div class="eyebrow">Nos importa a dónde va</div>
+    <h2 class="display" style="font-size: clamp(36px,5vw,64px); margin: 12px 0 0;">Un hogar seguro <em class="serif-italic">para cada cachorro.</em></h2>
+    <div class="safe-grid">
+      <div>
+        <p>No solo nos aseguramos de que el cachorro esté sano — también nos aseguramos de que va a un lugar donde será bien cuidado. Antes de confirmar una entrega, conversamos contigo para entender tu hogar, tu estilo de vida y tu experiencia con mascotas.</p>
+        <p>No es un interrogatorio — es una conversación genuina para asegurarnos de que la conexión entre tú y tu cachorro sea la correcta. Si sentimos que una raza no es la ideal para tu situación, te lo decimos con honestidad y te sugerimos alternativas.</p>
+        <p>Nuestro compromiso es con el bienestar del cachorro tanto como contigo. Eso es lo que nos diferencia.</p>
+      </div>
+      <div>
+        <div style="padding: 36px; border-radius: 20px; background: var(--paper); border: 1px solid var(--line); box-shadow: var(--shadow-soft);">
+          <div style="display: flex; flex-direction: column; gap: 20px;">
+            <div style="display: flex; gap: 14px; align-items: flex-start;">
+              <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--accent-2); display: grid; place-items: center; flex-shrink: 0;">🏡</div>
+              <div><strong style="font-family: var(--display); font-size: 16px;">Conversación sobre tu hogar</strong><p style="font-size: 13.5px; color: var(--ink-2); margin: 4px 0 0;">Espacio, rutina, otros animales y quién vive contigo.</p></div>
+            </div>
+            <div style="display: flex; gap: 14px; align-items: flex-start;">
+              <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--accent-2); display: grid; place-items: center; flex-shrink: 0;">👨‍👩‍👧</div>
+              <div><strong style="font-family: var(--display); font-size: 16px;">Contexto familiar</strong><p style="font-size: 13.5px; color: var(--ink-2); margin: 4px 0 0;">Niños, adultos mayores, necesidades especiales.</p></div>
+            </div>
+            <div style="display: flex; gap: 14px; align-items: flex-start;">
+              <div style="width: 40px; height: 40px; border-radius: 12px; background: var(--accent-2); display: grid; place-items: center; flex-shrink: 0;">💬</div>
+              <div><strong style="font-family: var(--display); font-size: 16px;">Recomendación honesta</strong><p style="font-size: 13.5px; color: var(--ink-2); margin: 4px 0 0;">Si la raza no encaja, te lo decimos y buscamos juntos.</p></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA ── -->
+<section class="back-cta">
+  <div class="container">
+    <h2 class="display" style="font-size: clamp(32px,5vw,56px); margin: 0 0 16px;">¿Tienes preguntas <em class="serif-italic">sobre la garantía?</em></h2>
+    <p style="color: var(--ink-2); max-width: 44ch; margin: 0 auto 28px;">Escríbenos por WhatsApp o llámanos. Te explicamos cada detalle sin compromiso.</p>
+    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
+      <a href="https://wa.me/18084928294" target="_blank" rel="noreferrer" class="btn btn-primary">Escríbenos por WhatsApp</a>
+      <a href="tel:+18084928294" class="btn btn-outline">Llámanos</a>
+    </div>
+  </div>
+</section>
+
+<!-- ── Footer ── -->
+<footer class="foot">
+  <div class="container foot-row">
+    <div class="foot-logo"><img src="assets/logo-clean.png" alt=""><span>BPuppy</span></div>
+    <p>© 2026 BPuppy · Cachorros criados con amor en hogares de familia.</p>
+    <div class="foot-links"><a href="Home.html">Inicio</a><a href="Historia.html">Historia</a><a href="Social.html">Social</a><a href="Garantia.html">Garantía</a></div>
+  </div>
+</footer>
+
+
+
+<script src="site-animations.js"></script>
+<script src="claude-bridge.js"></script>
+<script type="text/babel" src="chat-widget.jsx"></script>
+</body>
+</html>

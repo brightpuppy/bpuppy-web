@@ -1,0 +1,225 @@
+﻿<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BPuppy — Quiz Completo</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="icon" href="assets/logo.png">
+<link rel="stylesheet" href="styles.css">
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+<style>
+body { background: #fff; color: var(--ink, #2D2421); min-height: 100vh; }
+.quiz-page { max-width: 680px; margin: 0 auto; padding: 40px 24px 80px; }
+.quiz-back { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; letter-spacing: 0.06em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 36px; transition: color .2s; }
+.quiz-back:hover { color: #fff; }
+.quiz-header { text-align: center; margin-bottom: 48px; }
+.quiz-header h1 { font-family: var(--display); font-size: clamp(36px,6vw,56px); font-weight: 600; letter-spacing: -0.03em; line-height: 0.95; margin: 0 0 14px; color: var(--ink); }
+.quiz-header h1 em { font-family: var(--serif); font-style: italic; color: var(--accent-2); font-weight: 400; }
+.quiz-header p { color: var(--ink-soft); font-size: 16px; margin: 0; }
+
+.eq-card { background: #fff; color: var(--ink); border-radius: 28px; padding: 36px; border: 1px solid var(--line); box-shadow: 0 4px 32px rgba(45,36,33,0.08); }
+.eq-progress { display: flex; gap: 4px; margin-bottom: 28px; }
+.eq-progress span { flex: 1; height: 4px; border-radius: 2px; background: var(--line); transition: background .3s; }
+.eq-progress span.done { background: var(--orange); }
+.eq-step-label { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); margin-bottom: 12px; }
+.eq-question { font-family: var(--display); font-size: clamp(20px,3vw,28px); font-weight: 600; letter-spacing: -0.02em; line-height: 1.2; margin: 0 0 24px; }
+.eq-options { display: grid; gap: 10px; }
+.eq-opt { display: flex; align-items: center; gap: 14px; padding: 16px 18px; border-radius: 14px; background: var(--bg); border: 1.5px solid transparent; text-align: left; transition: all .2s; font-size: 15px; font-weight: 500; cursor: pointer; }
+.eq-opt:hover { border-color: var(--orange); transform: translateY(-2px); }
+.eq-opt.sel { background: var(--orange); color: #fff; border-color: var(--orange); }
+.eq-opt .emoji { font-size: 22px; flex-shrink: 0; }
+.eq-opt .desc { font-size: 12px; font-weight: 400; color: var(--ink-soft); margin-top: 2px; }
+.eq-opt.sel .desc { color: rgba(255,255,255,0.8); }
+.eq-nav { display: flex; justify-content: space-between; align-items: center; margin-top: 24px; }
+.eq-nav-back { color: var(--ink-soft); font-size: 14px; font-weight: 500; padding: 8px 0; cursor: pointer; background: none; border: none; font-family: inherit; }
+.eq-nav-back:hover { color: var(--ink); }
+.eq-nav-back:disabled { opacity: 0; pointer-events: none; }
+
+.eq-result { text-align: center; padding: 20px 0; }
+.eq-result .match-pct { font-family: var(--display); font-size: 72px; font-weight: 700; line-height: 1; color: var(--orange); letter-spacing: -0.04em; }
+.eq-result .match-lbl { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--ink-soft); margin-top: 4px; }
+.eq-result h3 { font-family: var(--display); font-size: 32px; font-weight: 600; letter-spacing: -0.02em; margin: 16px 0 8px; }
+.eq-result p { color: var(--ink-2); font-size: 15px; line-height: 1.55; max-width: 44ch; margin: 0 auto 24px; }
+.eq-result .actions { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const QUESTIONS = [
+  { q: '¿Dónde vives?', opts: [
+    { label: 'Apartamento en ciudad', emoji: '🏢', desc: 'Espacio interior, poca área exterior' },
+    { label: 'Casa con patio', emoji: '🏡', desc: 'Jardín o patio para jugar' },
+    { label: 'Casa de campo', emoji: '🌳', desc: 'Espacio abierto, mucho terreno' },
+    { label: 'Estudio o espacio reducido', emoji: '🛋️', desc: 'Espacio mínimo' },
+  ]},
+  { q: '¿Cuál es tu principal motivación para tener un cachorro?', opts: [
+    { label: 'Compañía en casa', emoji: '💕', desc: 'Un compañero para el día a día' },
+    { label: 'Estilo de vida activo', emoji: '🏃', desc: 'Salir a correr, hacer ejercicio' },
+    { label: 'Apoyo emocional', emoji: '🤗', desc: 'Necesito ese soporte especial' },
+    { label: 'Compañero para mis hijos', emoji: '👶', desc: 'Una mascota para la familia' },
+    { label: 'Compañía para adulto mayor', emoji: '🧓', desc: 'Acompañamiento y cariño' },
+  ]},
+  { q: '¿Qué tipo de pelaje prefieres?', opts: [
+    { label: 'Pelaje corto', emoji: '✂️', desc: 'Fácil de mantener' },
+    { label: 'Pelaje largo', emoji: '🐕‍🦺', desc: 'Me gusta cepillar y cuidar' },
+    { label: 'Hipoalergénico', emoji: '🌿', desc: 'Tengo alergias o sensibilidad' },
+    { label: 'Me es indiferente', emoji: '✨', desc: 'Lo que sea, con tal que sea lindo' },
+  ]},
+  { q: '¿Cuánta actividad física puedes ofrecer?', opts: [
+    { label: 'Paseos cortos (15-20 min)', emoji: '🚶', desc: 'Rutina tranquila' },
+    { label: 'Paseos moderados (30-60 min)', emoji: '🎾', desc: 'Ejercicio equilibrado' },
+    { label: 'Ejercicio intenso (1-2 horas)', emoji: '🏃‍♂️', desc: 'Correr, hiking, deportes' },
+    { label: 'Todo el día al aire libre', emoji: '⛰️', desc: 'Campo, playa, montaña' },
+  ]},
+  { q: '¿Tienes experiencia con perros?', opts: [
+    { label: 'Es mi primer perro', emoji: '🐣', desc: 'Nunca he tenido mascota' },
+    { label: 'Algo de experiencia', emoji: '🐕', desc: 'He tenido o convivido con perros' },
+    { label: 'Mucha experiencia', emoji: '🎓', desc: 'He criado varias razas' },
+  ]},
+  { q: '¿Qué tamaño prefieres?', opts: [
+    { label: 'Pequeño (hasta 10 kg)', emoji: '🐾', desc: 'Fácil de cargar y transportar' },
+    { label: 'Mediano (10-25 kg)', emoji: '🐕', desc: 'Versátil para cualquier espacio' },
+    { label: 'Grande (más de 25 kg)', emoji: '🦮', desc: 'Presencia fuerte, mucho amor' },
+    { label: 'No me importa el tamaño', emoji: '✨', desc: 'Sorpréndeme' },
+  ]},
+  { q: '¿Hay niños en tu hogar?', opts: [
+    { label: 'Sí, menores de 5 años', emoji: '👶', desc: 'Necesito un perro muy paciente' },
+    { label: 'Sí, entre 5 y 12 años', emoji: '🧒', desc: 'Niños que ya saben ser cuidadosos' },
+    { label: 'Adolescentes', emoji: '👦', desc: '13+ años' },
+    { label: 'No hay niños', emoji: '🙋', desc: 'Solo adultos en casa' },
+  ]},
+  { q: '¿Necesitas un perro entrenable para necesidades especiales?', opts: [
+    { label: 'Apoyo emocional', emoji: '💆', desc: 'Ansiedad, depresión, estrés' },
+    { label: 'Compañero para persona autista', emoji: '🧩', desc: 'Calma y conexión' },
+    { label: 'Asistencia para adulto mayor', emoji: '🤝', desc: 'Compañía constante y tranquila' },
+    { label: 'No, mascota regular', emoji: '🐶', desc: 'Solo quiero un amigo peludo' },
+  ]},
+  { q: '¿Cuánto puedes dedicar al cuidado diario (cepillado, juego, paseo)?', opts: [
+    { label: 'Menos de 30 minutos', emoji: '⏱️', desc: 'Vida muy ocupada' },
+    { label: '30 min a 1 hora', emoji: '🕐', desc: 'Tiempo moderado' },
+    { label: '1 a 2 horas', emoji: '🕑', desc: 'Dedicado al cuidado' },
+    { label: 'Todo el tiempo del mundo', emoji: '💯', desc: 'Mi cachorro es prioridad' },
+  ]},
+  { q: '¿Qué es más importante para ti en un cachorro?', opts: [
+    { label: 'Que sea cariñoso y tranquilo', emoji: '🥰', desc: 'Paz y ternura' },
+    { label: 'Que sea juguetón y energético', emoji: '⚡', desc: 'Diversión y acción' },
+    { label: 'Que sea protector y leal', emoji: '🛡️', desc: 'Seguridad y confianza' },
+    { label: 'Que sea independiente', emoji: '🐺', desc: 'No necesita atención constante' },
+  ]},
+];
+
+const BREEDS = [
+  { name: 'Golden Retriever', match: 96, desc: 'Cariñoso, inteligente, perfecto para familias. Se adapta a niños y adultos mayores con facilidad.', size: 'Grande', energy: 'Alta' },
+  { name: 'French Bulldog', match: 92, desc: 'Compacto, cariñoso y adaptable a espacios pequeños. Ideal para apartamentos y vida tranquila.', size: 'Pequeño', energy: 'Baja' },
+  { name: 'Cavalier King Charles', match: 89, desc: 'El perro de compañía por excelencia. Dulce, tranquilo y perfecto para apoyo emocional.', size: 'Pequeño', energy: 'Moderada' },
+  { name: 'Labrador Retriever', match: 94, desc: 'Activo, sociable y extremadamente entrenable. Excelente para familias activas con niños.', size: 'Grande', energy: 'Alta' },
+  { name: 'Poodle (Caniche)', match: 91, desc: 'Hipoalergénico, inteligente y elegante. Viene en todos los tamaños. Ideal si tienes alergias.', size: 'Variable', energy: 'Moderada' },
+  { name: 'Beagle', match: 87, desc: 'Juguetón, curioso y excelente con niños. Tamaño mediano, mucha personalidad.', size: 'Mediano', energy: 'Alta' },
+];
+
+function ExtendedQuiz() {
+  const [step, setStep] = React.useState(0);
+  const [answers, setAnswers] = React.useState(Array(QUESTIONS.length).fill(null));
+  const total = QUESTIONS.length;
+  const isResult = step >= total;
+
+  const choose = (idx) => {
+    const next = [...answers]; next[step] = idx; setAnswers(next);
+    setTimeout(() => setStep(s => Math.min(s + 1, total)), 250);
+  };
+  const back = () => setStep(s => Math.max(s - 1, 0));
+  const reset = () => { setStep(0); setAnswers(Array(total).fill(null)); };
+
+  // Simple breed selection based on answers
+  const getBreed = () => {
+    const a = answers;
+    // Hypoallergenic preference -> Poodle
+    if (a[2] === 2) return BREEDS[4];
+    // Small space + low activity -> French Bulldog
+    if ((a[0] === 0 || a[0] === 3) && a[3] === 0) return BREEDS[1];
+    // Emotional support -> Cavalier
+    if (a[7] === 0 || a[7] === 1) return BREEDS[2];
+    // Active lifestyle -> Labrador
+    if (a[1] === 1 && a[3] >= 2) return BREEDS[3];
+    // Kids -> Golden
+    if (a[6] === 0 || a[6] === 1 || a[1] === 3) return BREEDS[0];
+    // Playful preference -> Beagle
+    if (a[9] === 1) return BREEDS[5];
+    return BREEDS[0];
+  };
+
+  return (
+    <div className="quiz-page">
+      <a href="Home.html" className="quiz-back">← Volver al inicio</a>
+      <div className="quiz-header">
+        <h1>Quiz <em>completo</em></h1>
+        <p>10 preguntas para encontrar tu match perfecto</p>
+      </div>
+
+      <div className="eq-card">
+        <div className="eq-progress">
+          {Array.from({length: total}, (_, i) => (
+            <span key={i} className={(step > i || isResult) ? 'done' : ''} />
+          ))}
+        </div>
+
+        {!isResult ? (
+          <>
+            <div className="eq-step-label">Pregunta {step + 1} de {total}</div>
+            <h3 className="eq-question">{QUESTIONS[step].q}</h3>
+            <div className="eq-options">
+              {QUESTIONS[step].opts.map((opt, i) => (
+                <button key={i} className={`eq-opt ${answers[step] === i ? 'sel' : ''}`} onClick={() => choose(i)}>
+                  <span className="emoji">{opt.emoji}</span>
+                  <span style={{flex:1}}>
+                    {opt.label}
+                    <div className="desc">{opt.desc}</div>
+                  </span>
+                </button>
+              ))}
+            </div>
+            <div className="eq-nav">
+              <button className="eq-nav-back" onClick={back} disabled={step === 0}>← Atrás</button>
+              <span style={{fontSize: 12, color: 'var(--ink-soft)'}}>{step + 1}/{total}</span>
+            </div>
+          </>
+        ) : (() => {
+          const breed = getBreed();
+          return (
+            <div className="eq-result">
+              <div className="match-pct">{breed.match}%</div>
+              <div className="match-lbl">Match perfecto</div>
+              <h3>{breed.name}</h3>
+              <p>{breed.desc}</p>
+              <p style={{fontSize: 13, color: 'var(--ink-soft)', marginBottom: 20}}>Tamaño: {breed.size} · Energía: {breed.energy}</p>
+              <div className="actions">
+                <a href="Cachorros.html" className="btn btn-primary">Ver disponibles
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                </a>
+                <button className="btn btn-outline" onClick={reset}>Repetir quiz</button>
+              </div>
+              <a href="https://wa.me/18084928294" target="_blank" rel="noreferrer" style={{display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 20, fontSize: 14, fontWeight: 600, color: 'var(--orange)'}}>
+                Hablar con un asesor sobre {breed.name} →
+              </a>
+            </div>
+          );
+        })()}
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<ExtendedQuiz />);
+</script>
+
+<script src="site-animations.js"></script>
+<script src="claude-bridge.js"></script>
+<script type="text/babel" src="chat-widget.jsx"></script>
+</body>
+</html>

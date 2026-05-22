@@ -1,0 +1,22 @@
+# Netlify Redirects — BPuppy
+# URL limpia → archivo HTML real
+
+/                     /Home.html            200
+/cachorros            /Cachorros.html       200
+/gatos                /Gatos.html           200
+/solicitud            /Solicitud.html       200
+/quiz                 /Quiz-Completo.html   200
+/adopciones           /Adopciones.html      200
+/razas                /Razas-Perros.html    200
+/razas-gatos          /Razas-Gatos.html     200
+/grooming             /Grooming.html        200
+/media                /Media.html           200
+/nosotros             /Nosotros.html        200
+/historia             /Historia.html        200
+/garantia             /Garantia.html        200
+/tienda               /Tienda.html          200
+/blog                 /Blog.html            200
+/social               /Social.html          200
+/puppy-detalle        /Puppy-Detalle.html   200
+/entregados           /Cachorros-Entregados.html  200
+/admin-chats          /admin-chats.html     200
