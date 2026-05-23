@@ -50,12 +50,6 @@
   </url>
 
   <url>
-    <loc>https://bpuppy.us/tienda</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.7</priority>
-  </url>
-
-  <url>
     <loc>https://bpuppy.us/media</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
@@ -65,12 +59,6 @@
     <loc>https://bpuppy.us/blog</loc>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
-  </url>
-
-  <url>
-    <loc>https://bpuppy.us/social</loc>
-    <changefreq>weekly</changefreq>
-    <priority>0.5</priority>
   </url>
 
   <url>
