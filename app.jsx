@@ -1,4 +1,4 @@
-// app.jsx — root composition, theme/lang state, mounts everything
+﻿// app.jsx — root composition, theme/lang state, mounts everything
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "theme": "familia",
@@ -71,7 +71,6 @@ function App() {
         <Quiz />
         <Gallery />
         <InstagramFeed />
-        <FamiliesMapSection />
         <Testimonials />
         <FAQ />
         <FinalCTA />

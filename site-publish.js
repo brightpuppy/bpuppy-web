@@ -1,4 +1,4 @@
-// site-publish.js — BPuppy centralized visibility manager
+﻿// site-publish.js — BPuppy centralized visibility manager
 // Persists in localStorage. Any page can read/write via window.SitePublish.
 // Events: window listens for 'bpuppy:publish' to react to changes in real time.
 
@@ -63,10 +63,10 @@
 
   // ── Default live/draft state for pages ──────────────────────────────────────
   var DEFAULTS = {
-    Home: true, Cachorros: true, 'Cachorros-Entregados': true, 'Gatos-Entregados': true,
+    Home: true, Cachorros: true, 'Cachorros-Entregados': false, 'Gatos-Entregados': true,
     Nosotros: true, 'Razas-Perros': true, Media: true,
-    Adopciones: true, Tienda: true, Blog: true, Grooming: true,
-    Gatos: true, 'Razas-Gatos': true, Historia: true, Social: true,
+    Adopciones: true, Tienda: false, Blog: true, Grooming: true,
+    Gatos: true, 'Razas-Gatos': true, Historia: true, Social: false,
   };
 
   // ── Internal helpers ────────────────────────────────────────────────────────
