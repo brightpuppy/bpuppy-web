@@ -363,12 +363,19 @@ function EpisodeList({ episodes, playing, setPlaying, PD, isLive }) {
   );
 }
 
+function fmtTime(s){ s = Math.floor(s || 0); var m = Math.floor(s/60); var ss = String(s%60).padStart(2,'0'); return m + ':' + ss; }
+
 function PodcastSection() {
   const t = useT();
+  const { lang } = useLang();
   const [ref, visible] = useReveal();
   const [playing, setPlaying] = React.useState(null);
   const [progress, setProgress] = React.useState(0);
   const [tab, setTab] = React.useState('ai'); // 'ai' | 'live'
+  const audioRef = React.useRef(null);
+  const [pPlaying, setPPlaying] = React.useState(false);
+  const [pCur, setPCur] = React.useState(0);
+  const [pDur, setPDur] = React.useState(0);
 
   React.useEffect(function() {
     if (playing === null) return;
@@ -397,29 +404,39 @@ function PodcastSection() {
           B<span style={{ color:MC.brand }}>cast</span>
         </h2>
 
-        {/* Featured player */}
+        {/* Featured player — audio real, idioma segun toggle */}
         <div style={{ background:PD.surface, border:`1px solid ${PD.border}`, borderRadius:20, padding:'28px 28px 24px', marginBottom:20, backdropFilter:'blur(12px)', boxShadow:'0 4px 32px rgba(0,0,0,0.3)' }}>
+          <audio ref={audioRef}
+            src={lang === 'en' ? 'audio/podcast-ep1-en.mp3' : 'audio/podcast-ep1-es.mp3'}
+            preload="metadata"
+            onLoadedMetadata={function(e){ setPDur(e.target.duration || 0); }}
+            onTimeUpdate={function(e){ setPCur(e.target.currentTime || 0); }}
+            onPlay={function(){ setPPlaying(true); }}
+            onPause={function(){ setPPlaying(false); }}
+            onEnded={function(){ setPPlaying(false); setPCur(0); }} />
           <div style={{ fontSize:11, fontWeight:600, color:MC.brand, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:8 }}>{t(['Episodio mas reciente', 'Most recent episode'])}</div>
-          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(18px,2.5vw,28px)', fontWeight:700, color:PD.text, letterSpacing:'-0.02em', lineHeight:1.2, marginBottom:4 }}>{t(['Todo lo que debes saber antes de adoptar un Golden Retriever', 'Everything you should know before adopting a Golden Retriever'])}</div>
-          <div style={{ fontSize:13, color:PD.soft, marginBottom:22 }}>{t(['Dra. Carmen Reyes', 'Dr. Carmen Reyes'])} · 24:38</div>
-          <div style={{ height:3, background:'rgba(255,255,255,0.08)', borderRadius:999, marginBottom:16, cursor:'pointer' }}>
-            <div style={{ height:'100%', width:`${progress}%`, background:MC.grad, borderRadius:999, transition:'width .2s linear' }}/>
+          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(18px,2.5vw,28px)', fontWeight:700, color:PD.text, letterSpacing:'-0.02em', lineHeight:1.2, marginBottom:4 }}>{t(['Bienvenido al Podcast de Bright Puppy. 1er Episodio.', 'Welcome to Bright Puppy Podcast. 1st Episode.'])}</div>
+          <div style={{ fontSize:13, color:PD.soft, marginBottom:22 }}>BrightPuppy{pDur ? ' · ' + fmtTime(pDur) : ''}</div>
+          <div onClick={function(e){ var a=audioRef.current; if(!a||!pDur)return; var r=e.currentTarget.getBoundingClientRect(); a.currentTime=((e.clientX-r.left)/r.width)*pDur; }}
+            style={{ height:6, background:'rgba(255,255,255,0.08)', borderRadius:999, marginBottom:16, cursor:'pointer' }}>
+            <div style={{ height:'100%', width:`${pDur?(pCur/pDur*100):0}%`, background:MC.grad, borderRadius:999, transition:'width .2s linear' }}/>
           </div>
           <div style={{ display:'flex', alignItems:'center', gap:14 }}>
-            <button onClick={function(){ setPlaying(function(p){ return p===48?null:48; }); setProgress(0); }} style={{ width:48, height:48, borderRadius:'50%', background:playing===48?MC.grad:'rgba(255,255,255,0.08)', border:`1.5px solid ${playing===48?'transparent':PD.border}`, display:'grid', placeItems:'center', cursor:'pointer', transition:'all .2s', boxShadow:playing===48?MC.glow:'none' }}>
-              {playing===48
+            <button onClick={function(){ var a=audioRef.current; if(!a)return; if(a.paused){ a.play(); } else { a.pause(); } }}
+              style={{ width:48, height:48, borderRadius:'50%', background:pPlaying?MC.grad:'rgba(255,255,255,0.08)', border:`1.5px solid ${pPlaying?'transparent':PD.border}`, display:'grid', placeItems:'center', cursor:'pointer', transition:'all .2s', boxShadow:pPlaying?MC.glow:'none' }}>
+              {pPlaying
                 ? <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
                 : <svg width="18" height="18" viewBox="0 0 24 24" fill={MC.brand}><polygon points="5 3 19 12 5 21 5 3"/></svg>}
             </button>
-            <div style={{ display:'flex', gap:3, alignItems:'flex-end', height:32 }}>
-              {[...Array(32)].map(function(_,i){
+            <div style={{ display:'flex', gap:3, alignItems:'flex-end', height:32, flex:1 }}>
+              {[...Array(40)].map(function(_,i){
                 const h = 4 + Math.abs(Math.sin(i*0.8)*12 + Math.sin(i*1.7)*8);
-                const active = playing===48 && (i/32)*100 < progress;
+                const active = pDur && (i/40)*100 < (pCur/pDur*100);
                 return <div key={i} style={{ width:3, height:h, borderRadius:999, background:active?MC.brand:'rgba(255,255,255,0.1)', transition:'background .2s' }}/>;
               })}
             </div>
-            <span style={{ fontSize:12, color:PD.soft, marginLeft:4 }}>
-              {playing===48 ? `${Math.floor(progress/100*24)}:${String(Math.floor((progress/100*24*60)%60)).padStart(2,'0')}` : '0:00'} / 24:38
+            <span style={{ fontSize:12, color:PD.soft, marginLeft:4, whiteSpace:'nowrap' }}>
+              {fmtTime(pCur)} / {pDur ? fmtTime(pDur) : '--:--'}
             </span>
           </div>
         </div>

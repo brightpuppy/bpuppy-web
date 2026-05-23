@@ -198,12 +198,23 @@ function EpisodeList({ episodes, playing, setPlaying, PD, isLive }) {
     );
   }));
 }
+function fmtTime(s) {
+  s = Math.floor(s || 0);
+  var m = Math.floor(s / 60);
+  var ss = String(s % 60).padStart(2, "0");
+  return m + ":" + ss;
+}
 function PodcastSection() {
   const t = useT();
+  const { lang } = useLang();
   const [ref, visible] = useReveal();
   const [playing, setPlaying] = React.useState(null);
   const [progress, setProgress] = React.useState(0);
   const [tab, setTab] = React.useState("ai");
+  const audioRef = React.useRef(null);
+  const [pPlaying, setPPlaying] = React.useState(false);
+  const [pCur, setPCur] = React.useState(0);
+  const [pDur, setPDur] = React.useState(0);
   React.useEffect(function() {
     if (playing === null) return;
     const t2 = setInterval(function() {
@@ -223,16 +234,61 @@ function PodcastSection() {
     muted: "rgba(240,238,248,0.52)",
     soft: "rgba(240,238,248,0.28)"
   };
-  return /* @__PURE__ */ React.createElement("section", { ref, style: { padding: "clamp(80px,10vw,140px) clamp(24px,6vw,120px)", background: PD.bg, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(36px)", transition: "opacity 0.7s ease, transform 0.7s ease", position: "relative", overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", borderRadius: "50%", width: "50vw", height: "50vw", background: "radial-gradient(circle,rgba(255,85,32,0.07) 0%,transparent 65%)", bottom: "-20%", right: "-10%", pointerEvents: "none" } }), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 900, position: "relative", zIndex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: MC.brand, marginBottom: 14 } }, t(["02 \u2014 Podcast", "02 \u2014 Podcast"])), /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(44px,7.5vw,96px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.92, margin: "0 0 56px", color: PD.text } }, "B", /* @__PURE__ */ React.createElement("span", { style: { color: MC.brand } }, "cast")), /* @__PURE__ */ React.createElement("div", { style: { background: PD.surface, border: `1px solid ${PD.border}`, borderRadius: 20, padding: "28px 28px 24px", marginBottom: 20, backdropFilter: "blur(12px)", boxShadow: "0 4px 32px rgba(0,0,0,0.3)" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 600, color: MC.brand, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 } }, t(["Episodio mas reciente", "Most recent episode"])), /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(18px,2.5vw,28px)", fontWeight: 700, color: PD.text, letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 4 } }, t(["Todo lo que debes saber antes de adoptar un Golden Retriever", "Everything you should know before adopting a Golden Retriever"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: PD.soft, marginBottom: 22 } }, t(["Dra. Carmen Reyes", "Dr. Carmen Reyes"]), " \xB7 24:38"), /* @__PURE__ */ React.createElement("div", { style: { height: 3, background: "rgba(255,255,255,0.08)", borderRadius: 999, marginBottom: 16, cursor: "pointer" } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: `${progress}%`, background: MC.grad, borderRadius: 999, transition: "width .2s linear" } })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 14 } }, /* @__PURE__ */ React.createElement("button", { onClick: function() {
-    setPlaying(function(p) {
-      return p === 48 ? null : 48;
-    });
-    setProgress(0);
-  }, style: { width: 48, height: 48, borderRadius: "50%", background: playing === 48 ? MC.grad : "rgba(255,255,255,0.08)", border: `1.5px solid ${playing === 48 ? "transparent" : PD.border}`, display: "grid", placeItems: "center", cursor: "pointer", transition: "all .2s", boxShadow: playing === 48 ? MC.glow : "none" } }, playing === 48 ? /* @__PURE__ */ React.createElement("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "white" }, /* @__PURE__ */ React.createElement("rect", { x: "6", y: "4", width: "4", height: "16" }), /* @__PURE__ */ React.createElement("rect", { x: "14", y: "4", width: "4", height: "16" })) : /* @__PURE__ */ React.createElement("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: MC.brand }, /* @__PURE__ */ React.createElement("polygon", { points: "5 3 19 12 5 21 5 3" }))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 3, alignItems: "flex-end", height: 32 } }, [...Array(32)].map(function(_, i) {
+  return /* @__PURE__ */ React.createElement("section", { ref, style: { padding: "clamp(80px,10vw,140px) clamp(24px,6vw,120px)", background: PD.bg, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(36px)", transition: "opacity 0.7s ease, transform 0.7s ease", position: "relative", overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", borderRadius: "50%", width: "50vw", height: "50vw", background: "radial-gradient(circle,rgba(255,85,32,0.07) 0%,transparent 65%)", bottom: "-20%", right: "-10%", pointerEvents: "none" } }), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 900, position: "relative", zIndex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: MC.brand, marginBottom: 14 } }, t(["02 \u2014 Podcast", "02 \u2014 Podcast"])), /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(44px,7.5vw,96px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.92, margin: "0 0 56px", color: PD.text } }, "B", /* @__PURE__ */ React.createElement("span", { style: { color: MC.brand } }, "cast")), /* @__PURE__ */ React.createElement("div", { style: { background: PD.surface, border: `1px solid ${PD.border}`, borderRadius: 20, padding: "28px 28px 24px", marginBottom: 20, backdropFilter: "blur(12px)", boxShadow: "0 4px 32px rgba(0,0,0,0.3)" } }, /* @__PURE__ */ React.createElement(
+    "audio",
+    {
+      ref: audioRef,
+      src: lang === "en" ? "audio/podcast-ep1-en.mp3" : "audio/podcast-ep1-es.mp3",
+      preload: "metadata",
+      onLoadedMetadata: function(e) {
+        setPDur(e.target.duration || 0);
+      },
+      onTimeUpdate: function(e) {
+        setPCur(e.target.currentTime || 0);
+      },
+      onPlay: function() {
+        setPPlaying(true);
+      },
+      onPause: function() {
+        setPPlaying(false);
+      },
+      onEnded: function() {
+        setPPlaying(false);
+        setPCur(0);
+      }
+    }
+  ), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 600, color: MC.brand, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 8 } }, t(["Episodio mas reciente", "Most recent episode"])), /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(18px,2.5vw,28px)", fontWeight: 700, color: PD.text, letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 4 } }, t(["Bienvenido al Podcast de Bright Puppy. 1er Episodio.", "Welcome to Bright Puppy Podcast. 1st Episode."])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: PD.soft, marginBottom: 22 } }, "BrightPuppy", pDur ? " \xB7 " + fmtTime(pDur) : ""), /* @__PURE__ */ React.createElement(
+    "div",
+    {
+      onClick: function(e) {
+        var a = audioRef.current;
+        if (!a || !pDur) return;
+        var r = e.currentTarget.getBoundingClientRect();
+        a.currentTime = (e.clientX - r.left) / r.width * pDur;
+      },
+      style: { height: 6, background: "rgba(255,255,255,0.08)", borderRadius: 999, marginBottom: 16, cursor: "pointer" }
+    },
+    /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: `${pDur ? pCur / pDur * 100 : 0}%`, background: MC.grad, borderRadius: 999, transition: "width .2s linear" } })
+  ), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 14 } }, /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: function() {
+        var a = audioRef.current;
+        if (!a) return;
+        if (a.paused) {
+          a.play();
+        } else {
+          a.pause();
+        }
+      },
+      style: { width: 48, height: 48, borderRadius: "50%", background: pPlaying ? MC.grad : "rgba(255,255,255,0.08)", border: `1.5px solid ${pPlaying ? "transparent" : PD.border}`, display: "grid", placeItems: "center", cursor: "pointer", transition: "all .2s", boxShadow: pPlaying ? MC.glow : "none" }
+    },
+    pPlaying ? /* @__PURE__ */ React.createElement("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "white" }, /* @__PURE__ */ React.createElement("rect", { x: "6", y: "4", width: "4", height: "16" }), /* @__PURE__ */ React.createElement("rect", { x: "14", y: "4", width: "4", height: "16" })) : /* @__PURE__ */ React.createElement("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: MC.brand }, /* @__PURE__ */ React.createElement("polygon", { points: "5 3 19 12 5 21 5 3" }))
+  ), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 3, alignItems: "flex-end", height: 32, flex: 1 } }, [...Array(40)].map(function(_, i) {
     const h = 4 + Math.abs(Math.sin(i * 0.8) * 12 + Math.sin(i * 1.7) * 8);
-    const active = playing === 48 && i / 32 * 100 < progress;
+    const active = pDur && i / 40 * 100 < pCur / pDur * 100;
     return /* @__PURE__ */ React.createElement("div", { key: i, style: { width: 3, height: h, borderRadius: 999, background: active ? MC.brand : "rgba(255,255,255,0.1)", transition: "background .2s" } });
-  })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: PD.soft, marginLeft: 4 } }, playing === 48 ? `${Math.floor(progress / 100 * 24)}:${String(Math.floor(progress / 100 * 24 * 60 % 60)).padStart(2, "0")}` : "0:00", " / 24:38"))), /* @__PURE__ */ React.createElement("div", { style: { display: "inline-flex", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 999, padding: 4, marginBottom: 40, gap: 4 } }, [
+  })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: PD.soft, marginLeft: 4, whiteSpace: "nowrap" } }, fmtTime(pCur), " / ", pDur ? fmtTime(pDur) : "--:--"))), /* @__PURE__ */ React.createElement("div", { style: { display: "inline-flex", background: "rgba(255,255,255,0.05)", border: "1px solid rgba(255,255,255,0.09)", borderRadius: 999, padding: 4, marginBottom: 40, gap: 4 } }, [
     { id: "ai", label: ["\u25CE IA Generado", "\u25CE AI Generated"], color: MC.ice },
     { id: "live", label: ["\u2665 Grabado en Vivo", "\u2665 Recorded Live"], color: MC.brand }
   ].map(function(tabItem) {
