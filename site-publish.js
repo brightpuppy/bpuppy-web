@@ -1,4 +1,4 @@
-// site-publish.js — BPuppy centralized visibility manager
+﻿// site-publish.js — BPuppy centralized visibility manager
 // Persists in localStorage. Any page can read/write via window.SitePublish.
 // Events: window listens for 'bpuppy:publish' to react to changes in real time.
 

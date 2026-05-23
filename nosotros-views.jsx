@@ -1,4 +1,4 @@
-// nosotros-views.jsx — Página Nosotros / About BPuppy
+﻿// nosotros-views.jsx — Página Nosotros / About BPuppy
 const { useState, useEffect } = React;
 
 const TIMELINE = [
@@ -259,25 +259,14 @@ function NosotrosApp() {
       <div style={{ background:'var(--paper)', borderTop:'1px solid var(--line)', marginTop:40 }}>
         <div className="container" style={{ padding:'48px 0 56px' }}>
           <div className="eyebrow" style={{ marginBottom:10 }}>Haines City, FL</div>
-          <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:26, fontWeight:800, color:'var(--ink)', margin:'0 0 6px', letterSpacing:'-0.02em' }}>
-            {t(['Donde estamos', 'Where we are'])}
-          </h2>
+          <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:26, fontWeight:800, color:'var(--ink)', margin:'0 0 6px', letterSpacing:'-0.02em' }}>{t(['Donde estamos','Where we are'])}</h2>
           <p style={{ fontSize:14, color:'var(--ink-2)', margin:'0 0 24px' }}>5604 Kalogridis Rd, Haines City, FL 33844</p>
           <div style={{ borderRadius:20, overflow:'hidden', border:'1px solid var(--line)' }}>
-            <iframe
-              src="https://maps.google.com/maps?q=5604+Kalogridis+Rd,+Haines+City,+FL+33844&output=embed"
-              width="100%" height="360" style={{ border:0, display:'block' }}
-              allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
-              title="BPuppy ubicacion">
-            </iframe>
+            <iframe src="https://maps.google.com/maps?q=5604+Kalogridis+Rd,+Haines+City,+FL+33844&output=embed" width="100%" height="360" style={{ border:0, display:'block' }} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade" title="BPuppy ubicacion"></iframe>
           </div>
           <div style={{ marginTop:16, display:'flex', gap:12, flexWrap:'wrap' }}>
-            <a href="https://maps.google.com/?q=5604+Kalogridis+Rd+Haines+City+FL+33844" target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ fontSize:13 }}>
-              {t(['Ver en Google Maps', 'View on Google Maps'])}
-            </a>
-            <a href="https://www.google.com/maps?cid=10300429461328700851" target="_blank" rel="noreferrer" className="btn btn-dark" style={{ fontSize:13 }}>
-              ⭐ {t(['Dejar reseña', 'Leave a review'])}
-            </a>
+            <a href="https://maps.google.com/?q=5604+Kalogridis+Rd+Haines+City+FL+33844" target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ fontSize:13 }}>{t(['Ver en Google Maps','View on Google Maps'])}</a>
+            <a href="https://www.google.com/maps?cid=10300429461328700851" target="_blank" rel="noreferrer" className="btn btn-dark" style={{ fontSize:13 }}>&#11088; {t(['Dejar resena','Leave a review'])}</a>
           </div>
         </div>
       </div>

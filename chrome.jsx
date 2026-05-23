@@ -1,4 +1,4 @@
-// chrome.jsx — Header, Footer, Paw cursor
+﻿// chrome.jsx — Header, Footer, Paw cursor
 
 const { useState, useEffect, useRef, useCallback } = React;
 
@@ -172,12 +172,8 @@ function Footer() {
         </div>
       </div>
       <div className="container" style={{ marginTop:14, paddingTop:14, borderTop:'1px solid rgba(45,36,33,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
-        <a href="https://maps.google.com/?q=5604+Kalogridis+Rd+Haines+City+FL+33844" target="_blank" rel="noreferrer" style={{ fontSize:13, color:'var(--ink-2)', textDecoration:'none', display:'flex', alignItems:'center', gap:6 }}>
-          📍 5604 Kalogridis Rd, Haines City, FL 33844
-        </a>
-        <a href="https://www.google.com/maps?cid=10300429461328700851" target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ fontSize:13, gap:6 }}>
-          ⭐ {t(['Dejar reseña en Google', 'Leave a Google review'])}
-        </a>
+        <a href="https://maps.google.com/?q=5604+Kalogridis+Rd+Haines+City+FL+33844" target="_blank" rel="noreferrer" style={{ fontSize:13, color:'var(--ink-2)', textDecoration:'none', display:'flex', alignItems:'center', gap:6 }}>&#128205; 5604 Kalogridis Rd, Haines City, FL 33844</a>
+        <a href="https://www.google.com/maps?cid=10300429461328700851" target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ fontSize:13, gap:6 }}>&#11088; {t(['Dejar resena en Google','Leave a Google review'])}</a>
       </div>
     </footer>
     {show && (
