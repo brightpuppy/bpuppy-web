@@ -1,23 +1,24 @@
 // gallery.jsx — Happy families marquee + testimonials + final CTA
 
-// Clean photos from fotos-raw — assigned to gallery cards by index.
+// Real family photos — 50 uploaded images
 const GALLERY_PHOTOS = [
-  'fotos-raw/p01.jpg',
-  'fotos-raw/p02.jpg',
-  'fotos-raw/p03.jpg',
-  'fotos-raw/p04.jpg',
-  'fotos-raw/p05.jpg',
-  'fotos-raw/p07.jpg',
-  'fotos-raw/p08.jpg',
-  'fotos-raw/p09.jpg',
+  'uploads/1A.jpg','uploads/2.jpg','uploads/3.jpg','uploads/4.jpg','uploads/5.jpg',
+  'uploads/6.jpg','uploads/7.jpg','uploads/8.jpg','uploads/9.jpg','uploads/10.JPG',
+  'uploads/11.jpg','uploads/12.jpg','uploads/13.jpg','uploads/14.jpg','uploads/15.jpg',
+  'uploads/16.jpg','uploads/17.jpg','uploads/18.jpg','uploads/19.jpg','uploads/20.jpg',
+  'uploads/21.jpg','uploads/22.jpg','uploads/23.jpg','uploads/24.jpg','uploads/25.jpg',
+  'uploads/26.jpg','uploads/27.JPG','uploads/28.JPG','uploads/29.jpg','uploads/30.jpg',
+  'uploads/31.jpg','uploads/32.jpg','uploads/33.JPG','uploads/34.jpg','uploads/35.jpg',
+  'uploads/36.jpg','uploads/37.jpg','uploads/38.jpg','uploads/39.jpg','uploads/40.jpg',
+  'uploads/41.jpg','uploads/42.JPG','uploads/43.jpg','uploads/44.jpg','uploads/45.jpg',
+  'uploads/46.jpg','uploads/47.jpg','uploads/48.jpg','uploads/49.jpg','uploads/50.jpg',
 ];
 
 function Gallery() {
   const t = useT();
   const { lang } = useLang();
-  const cards = STRINGS.gallery.cards;
-  // Repeat twice for seamless marquee
-  const seq = [...cards, ...cards];
+  // Repeat all 50 photos twice for seamless marquee
+  const seq = [...GALLERY_PHOTOS, ...GALLERY_PHOTOS];
   return (
     <section className="sec gallery" id="gallery">
       <div className="container">
@@ -30,22 +31,20 @@ function Gallery() {
         </div>
       </div>
       <div className="gallery-marquee">
-        {seq.map((c, i) => {
+        {seq.map((photo, i) => {
           const variant = ((i % 4) + 1);
-          const photo = GALLERY_PHOTOS[i % GALLERY_PHOTOS.length];
           return (
             <div key={i} className={`g-card g-card-${variant}`}>
               <img
                 className="g-card-img"
                 src={photo}
-                alt={`${pick(c.name, lang)} · ${pick(c.breed, lang)}`}
+                alt="Familia feliz con su cachorro"
                 loading="lazy"
               />
               <div className="g-card-overlay">
                 <div className="g-tag">
-                  <span className="heart">♥</span> {pick(c.breed, lang)}
+                  <span className="heart">♥</span> BPuppy
                 </div>
-                <div className="g-card-name">{pick(c.name, lang)} · {pick(c.loc, lang)}</div>
               </div>
             </div>
           );
@@ -71,7 +70,7 @@ function Testimonials() {
         <div className="t-grid">
           {STRINGS.testi.items.map((it, i) => (
             <div key={i} className="t-card reveal" data-d={i+1}>
-              <div className="pup-tag">🦴 {pick(it.pup, lang)}</div>
+              {it.pup && it.pup.length > 0 && <div className="pup-tag">🦴 {pick(it.pup, lang)}</div>}
               <div className="stars">★★★★★</div>
               <blockquote>{pick(it.q, lang)}</blockquote>
               <div className="who">

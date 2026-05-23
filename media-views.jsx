@@ -137,23 +137,20 @@ function MediaHero() {
       {/* Featured card — glass morphism */}
       <div style={{ padding:'0 clamp(24px,6vw,120px) 48px', position:'relative', zIndex:1 }}>
         <div style={{ position:'relative', borderRadius:20, overflow:'hidden', background:'rgba(255,255,255,0.048)', border:'1px solid rgba(255,255,255,0.1)', backdropFilter:'blur(16px)', maxWidth:700, boxShadow:'0 4px 64px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)' }}>
-          <div style={{ aspectRatio:'16/8', background:'linear-gradient(135deg,rgba(255,85,32,0.14),rgba(74,184,255,0.06))', display:'flex', alignItems:'center', justifyContent:'center', position:'relative' }}>
-            <div style={{ position:'absolute', inset:0, display:'grid', gridTemplateColumns:'repeat(6,1fr)', gridTemplateRows:'repeat(4,1fr)', gap:1, opacity:.04 }}>
-              {[...Array(24)].map(function(_,i){ return <div key={i} style={{ background:'#fff' }}/>; })}
-            </div>
-            <div style={{ position:'relative', zIndex:2, textAlign:'center' }}>
-              <div style={{ width:64, height:64, borderRadius:'50%', background:MC.grad, display:'grid', placeItems:'center', margin:'0 auto 12px', boxShadow:MC.glow }}>
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none"><polygon points="5 3 19 12 5 21 5 3" fill="white"/></svg>
-              </div>
-              <div style={{ fontSize:12, color:'rgba(255,255,255,0.45)', letterSpacing:'0.06em', textTransform:'uppercase' }}>Episodio destacado</div>
-            </div>
-            <div style={{ position:'absolute', top:14, left:14, background:MC.brand, color:'#fff', fontSize:10.5, fontWeight:700, padding:'4px 10px', borderRadius:6, letterSpacing:'0.06em', textTransform:'uppercase' }}>Nuevo</div>
-            <div style={{ position:'absolute', bottom:14, right:14, background:'rgba(0,0,0,0.55)', color:'#fff', fontSize:11, fontWeight:600, padding:'3px 8px', borderRadius:5, backdropFilter:'blur(4px)' }}>24:38</div>
+          <div style={{ position:'relative', aspectRatio:'16/9' }}>
+            <iframe
+              src="https://www.youtube.com/embed/M4D398WTPb0?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es"
+              title="Comercial 1 BPuppy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ position:'absolute', inset:0, width:'100%', height:'100%', border:'none', display:'block' }}
+            />
+            <div style={{ position:'absolute', top:14, left:14, background:MC.brand, color:'#fff', fontSize:10.5, fontWeight:700, padding:'4px 10px', borderRadius:6, letterSpacing:'0.06em', textTransform:'uppercase', pointerEvents:'none' }}>Nuevo</div>
           </div>
           <div style={{ padding:'18px 20px 22px' }}>
-            <div style={{ fontSize:11, fontWeight:600, color:MC.brand, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:6 }}>Podcast · Episodio 48</div>
-            <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:22, fontWeight:700, color:'rgba(255,255,255,0.92)', letterSpacing:'-0.02em', lineHeight:1.2, marginBottom:8 }}>Todo lo que debes saber antes de adoptar un Golden Retriever</div>
-            <div style={{ fontSize:13, color:'rgba(255,255,255,0.35)' }}>Con la Dra. Carmen Reyes · Mayo 2026</div>
+            <div style={{ fontSize:11, fontWeight:600, color:MC.brand, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:6 }}>Episodio destacado</div>
+            <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:22, fontWeight:700, color:'rgba(255,255,255,0.92)', letterSpacing:'-0.02em', lineHeight:1.2, marginBottom:8 }}>Mira nuestro último episodio</div>
+            <div style={{ fontSize:13, color:'rgba(255,255,255,0.35)' }}>BPuppy · 2026</div>
           </div>
         </div>
       </div>
@@ -175,34 +172,33 @@ function MediaHero() {
 }
 
 // ── Videos ─────────────────────────────────────────────────────────────────────
-const VIDEO_DATA = [
-  { id:1, cat:'Crianza',   title:'Primeras semanas con tu cachorro',        dur:'18:22', views:'42k', isNew:true  },
-  { id:2, cat:'Salud',     title:'Vacunas esenciales: guia completa',       dur:'12:05', views:'28k', isNew:false },
-  { id:3, cat:'Razas',     title:'Golden vs Labrador: diferencias clave',   dur:'21:47', views:'61k', isNew:false },
-  { id:4, cat:'Crianza',   title:'Socializacion en los primeros 3 meses',   dur:'15:30', views:'34k', isNew:true  },
-  { id:5, cat:'Nutricion', title:'La mejor dieta para cachorros',           dur:'09:54', views:'19k', isNew:false },
-  { id:6, cat:'Grooming',  title:'Bano y cepillado paso a paso',            dur:'11:18', views:'22k', isNew:false },
+const COMERCIALES = [
+  { id:'M4D398WTPb0', label:'Comercial 1', color:'#FF5520' },
+  { id:'m5zU7U34GC0', label:'Comercial 2', color:'#9B6FFF' },
 ];
 
-const CARD_COLORS = ['#FF5520','#9B6FFF','#00A896','#E83060','#F5A623','#3B82F6'];
-
-function VideoCard({ v, idx }) {
-  const c = CARD_COLORS[idx % CARD_COLORS.length];
+function CommercialCard({ item }) {
   return (
-    <div style={{ background:MC.surface, border:`1px solid ${MC.border}`, borderRadius:16, overflow:'hidden', cursor:'pointer', transition:'transform .2s, box-shadow .2s' }}
-      onMouseEnter={function(e){ e.currentTarget.style.transform='translateY(-5px)'; e.currentTarget.style.boxShadow=`0 16px 48px rgba(0,0,0,0.1), 0 0 0 1.5px ${c}30`; }}
+    <div style={{ background:MC.surface, border:`1px solid ${MC.border}`, borderRadius:20, overflow:'hidden', transition:'transform .22s, box-shadow .22s' }}
+      onMouseEnter={function(e){ e.currentTarget.style.transform='translateY(-5px)'; e.currentTarget.style.boxShadow=`0 20px 56px rgba(0,0,0,0.11), 0 0 0 1.5px ${item.color}35`; }}
       onMouseLeave={function(e){ e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; }}>
-      <div style={{ aspectRatio:'16/9', background:`linear-gradient(135deg,${c}18,${c}08)`, position:'relative', display:'flex', alignItems:'center', justifyContent:'center' }}>
-        <div style={{ width:44, height:44, borderRadius:'50%', background:`${c}20`, border:`1.5px solid ${c}40`, display:'grid', placeItems:'center' }}>
-          <svg width="16" height="16" viewBox="0 0 24 24" fill={c}><polygon points="5 3 19 12 5 21 5 3"/></svg>
-        </div>
-        {v.isNew && <div style={{ position:'absolute', top:10, left:10, background:MC.brand, color:'#fff', fontSize:9.5, fontWeight:700, padding:'3px 8px', borderRadius:5, letterSpacing:'0.06em', textTransform:'uppercase' }}>Nuevo</div>}
-        <div style={{ position:'absolute', bottom:10, right:10, background:'rgba(14,12,20,0.6)', color:'#fff', fontSize:10.5, fontWeight:600, padding:'2px 7px', borderRadius:5 }}>{v.dur}</div>
+      <div style={{ aspectRatio:'16/9', position:'relative' }}>
+        <iframe
+          src={'https://www.youtube.com/embed/' + item.id + '?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es'}
+          title={'BPuppy ' + item.label}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{ position:'absolute', inset:0, width:'100%', height:'100%', border:'none', display:'block' }}
+        />
       </div>
-      <div style={{ padding:'14px 16px 16px' }}>
-        <div style={{ fontSize:10.5, fontWeight:700, color:c, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:6 }}>{v.cat}</div>
-        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:16, fontWeight:700, color:MC.ink, lineHeight:1.3, marginBottom:8, letterSpacing:'-0.01em' }}>{v.title}</div>
-        <div style={{ fontSize:12, color:MC.soft }}>{v.views} vistas</div>
+      <div style={{ padding:'16px 20px 22px', display:'flex', alignItems:'center', gap:14 }}>
+        <div style={{ width:36, height:36, borderRadius:'50%', background:`${item.color}15`, border:`1.5px solid ${item.color}30`, display:'grid', placeItems:'center', flexShrink:0 }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill={item.color}><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        </div>
+        <div>
+          <div style={{ fontSize:10, fontWeight:700, color:item.color, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:3 }}>{item.label}</div>
+          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:17, fontWeight:700, color:MC.ink, letterSpacing:'-0.01em' }}>BPuppy — {item.label}</div>
+        </div>
       </div>
     </div>
   );
@@ -212,22 +208,14 @@ function VideosSection() {
   const [ref, visible] = useReveal();
   return (
     <section id="videos" ref={ref} style={{ padding:'clamp(80px,10vw,140px) clamp(24px,6vw,120px)', background:MC.bg, opacity:visible?1:0, transform:visible?'translateY(0)':'translateY(36px)', transition:'opacity 0.7s ease, transform 0.7s ease' }}>
-      <div style={{ display:'flex', alignItems:'flex-end', gap:32, marginBottom:56, flexWrap:'wrap' }}>
-        <div>
-          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:12, fontWeight:700, letterSpacing:'0.18em', textTransform:'uppercase', color:MC.brand, marginBottom:14 }}>01 — Videos</div>
-          <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(44px,7.5vw,96px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.92, margin:0, color:MC.ink }}>
-            Lo ultimo<br/><span style={{ color:MC.soft, fontWeight:300 }}>en pantalla</span>
-          </h2>
-        </div>
-        <a href="#" style={{ marginLeft:'auto', display:'inline-flex', alignItems:'center', gap:8, padding:'10px 20px', borderRadius:999, border:`1.5px solid ${MC.borderStrong}`, color:MC.ink2, fontSize:13, fontWeight:600, textDecoration:'none', whiteSpace:'nowrap', transition:'all .2s' }}
-          onMouseEnter={function(e){ e.currentTarget.style.background=MC.ink; e.currentTarget.style.color='#fff'; e.currentTarget.style.borderColor=MC.ink; }}
-          onMouseLeave={function(e){ e.currentTarget.style.background='transparent'; e.currentTarget.style.color=MC.ink2; e.currentTarget.style.borderColor=MC.borderStrong; }}>
-          Ver todos
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-        </a>
+      <div style={{ marginBottom:56 }}>
+        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:12, fontWeight:700, letterSpacing:'0.18em', textTransform:'uppercase', color:MC.brand, marginBottom:14 }}>01 — Videos</div>
+        <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(44px,7.5vw,96px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.92, margin:0, color:MC.ink }}>
+          Comerciales<br/><span style={{ color:MC.soft, fontWeight:300 }}>BPuppy</span>
+        </h2>
       </div>
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(280px,1fr))', gap:18 }}>
-        {VIDEO_DATA.map(function(v,i){ return <VideoCard key={v.id} v={v} idx={i}/>; })}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(360px,1fr))', gap:22 }}>
+        {COMERCIALES.map(function(item){ return <CommercialCard key={item.id} item={item}/>; })}
       </div>
     </section>
   );
@@ -467,17 +455,44 @@ function PodcastSection() {
 }
 
 // ── Interviews ─────────────────────────────────────────────────────────────────
-const INTERVIEWS = [
-  { n:'01', name:'Dr. Rodrigo Salas',  role:'Medico Veterinario',    topic:'Salud preventiva en perros de raza',  tag:'Salud',    color:'#FF5520' },
-  { n:'02', name:'Maria Elena Torres', role:'Criadora certificada',   topic:'25 anos criando Golden Retrievers',   tag:'Crianza',  color:'#9B6FFF' },
-  { n:'03', name:'Carlos Munoz',       role:'Entrenador canino',      topic:'Educacion positiva desde cachorros',  tag:'Entrena',  color:'#00A896' },
-  { n:'04', name:'Sofia Valencia',     role:'Nutricionista animal',   topic:'Mitos sobre la alimentacion BARF',    tag:'Nutricion',color:'#E83060' },
+const INTERVIEW_ID = 'yOLFVCR4nEE';
+
+const SHORTS_IDS = [
+  'GMYoOg4V2zI',
+  '-tm9_rH1Mg0',
+  'wf0CF8B__pk',
+  'MHRiMVG8cHo',
+  'IBppn2M26IE',
+  'VcGkPy7U57I',
+  'mkFXaEmaDdU',
+  'GMoy5dJtp_s',
+  'M7KZF9P3S34',
 ];
+
+function ShortCard({ id, idx }) {
+  return (
+    <div style={{ borderRadius:14, overflow:'hidden', background:MC.surface, border:`1px solid ${MC.border}`, transition:'transform .22s, box-shadow .22s' }}
+      onMouseEnter={function(e){ e.currentTarget.style.transform='translateY(-5px)'; e.currentTarget.style.boxShadow='0 18px 44px rgba(0,0,0,0.1)'; }}
+      onMouseLeave={function(e){ e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; }}>
+      <div style={{ aspectRatio:'9/16', position:'relative' }}>
+        <iframe
+          src={'https://www.youtube.com/embed/' + id + '?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es'}
+          title={'Short entrevista ' + (idx + 1)}
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          allowFullScreen
+          style={{ position:'absolute', inset:0, width:'100%', height:'100%', border:'none', display:'block' }}
+        />
+      </div>
+    </div>
+  );
+}
 
 function InterviewsSection() {
   const [ref, visible] = useReveal();
   return (
     <section ref={ref} style={{ padding:'clamp(80px,10vw,140px) clamp(24px,6vw,120px)', background:MC.bg, opacity:visible?1:0, transform:visible?'translateY(0)':'translateY(36px)', transition:'opacity 0.7s ease, transform 0.7s ease' }}>
+
+      {/* Header */}
       <div style={{ fontSize:12, fontWeight:700, letterSpacing:'0.18em', textTransform:'uppercase', color:MC.brand, marginBottom:14 }}>03 — Entrevistas</div>
       <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginBottom:56, flexWrap:'wrap', gap:24 }}>
         <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(44px,7.5vw,96px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.92, margin:0, color:MC.ink }}>
@@ -487,22 +502,49 @@ function InterviewsSection() {
           Conversaciones profundas con los expertos que marcan la pauta en el mundo de las mascotas.
         </p>
       </div>
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(260px,1fr))', gap:16 }}>
-        {INTERVIEWS.map(function(iv){
+
+      {/* Featured interviews grid */}
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(380px,1fr))', gap:24, marginBottom:72 }}>
+        {[
+          { id: INTERVIEW_ID,    label:'Entrevista completa — BPuppy',                                                                          tag:'Entrevista'     },
+          { id: 'J5Q6c3wy0QE',  label:'Caring Hands Humane Society — Newton, Kansas · Primera parte', tag:'Entrevista · Refugio' },
+        ].map(function(iv) {
           return (
-            <div key={iv.n} style={{ background:MC.surface, border:`1px solid ${MC.border}`, borderRadius:18, padding:'28px 24px 24px', cursor:'pointer', transition:'transform .2s, box-shadow .2s', position:'relative', overflow:'hidden' }}
-              onMouseEnter={function(e){ e.currentTarget.style.transform='translateY(-5px)'; e.currentTarget.style.boxShadow=`0 14px 44px rgba(0,0,0,0.08), inset 0 0 0 1.5px ${iv.color}35`; }}
-              onMouseLeave={function(e){ e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow='none'; }}>
-              <div style={{ position:'absolute', top:0, right:0, width:80, height:80, borderRadius:'0 18px 0 80px', background:`${iv.color}08` }}/>
-              <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:48, fontWeight:800, color:`${iv.color}20`, letterSpacing:'-0.04em', lineHeight:1, marginBottom:20 }}>{iv.n}</div>
-              <div style={{ display:'inline-block', fontSize:10, fontWeight:700, color:iv.color, background:`${iv.color}12`, border:`1px solid ${iv.color}25`, borderRadius:6, padding:'3px 9px', letterSpacing:'0.06em', textTransform:'uppercase', marginBottom:14 }}>{iv.tag}</div>
-              <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:18, fontWeight:700, color:MC.ink, lineHeight:1.3, letterSpacing:'-0.01em', marginBottom:8 }}>{iv.topic}</div>
-              <div style={{ fontSize:13, color:MC.ink2, marginBottom:2 }}>{iv.name}</div>
-              <div style={{ fontSize:11.5, color:MC.soft }}>{iv.role}</div>
+            <div key={iv.id} style={{ borderRadius:20, overflow:'hidden', background:MC.surface, border:`1px solid ${MC.border}`, boxShadow:'0 8px 48px rgba(0,0,0,0.07)' }}>
+              <div style={{ aspectRatio:'16/9', position:'relative' }}>
+                <iframe
+                  src={'https://www.youtube.com/embed/' + iv.id + '?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es'}
+                  title={iv.label}
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  style={{ position:'absolute', inset:0, width:'100%', height:'100%', border:'none', display:'block' }}
+                />
+              </div>
+              <div style={{ padding:'16px 20px 20px', display:'flex', alignItems:'center', gap:12 }}>
+                <div style={{ width:36, height:36, borderRadius:'50%', background:`${MC.brand}15`, border:`1.5px solid ${MC.brand}30`, display:'grid', placeItems:'center', flexShrink:0 }}>
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill={MC.brand}><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                </div>
+                <div>
+                  <div style={{ fontSize:9.5, fontWeight:700, color:MC.brand, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:3 }}>{iv.tag}</div>
+                  <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:16, fontWeight:700, color:MC.ink, letterSpacing:'-0.01em' }}>{iv.label}</div>
+                </div>
+              </div>
             </div>
           );
         })}
       </div>
+
+      {/* Shorts grid */}
+      <div>
+        <div style={{ display:'flex', alignItems:'baseline', gap:12, marginBottom:28 }}>
+          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(28px,4vw,44px)', fontWeight:800, letterSpacing:'-0.03em', color:MC.ink }}>Shorts</div>
+          <div style={{ fontSize:15, color:MC.soft, fontWeight:400 }}>— Entrevistas breves</div>
+        </div>
+        <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(168px,1fr))', gap:14 }}>
+          {SHORTS_IDS.map(function(id, i){ return <ShortCard key={id} id={id} idx={i}/>; })}
+        </div>
+      </div>
+
     </section>
   );
 }

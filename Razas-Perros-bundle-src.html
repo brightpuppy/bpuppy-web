@@ -3,21 +3,72 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<meta name="description" content="Razas de Perros | BPuppy | Explora mas de 50 razas con fotos, caracteristicas, cuidados y temperamento. Encuentra la raza perfecta." />
-<meta name="robots" content="index, follow" />
-<link rel="canonical" href="https://bpuppy.us/razas" />
-<meta property="og:title" content="BPuppy — Razas de Perros" />
-<meta property="og:description" content="Razas de Perros | BPuppy | Explora mas de 50 razas con fotos, caracteristicas, cuidados y temperamento. Encuentra la raza perfecta." />
-<meta property="og:url" content="https://bpuppy.us/razas" />
-<meta property="og:type" content="website" />
-<meta property="og:image" content="https://bpuppy.us/fotos-raw/p01.jpg" />
 <title>BPuppy — Razas de Perros</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
 <link rel="icon" href="assets/logo.png">
 <link rel="stylesheet" href="styles.css">
-<script src="site-publish.js"></script>
+
+<!-- code-referenced resources: logo (used in React footer) -->
+<meta name="ext-resource-dependency" content="fotos-razas-sm/_logo-clean.png" data-resource-id="logo_clean" />
+
+<!-- code-referenced resources: breed photos from breed-data.jsx -->
+<meta name="ext-resource-dependency" content="fotos-razas-sm/French Bulldog.jpg" data-resource-id="French_Bulldog" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Yorkshire Terrier.jpg" data-resource-id="Yorkshire_Terrier" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Pomeranian.jpg" data-resource-id="Pomeranian" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Chihuahua.jpg" data-resource-id="Chihuahua" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Maltese.jpg" data-resource-id="Maltese" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Shih Tzu.jpg" data-resource-id="Shih_Tzu" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Miniature Schnauzer.jpg" data-resource-id="Miniature_Schnauzer" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Cavalier King Charles Spaniel.jpg" data-resource-id="Cavalier_King_Charles_Spaniel" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Dachshund.jpg" data-resource-id="Dachshund" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Boston Terrier.jpg" data-resource-id="Boston_Terrier" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Beagle.jpg" data-resource-id="Beagle" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Cocker Spaniel.jpg" data-resource-id="Cocker_Spaniel" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Border Collie.jpg" data-resource-id="Border_Collie" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/English Bulldog.jpg" data-resource-id="English_Bulldog" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Golden Retriever.jpg" data-resource-id="Golden_Retriever" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Labrador Retriever.jpg" data-resource-id="Labrador_Retriever" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/German Shepherd.jpg" data-resource-id="German_Shepherd" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Siberian Husky.jpg" data-resource-id="Siberian_Husky" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Standard Poodle.jpg" data-resource-id="Standard_Poodle" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Goldendoodle.jpg" data-resource-id="Goldendoodle" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Labradoodle.jpg" data-resource-id="Labradoodle" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Cavapoo.jpg" data-resource-id="Cavapoo" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Maltipoo.jpg" data-resource-id="Maltipoo" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Pomsky.jpg" data-resource-id="Pomsky" />
+
+<!-- code-referenced resources: breed photos from breed-data-extra.jsx -->
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Affenpinscher.jpg" data-resource-id="Affenpinscher" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Bichon Frise.jpg" data-resource-id="Bichon_Frise" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Havanese.jpg" data-resource-id="Havanese" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Jack Russell Terrier.jpg" data-resource-id="Jack_Russell_Terrier" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Pug.jpg" data-resource-id="Pug" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Shiba Inu.jpg" data-resource-id="Shiba_Inu" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Toy Poodle.jpg" data-resource-id="Toy_Poodle" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Australian Shepherd.jpg" data-resource-id="Australian_Shepherd" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Basset Hound.jpg" data-resource-id="Basset_Hound" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Bull Terrier.jpg" data-resource-id="Bull_Terrier" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Chow Chow.jpg" data-resource-id="Chow_Chow" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Pembroke Welsh Corgi.jpg" data-resource-id="Pembroke_Welsh_Corgi" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Afghan Hound.jpg" data-resource-id="Afghan_Hound" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Airedale Terrier.jpg" data-resource-id="Airedale_Terrier" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Akita.jpg" data-resource-id="Akita" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Alaskan Malamute.jpg" data-resource-id="Alaskan_Malamute" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Belgian Malinois.jpg" data-resource-id="Belgian_Malinois" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Bernese Mountain Dog.jpg" data-resource-id="Bernese_Mountain_Dog" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Boxer.jpg" data-resource-id="Boxer" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Dalmatian.jpg" data-resource-id="Dalmatian" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Doberman Pinscher.jpg" data-resource-id="Doberman_Pinscher" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Great Dane.jpg" data-resource-id="Great_Dane" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Rottweiler.jpg" data-resource-id="Rottweiler" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Saint Bernard.jpg" data-resource-id="Saint_Bernard" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Samoyed.jpg" data-resource-id="Samoyed" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Weimaraner.jpg" data-resource-id="Weimaraner" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Yorkipoo.jpg" data-resource-id="Yorkipoo" />
+<meta name="ext-resource-dependency" content="fotos-razas-sm/Chocolate Labradoodle.jpg" data-resource-id="Chocolate_Labradoodle" />
+
 <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
@@ -119,39 +170,66 @@
 .mestizo-card{max-width:720px;margin:0 auto;background:var(--paper);border-radius:28px;border:1px solid var(--line);padding:48px;text-align:center}
 @media(max-width:700px){.modal-hero{aspect-ratio:1/1}.breed-grid{grid-template-columns:repeat(auto-fill,minmax(200px,1fr))}}
 </style>
+
+<template id="__bundler_thumbnail" data-bg-color="#FFF5EB">
+  <svg viewBox="0 0 120 80" xmlns="http://www.w3.org/2000/svg">
+    <rect width="120" height="80" fill="#FFF5EB"/>
+    <ellipse cx="60" cy="52" rx="18" ry="12" fill="#F58220" opacity="0.25"/>
+    <ellipse cx="40" cy="36" rx="8" ry="10" fill="#F58220" opacity="0.25"/>
+    <ellipse cx="80" cy="36" rx="8" ry="10" fill="#F58220" opacity="0.25"/>
+    <ellipse cx="50" cy="24" rx="7" ry="9" fill="#F58220" opacity="0.25"/>
+    <ellipse cx="70" cy="24" rx="7" ry="9" fill="#F58220" opacity="0.25"/>
+    <text x="60" y="74" text-anchor="middle" font-family="sans-serif" font-size="7" font-weight="700" fill="#F58220" letter-spacing="2">BPUPPY</text>
+  </svg>
+</template>
 </head>
 <body>
-<div id="__chrome-hdr"></div>
-<div id="root"></div>
-<script type="text/babel" src="tweaks-panel.jsx"></script>
-<script type="text/babel" src="i18n.jsx"></script>
-<script type="text/babel" src="chrome.jsx"></script>
-<script type="text/babel">
-(function(){
-  var hdrMount = document.getElementById('__chrome-hdr');
-  var ftrMount = document.getElementById('__chrome-ftr');
-  if (!hdrMount) return;
-  function ChromeShell() {
-    var init = function(){ return localStorage.getItem('bpuppy-lang') || 'es'; };
-    var _s = React.useState(init);
-    var lang = _s[0], setLang_ = _s[1];
-    var setLang = function(l){ setLang_(l); localStorage.setItem('bpuppy-lang',l); document.documentElement.lang=l; };
-    return React.createElement(LangContext.Provider, { value:{ lang:lang, setLang:setLang } },
-      ReactDOM.createPortal(React.createElement(Header, { overDark:false }), hdrMount),
-      ftrMount ? ReactDOM.createPortal(React.createElement(Footer, null), ftrMount) : null
-    );
+
+<!-- Minimal inline header (replaces shared-header.js web component) -->
+<header style="position:sticky;top:0;z-index:100;background:rgba(255,245,235,.95);backdrop-filter:blur(16px);border-bottom:1px solid rgba(45,36,33,.1);height:60px;display:flex;align-items:center;">
+  <div class="container" style="display:flex;align-items:center;justify-content:space-between;gap:16px;">
+    <a href="#" style="display:flex;align-items:center;gap:10px;text-decoration:none;">
+      <img src="fotos-razas-sm/_logo-clean.png" alt="BPuppy" style="height:32px;width:auto;display:block;">
+      <span style="font-family:var(--display);font-size:18px;font-weight:700;color:var(--ink);letter-spacing:-.02em;">Bright Puppy</span>
+    </a>
+    <div style="display:flex;align-items:center;gap:8px;" id="sa-lang-btns">
+      <button onclick="saSetLang('es')" id="sa-btn-es" style="padding:5px 12px;border-radius:999px;border:1.5px solid var(--orange);background:var(--orange);color:#fff;font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:.06em;">ES</button>
+      <button onclick="saSetLang('en')" id="sa-btn-en" style="padding:5px 12px;border-radius:999px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink-2);font-size:12px;font-weight:700;font-family:inherit;cursor:pointer;letter-spacing:.06em;">EN</button>
+    </div>
+  </div>
+</header>
+<script>
+(function() {
+  var lang = localStorage.getItem('bpuppy-lang') || 'es';
+  function saSetLang(l) {
+    lang = l;
+    localStorage.setItem('bpuppy-lang', l);
+    document.getElementById('sa-btn-es').style.background = l === 'es' ? 'var(--orange)' : 'var(--paper)';
+    document.getElementById('sa-btn-es').style.color = l === 'es' ? '#fff' : 'var(--ink-2)';
+    document.getElementById('sa-btn-es').style.borderColor = l === 'es' ? 'var(--orange)' : 'var(--line)';
+    document.getElementById('sa-btn-en').style.background = l === 'en' ? 'var(--orange)' : 'var(--paper)';
+    document.getElementById('sa-btn-en').style.color = l === 'en' ? '#fff' : 'var(--ink-2)';
+    document.getElementById('sa-btn-en').style.borderColor = l === 'en' ? 'var(--orange)' : 'var(--line)';
+    window.dispatchEvent(new CustomEvent('bpuppy-lang-change', { detail: l }));
   }
-  var shell = document.createElement('div');
-  shell.style.display = 'none';
-  document.body.appendChild(shell);
-  ReactDOM.createRoot(shell).render(React.createElement(ChromeShell));
+  window.saSetLang = saSetLang;
+  saSetLang(lang);
 })();
 </script>
+
+<div id="root"></div>
 <script type="text/babel" src="breed-data.jsx"></script>
 <script type="text/babel" src="breed-data-extra.jsx"></script>
 <script type="text/babel">
 const { useState, useMemo, useEffect } = React;
 const tl = (arr, l) => Array.isArray(arr) ? (l==='en' ? (arr[1]||arr[0]) : arr[0]) : arr;
+
+// Resolve photo paths to inlined blob URLs (set by bundler via window.__resources)
+function resolvePhoto(path) {
+  if (!path || !window.__resources) return path;
+  const id = path.replace(/^.*\//, '').replace(/\.\w+$/, '').replace(/[^a-zA-Z0-9]/g, '_');
+  return window.__resources[id] || path;
+}
 
 function RatingDots({ value, max=5 }) {
   return <div className="bcard-dots">{Array.from({length:max},(_,i)=><div key={i} className={`bcard-dot ${i<value?'filled':''}`}/>)}</div>;
@@ -162,7 +240,7 @@ function RatingBar({ label, value }) {
 function BreedPhoto({ breed, large }) {
   const [err, setErr] = useState(false);
   const init = (breed.es||breed.name).charAt(0);
-  if (breed.photo && !err) return <img src={breed.photo} alt={breed.name} onError={()=>setErr(true)} style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 20%',display:'block'}}/>;
+  if (breed.photo && !err) return <img src={resolvePhoto(breed.photo)} alt={breed.name} onError={()=>setErr(true)} style={{width:'100%',height:'100%',objectFit:'cover',objectPosition:'center 20%',display:'block'}}/>;
   return <div className={large?'modal-hero-ph':'bcard-photo-ph'}>{init}</div>;
 }
 function BreedCard({ breed, onClick, lang:l }) {
@@ -193,7 +271,7 @@ function DesignerCard({ b, onClick, lang:l }) {
     <div className="dcard" onClick={()=>onClick(b)} style={{padding:0,overflow:'hidden'}}>
       {b.photo && (
         <div style={{aspectRatio:'16/9',overflow:'hidden',background:'linear-gradient(135deg,var(--bg-2),var(--accent-2))'}}>
-          <img src={b.photo} alt={b.name} style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} onError={e=>{e.target.style.display='none'}}/>
+          <img src={resolvePhoto(b.photo)} alt={b.name} style={{width:'100%',height:'100%',objectFit:'cover',display:'block'}} onError={e=>{e.target.style.display='none'}}/>
         </div>
       )}
       <div style={{padding:'16px 18px'}}>
@@ -211,14 +289,14 @@ function BreedModal({ breed, onClose, lang:l, isDesigner }) {
   const [showMixes, setShowMixes] = useState(false);
   const [imgErr, setImgErr] = useState(false);
   useEffect(()=>{document.body.style.overflow='hidden';return()=>{document.body.style.overflow='';};},[]);
-  const src = breed.photo || `fotos-razas/${breed.id}.jpg`;
+  const src = resolvePhoto(breed.photo || '');
   return (
     <div className="modal-overlay" onClick={e=>{if(e.target===e.currentTarget)onClose()}}>
       <div className="modal">
         <div className="modal-inner">
         <div className="modal-hero">
           <button className="modal-close" onClick={onClose}>✕</button>
-          {!imgErr
+          {src && !imgErr
             ? <img className="modal-hero-img" src={src} alt={breed.name} onError={()=>setImgErr(true)}/>
             : <div className="modal-hero-ph">{(breed.es||breed.name).charAt(0)}</div>
           }
@@ -318,10 +396,8 @@ function RazasApp() {
 
   return (
     <>
-
       <section className="razas-hero">
         <div className="container">
-          <a href="Cachorros.html" style={{display:'inline-flex',alignItems:'center',gap:8,fontSize:13,fontWeight:600,letterSpacing:'.06em',textTransform:'uppercase',color:'var(--ink-soft)',marginBottom:24}}>← {t(['Volver a cachorros','Back to puppies'])}</a>
           <h1>{t(['Conoce las','Meet the'])} <em>{t(['razas','breeds'])}</em></h1>
           <p>{t(['Explora más de 20 razas con filtros, datos completos y los mixes más comunes de cada una.','Explore 20+ breeds with filters, complete data, and the most common mixes for each.'])}</p>
           <div style={{display:'flex',gap:12,marginTop:24,flexWrap:'wrap'}}>
@@ -382,15 +458,20 @@ function RazasApp() {
               <h2 className="display" style={{fontSize:'clamp(28px,4vw,44px)',margin:'0 0 16px'}}>{t(['Perros','Dogs'])} <em className="serif-italic" style={{color:'var(--orange)'}}>{t(['Mestizos','Mixed Breed'])}</em></h2>
               <p style={{fontSize:17,lineHeight:1.65,color:'var(--ink-2)',margin:'0 0 28px'}}>{tl(MESTIZO_INFO.desc, lang)}</p>
               <div style={{display:'flex',gap:14,justifyContent:'center',flexWrap:'wrap'}}>
-                <a href="Adopciones.html" className="btn btn-primary">{t(['Ver refugios cercanos','Find nearby shelters'])}<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg></a>
-                <a href="https://wa.me/18084928294" target="_blank" rel="noreferrer" className="btn btn-outline">{t(['Preguntar por un mestizo','Ask about a mixed breed'])}</a>
+                <span style={{padding:'12px 24px',borderRadius:999,background:'var(--orange)',color:'#fff',fontSize:15,fontWeight:700,fontFamily:'var(--display)',letterSpacing:'-.01em'}}>{t(['Ver refugios cercanos','Find nearby shelters'])}</span>
               </div>
             </div>
           )}
         </div>
       </section>
 
-      <Footer />
+      <footer className="foot">
+        <div className="container foot-row">
+          <div className="foot-logo"><img src={resolvePhoto('assets/logo-clean.png')} alt="" style={{height:28,width:'auto'}}/><span>BPuppy</span></div>
+          <p>© 2026 BPuppy · {t(['Cachorros criados con amor.','Puppies raised with love.'])}</p>
+          <div className="foot-links"><a href="#">{t(['Inicio','Home'])}</a><a href="#">{t(['Cachorros','Puppies'])}</a><a href="#">{t(['Adopciones','Adoptions'])}</a><a href="#">Social</a><a href="#">{t(['Garantía','Guarantee'])}</a></div>
+        </div>
+      </footer>
       {selected && <BreedModal breed={selected} onClose={()=>setSelected(null)} lang={lang} isDesigner={isDesigner}/>}
     </>
   );
@@ -398,7 +479,6 @@ function RazasApp() {
 ReactDOM.createRoot(document.getElementById('root')).render(<RazasApp/>);
 </script>
 <script src="site-animations.js"></script>
-
 <script src="claude-bridge.js"></script>
 <script type="text/babel" src="chat-widget.jsx"></script>
 </body>

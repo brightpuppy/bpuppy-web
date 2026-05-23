@@ -229,6 +229,27 @@ const CAT_BREEDS = [
     healthEn:'Watch for HCM, glycogen storage disease type IV, and PKD.',
     mixes:[]
   },
+  {
+    id:'himalayan', name:'Himalayan', es:'Himalayo', emoji:'💙',
+    photo:'uploads/Page 12.jpeg',
+    size:'medium', coat:['long'], hypo:false, energy:1, grooming:5, shedding:3,
+    trainability:2, vocal:2, family:5, kids:3, pets:4, apartment:5,
+    origin:'USA / UK', originEn:'USA / UK', flag:'🇺🇸',
+    weight:'3–5 kg', lifespan:'9–15 años', akc:false, fci:false, tica:true, cfa:true,
+    temperament:['Tranquilo','Gentil','Cariñoso','Dulce','Elegante'],
+    temperamentEn:['Calm','Gentle','Affectionate','Sweet','Elegant'],
+    bestFor:['Apartamentos','Adultos tranquilos','Personas mayores','Familias con niños tranquilos'],
+    bestForEn:['Apartments','Quiet adults','Seniors','Families with calm children'],
+    desc:'El Himalayo combina el pelaje largo y lujoso del Persa con los colores punto del Siamés, creando uno de los gatos más bellos del mundo. Es tranquilo, afectuoso y profundamente leal a su familia. Sus ojos azules intensos son característicos de la raza.',
+    descEn:'The Himalayan combines the long, luxurious coat of the Persian with the colorpoint pattern of the Siamese, creating one of the most beautiful cats in the world. Calm, affectionate, and deeply loyal to their family, with characteristic deep blue eyes.',
+    care:'Cepillado diario obligatorio para evitar nudos en el pelaje largo. Limpieza ocular frecuente. Baños mensuales recomendados.',
+    careEn:'Daily brushing required to prevent matting. Frequent eye cleaning. Monthly baths recommended.',
+    health:'Propenso a PKD (enfermedad poliquística renal), problemas respiratorios leves por la cara aplanada y problemas dentales.',
+    healthEn:'Prone to PKD (polycystic kidney disease), mild breathing issues due to flat face, and dental problems.',
+    mixes:[
+      {name:'Himmy Mix', parents:'Himalayan + domestic', desc:'Hereda los colores punto y el pelaje semi-largo con carácter generalmente tranquilo.'},
+    ]
+  },
 ];
 
 const CAT_MESTIZO_INFO = {

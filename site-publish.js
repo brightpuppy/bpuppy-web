@@ -1,4 +1,4 @@
-﻿// site-publish.js — BPuppy centralized visibility manager
+// site-publish.js — BPuppy centralized visibility manager
 // Persists in localStorage. Any page can read/write via window.SitePublish.
 // Events: window listens for 'bpuppy:publish' to react to changes in real time.
 
@@ -29,7 +29,8 @@
       Home:        [{ id:'hero',       label:'Hero principal'        },
                    { id:'razas',      label:'Razas destacadas'      },
                    { id:'proceso',    label:'Proceso de adopción'   },
-                   { id:'cta',        label:'CTA final'             }],
+                   { id:'cta',        label:'CTA final'             },
+                   { id:'mapa',       label:'Mapa — Familias por el mundo' }],
       Cachorros:   [{ id:'hero',       label:'Hero'                  },
                    { id:'listado',    label:'Listado de cachorros'  }],
       Adopciones:  [{ id:'hero',       label:'Hero'                  },
@@ -51,9 +52,10 @@
                    { id:'reserva',    label:'Reserva online'        }],
       Gatos:       [{ id:'hero',       label:'Hero'                  },
                    { id:'listado',    label:'Listado'               }],
-      Nosotros:    [{ id:'hero',       label:'Hero'                  },
-                   { id:'equipo',     label:'Equipo'                },
-                   { id:'valores',    label:'Valores'               }],
+      Nosotros:    [{ id:'hero',                label:'Hero'                       },
+                   { id:'equipo',             label:'Equipo'                     },
+                   { id:'valores',            label:'Valores'                    },
+                   { id:'impacto_educacion',  label:'Impacto — Educación'        }],
       Historia:    [{ id:'hero',       label:'Hero'                  },
                    { id:'timeline',   label:'Timeline'              }],
     }
@@ -61,10 +63,10 @@
 
   // ── Default live/draft state for pages ──────────────────────────────────────
   var DEFAULTS = {
-    Home: true, Cachorros: true, 'Cachorros-Entregados': false, 'Gatos-Entregados': false,
+    Home: true, Cachorros: true, 'Cachorros-Entregados': true, 'Gatos-Entregados': true,
     Nosotros: true, 'Razas-Perros': true, Media: true,
-    Adopciones: true, Tienda: true, Blog: false, Grooming: true,
-    Gatos: true, 'Razas-Gatos': true, Historia: false, Social: true,
+    Adopciones: true, Tienda: true, Blog: true, Grooming: true,
+    Gatos: true, 'Razas-Gatos': true, Historia: true, Social: true,
   };
 
   // ── Internal helpers ────────────────────────────────────────────────────────

@@ -23,6 +23,7 @@
 <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="image-slot.js"></script>
 <style>
+  @keyframes bubbleUp { 0%{transform:translateY(0) scale(1);opacity:.55} 100%{transform:translateY(-110vh) scale(.7);opacity:0} }
   @media (max-width: 768px) {
     .grooming-hero-grid { grid-template-columns: 1fr !important; }
     .grooming-booking-grid { grid-template-columns: 1fr !important; }
@@ -49,7 +50,7 @@ function GroomRoot() {
   if (!isLive) return <ComingSoon pageName="Grooming"/>;
   return (
     <LangContext.Provider value={{ lang, setLang: setLangBoth }}>
-      <Header overDark={true} />
+      <Header overDark={false} />
       <main><GroomingApp /></main>
       <Footer />
     </LangContext.Provider>

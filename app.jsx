@@ -7,6 +7,20 @@ const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
   "lang": "es"
 }/*EDITMODE-END*/;
 
+// Wrapper that respects the SitePublish toggle for the map section
+function FamiliesMapSection() {
+  const [show, setShow] = React.useState(
+    () => window.SitePublish ? window.SitePublish.isSectionLive('Home', 'mapa') : true
+  );
+  React.useEffect(() => {
+    const h = () => setShow(window.SitePublish ? window.SitePublish.isSectionLive('Home', 'mapa') : true);
+    window.addEventListener('bpuppy:publish', h);
+    return () => window.removeEventListener('bpuppy:publish', h);
+  }, []);
+  if (!show) return null;
+  return <FamiliesMap />;
+}
+
 function App() {
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [lang, setLang] = React.useState(tweaks.lang || 'es');
@@ -57,7 +71,7 @@ function App() {
         <Quiz />
         <Gallery />
         <InstagramFeed />
-        <FamiliesMap />
+        <FamiliesMapSection />
         <Testimonials />
         <FAQ />
         <FinalCTA />

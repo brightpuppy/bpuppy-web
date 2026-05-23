@@ -14,7 +14,7 @@ const BLOG = [
   // ── RAZAS ───────────────────────────────────────────────────────────────
   {
     id: 1, cat: 'razas', emoji: '🐕', color: '#F58220',
-    img: 'assets/photos/g03.jpg',
+    img: 'uploads/Page 10.jpeg',
     title: 'Golden Retriever: guía práctica para dueños reales',
     sub: 'Ejercicio, pelaje, alimentación y salud sin rodeos',
     date: 'Mayo 2025', read: 6,
@@ -32,6 +32,7 @@ const BLOG = [
   },
   {
     id: 2, cat: 'razas', emoji: '🐾', color: '#8B5CF6',
+    img: 'uploads/Page 8.jpeg',
     title: 'French Bulldog: la verdad que nadie te dice antes de adoptarlo',
     sub: 'Salud, costos reales y cómo mantenerlo feliz',
     date: 'Mayo 2025', read: 5,
@@ -49,6 +50,7 @@ const BLOG = [
   },
   {
     id: 3, cat: 'razas', emoji: '🦮', color: '#1EB87A',
+    img: 'fotos-razas-sm/Labrador Retriever.jpg',
     title: 'Labrador Retriever: el compañero que nunca falla',
     sub: 'Por qué fue el perro más popular del mundo por 30 años',
     date: 'Abril 2025', read: 5,
@@ -66,6 +68,7 @@ const BLOG = [
   },
   {
     id: 4, cat: 'razas', emoji: '🐩', color: '#E85D75',
+    img: 'uploads/Page 17.jpeg',
     title: 'Poodle: inteligencia, elegancia y muy poco alérgeno',
     sub: 'El perro más inteligente del mundo también es el más subestimado',
     date: 'Abril 2025', read: 5,
@@ -83,7 +86,7 @@ const BLOG = [
   },
   {
     id: 5, cat: 'razas', emoji: '🐕‍🦺', color: '#F58220',
-    img: 'assets/photos/g01.jpg',
+    img: 'uploads/Page 20.jpeg',
     title: 'Schnauzer: fiel, inteligente y siempre alerta',
     sub: 'El guardián del hogar en tamaño compacto',
     date: 'Abril 2025', read: 4,
@@ -101,7 +104,7 @@ const BLOG = [
   },
   {
     id: 6, cat: 'razas', emoji: '🦴', color: '#1E90FF',
-    img: 'assets/photos/g05.jpg',
+    img: 'uploads/Page 13.jpeg',
     title: 'Yorkshire Terrier: pequeño en tamaño, enorme en personalidad',
     sub: 'Cómo vivir con el perro más valiente del mundo',
     date: 'Marzo 2025', read: 4,
@@ -119,6 +122,7 @@ const BLOG = [
   },
   {
     id: 7, cat: 'razas', emoji: '🐶', color: '#E86535',
+    img: 'fotos-razas-sm/Beagle.jpg',
     title: 'Beagle: cómo manejar su energía (sin volverte loco)',
     sub: 'Todo sobre el olfato más poderoso del mundo doméstico',
     date: 'Marzo 2025', read: 5,
@@ -136,6 +140,7 @@ const BLOG = [
   },
   {
     id: 8, cat: 'razas', emoji: '🐕', color: '#2D6A4F',
+    img: 'uploads/Page 4.jpeg',
     title: 'Cocker Spaniel: el más sensible de la familia',
     sub: 'Cómo criar a un perro que siente todo profundamente',
     date: 'Marzo 2025', read: 4,
@@ -153,6 +158,7 @@ const BLOG = [
   },
   {
     id: 9, cat: 'razas', emoji: '🐩', color: '#7C3AED',
+    img: 'fotos-razas-sm/Chihuahua.jpg',
     title: 'Chihuahua: criando al perro más malentendido del mundo',
     sub: 'Por qué los problemas de carácter son siempre culpa del dueño',
     date: 'Febrero 2025', read: 4,
@@ -170,6 +176,7 @@ const BLOG = [
   },
   {
     id: 10, cat: 'razas', emoji: '🐾', color: '#E85D75',
+    img: 'uploads/Page 21.jpeg',
     title: 'Shih Tzu: el arte de cuidar ese pelaje de seda',
     sub: 'Grooming, salud y vida con el perro de los emperadores chinos',
     date: 'Febrero 2025', read: 4,

@@ -418,29 +418,62 @@ function GroomingApp() {
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
 
       {/* Hero */}
-      <div style={{ position: 'relative', minHeight: 500, display: 'flex', alignItems: 'flex-end', overflow: 'hidden', background: 'linear-gradient(135deg,#2D2421 0%,#5C3D2E 100%)' }}>
-        <div style={{ position: 'absolute', inset: 0, opacity: 0.06 }}>
-          {Array.from({ length: 8 }).map((_, i) => <div key={i} style={{ position: 'absolute', top: `${i * 13}%`, left: 0, right: 0, height: 1, background: '#fff' }} />)}
-        </div>
-        <div className="container" style={{ paddingTop: 140, paddingBottom: 60, position: 'relative', zIndex: 1, display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 48, alignItems: 'center' }}>
-          <div>
-            <div style={{ display: 'inline-block', padding: '4px 14px', borderRadius: 999, background: 'rgba(245,130,32,0.18)', color: 'var(--orange)', fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 16 }}>BPuppy Grooming</div>
-            <h1 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 'clamp(32px,4.5vw,54px)', fontWeight: 800, color: '#fff', margin: '0 0 16px', letterSpacing: '-0.03em', lineHeight: 1.05 }}>
-              Tu mascota merece<br /><em style={{ fontFamily: 'Instrument Serif,Georgia,serif', fontStyle: 'italic', fontWeight: 400, color: 'var(--orange)' }}>verse increíble</em>
+      <div style={{ position:'relative', minHeight:580, display:'flex', alignItems:'center', overflow:'hidden', background:'#e9e9e9' }}>
+
+        {/* Dogs image — absolute right, shows all 4 */}
+        <img src="uploads/Pom Grooming.webp" alt=""
+          style={{ position:'absolute', bottom:0, right:0, width:'57%', height:'auto', display:'block', pointerEvents:'none', zIndex:0 }}
+        />
+
+        {/* White gradient overlay — keeps text legible */}
+        <div style={{ position:'absolute', inset:0, background:'linear-gradient(to right, #e9e9e9 34%, rgba(233,233,233,0.82) 43%, transparent 50%)', pointerEvents:'none', zIndex:1 }}/>
+
+        {/* Floating bubbles */}
+        {[
+          {w:70,  l:'8%',  delay:0},   {w:40,  l:'18%', delay:1.2}, {w:90,  l:'28%', delay:2.1},
+          {w:35,  l:'38%', delay:0.7}, {w:55,  l:'45%', delay:3.0}, {w:80,  l:'22%', delay:1.8},
+          {w:45,  l:'12%', delay:2.5}, {w:60,  l:'32%', delay:0.4}, {w:30,  l:'42%', delay:1.5},
+        ].map(function(b, i) {
+          return (
+            <div key={i} style={{
+              position:'absolute', borderRadius:'50%', background:'transparent',
+              border: `2px solid rgba(245,130,32,${0.08 + (i%4)*0.04})`,
+              width:b.w, height:b.w, left:b.l, bottom: -b.w,
+              animation:`bubbleUp ${5 + i*0.6}s ease-in infinite`,
+              animationDelay: b.delay + 's',
+              pointerEvents:'none',
+            }}/>
+          );
+        })}
+
+        <div className="container" style={{ paddingTop:120, paddingBottom:60, position:'relative', zIndex:1 }}>
+
+          {/* Left — text */}
+          <div style={{ paddingBottom:20, maxWidth:'50%', position:'relative', zIndex:2 }}>            {/* Address badge */}
+            <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(245,130,32,0.08)', border:'1px solid rgba(245,130,32,0.22)', borderRadius:999, padding:'7px 16px', marginBottom:22 }}>
+              <span style={{ fontSize:15 }}>📍</span>
+              <div>
+                <div style={{ fontSize:9.5, fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--orange)', marginBottom:1 }}>Próximamente abriendo</div>
+                <div style={{ fontSize:12, fontWeight:600, color:'var(--ink)' }}>5604 Kalogridis Rd, Haines City, FL 33844</div>
+              </div>
+            </div>
+
+            <div style={{ fontSize:15, fontWeight:800, letterSpacing:'0.18em', textTransform:'uppercase', color:'#3A8FC7', marginBottom:16 }}>BPuppy Grooming</div>
+
+            <h1 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(32px,4.5vw,58px)', fontWeight:800, color:'var(--ink)', margin:'0 0 16px', letterSpacing:'-0.035em', lineHeight:1.05 }}>
+              Tu mascota merece<br/><em style={{ fontFamily:'Instrument Serif,Georgia,serif', fontStyle:'italic', fontWeight:400, color:'var(--orange)' }}>verse increíble</em>
             </h1>
-            <p style={{ fontSize: 15, color: 'rgba(255,255,255,0.7)', margin: '0 0 28px', lineHeight: 1.65, maxWidth: 400 }}>
+
+            <p style={{ fontSize:15, color:'var(--ink-2)', margin:'0 0 28px', lineHeight:1.65, maxWidth:400 }}>
               Baño, corte, deslanado y spa con productos premium. Recogida y entrega disponible. Planes de membresía con descuento anual.
             </p>
-            <div style={{ display: 'flex', gap: 10, flexWrap: 'wrap' }}>
-              <a href="#booking" style={{ padding: '13px 24px', borderRadius: 14, background: 'var(--orange)', color: '#fff', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>Agendar cita ahora</a>
-              <a href="#memberships" style={{ padding: '13px 24px', borderRadius: 14, background: 'rgba(255,255,255,0.12)', color: '#fff', fontFamily: 'inherit', fontSize: 14, fontWeight: 600, textDecoration: 'none', backdropFilter: 'blur(8px)' }}>Ver membresías</a>
+
+            <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+              <a href="#booking" style={{ padding:'13px 24px', borderRadius:14, background:'var(--orange)', color:'#fff', fontFamily:'inherit', fontSize:14, fontWeight:700, textDecoration:'none', boxShadow:'0 8px 24px -8px rgba(245,130,32,0.45)' }}>Agendar cita ahora</a>
+              <a href="#memberships" style={{ padding:'13px 24px', borderRadius:14, background:'var(--bg)', color:'var(--ink)', fontFamily:'inherit', fontSize:14, fontWeight:600, textDecoration:'none', border:'1.5px solid var(--line)' }}>Ver membresías</a>
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            {['Antes / Después', 'Proceso de spa', 'Nuestras tijeras', 'Resultados'].map((label, i) => (
-              <image-slot key={i} id={`grooming-gallery-${i}`} shape="rounded" radius="16" placeholder={label} style={{ aspectRatio: '1', display: 'block' }} />
-            ))}
-          </div>
+
         </div>
       </div>
 
@@ -541,7 +574,7 @@ function GroomingApp() {
               Selecciona servicio, fecha y hora. Te confirmamos disponibilidad en menos de 2 horas. También ofrecemos <strong>recogida y entrega</strong> — pregunta al reservar.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {[['📍', 'Servicio en local', 'Tráenos a tu mascota a nuestro salón'], ['🚐', 'Pickup & Delivery', 'Recogemos y entregamos en tu casa (+$20)'], ['⏰', 'Horario', 'Lun – Sáb: 9:00 AM – 6:00 PM']].map(([ic, title, sub]) => (
+              {[['📍', 'Próximamente · Haines City, FL', '5604 Kalogridis Rd, Haines City, FL 33844'], ['🚐', 'Pickup & Delivery', 'Recogemos y entregamos en tu casa (+$20)'], ['⏰', 'Horario', 'Lun – Sáb: 9:00 AM – 6:00 PM']].map(([ic, title, sub]) => (
                 <div key={title} style={{ display: 'flex', gap: 12, padding: '14px 16px', background: 'var(--paper)', borderRadius: 12, border: '1px solid var(--line)' }}>
                   <span style={{ fontSize: 22, flexShrink: 0 }}>{ic}</span>
                   <div>
@@ -562,8 +595,41 @@ function GroomingApp() {
         </div>
       </div>
 
-      {/* Memberships */}
-      <div id="memberships" style={{ background: 'var(--ink)', padding: '70px 0' }}>
+      {/* Location map */}
+      <div style={{ background:'#fff', padding:'60px 0 0', borderTop:'1px solid var(--line)' }}>
+        <div className="container">
+          <div style={{ display:'flex', alignItems:'center', gap:16, marginBottom:24, flexWrap:'wrap' }}>
+            <div>
+              <div className="eyebrow" style={{ marginBottom:6 }}>Nuestra próxima ubicación</div>
+              <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(22px,3vw,32px)', fontWeight:800, color:'var(--ink)', margin:0, letterSpacing:'-0.025em' }}>
+                BPuppy Grooming · Haines City, FL
+              </h2>
+            </div>
+            <a href="https://maps.google.com/?q=5604+Kalogridis+Rd,+Haines+City,+FL+33844" target="_blank" rel="noreferrer"
+              style={{ marginLeft:'auto', display:'inline-flex', alignItems:'center', gap:8, padding:'10px 18px', borderRadius:999, background:'var(--orange)', color:'#fff', fontSize:13, fontWeight:700, textDecoration:'none', whiteSpace:'nowrap', boxShadow:'0 6px 20px -6px rgba(245,130,32,0.45)' }}>
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Abrir en Maps
+            </a>
+          </div>
+          <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:20, padding:'12px 18px', background:'rgba(245,130,32,0.06)', border:'1px solid rgba(245,130,32,0.2)', borderRadius:12 }}>
+            <span style={{ fontSize:18 }}>📍</span>
+            <div>
+              <div style={{ fontSize:14, fontWeight:700, color:'var(--ink)' }}>5604 Kalogridis Rd, Haines City, FL 33844</div>
+              <div style={{ fontSize:12, color:'var(--orange)', fontWeight:600 }}>Próximamente abriendo · ¡Síguenos para el anuncio oficial!</div>
+            </div>
+          </div>
+          <div style={{ borderRadius:18, overflow:'hidden', border:'1px solid var(--line)', boxShadow:'0 4px 24px rgba(0,0,0,0.07)' }}>
+            <iframe
+              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d622.1281722026707!2d-81.56348267074404!3d28.107241293543456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88dd744a45039381%3A0x7e8fc576a126e748!2s5604%20Kalogridis%20Rd%2C%20Haines%20City%2C%20FL%2033844!5e0!3m2!1ses!2sus!4v1779474402737!5m2!1ses!2sus"
+              width="100%" height="380" style={{ border:0, display:'block' }}
+              allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
+              title="BPuppy Grooming — Haines City FL"
+            />
+          </div>
+        </div>
+      </div>
+
+      {/* Memberships */}      <div id="memberships" style={{ background: 'var(--ink)', padding: '70px 0' }}>
         <div className="container">
           <div style={{ textAlign: 'center', marginBottom: 40 }}>
             <div style={{ display: 'inline-block', padding: '4px 14px', borderRadius: 999, background: 'rgba(245,130,32,0.18)', color: 'var(--orange)', fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', marginBottom: 12 }}>Membresías</div>

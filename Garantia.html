@@ -17,6 +17,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
 <link rel="icon" href="assets/logo.png">
 <link rel="stylesheet" href="styles.css">
+<script src="site-publish.js"></script>
 <style>
 .page-hero {
   background: var(--dark-sec, #5C4F48); color: var(--ink, #2D2421); padding: 140px 0 80px;
@@ -119,12 +120,13 @@
 .lang button { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-2); transition: all .2s; border: 0; background: none; cursor: pointer; font-family: inherit; }
 .lang button[data-active="true"] { background: var(--ink); color: var(--bg); }
 </style>
-<script src="shared-header.js"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 </head>
 <body>
 <!-- ── Header ── -->
-<site-header></site-header>
-
+<div id="__chrome-hdr"></div>
 <!-- ── Hero ── -->
 <section class="page-hero">
   <div class="container">
@@ -279,17 +281,36 @@
 </section>
 
 <!-- ── Footer ── -->
-<footer class="foot">
-  <div class="container foot-row">
-    <div class="foot-logo"><img src="assets/logo-clean.png" alt=""><span>BPuppy</span></div>
-    <p>© 2026 BPuppy · Cachorros criados con amor en hogares de familia.</p>
-    <div class="foot-links"><a href="Home.html">Inicio</a><a href="Historia.html">Historia</a><a href="Social.html">Social</a><a href="Garantia.html">Garantía</a></div>
-  </div>
-</footer>
+<div id="__chrome-ftr"></div>
 
 
 
 <script src="site-animations.js"></script>
+<script type="text/babel" src="tweaks-panel.jsx"></script>
+<script type="text/babel" src="i18n.jsx"></script>
+<script type="text/babel" src="chrome.jsx"></script>
+<script type="text/babel">
+(function(){
+  var hdrMount = document.getElementById('__chrome-hdr');
+  var ftrMount = document.getElementById('__chrome-ftr');
+  if (!hdrMount) return;
+  function ChromeShell() {
+    var init = function(){ return localStorage.getItem('bpuppy-lang') || 'es'; };
+    var _s = React.useState(init);
+    var lang = _s[0], setLang_ = _s[1];
+    var setLang = function(l){ setLang_(l); localStorage.setItem('bpuppy-lang',l); document.documentElement.lang=l; };
+    return React.createElement(LangContext.Provider, { value:{ lang:lang, setLang:setLang } },
+      ReactDOM.createPortal(React.createElement(Header, { overDark:false }), hdrMount),
+      ftrMount ? ReactDOM.createPortal(React.createElement(Footer, null), ftrMount) : null
+    );
+  }
+  var shell = document.createElement('div');
+  shell.style.display = 'none';
+  document.body.appendChild(shell);
+  ReactDOM.createRoot(shell).render(React.createElement(ChromeShell));
+})();
+</script>
+<script src="claude-bridge.js"></script>
 <script type="text/babel" src="chat-widget.jsx"></script>
 </body>
 </html>

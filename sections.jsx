@@ -29,25 +29,14 @@ function About() {
         </div>
 
         <div className="about-video reveal">
-          <div className="about-video-frame">
-            <image-slot
-              id="about-video-poster" src="fotos-raw/p03.jpg"
-              shape="rounded"
-              radius="20"
-              placeholder={t(S.videoP)}>
-            </image-slot>
-            <button className="about-video-play" type="button" aria-label="Play">
-              <svg viewBox="0 0 24 24" width="28" height="28" fill="currentColor"><path d="M8 5v14l11-7z" /></svg>
-            </button>
-            <div className="about-video-cap">
-              <span className="about-video-dot"></span>
-              {t(S.videoT)}
-            </div>
-          </div>
-          <div className="about-video-note">
-            <strong>{t(['Sube tu video aquí', 'Drop your video here'])}</strong>
-            <span>{t(['MP4 o MOV · 30–60s · contando la historia desde 2012',
-              'MP4 or MOV · 30–60s · telling the story since 2012'])}</span>
+          <div className="about-video-frame" style={{ borderRadius: 20, overflow: 'hidden', aspectRatio: '9/16', position: 'relative', maxWidth: 340, margin: '0 auto', boxShadow: '0 12px 48px rgba(0,0,0,0.14)' }}>
+            <iframe
+              src="https://www.youtube.com/embed/YImasdUtIrI?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es"
+              title="Quiénes somos — BPuppy"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowFullScreen
+              style={{ position: 'absolute', inset: 0, width: '100%', height: '100%', border: 'none', display: 'block' }}
+            />
           </div>
         </div>
       </div>
@@ -94,6 +83,14 @@ const IG_PHOTOS = [
 
 
 function InstagramFeed() {
+  React.useEffect(() => {
+    const d = document;
+    if (!d.querySelector('script[src="https://w.behold.so/widget.js"]')) {
+      const s = d.createElement('script');
+      s.type = 'module'; s.src = 'https://w.behold.so/widget.js'; d.head.append(s);
+    }
+  }, []);
+
   const t = useT();
   const S = STRINGS.ig;
   return (
