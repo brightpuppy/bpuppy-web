@@ -70,9 +70,9 @@ function ImpactStories() {
     try {
       var d = JSON.parse(localStorage.getItem('bpuppy_publish_v1')) || {};
       return d.sections && d.sections['Nosotros'] && d.sections['Nosotros']['impacto_educacion'] === true;
-    } catch(e) { return false; }
+    } catch (e) {return false;}
   }
-  const visibleStories = IMPACT_STORIES.filter(function(s) { return !s.hidden || isEducacionVisible(); });
+  const visibleStories = IMPACT_STORIES.filter(function (s) {return !s.hidden || isEducacionVisible();});
   const [active, setActive] = useState(0);
   const story = visibleStories[Math.min(active, visibleStories.length - 1)];
   return (
@@ -123,8 +123,8 @@ function NosotrosApp() {
             <h1 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 'clamp(32px,4.5vw,52px)', fontWeight: 800, color: '#fff', margin: '0 0 16px', letterSpacing: '-0.03em', lineHeight: 1.05 }}>
               De Santiago<br />a <em style={{ fontFamily: 'Instrument Serif,Georgia,serif', fontStyle: 'italic', fontWeight: 400, color: 'var(--orange)' }}>Estados Unidos</em>
             </h1>
-            <p style={{ fontSize: 15.5, color: 'rgba(255,255,255,0.7)', margin: '0 0 28px', lineHeight: 1.65, maxWidth: 420 }}>
-              Más de 12 años criando cachorros con amor, construyendo familias y generando impacto en comunidades que necesitaban un compañero fiel.
+            <p style={{ fontSize: 15.5, color: 'rgba(255,255,255,0.7)', margin: '0 0 28px', lineHeight: 1.65, maxWidth: 420 }}>Más de 12 años repartiendo felicidad, construyendo familias y generando impacto en comunidades que necesitaban un compañero fiel.
+
             </p>
             <div style={{ display: 'flex', gap: 24, flexWrap: 'wrap' }}>
               {[['12+', 'Años de experiencia'], ['500+', 'Familias'], ['3', 'Ciudades'], ['100%', 'Con amor']].map(([n, l]) =>
