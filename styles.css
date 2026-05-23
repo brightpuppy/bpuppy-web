@@ -206,7 +206,7 @@ html.media-dark .hdr .lang { background: rgba(255,255,255,.12); }
 html.media-dark .hdr .lang button { color: rgba(255,255,255,.82); }
 html.media-dark .hdr-phone { background: rgba(255,255,255,.12); color: rgba(255,255,255,.85); }
 html.media-dark .hdr-burger { background: rgba(255,255,255,.12); color: #fff; }
-html.media-dark .hdr-logo img { border: 1.5px solid rgba(255,255,255,.45); border-radius: 10px; }
+html.media-dark .hdr .nav-dropdown a { color: var(--ink) !important; }
 
 .hdr-burger { display: none; background: rgba(45,36,33,.06); border: none; border-radius: 10px; width: 40px; height: 40px; cursor: pointer; color: var(--ink); align-items: center; justify-content: center; }
 .hdr.over-dark .hdr-burger { background: rgba(255,255,255,.16); color: #fff; }
