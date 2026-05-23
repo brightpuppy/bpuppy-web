@@ -49,6 +49,42 @@ function Process() {
 
 }
 
+// Match de raza para el quiz de inicio. answers = [hogar, tiempo, familia, tamano]
+// size: 0=pequeno 1=mediano 2=grande | energy: 0-3 | apt: apto apartamento | kids: bueno con ninos
+const QUIZ_BREEDS = [
+  { name: 'French Bulldog',     art: 2,  size: 0, energy: 1, apt: true,  kids: true,
+    blurb: ['Ideal para apartamentos. Tranquilo, cariñoso y perfecto para la vida urbana.', 'Ideal for apartments. Calm, affectionate and perfect for city life.'] },
+  { name: 'Pomeranian',         art: 51, size: 0, energy: 2, apt: true,  kids: false,
+    blurb: ['Pequeño, alegre y lleno de personalidad. Perfecto para espacios reducidos.', 'Small, cheerful and full of personality. Perfect for small spaces.'] },
+  { name: 'Yorkshire Terrier',  art: 6,  size: 0, energy: 2, apt: true,  kids: false,
+    blurb: ['Compañero leal y elegante en cuerpo pequeño. Genial para departamentos.', 'A loyal, elegant companion in a small body. Great for apartments.'] },
+  { name: 'Poodle',             art: 4,  size: 1, energy: 2, apt: true,  kids: true,
+    blurb: ['Inteligente, hipoalergénico y muy adaptable. Excelente para familias.', 'Smart, hypoallergenic and highly adaptable. Excellent for families.'] },
+  { name: 'Beagle',             art: 7,  size: 1, energy: 3, apt: false, kids: true,
+    blurb: ['Curioso, juguetón y amante de la familia. Necesita ejercicio diario.', 'Curious, playful and family-loving. Needs daily exercise.'] },
+  { name: 'Golden Retriever',   art: 1,  size: 2, energy: 3, apt: false, kids: true,
+    blurb: ['Familias activas y casas con espacio. Cariñoso y se adapta a niños sin esfuerzo.', 'Active families and homes with space. Affectionate and great with kids.'] },
+  { name: 'Labrador Retriever', art: 3,  size: 2, energy: 3, apt: false, kids: true,
+    blurb: ['El compañero que nunca falla. Leal, energético y perfecto para familias grandes.', 'The companion that never fails. Loyal, energetic and perfect for big families.'] },
+  { name: 'Husky',              art: 46, size: 2, energy: 3, apt: false, kids: false,
+    blurb: ['Para los más activos. Necesita mucho ejercicio y espacio para correr.', 'For the most active. Needs lots of exercise and room to run.'] },
+];
+
+function matchBreed(answers) {
+  const a = answers.map(x => (x == null ? 0 : x));
+  const [home, time, family, size] = a;
+  let best = QUIZ_BREEDS[0], bestScore = -1;
+  for (const b of QUIZ_BREEDS) {
+    let s = 0;
+    if (size !== 3) { if (b.size === size) s += 3; else if (Math.abs(b.size - size) === 1) s += 1; }
+    if (home === 0 || home === 3) { if (b.apt) s += 2; } else { if (b.size >= 1) s += 1; }
+    if (b.energy === time) s += 2; else if (Math.abs(b.energy - time) === 1) s += 1;
+    if (family === 2 || family === 3) { if (b.kids) s += 2; }
+    if (s > bestScore) { bestScore = s; best = b; }
+  }
+  return { breed: best, pct: Math.min(98, 84 + bestScore * 2) };
+}
+
 function Quiz() {
   const t = useT();
   const { lang } = useLang();
@@ -70,6 +106,7 @@ function Quiz() {
   const reset = () => {setStep(0);setAnswers([null, null, null, null]);};
 
   const isResult = step === 4;
+  const match = isResult ? matchBreed(answers) : { breed: QUIZ_BREEDS[0], pct: 96 };
 
   return (
     <section className="sec quiz" id="quiz" style={{ background: 'linear-gradient(135deg,#0E0B1E 0%,#1A0D35 50%,#0C1628 100%)' }}>
@@ -129,16 +166,16 @@ function Quiz() {
             </> :
 
           <div className="quiz-result">
-              <div className="match-pct">96%</div>
+              <div className="match-pct">{match.pct}%</div>
               <div className="match-lbl">{t(STRINGS.quiz.matchLbl)}</div>
-              <h3>{t(STRINGS.quiz.breed)}</h3>
-              <p>{t(STRINGS.quiz.resultP)}</p>
-              <a href="razas/Golden-Retriever.html" style={{ fontSize: 14, color: 'var(--orange)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+              <h3>{match.breed.name}</h3>
+              <p>{t(match.breed.blurb)}</p>
+              <a href={`Blog.html?art=${match.breed.art}`} style={{ fontSize: 14, color: 'var(--orange)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                 {t(['Conocer más sobre esta raza', 'Learn more about this breed'])}
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
               </a>
               <div className="actions">
-                <a href="Cachorros.html" className="btn btn-primary">{t(STRINGS.quiz.seeAll)}</a>
+                <a href="Solicitud.html" className="btn btn-primary">{t(['Solicita un ' + match.breed.name, 'Request a ' + match.breed.name])}</a>
                 <button className="btn btn-outline" onClick={reset}>{t(STRINGS.quiz.again)}</button>
               </div>
               <a href="Quiz-Completo.html" className="btn btn-outline" style={{ marginTop: 10, fontSize: 13 }}>
