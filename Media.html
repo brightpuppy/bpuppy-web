@@ -69,7 +69,7 @@ function MediaRoot() {
     if (window.SitePublish) window.SitePublish.setSectionLive('Media', key, val);
   }
 
-  React.useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+  React.useEffect(() => { document.documentElement.lang = lang; document.documentElement.classList.add('media-dark'); }, [lang]);
 
   return (
     <LangContext.Provider value={{ lang, setLang }}>

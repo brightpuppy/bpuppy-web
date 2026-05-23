@@ -116,12 +116,12 @@ const QUESTIONS = [
 ];
 
 const BREEDS = [
-  { name: 'Golden Retriever', match: 96, desc: 'Cariñoso, inteligente, perfecto para familias. Se adapta a niños y adultos mayores con facilidad.', size: 'Grande', energy: 'Alta' },
-  { name: 'French Bulldog', match: 92, desc: 'Compacto, cariñoso y adaptable a espacios pequeños. Ideal para apartamentos y vida tranquila.', size: 'Pequeño', energy: 'Baja' },
-  { name: 'Cavalier King Charles', match: 89, desc: 'El perro de compañía por excelencia. Dulce, tranquilo y perfecto para apoyo emocional.', size: 'Pequeño', energy: 'Moderada' },
-  { name: 'Labrador Retriever', match: 94, desc: 'Activo, sociable y extremadamente entrenable. Excelente para familias activas con niños.', size: 'Grande', energy: 'Alta' },
-  { name: 'Poodle (Caniche)', match: 91, desc: 'Hipoalergénico, inteligente y elegante. Viene en todos los tamaños. Ideal si tienes alergias.', size: 'Variable', energy: 'Moderada' },
-  { name: 'Beagle', match: 87, desc: 'Juguetón, curioso y excelente con niños. Tamaño mediano, mucha personalidad.', size: 'Mediano', energy: 'Alta' },
+  { name: 'Golden Retriever', art: 1, match: 96, desc: 'Cariñoso, inteligente, perfecto para familias. Se adapta a niños y adultos mayores con facilidad.', size: 'Grande', energy: 'Alta' },
+  { name: 'French Bulldog', art: 2, match: 92, desc: 'Compacto, cariñoso y adaptable a espacios pequeños. Ideal para apartamentos y vida tranquila.', size: 'Pequeño', energy: 'Baja' },
+  { name: 'Cavalier King Charles', art: 0, match: 89, desc: 'El perro de compañía por excelencia. Dulce, tranquilo y perfecto para apoyo emocional.', size: 'Pequeño', energy: 'Moderada' },
+  { name: 'Labrador Retriever', art: 3, match: 94, desc: 'Activo, sociable y extremadamente entrenable. Excelente para familias activas con niños.', size: 'Grande', energy: 'Alta' },
+  { name: 'Poodle (Caniche)', art: 4, match: 91, desc: 'Hipoalergénico, inteligente y elegante. Viene en todos los tamaños. Ideal si tienes alergias.', size: 'Variable', energy: 'Moderada' },
+  { name: 'Beagle', art: 7, match: 87, desc: 'Juguetón, curioso y excelente con niños. Tamaño mediano, mucha personalidad.', size: 'Mediano', energy: 'Alta' },
 ];
 
 function ExtendedQuiz() {
@@ -198,9 +198,15 @@ function ExtendedQuiz() {
               <div className="match-lbl">Match perfecto</div>
               <h3>{breed.name}</h3>
               <p>{breed.desc}</p>
-              <p style={{fontSize: 13, color: 'var(--ink-soft)', marginBottom: 20}}>Tamaño: {breed.size} · Energía: {breed.energy}</p>
+              <p style={{fontSize: 13, color: 'var(--ink-soft)', marginBottom: 16}}>Tamaño: {breed.size} · Energía: {breed.energy}</p>
+              {breed.art ? (
+                <a href={`Blog.html?art=${breed.art}`} style={{display:'inline-flex', alignItems:'center', gap:6, marginBottom:18, fontSize:14, fontWeight:600, color:'var(--orange)'}}>
+                  Conocer más sobre esta raza
+                  <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
+                </a>
+              ) : null}
               <div className="actions">
-                <a href="Cachorros.html" className="btn btn-primary">Ver disponibles
+                <a href="Solicitud.html" className="btn btn-primary">Solicita un {breed.name.split(' (')[0]}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                 </a>
                 <button className="btn btn-outline" onClick={reset}>Repetir quiz</button>
