@@ -92,6 +92,7 @@ function Header({ overDark }) {
   const t = useT();
   const { lang, setLang } = useLang();
   const [scrolled, setScrolled] = useState(false);
+  const [menuOpen, setMenuOpen] = useState(false);
   const [gtLang,  setGtLang]  = useState(() => localStorage.getItem('bpuppy-gt-lang')  || null);
   const [gtLabel, setGtLabel] = useState(() => localStorage.getItem('bpuppy-gt-label') || null);
 
@@ -213,8 +214,23 @@ function Header({ overDark }) {
           </div>
           <GlobeDropdown isOverDark={overDark && !scrolled} onLangSelect={handleGtSelect} />
           <a href="Solicitud.html" className="hdr-cta">{t(STRINGS.hdr.cta)}</a>
+          <button className="hdr-burger" aria-label="Menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(o => !o)}>
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
+          </button>
         </div>
       </div>
+      {menuOpen && (
+        <nav className="mobile-nav">
+          <a href="Home.html" onClick={() => setMenuOpen(false)}>{t(['Inicio','Home'])}</a>
+          {pv['Cachorros'] !== false && <a href="Cachorros.html" onClick={() => setMenuOpen(false)}>{t(STRINGS.nav.puppies)}</a>}
+          {pv['Gatos'] !== false && <a href="Gatos.html" onClick={() => setMenuOpen(false)}>{t(['Gatos','Cats'])}</a>}
+          <a href="Financiamiento.html" onClick={() => setMenuOpen(false)}>{t(['Financiamiento','Financing'])}</a>
+          {pv['Grooming'] !== false && <a href="Grooming.html" onClick={() => setMenuOpen(false)}><span className="notranslate">Grooming</span></a>}
+          <a href="Media.html" onClick={() => setMenuOpen(false)}><span className="notranslate">Media</span></a>
+          {pv['Nosotros'] !== false && <a href="Nosotros.html" onClick={() => setMenuOpen(false)}>{t(['Nosotros','About'])}</a>}
+          <a href="Solicitud.html" className="mobile-nav-cta" onClick={() => setMenuOpen(false)}>{t(STRINGS.hdr.cta)}</a>
+        </nav>
+      )}
     </header>);
 
 }
