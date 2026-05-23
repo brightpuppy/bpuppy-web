@@ -31,7 +31,7 @@ function About() {
         <div className="about-video reveal">
           <div className="about-video-frame">
             <image-slot
-              id="about-video-poster" src="fotos-raw/p03.jpg"
+              id="about-video-poster"
               shape="rounded"
               radius="20"
               placeholder={t(S.videoP)}>

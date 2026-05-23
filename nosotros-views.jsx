@@ -255,40 +255,6 @@ function NosotrosApp() {
         }
       </div>
 
-      {/* ── Ubicación ── */}
-      <div style={{ marginTop: 64 }}>
-        <div style={{ textAlign: 'center', marginBottom: 32 }}>
-          <div style={{ fontSize: 11, fontWeight: 800, letterSpacing: '0.12em', textTransform: 'uppercase', color: 'var(--orange)', marginBottom: 8 }}>Dónde estamos</div>
-          <h2 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 'clamp(26px,4vw,40px)', fontWeight: 800, color: 'var(--ink)', margin: 0 }}>
-            Visítanos en <em style={{ fontFamily: 'Instrument Serif,serif', fontStyle: 'italic' }}>Haines City, FL</em>
-          </h2>
-          <p style={{ fontSize: 15, color: 'var(--ink-2)', marginTop: 12 }}>5604 Kalogridis Rd, Haines City, FL 33844</p>
-        </div>
-        <div style={{ borderRadius: 20, overflow: 'hidden', boxShadow: '0 8px 32px rgba(0,0,0,0.10)', border: '1px solid var(--line)' }}>
-          <iframe
-            src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3617386.28608084!2d-83.804601!3d27.698638!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0xa8d6519ade3ab891%3A0x8ef27a05647725b3!2sBright%20Puppy!5e0!3m2!1ses!2sus!4v1779494224031!5m2!1ses!2sus"
-            width="100%" height="420" style={{ border: 0, display: 'block' }}
-            allowFullScreen="" loading="lazy"
-            referrerPolicy="no-referrer-when-downgrade"
-            title="BPuppy — Bright Puppy, Haines City FL"
-          />
-        </div>
-        <div style={{ display: 'flex', flexWrap: 'wrap', gap: 16, justifyContent: 'center', marginTop: 24 }}>
-          <a href="https://www.google.com/maps?cid=10300429461328700851" target="_blank" rel="noreferrer"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 22px', borderRadius: 999, background: 'var(--ink)', color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
-            📍 Ver en Google Maps
-          </a>
-          <a href="https://www.google.com/maps?cid=10300429461328700851" target="_blank" rel="noreferrer"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 22px', borderRadius: 999, background: '#fff', border: '1.5px solid var(--line)', color: 'var(--ink)', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
-            ⭐ Déjanos una reseña
-          </a>
-          <a href="https://wa.me/18084928294" target="_blank" rel="noreferrer"
-            style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 22px', borderRadius: 999, background: '#25D366', color: '#fff', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
-            💬 WhatsApp
-          </a>
-        </div>
-      </div>
-
       <style>{`
         @keyframes fadeIn { from { opacity:0; transform:translateY(8px); } to { opacity:1; transform:none; } }
         @media (max-width: 768px) {

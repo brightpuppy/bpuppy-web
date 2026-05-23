@@ -62,9 +62,9 @@
   // ── Default live/draft state for pages ──────────────────────────────────────
   var DEFAULTS = {
     Home: true, Cachorros: true, 'Cachorros-Entregados': false, 'Gatos-Entregados': false,
-    Nosotros: true, 'Razas-Perros': true, 'Razas-Gatos': true, Media: true,
+    Nosotros: true, 'Razas-Perros': true, Media: true,
     Adopciones: true, Tienda: true, Blog: false, Grooming: true,
-    Gatos: true, Historia: false, Social: true,
+    Gatos: true, 'Razas-Gatos': true, Historia: false, Social: true,
   };
 
   // ── Internal helpers ────────────────────────────────────────────────────────
