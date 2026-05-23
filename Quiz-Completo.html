@@ -51,80 +51,83 @@ body { background: #fff; color: var(--ink, #2D2421); min-height: 100vh; }
 </head>
 <body>
 <div id="root"></div>
+<script type="text/babel" src="i18n.jsx"></script>
+<script type="text/babel" src="chrome.jsx"></script>
 <script type="text/babel">
 const QUESTIONS = [
-  { q: '¿Dónde vives?', opts: [
-    { label: 'Apartamento en ciudad', emoji: '🏢', desc: 'Espacio interior, poca área exterior' },
-    { label: 'Casa con patio', emoji: '🏡', desc: 'Jardín o patio para jugar' },
-    { label: 'Casa de campo', emoji: '🌳', desc: 'Espacio abierto, mucho terreno' },
-    { label: 'Estudio o espacio reducido', emoji: '🛋️', desc: 'Espacio mínimo' },
+  { q: ['¿Dónde vives?', 'Where do you live?'], opts: [
+    { label: ['Apartamento en ciudad', 'City apartment'], emoji: '🏢', desc: ['Espacio interior, poca área exterior', 'Indoor space, little outdoor area'] },
+    { label: ['Casa con patio', 'House with a yard'], emoji: '🏡', desc: ['Jardín o patio para jugar', 'Garden or yard to play in'] },
+    { label: ['Casa de campo', 'Country house'], emoji: '🌳', desc: ['Espacio abierto, mucho terreno', 'Open space, lots of land'] },
+    { label: ['Estudio o espacio reducido', 'Studio or small space'], emoji: '🛋️', desc: ['Espacio mínimo', 'Minimal space'] },
   ]},
-  { q: '¿Cuál es tu principal motivación para tener un cachorro?', opts: [
-    { label: 'Compañía en casa', emoji: '💕', desc: 'Un compañero para el día a día' },
-    { label: 'Estilo de vida activo', emoji: '🏃', desc: 'Salir a correr, hacer ejercicio' },
-    { label: 'Apoyo emocional', emoji: '🤗', desc: 'Necesito ese soporte especial' },
-    { label: 'Compañero para mis hijos', emoji: '👶', desc: 'Una mascota para la familia' },
-    { label: 'Compañía para adulto mayor', emoji: '🧓', desc: 'Acompañamiento y cariño' },
+  { q: ['¿Cuál es tu principal motivación para tener un cachorro?', 'What’s your main reason for getting a puppy?'], opts: [
+    { label: ['Compañía en casa', 'Companionship at home'], emoji: '💕', desc: ['Un compañero para el día a día', 'A companion for everyday life'] },
+    { label: ['Estilo de vida activo', 'Active lifestyle'], emoji: '🏃', desc: ['Salir a correr, hacer ejercicio', 'Going for runs, exercising'] },
+    { label: ['Apoyo emocional', 'Emotional support'], emoji: '🤗', desc: ['Necesito ese soporte especial', 'I need that special support'] },
+    { label: ['Compañero para mis hijos', 'A companion for my kids'], emoji: '👶', desc: ['Una mascota para la familia', 'A pet for the family'] },
+    { label: ['Compañía para adulto mayor', 'Companionship for a senior'], emoji: '🧓', desc: ['Acompañamiento y cariño', 'Company and affection'] },
   ]},
-  { q: '¿Qué tipo de pelaje prefieres?', opts: [
-    { label: 'Pelaje corto', emoji: '✂️', desc: 'Fácil de mantener' },
-    { label: 'Pelaje largo', emoji: '🐕‍🦺', desc: 'Me gusta cepillar y cuidar' },
-    { label: 'Hipoalergénico', emoji: '🌿', desc: 'Tengo alergias o sensibilidad' },
-    { label: 'Me es indiferente', emoji: '✨', desc: 'Lo que sea, con tal que sea lindo' },
+  { q: ['¿Qué tipo de pelaje prefieres?', 'What type of coat do you prefer?'], opts: [
+    { label: ['Pelaje corto', 'Short coat'], emoji: '✂️', desc: ['Fácil de mantener', 'Easy to maintain'] },
+    { label: ['Pelaje largo', 'Long coat'], emoji: '🐕‍🦺', desc: ['Me gusta cepillar y cuidar', 'I enjoy brushing and grooming'] },
+    { label: ['Hipoalergénico', 'Hypoallergenic'], emoji: '🌿', desc: ['Tengo alergias o sensibilidad', 'I have allergies or sensitivities'] },
+    { label: ['Me es indiferente', 'No preference'], emoji: '✨', desc: ['Lo que sea, con tal que sea lindo', 'Anything, as long as it’s cute'] },
   ]},
-  { q: '¿Cuánta actividad física puedes ofrecer?', opts: [
-    { label: 'Paseos cortos (15-20 min)', emoji: '🚶', desc: 'Rutina tranquila' },
-    { label: 'Paseos moderados (30-60 min)', emoji: '🎾', desc: 'Ejercicio equilibrado' },
-    { label: 'Ejercicio intenso (1-2 horas)', emoji: '🏃‍♂️', desc: 'Correr, hiking, deportes' },
-    { label: 'Todo el día al aire libre', emoji: '⛰️', desc: 'Campo, playa, montaña' },
+  { q: ['¿Cuánta actividad física puedes ofrecer?', 'How much physical activity can you offer?'], opts: [
+    { label: ['Paseos cortos (15-20 min)', 'Short walks (15-20 min)'], emoji: '🚶', desc: ['Rutina tranquila', 'Easygoing routine'] },
+    { label: ['Paseos moderados (30-60 min)', 'Moderate walks (30-60 min)'], emoji: '🎾', desc: ['Ejercicio equilibrado', 'Balanced exercise'] },
+    { label: ['Ejercicio intenso (1-2 horas)', 'Intense exercise (1-2 hours)'], emoji: '🏃‍♂️', desc: ['Correr, hiking, deportes', 'Running, hiking, sports'] },
+    { label: ['Todo el día al aire libre', 'All day outdoors'], emoji: '⛰️', desc: ['Campo, playa, montaña', 'Countryside, beach, mountains'] },
   ]},
-  { q: '¿Tienes experiencia con perros?', opts: [
-    { label: 'Es mi primer perro', emoji: '🐣', desc: 'Nunca he tenido mascota' },
-    { label: 'Algo de experiencia', emoji: '🐕', desc: 'He tenido o convivido con perros' },
-    { label: 'Mucha experiencia', emoji: '🎓', desc: 'He criado varias razas' },
+  { q: ['¿Tienes experiencia con perros?', 'Do you have experience with dogs?'], opts: [
+    { label: ['Es mi primer perro', 'It’s my first dog'], emoji: '🐣', desc: ['Nunca he tenido mascota', 'I’ve never had a pet'] },
+    { label: ['Algo de experiencia', 'Some experience'], emoji: '🐕', desc: ['He tenido o convivido con perros', 'I’ve had or lived with dogs'] },
+    { label: ['Mucha experiencia', 'Lots of experience'], emoji: '🎓', desc: ['He criado varias razas', 'I’ve raised several breeds'] },
   ]},
-  { q: '¿Qué tamaño prefieres?', opts: [
-    { label: 'Pequeño (hasta 10 kg)', emoji: '🐾', desc: 'Fácil de cargar y transportar' },
-    { label: 'Mediano (10-25 kg)', emoji: '🐕', desc: 'Versátil para cualquier espacio' },
-    { label: 'Grande (más de 25 kg)', emoji: '🦮', desc: 'Presencia fuerte, mucho amor' },
-    { label: 'No me importa el tamaño', emoji: '✨', desc: 'Sorpréndeme' },
+  { q: ['¿Qué tamaño prefieres?', 'What size do you prefer?'], opts: [
+    { label: ['Pequeño (hasta 10 kg)', 'Small (up to 22 lb)'], emoji: '🐾', desc: ['Fácil de cargar y transportar', 'Easy to carry and travel with'] },
+    { label: ['Mediano (10-25 kg)', 'Medium (22-55 lb)'], emoji: '🐕', desc: ['Versátil para cualquier espacio', 'Versatile for any space'] },
+    { label: ['Grande (más de 25 kg)', 'Large (over 55 lb)'], emoji: '🦮', desc: ['Presencia fuerte, mucho amor', 'Strong presence, lots of love'] },
+    { label: ['No me importa el tamaño', 'Size doesn’t matter'], emoji: '✨', desc: ['Sorpréndeme', 'Surprise me'] },
   ]},
-  { q: '¿Hay niños en tu hogar?', opts: [
-    { label: 'Sí, menores de 5 años', emoji: '👶', desc: 'Necesito un perro muy paciente' },
-    { label: 'Sí, entre 5 y 12 años', emoji: '🧒', desc: 'Niños que ya saben ser cuidadosos' },
-    { label: 'Adolescentes', emoji: '👦', desc: '13+ años' },
-    { label: 'No hay niños', emoji: '🙋', desc: 'Solo adultos en casa' },
+  { q: ['¿Hay niños en tu hogar?', 'Are there children in your home?'], opts: [
+    { label: ['Sí, menores de 5 años', 'Yes, under 5 years old'], emoji: '👶', desc: ['Necesito un perro muy paciente', 'I need a very patient dog'] },
+    { label: ['Sí, entre 5 y 12 años', 'Yes, between 5 and 12'], emoji: '🧒', desc: ['Niños que ya saben ser cuidadosos', 'Kids who already know to be careful'] },
+    { label: ['Adolescentes', 'Teenagers'], emoji: '👦', desc: ['13+ años', 'Ages 13+'] },
+    { label: ['No hay niños', 'No children'], emoji: '🙋', desc: ['Solo adultos en casa', 'Only adults at home'] },
   ]},
-  { q: '¿Necesitas un perro entrenable para necesidades especiales?', opts: [
-    { label: 'Apoyo emocional', emoji: '💆', desc: 'Ansiedad, depresión, estrés' },
-    { label: 'Compañero para persona autista', emoji: '🧩', desc: 'Calma y conexión' },
-    { label: 'Asistencia para adulto mayor', emoji: '🤝', desc: 'Compañía constante y tranquila' },
-    { label: 'No, mascota regular', emoji: '🐶', desc: 'Solo quiero un amigo peludo' },
+  { q: ['¿Necesitas un perro entrenable para necesidades especiales?', 'Do you need a trainable dog for special needs?'], opts: [
+    { label: ['Apoyo emocional', 'Emotional support'], emoji: '💆', desc: ['Ansiedad, depresión, estrés', 'Anxiety, depression, stress'] },
+    { label: ['Compañero para persona autista', 'Companion for someone autistic'], emoji: '🧩', desc: ['Calma y conexión', 'Calm and connection'] },
+    { label: ['Asistencia para adulto mayor', 'Assistance for a senior'], emoji: '🤝', desc: ['Compañía constante y tranquila', 'Constant, calm company'] },
+    { label: ['No, mascota regular', 'No, a regular pet'], emoji: '🐶', desc: ['Solo quiero un amigo peludo', 'I just want a furry friend'] },
   ]},
-  { q: '¿Cuánto puedes dedicar al cuidado diario (cepillado, juego, paseo)?', opts: [
-    { label: 'Menos de 30 minutos', emoji: '⏱️', desc: 'Vida muy ocupada' },
-    { label: '30 min a 1 hora', emoji: '🕐', desc: 'Tiempo moderado' },
-    { label: '1 a 2 horas', emoji: '🕑', desc: 'Dedicado al cuidado' },
-    { label: 'Todo el tiempo del mundo', emoji: '💯', desc: 'Mi cachorro es prioridad' },
+  { q: ['¿Cuánto puedes dedicar al cuidado diario (cepillado, juego, paseo)?', 'How much time can you give to daily care (brushing, play, walks)?'], opts: [
+    { label: ['Menos de 30 minutos', 'Less than 30 minutes'], emoji: '⏱️', desc: ['Vida muy ocupada', 'Very busy life'] },
+    { label: ['30 min a 1 hora', '30 min to 1 hour'], emoji: '🕐', desc: ['Tiempo moderado', 'Moderate time'] },
+    { label: ['1 a 2 horas', '1 to 2 hours'], emoji: '🕑', desc: ['Dedicado al cuidado', 'Dedicated to their care'] },
+    { label: ['Todo el tiempo del mundo', 'All the time in the world'], emoji: '💯', desc: ['Mi cachorro es prioridad', 'My puppy is a priority'] },
   ]},
-  { q: '¿Qué es más importante para ti en un cachorro?', opts: [
-    { label: 'Que sea cariñoso y tranquilo', emoji: '🥰', desc: 'Paz y ternura' },
-    { label: 'Que sea juguetón y energético', emoji: '⚡', desc: 'Diversión y acción' },
-    { label: 'Que sea protector y leal', emoji: '🛡️', desc: 'Seguridad y confianza' },
-    { label: 'Que sea independiente', emoji: '🐺', desc: 'No necesita atención constante' },
+  { q: ['¿Qué es más importante para ti en un cachorro?', 'What matters most to you in a puppy?'], opts: [
+    { label: ['Que sea cariñoso y tranquilo', 'Affectionate and calm'], emoji: '🥰', desc: ['Paz y ternura', 'Peace and tenderness'] },
+    { label: ['Que sea juguetón y energético', 'Playful and energetic'], emoji: '⚡', desc: ['Diversión y acción', 'Fun and action'] },
+    { label: ['Que sea protector y leal', 'Protective and loyal'], emoji: '🛡️', desc: ['Seguridad y confianza', 'Safety and confidence'] },
+    { label: ['Que sea independiente', 'Independent'], emoji: '🐺', desc: ['No necesita atención constante', 'Doesn’t need constant attention'] },
   ]},
 ];
 
 const BREEDS = [
-  { name: 'Golden Retriever', art: 1, match: 96, desc: 'Cariñoso, inteligente, perfecto para familias. Se adapta a niños y adultos mayores con facilidad.', size: 'Grande', energy: 'Alta' },
-  { name: 'French Bulldog', art: 2, match: 92, desc: 'Compacto, cariñoso y adaptable a espacios pequeños. Ideal para apartamentos y vida tranquila.', size: 'Pequeño', energy: 'Baja' },
-  { name: 'Cavalier King Charles', art: 0, match: 89, desc: 'El perro de compañía por excelencia. Dulce, tranquilo y perfecto para apoyo emocional.', size: 'Pequeño', energy: 'Moderada' },
-  { name: 'Labrador Retriever', art: 3, match: 94, desc: 'Activo, sociable y extremadamente entrenable. Excelente para familias activas con niños.', size: 'Grande', energy: 'Alta' },
-  { name: 'Poodle (Caniche)', art: 4, match: 91, desc: 'Hipoalergénico, inteligente y elegante. Viene en todos los tamaños. Ideal si tienes alergias.', size: 'Variable', energy: 'Moderada' },
-  { name: 'Beagle', art: 7, match: 87, desc: 'Juguetón, curioso y excelente con niños. Tamaño mediano, mucha personalidad.', size: 'Mediano', energy: 'Alta' },
+  { name: 'Golden Retriever', art: 1, match: 96, desc: ['Cariñoso, inteligente, perfecto para familias. Se adapta a niños y adultos mayores con facilidad.', 'Affectionate, smart and perfect for families. Adapts easily to children and seniors.'], size: ['Grande', 'Large'], energy: ['Alta', 'High'] },
+  { name: 'French Bulldog', art: 2, match: 92, desc: ['Compacto, cariñoso y adaptable a espacios pequeños. Ideal para apartamentos y vida tranquila.', 'Compact, affectionate and great for small spaces. Ideal for apartments and a relaxed life.'], size: ['Pequeño', 'Small'], energy: ['Baja', 'Low'] },
+  { name: 'Cavalier King Charles', art: 0, match: 89, desc: ['El perro de compañía por excelencia. Dulce, tranquilo y perfecto para apoyo emocional.', 'The companion dog par excellence. Sweet, calm and perfect for emotional support.'], size: ['Pequeño', 'Small'], energy: ['Moderada', 'Moderate'] },
+  { name: 'Labrador Retriever', art: 3, match: 94, desc: ['Activo, sociable y extremadamente entrenable. Excelente para familias activas con niños.', 'Active, social and highly trainable. Excellent for active families with kids.'], size: ['Grande', 'Large'], energy: ['Alta', 'High'] },
+  { name: 'Poodle (Caniche)', art: 4, match: 91, desc: ['Hipoalergénico, inteligente y elegante. Viene en todos los tamaños. Ideal si tienes alergias.', 'Hypoallergenic, intelligent and elegant. Comes in every size. Ideal if you have allergies.'], size: ['Variable', 'Varies'], energy: ['Moderada', 'Moderate'] },
+  { name: 'Beagle', art: 7, match: 87, desc: ['Juguetón, curioso y excelente con niños. Tamaño mediano, mucha personalidad.', 'Playful, curious and great with kids. Medium-sized, with tons of personality.'], size: ['Mediano', 'Medium'], energy: ['Alta', 'High'] },
 ];
 
 function ExtendedQuiz() {
+  const t = useT();
   const [step, setStep] = React.useState(0);
   const [answers, setAnswers] = React.useState(Array(QUESTIONS.length).fill(null));
   const total = QUESTIONS.length;
@@ -157,10 +160,10 @@ function ExtendedQuiz() {
 
   return (
     <div className="quiz-page">
-      <a href="Home.html" className="quiz-back">← Volver al inicio</a>
+      <a href="Home.html" className="quiz-back">{t(['← Volver al inicio', '← Back to home'])}</a>
       <div className="quiz-header">
-        <h1>Quiz <em>completo</em></h1>
-        <p>10 preguntas para encontrar tu match perfecto</p>
+        <h1>{t(['Quiz', 'The'])} <em>{t(['completo', 'full quiz'])}</em></h1>
+        <p>{t(['10 preguntas para encontrar tu match perfecto', '10 questions to find your perfect match'])}</p>
       </div>
 
       <div className="eq-card">
@@ -172,21 +175,21 @@ function ExtendedQuiz() {
 
         {!isResult ? (
           <>
-            <div className="eq-step-label">Pregunta {step + 1} de {total}</div>
-            <h3 className="eq-question">{QUESTIONS[step].q}</h3>
+            <div className="eq-step-label">{t(['Pregunta', 'Question'])} {step + 1} {t(['de', 'of'])} {total}</div>
+            <h3 className="eq-question">{t(QUESTIONS[step].q)}</h3>
             <div className="eq-options">
               {QUESTIONS[step].opts.map((opt, i) => (
                 <button key={i} className={`eq-opt ${answers[step] === i ? 'sel' : ''}`} onClick={() => choose(i)}>
                   <span className="emoji">{opt.emoji}</span>
                   <span style={{flex:1}}>
-                    {opt.label}
-                    <div className="desc">{opt.desc}</div>
+                    {t(opt.label)}
+                    <div className="desc">{t(opt.desc)}</div>
                   </span>
                 </button>
               ))}
             </div>
             <div className="eq-nav">
-              <button className="eq-nav-back" onClick={back} disabled={step === 0}>← Atrás</button>
+              <button className="eq-nav-back" onClick={back} disabled={step === 0}>{t(['← Atrás', '← Back'])}</button>
               <span style={{fontSize: 12, color: 'var(--ink-soft)'}}>{step + 1}/{total}</span>
             </div>
           </>
@@ -195,24 +198,24 @@ function ExtendedQuiz() {
           return (
             <div className="eq-result">
               <div className="match-pct">{breed.match}%</div>
-              <div className="match-lbl">Match perfecto</div>
+              <div className="match-lbl">{t(['Match perfecto', 'Perfect match'])}</div>
               <h3>{breed.name}</h3>
-              <p>{breed.desc}</p>
-              <p style={{fontSize: 13, color: 'var(--ink-soft)', marginBottom: 16}}>Tamaño: {breed.size} · Energía: {breed.energy}</p>
+              <p>{t(breed.desc)}</p>
+              <p style={{fontSize: 13, color: 'var(--ink-soft)', marginBottom: 16}}>{t(['Tamaño', 'Size'])}: {t(breed.size)} · {t(['Energía', 'Energy'])}: {t(breed.energy)}</p>
               {breed.art ? (
                 <a href={`Blog.html?art=${breed.art}`} style={{display:'inline-flex', alignItems:'center', gap:6, marginBottom:18, fontSize:14, fontWeight:600, color:'var(--orange)'}}>
-                  Conocer más sobre esta raza
+                  {t(['Conocer más sobre esta raza', 'Learn more about this breed'])}
                   <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                 </a>
               ) : null}
               <div className="actions">
-                <a href="Solicitud.html" className="btn btn-primary">Solicita un {breed.name.split(' (')[0]}
+                <a href="Solicitud.html" className="btn btn-primary">{t(['Solicita un', 'Request a'])} {breed.name.split(' (')[0]}
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                 </a>
-                <button className="btn btn-outline" onClick={reset}>Repetir quiz</button>
+                <button className="btn btn-outline" onClick={reset}>{t(['Repetir quiz', 'Retake quiz'])}</button>
               </div>
               <a href="https://wa.me/18084928294" target="_blank" rel="noreferrer" style={{display: 'inline-flex', alignItems: 'center', gap: 8, marginTop: 20, fontSize: 14, fontWeight: 600, color: 'var(--orange)'}}>
-                Hablar con un asesor sobre {breed.name} →
+                {t(['Hablar con un asesor sobre', 'Talk to an advisor about'])} {breed.name} →
               </a>
             </div>
           );
@@ -222,7 +225,20 @@ function ExtendedQuiz() {
   );
 }
 
-ReactDOM.createRoot(document.getElementById('root')).render(<ExtendedQuiz />);
+function QuizRoot() {
+  const [lang, setLang] = React.useState('es');
+  React.useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+  return (
+    <LangContext.Provider value={{ lang, setLang }}>
+      <Header overDark={false}/>
+      <main style={{ paddingTop: 80 }}>
+        <ExtendedQuiz />
+      </main>
+      <Footer/>
+    </LangContext.Provider>
+  );
+}
+ReactDOM.createRoot(document.getElementById('root')).render(<QuizRoot />);
 </script>
 
 <script src="site-animations.js"></script>

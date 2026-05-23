@@ -58,6 +58,7 @@ function MediaApp({ visibility = {} }) {
 
 // ── Hero ───────────────────────────────────────────────────────────────────────
 function MediaHero() {
+  const t = useT();
   // Each letter: outline=true means transparent + stroke
   const chars = [
     { c:'B', outline:false, stroke:null,                          dur:5.8, delay:0    },
@@ -94,7 +95,7 @@ function MediaHero() {
         <div style={{ display:'flex', alignItems:'center', marginBottom:32 }}>
           <div style={{ display:'flex', alignItems:'center', gap:10, background:'rgba(255,85,32,0.12)', border:'1px solid rgba(255,85,32,0.3)', borderRadius:999, padding:'6px 14px 6px 8px' }}>
             <span style={{ width:8, height:8, borderRadius:'50%', background:MC.brand, display:'inline-block', boxShadow:'0 0 0 3px rgba(255,85,32,0.25)', animation:'mediaPulse 1.8s ease-in-out infinite' }}/>
-            <span style={{ fontSize:11, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:MC.brand }}>En Vivo ahora</span>
+            <span style={{ fontSize:11, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:MC.brand }}>{t(['En Vivo ahora', 'Live now'])}</span>
           </div>
         </div>
 
@@ -123,13 +124,13 @@ function MediaHero() {
         {/* Subtitle + CTA */}
         <div style={{ display:'flex', gap:32, flexWrap:'wrap', alignItems:'flex-end', maxWidth:900 }}>
           <p style={{ fontSize:'clamp(15px,1.4vw,18px)', color:MC.heroMuted, lineHeight:1.6, margin:0, maxWidth:'42ch' }}>
-            Contenido original sobre mascotas, crianza responsable y la comunidad BrightPuppy.
+            {t(['Contenido original sobre mascotas, crianza responsable y la comunidad BrightPuppy.', 'Original content about pets, responsible breeding and the BrightPuppy community.'])}
           </p>
           <a href="#videos" style={{ display:'inline-flex', alignItems:'center', gap:10, padding:'14px 28px', borderRadius:999, background:MC.grad, color:'#fff', fontWeight:700, fontSize:15, textDecoration:'none', whiteSpace:'nowrap', boxShadow:MC.glow, transition:'transform .2s, box-shadow .2s' }}
             onMouseEnter={function(e){ e.currentTarget.style.transform='translateY(-2px)'; e.currentTarget.style.boxShadow='0 14px 40px rgba(255,85,32,0.5)'; }}
             onMouseLeave={function(e){ e.currentTarget.style.transform='translateY(0)'; e.currentTarget.style.boxShadow=MC.glow; }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 3 19 12 5 21 5 3"/></svg>
-            Ver ahora
+            {t(['Ver ahora', 'Watch now'])}
           </a>
         </div>
       </div>
@@ -145,11 +146,11 @@ function MediaHero() {
               allowFullScreen
               style={{ position:'absolute', inset:0, width:'100%', height:'100%', border:'none', display:'block' }}
             />
-            <div style={{ position:'absolute', top:14, left:14, background:MC.brand, color:'#fff', fontSize:10.5, fontWeight:700, padding:'4px 10px', borderRadius:6, letterSpacing:'0.06em', textTransform:'uppercase', pointerEvents:'none' }}>Nuevo</div>
+            <div style={{ position:'absolute', top:14, left:14, background:MC.brand, color:'#fff', fontSize:10.5, fontWeight:700, padding:'4px 10px', borderRadius:6, letterSpacing:'0.06em', textTransform:'uppercase', pointerEvents:'none' }}>{t(['Nuevo', 'New'])}</div>
           </div>
           <div style={{ padding:'18px 20px 22px' }}>
-            <div style={{ fontSize:11, fontWeight:600, color:MC.brand, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:6 }}>Episodio destacado</div>
-            <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:22, fontWeight:700, color:'rgba(255,255,255,0.92)', letterSpacing:'-0.02em', lineHeight:1.2, marginBottom:8 }}>Mira nuestro último episodio</div>
+            <div style={{ fontSize:11, fontWeight:600, color:MC.brand, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:6 }}>{t(['Episodio destacado', 'Featured episode'])}</div>
+            <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:22, fontWeight:700, color:'rgba(255,255,255,0.92)', letterSpacing:'-0.02em', lineHeight:1.2, marginBottom:8 }}>{t(['Mira nuestro último episodio', 'Watch our latest episode'])}</div>
             <div style={{ fontSize:13, color:'rgba(255,255,255,0.35)' }}>BPuppy · 2026</div>
           </div>
         </div>
@@ -161,7 +162,7 @@ function MediaHero() {
           {[...Array(4)].map(function(_,i){
             return (
               <span key={i} style={{ fontSize:10.5, fontWeight:700, letterSpacing:'0.13em', textTransform:'uppercase', color:'rgba(255,255,255,0.25)', paddingRight:72 }}>
-                <span style={{ color:MC.brand }}>◆</span>&nbsp;Videos &nbsp;·&nbsp; Podcasts &nbsp;·&nbsp; Entrevistas &nbsp;·&nbsp; Razas &nbsp;·&nbsp; Crianza &nbsp;·&nbsp; Salud &nbsp;·&nbsp; Adopciones &nbsp;·&nbsp; Comunidad &nbsp;
+                <span style={{ color:MC.brand }}>◆</span>&nbsp;{t(['Videos', 'Videos'])} &nbsp;·&nbsp; {t(['Podcasts', 'Podcasts'])} &nbsp;·&nbsp; {t(['Entrevistas', 'Interviews'])} &nbsp;·&nbsp; {t(['Razas', 'Breeds'])} &nbsp;·&nbsp; {t(['Crianza', 'Breeding'])} &nbsp;·&nbsp; {t(['Salud', 'Health'])} &nbsp;·&nbsp; {t(['Adopciones', 'Adoptions'])} &nbsp;·&nbsp; {t(['Comunidad', 'Community'])} &nbsp;
               </span>
             );
           })}
@@ -173,11 +174,12 @@ function MediaHero() {
 
 // ── Videos ─────────────────────────────────────────────────────────────────────
 const COMERCIALES = [
-  { id:'M4D398WTPb0', label:'Comercial 1', color:'#FF5520' },
-  { id:'m5zU7U34GC0', label:'Comercial 2', color:'#9B6FFF' },
+  { id:'M4D398WTPb0', label:['Comercial 1', 'Commercial 1'], color:'#FF5520' },
+  { id:'m5zU7U34GC0', label:['Comercial 2', 'Commercial 2'], color:'#9B6FFF' },
 ];
 
 function CommercialCard({ item }) {
+  const t = useT();
   return (
     <div style={{ background:MC.surface, border:`1px solid ${MC.border}`, borderRadius:20, overflow:'hidden', transition:'transform .22s, box-shadow .22s' }}
       onMouseEnter={function(e){ e.currentTarget.style.transform='translateY(-5px)'; e.currentTarget.style.boxShadow=`0 20px 56px rgba(0,0,0,0.11), 0 0 0 1.5px ${item.color}35`; }}
@@ -185,7 +187,7 @@ function CommercialCard({ item }) {
       <div style={{ aspectRatio:'16/9', position:'relative' }}>
         <iframe
           src={'https://www.youtube.com/embed/' + item.id + '?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es'}
-          title={'BPuppy ' + item.label}
+          title={'BPuppy ' + t(item.label)}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           style={{ position:'absolute', inset:0, width:'100%', height:'100%', border:'none', display:'block' }}
@@ -196,8 +198,8 @@ function CommercialCard({ item }) {
           <svg width="13" height="13" viewBox="0 0 24 24" fill={item.color}><polygon points="5 3 19 12 5 21 5 3"/></svg>
         </div>
         <div>
-          <div style={{ fontSize:10, fontWeight:700, color:item.color, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:3 }}>{item.label}</div>
-          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:17, fontWeight:700, color:MC.ink, letterSpacing:'-0.01em' }}>BPuppy — {item.label}</div>
+          <div style={{ fontSize:10, fontWeight:700, color:item.color, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:3 }}>{t(item.label)}</div>
+          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:17, fontWeight:700, color:MC.ink, letterSpacing:'-0.01em' }}>BPuppy — {t(item.label)}</div>
         </div>
       </div>
     </div>
@@ -205,13 +207,14 @@ function CommercialCard({ item }) {
 }
 
 function VideosSection() {
+  const t = useT();
   const [ref, visible] = useReveal();
   return (
     <section id="videos" ref={ref} style={{ padding:'clamp(80px,10vw,140px) clamp(24px,6vw,120px)', background:MC.bg, opacity:visible?1:0, transform:visible?'translateY(0)':'translateY(36px)', transition:'opacity 0.7s ease, transform 0.7s ease' }}>
       <div style={{ marginBottom:56 }}>
-        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:12, fontWeight:700, letterSpacing:'0.18em', textTransform:'uppercase', color:MC.brand, marginBottom:14 }}>01 — Videos</div>
+        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:12, fontWeight:700, letterSpacing:'0.18em', textTransform:'uppercase', color:MC.brand, marginBottom:14 }}>{t(['01 — Videos', '01 — Videos'])}</div>
         <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(44px,7.5vw,96px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.92, margin:0, color:MC.ink }}>
-          Comerciales<br/><span style={{ color:MC.soft, fontWeight:300 }}>BPuppy</span>
+          {t(['Comerciales', 'Commercials'])}<br/><span style={{ color:MC.soft, fontWeight:300 }}>BPuppy</span>
         </h2>
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(360px,1fr))', gap:22 }}>
@@ -223,24 +226,25 @@ function VideosSection() {
 
 // ── Podcast — dark ────────────────────────────────────────────────────────────
 const AI_EPISODES = [
-  { n:'048', title:'Todo sobre el Golden Retriever',         guest:'Dra. Carmen Reyes', dur:'24:38', date:'12 May 2026' },
-  { n:'047', title:'Nutricion en cachorros de 0 a 6 meses',  guest:'Dr. Miguel Torres', dur:'31:15', date:'5 May 2026'  },
-  { n:'046', title:'Socializacion temprana y sus mitos',      guest:'Ana Delgado',       dur:'19:42', date:'28 Abr 2026' },
-  { n:'045', title:'Cuando adoptar vs comprar un gatito',     guest:'Vet. Luis Perez',   dur:'27:06', date:'21 Abr 2026' },
+  { n:'048', title:['Todo sobre el Golden Retriever', 'Everything about the Golden Retriever'],         guest:['Dra. Carmen Reyes', 'Dr. Carmen Reyes'], dur:'24:38', date:['12 May 2026', 'May 12, 2026'] },
+  { n:'047', title:['Nutricion en cachorros de 0 a 6 meses', 'Nutrition for puppies 0 to 6 months'],  guest:['Dr. Miguel Torres', 'Dr. Miguel Torres'], dur:'31:15', date:['5 May 2026', 'May 5, 2026']  },
+  { n:'046', title:['Socializacion temprana y sus mitos', 'Early socialization and its myths'],      guest:['Ana Delgado', 'Ana Delgado'],       dur:'19:42', date:['28 Abr 2026', 'Apr 28, 2026'] },
+  { n:'045', title:['Cuando adoptar vs comprar un gatito', 'When to adopt vs. buy a kitten'],     guest:['Vet. Luis Perez', 'Dr. Luis Perez'],   dur:'27:06', date:['21 Abr 2026', 'Apr 21, 2026'] },
 ];
 
 const LIVE_EPISODES = [
-  { n:'L12', title:'La historia detrás de BPuppy',            guest:'Equipo BPuppy',     dur:'38:10', date:'10 May 2026' },
-  { n:'L11', title:'Criando a Milo: nuestro golden de prueba', guest:'Sofia & Carlos',    dur:'45:22', date:'2 May 2026'  },
-  { n:'L10', title:'Q&A en vivo: sus preguntas, nuestras resp.', guest:'Todo el equipo',  dur:'52:05', date:'25 Abr 2026' },
-  { n:'L09', title:'Visita al veterinario: la experiencia real', guest:'Ana Delgado',     dur:'29:48', date:'18 Abr 2026' },
+  { n:'L12', title:['La historia detrás de BPuppy', 'The story behind BPuppy'],            guest:['Equipo BPuppy', 'BPuppy Team'],     dur:'38:10', date:['10 May 2026', 'May 10, 2026'] },
+  { n:'L11', title:['Criando a Milo: nuestro golden de prueba', 'Raising Milo: our test golden'], guest:['Sofia & Carlos', 'Sofia & Carlos'],    dur:'45:22', date:['2 May 2026', 'May 2, 2026']  },
+  { n:'L10', title:['Q&A en vivo: sus preguntas, nuestras resp.', 'Live Q&A: your questions, our answers'], guest:['Todo el equipo', 'The whole team'],  dur:'52:05', date:['25 Abr 2026', 'Apr 25, 2026'] },
+  { n:'L09', title:['Visita al veterinario: la experiencia real', 'A vet visit: the real experience'], guest:['Ana Delgado', 'Ana Delgado'],     dur:'29:48', date:['18 Abr 2026', 'Apr 18, 2026'] },
 ];
 
 function AIBanner({ PD }) {
+  const t = useT();
   const steps = [
-    { icon:'◎', label:'Generado por IA especializada' },
-    { icon:'◈', label:'Revisado por expertos humanos' },
-    { icon:'◉', label:'Aprobado para ti y tu mascota' },
+    { icon:'◎', label:['Generado por IA especializada', 'Generated by specialized AI'] },
+    { icon:'◈', label:['Revisado por expertos humanos', 'Reviewed by human experts'] },
+    { icon:'◉', label:['Aprobado para ti y tu mascota', 'Approved for you and your pet'] },
   ];
   return (
     <div style={{ borderRadius:18, border:'1px solid rgba(74,184,255,0.22)', background:'linear-gradient(130deg,rgba(74,184,255,0.07) 0%,rgba(255,85,32,0.06) 100%)', padding:'36px 32px 32px', marginBottom:28, position:'relative', overflow:'hidden' }}>
@@ -250,18 +254,18 @@ function AIBanner({ PD }) {
       {/* Badge */}
       <div style={{ display:'inline-flex', alignItems:'center', gap:7, background:'rgba(74,184,255,0.1)', border:'1px solid rgba(74,184,255,0.28)', borderRadius:999, padding:'5px 13px 5px 9px', marginBottom:22 }}>
         <span style={{ width:7, height:7, borderRadius:'50%', background:MC.ice, display:'inline-block', boxShadow:`0 0 0 2px rgba(74,184,255,0.25)` }}/>
-        <span style={{ fontSize:10.5, fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color:MC.ice }}>IA Generado · Curado por Humanos</span>
+        <span style={{ fontSize:10.5, fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color:MC.ice }}>{t(['IA Generado · Curado por Humanos', 'AI Generated · Human Curated'])}</span>
       </div>
 
       {/* Title */}
       <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontWeight:800, fontSize:'clamp(28px,4vw,52px)', letterSpacing:'-0.035em', lineHeight:1.0, marginBottom:16 }}>
-        <span style={{ color:PD.text, display:'block' }}>IA de última generación.</span>
-        <span style={{ color:'transparent', WebkitTextStroke:'2px rgba(74,184,255,0.55)', display:'block' }}>Corazón 100% humano.</span>
+        <span style={{ color:PD.text, display:'block' }}>{t(['IA de última generación.', 'Next-generation AI.'])}</span>
+        <span style={{ color:'transparent', WebkitTextStroke:'2px rgba(74,184,255,0.55)', display:'block' }}>{t(['Corazón 100% humano.', '100% human heart.'])}</span>
       </div>
 
       {/* Subtitle */}
       <p style={{ fontSize:'clamp(14px,1.3vw,16px)', color:PD.muted, lineHeight:1.65, margin:'0 0 28px', maxWidth:'58ch' }}>
-        Nuestros top podcasts son producidos con modelos de inteligencia artificial entrenados por especialistas en bienestar animal — y revisados por nuestro equipo antes de llegar a ti. Porque la mejor tecnología siempre es mejor con toque humano.
+        {t(['Nuestros top podcasts son producidos con modelos de inteligencia artificial entrenados por especialistas en bienestar animal — y revisados por nuestro equipo antes de llegar a ti. Porque la mejor tecnología siempre es mejor con toque humano.', 'Our top podcasts are produced with artificial intelligence models trained by animal welfare specialists — and reviewed by our team before they reach you. Because the best technology is always better with a human touch.'])}
       </p>
 
       {/* Process steps */}
@@ -270,7 +274,7 @@ function AIBanner({ PD }) {
           return (
             <div key={i} style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.09)', borderRadius:999, padding:'7px 14px' }}>
               <span style={{ fontSize:12, color:MC.ice, lineHeight:1 }}>{s.icon}</span>
-              <span style={{ fontSize:11.5, fontWeight:600, color:PD.muted, letterSpacing:'0.01em' }}>{s.label}</span>
+              <span style={{ fontSize:11.5, fontWeight:600, color:PD.muted, letterSpacing:'0.01em' }}>{t(s.label)}</span>
             </div>
           );
         })}
@@ -280,10 +284,11 @@ function AIBanner({ PD }) {
 }
 
 function LiveBanner({ PD }) {
+  const t = useT();
   const traits = [
-    { icon:'♥', label:'Voces reales, sin filtros' },
-    { icon:'◎', label:'Grabado por nuestro equipo' },
-    { icon:'✦', label:'Historias que nos pasaron a nosotros' },
+    { icon:'♥', label:['Voces reales, sin filtros', 'Real voices, no filters'] },
+    { icon:'◎', label:['Grabado por nuestro equipo', 'Recorded by our team'] },
+    { icon:'✦', label:['Historias que nos pasaron a nosotros', 'Stories that happened to us'] },
   ];
   return (
     <div style={{ borderRadius:18, border:'1px solid rgba(255,85,32,0.25)', background:'linear-gradient(130deg,rgba(255,85,32,0.08) 0%,rgba(255,180,60,0.05) 100%)', padding:'36px 32px 32px', marginBottom:28, position:'relative', overflow:'hidden' }}>
@@ -293,18 +298,18 @@ function LiveBanner({ PD }) {
       {/* Recording dot badge */}
       <div style={{ display:'inline-flex', alignItems:'center', gap:7, background:'rgba(255,85,32,0.1)', border:'1px solid rgba(255,85,32,0.3)', borderRadius:999, padding:'5px 13px 5px 9px', marginBottom:22 }}>
         <span style={{ width:7, height:7, borderRadius:'50%', background:MC.brand, display:'inline-block', animation:'pulse 1.4s ease-in-out infinite' }}/>
-        <span style={{ fontSize:10.5, fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color:MC.brand }}>Grabado por Nosotros · 100% Humano</span>
+        <span style={{ fontSize:10.5, fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color:MC.brand }}>{t(['Grabado por Nosotros · 100% Humano', 'Recorded by Us · 100% Human'])}</span>
       </div>
 
       {/* Title */}
       <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontWeight:800, fontSize:'clamp(28px,4vw,52px)', letterSpacing:'-0.035em', lineHeight:1.0, marginBottom:16 }}>
-        <span style={{ color:PD.text, display:'block' }}>Nuestra voz.</span>
-        <span style={{ color:'transparent', WebkitTextStroke:'2px rgba(255,85,32,0.6)', display:'block' }}>Sin guión, sin IA.</span>
+        <span style={{ color:PD.text, display:'block' }}>{t(['Nuestra voz.', 'Our voice.'])}</span>
+        <span style={{ color:'transparent', WebkitTextStroke:'2px rgba(255,85,32,0.6)', display:'block' }}>{t(['Sin guión, sin IA.', 'No script, no AI.'])}</span>
       </div>
 
       {/* Subtitle */}
       <p style={{ fontSize:'clamp(14px,1.3vw,16px)', color:PD.muted, lineHeight:1.65, margin:'0 0 28px', maxWidth:'58ch' }}>
-        Estos episodios los grabamos nosotros mismos — el equipo BPuppy hablando de lo que vivimos, lo que aprendimos y lo que amamos. Nada de inteligencia artificial: pura experiencia humana con mascotas reales.
+        {t(['Estos episodios los grabamos nosotros mismos — el equipo BPuppy hablando de lo que vivimos, lo que aprendimos y lo que amamos. Nada de inteligencia artificial: pura experiencia humana con mascotas reales.', 'We record these episodes ourselves — the BPuppy team talking about what we live, what we’ve learned and what we love. No artificial intelligence: pure human experience with real pets.'])}
       </p>
 
       {/* Traits */}
@@ -313,7 +318,7 @@ function LiveBanner({ PD }) {
           return (
             <div key={i} style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.09)', borderRadius:999, padding:'7px 14px' }}>
               <span style={{ fontSize:12, color:MC.brand, lineHeight:1 }}>{s.icon}</span>
-              <span style={{ fontSize:11.5, fontWeight:600, color:PD.muted, letterSpacing:'0.01em' }}>{s.label}</span>
+              <span style={{ fontSize:11.5, fontWeight:600, color:PD.muted, letterSpacing:'0.01em' }}>{t(s.label)}</span>
             </div>
           );
         })}
@@ -323,6 +328,7 @@ function LiveBanner({ PD }) {
 }
 
 function EpisodeList({ episodes, playing, setPlaying, PD, isLive }) {
+  const t = useT();
   return (
     <div style={{ display:'flex', flexDirection:'column' }}>
       {episodes.map(function(ep, i){
@@ -334,15 +340,15 @@ function EpisodeList({ episodes, playing, setPlaying, PD, isLive }) {
             <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:13, fontWeight:700, color: isLive ? MC.brand : MC.ice, minWidth:40, letterSpacing:'0.04em' }}>{ep.n}</div>
             <div style={{ flex:1 }}>
               <div style={{ display:'flex', alignItems:'center', gap:8, marginBottom:3, flexWrap:'wrap' }}>
-                <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:16, fontWeight:700, color:PD.text, letterSpacing:'-0.01em' }}>{ep.title}</div>
+                <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:16, fontWeight:700, color:PD.text, letterSpacing:'-0.01em' }}>{t(ep.title)}</div>
                 {!isLive && (
-                  <span style={{ fontSize:9.5, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:MC.ice, background:'rgba(74,184,255,0.1)', border:'1px solid rgba(74,184,255,0.22)', borderRadius:4, padding:'2px 7px', flexShrink:0 }}>◎ IA</span>
+                  <span style={{ fontSize:9.5, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:MC.ice, background:'rgba(74,184,255,0.1)', border:'1px solid rgba(74,184,255,0.22)', borderRadius:4, padding:'2px 7px', flexShrink:0 }}>{t(['◎ IA', '◎ AI'])}</span>
                 )}
                 {isLive && (
-                  <span style={{ fontSize:9.5, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:MC.brand, background:'rgba(255,85,32,0.1)', border:'1px solid rgba(255,85,32,0.25)', borderRadius:4, padding:'2px 7px', flexShrink:0 }}>♥ En Vivo</span>
+                  <span style={{ fontSize:9.5, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:MC.brand, background:'rgba(255,85,32,0.1)', border:'1px solid rgba(255,85,32,0.25)', borderRadius:4, padding:'2px 7px', flexShrink:0 }}>{t(['♥ En Vivo', '♥ Live'])}</span>
                 )}
               </div>
-              <div style={{ fontSize:12, color:PD.soft }}>{ep.guest} · {ep.date}</div>
+              <div style={{ fontSize:12, color:PD.soft }}>{t(ep.guest)} · {t(ep.date)}</div>
             </div>
             <div style={{ fontSize:12, color:PD.soft, marginRight:8 }}>{ep.dur}</div>
             <button onClick={function(){ setPlaying(function(p){ var key = isLive?'L'+i:'A'+i; return p===key?null:key; }); }} style={{ width:36, height:36, borderRadius:'50%', background:isPlaying?MC.grad:'rgba(255,255,255,0.06)', border:`1.5px solid ${isPlaying?'transparent':PD.border}`, display:'grid', placeItems:'center', cursor:'pointer', flexShrink:0, boxShadow:isPlaying?MC.glow:'none' }}>
@@ -358,6 +364,7 @@ function EpisodeList({ episodes, playing, setPlaying, PD, isLive }) {
 }
 
 function PodcastSection() {
+  const t = useT();
   const [ref, visible] = useReveal();
   const [playing, setPlaying] = React.useState(null);
   const [progress, setProgress] = React.useState(0);
@@ -385,16 +392,16 @@ function PodcastSection() {
       <div style={{ position:'absolute', borderRadius:'50%', width:'50vw', height:'50vw', background:'radial-gradient(circle,rgba(255,85,32,0.07) 0%,transparent 65%)', bottom:'-20%', right:'-10%', pointerEvents:'none' }}/>
 
       <div style={{ maxWidth:900, position:'relative', zIndex:1 }}>
-        <div style={{ fontSize:12, fontWeight:700, letterSpacing:'0.18em', textTransform:'uppercase', color:MC.brand, marginBottom:14 }}>02 — Podcast</div>
+        <div style={{ fontSize:12, fontWeight:700, letterSpacing:'0.18em', textTransform:'uppercase', color:MC.brand, marginBottom:14 }}>{t(['02 — Podcast', '02 — Podcast'])}</div>
         <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(44px,7.5vw,96px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.92, margin:'0 0 56px', color:PD.text }}>
           B<span style={{ color:MC.brand }}>cast</span>
         </h2>
 
         {/* Featured player */}
         <div style={{ background:PD.surface, border:`1px solid ${PD.border}`, borderRadius:20, padding:'28px 28px 24px', marginBottom:20, backdropFilter:'blur(12px)', boxShadow:'0 4px 32px rgba(0,0,0,0.3)' }}>
-          <div style={{ fontSize:11, fontWeight:600, color:MC.brand, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:8 }}>Episodio mas reciente</div>
-          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(18px,2.5vw,28px)', fontWeight:700, color:PD.text, letterSpacing:'-0.02em', lineHeight:1.2, marginBottom:4 }}>Todo lo que debes saber antes de adoptar un Golden Retriever</div>
-          <div style={{ fontSize:13, color:PD.soft, marginBottom:22 }}>Dra. Carmen Reyes · 24:38</div>
+          <div style={{ fontSize:11, fontWeight:600, color:MC.brand, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:8 }}>{t(['Episodio mas reciente', 'Most recent episode'])}</div>
+          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(18px,2.5vw,28px)', fontWeight:700, color:PD.text, letterSpacing:'-0.02em', lineHeight:1.2, marginBottom:4 }}>{t(['Todo lo que debes saber antes de adoptar un Golden Retriever', 'Everything you should know before adopting a Golden Retriever'])}</div>
+          <div style={{ fontSize:13, color:PD.soft, marginBottom:22 }}>{t(['Dra. Carmen Reyes', 'Dr. Carmen Reyes'])} · 24:38</div>
           <div style={{ height:3, background:'rgba(255,255,255,0.08)', borderRadius:999, marginBottom:16, cursor:'pointer' }}>
             <div style={{ height:'100%', width:`${progress}%`, background:MC.grad, borderRadius:999, transition:'width .2s linear' }}/>
           </div>
@@ -420,18 +427,18 @@ function PodcastSection() {
         {/* Tab switcher */}
         <div style={{ display:'inline-flex', background:'rgba(255,255,255,0.05)', border:'1px solid rgba(255,255,255,0.09)', borderRadius:999, padding:4, marginBottom:40, gap:4 }}>
           {[
-            { id:'ai',   label:'◎ IA Generado',  color:MC.ice  },
-            { id:'live', label:'♥ Grabado en Vivo', color:MC.brand },
-          ].map(function(t){
-            const active = tab === t.id;
+            { id:'ai',   label:['◎ IA Generado', '◎ AI Generated'],  color:MC.ice  },
+            { id:'live', label:['♥ Grabado en Vivo', '♥ Recorded Live'], color:MC.brand },
+          ].map(function(tabItem){
+            const active = tab === tabItem.id;
             return (
-              <button key={t.id} onClick={function(){ setTab(t.id); setPlaying(null); }}
+              <button key={tabItem.id} onClick={function(){ setTab(tabItem.id); setPlaying(null); }}
                 style={{ padding:'10px 22px', borderRadius:999, border:'none', cursor:'pointer', fontFamily:'inherit', fontSize:13, fontWeight:700, letterSpacing:'0.03em', transition:'all .22s',
-                  background: active ? (t.id==='ai' ? 'rgba(74,184,255,0.15)' : MC.grad) : 'transparent',
-                  color: active ? (t.id==='ai' ? MC.ice : '#fff') : PD.soft,
-                  boxShadow: active ? (t.id==='ai' ? '0 0 0 1px rgba(74,184,255,0.3)' : MC.glow) : 'none',
+                  background: active ? (tabItem.id==='ai' ? 'rgba(74,184,255,0.15)' : MC.grad) : 'transparent',
+                  color: active ? (tabItem.id==='ai' ? MC.ice : '#fff') : PD.soft,
+                  boxShadow: active ? (tabItem.id==='ai' ? '0 0 0 1px rgba(74,184,255,0.3)' : MC.glow) : 'none',
                 }}>
-                {t.label}
+                {t(tabItem.label)}
               </button>
             );
           })}
@@ -470,6 +477,7 @@ const SHORTS_IDS = [
 ];
 
 function ShortCard({ id, idx }) {
+  const t = useT();
   return (
     <div style={{ borderRadius:14, overflow:'hidden', background:MC.surface, border:`1px solid ${MC.border}`, transition:'transform .22s, box-shadow .22s' }}
       onMouseEnter={function(e){ e.currentTarget.style.transform='translateY(-5px)'; e.currentTarget.style.boxShadow='0 18px 44px rgba(0,0,0,0.1)'; }}
@@ -477,7 +485,7 @@ function ShortCard({ id, idx }) {
       <div style={{ aspectRatio:'9/16', position:'relative' }}>
         <iframe
           src={'https://www.youtube.com/embed/' + id + '?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es'}
-          title={'Short entrevista ' + (idx + 1)}
+          title={t(['Short entrevista ', 'Interview short ']) + (idx + 1)}
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
           allowFullScreen
           style={{ position:'absolute', inset:0, width:'100%', height:'100%', border:'none', display:'block' }}
@@ -488,33 +496,34 @@ function ShortCard({ id, idx }) {
 }
 
 function InterviewsSection() {
+  const t = useT();
   const [ref, visible] = useReveal();
   return (
     <section ref={ref} style={{ padding:'clamp(80px,10vw,140px) clamp(24px,6vw,120px)', background:MC.bg, opacity:visible?1:0, transform:visible?'translateY(0)':'translateY(36px)', transition:'opacity 0.7s ease, transform 0.7s ease' }}>
 
       {/* Header */}
-      <div style={{ fontSize:12, fontWeight:700, letterSpacing:'0.18em', textTransform:'uppercase', color:MC.brand, marginBottom:14 }}>03 — Entrevistas</div>
+      <div style={{ fontSize:12, fontWeight:700, letterSpacing:'0.18em', textTransform:'uppercase', color:MC.brand, marginBottom:14 }}>{t(['03 — Entrevistas', '03 — Interviews'])}</div>
       <div style={{ display:'flex', alignItems:'flex-end', justifyContent:'space-between', marginBottom:56, flexWrap:'wrap', gap:24 }}>
         <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(44px,7.5vw,96px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.92, margin:0, color:MC.ink }}>
-          Cara<br/>a cara
+          {t(['Cara', 'Face'])}<br/>{t(['a cara', 'to face'])}
         </h2>
         <p style={{ fontSize:16, color:MC.ink2, lineHeight:1.6, maxWidth:'36ch', margin:0 }}>
-          Conversaciones profundas con los expertos que marcan la pauta en el mundo de las mascotas.
+          {t(['Conversaciones profundas con los expertos que marcan la pauta en el mundo de las mascotas.', 'In-depth conversations with the experts setting the standard in the world of pets.'])}
         </p>
       </div>
 
       {/* Featured interviews grid */}
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fit,minmax(380px,1fr))', gap:24, marginBottom:72 }}>
         {[
-          { id: INTERVIEW_ID,    label:'Entrevista completa — BPuppy',                                                                          tag:'Entrevista'     },
-          { id: 'J5Q6c3wy0QE',  label:'Caring Hands Humane Society — Newton, Kansas · Primera parte', tag:'Entrevista · Refugio' },
+          { id: INTERVIEW_ID,    label:['Entrevista completa — BPuppy', 'Full interview — BPuppy'],                                              tag:['Entrevista', 'Interview']     },
+          { id: 'J5Q6c3wy0QE',  label:['Caring Hands Humane Society — Newton, Kansas · Primera parte', 'Caring Hands Humane Society — Newton, Kansas · Part one'], tag:['Entrevista · Refugio', 'Interview · Shelter'] },
         ].map(function(iv) {
           return (
             <div key={iv.id} style={{ borderRadius:20, overflow:'hidden', background:MC.surface, border:`1px solid ${MC.border}`, boxShadow:'0 8px 48px rgba(0,0,0,0.07)' }}>
               <div style={{ aspectRatio:'16/9', position:'relative' }}>
                 <iframe
                   src={'https://www.youtube.com/embed/' + iv.id + '?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es'}
-                  title={iv.label}
+                  title={t(iv.label)}
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
                   style={{ position:'absolute', inset:0, width:'100%', height:'100%', border:'none', display:'block' }}
@@ -525,8 +534,8 @@ function InterviewsSection() {
                   <svg width="12" height="12" viewBox="0 0 24 24" fill={MC.brand}><polygon points="5 3 19 12 5 21 5 3"/></svg>
                 </div>
                 <div>
-                  <div style={{ fontSize:9.5, fontWeight:700, color:MC.brand, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:3 }}>{iv.tag}</div>
-                  <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:16, fontWeight:700, color:MC.ink, letterSpacing:'-0.01em' }}>{iv.label}</div>
+                  <div style={{ fontSize:9.5, fontWeight:700, color:MC.brand, letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:3 }}>{t(iv.tag)}</div>
+                  <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:16, fontWeight:700, color:MC.ink, letterSpacing:'-0.01em' }}>{t(iv.label)}</div>
                 </div>
               </div>
             </div>
@@ -538,7 +547,7 @@ function InterviewsSection() {
       <div>
         <div style={{ display:'flex', alignItems:'baseline', gap:12, marginBottom:28 }}>
           <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(28px,4vw,44px)', fontWeight:800, letterSpacing:'-0.03em', color:MC.ink }}>Shorts</div>
-          <div style={{ fontSize:15, color:MC.soft, fontWeight:400 }}>— Entrevistas breves</div>
+          <div style={{ fontSize:15, color:MC.soft, fontWeight:400 }}>{t(['— Entrevistas breves', '— Quick interviews'])}</div>
         </div>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(168px,1fr))', gap:14 }}>
           {SHORTS_IDS.map(function(id, i){ return <ShortCard key={id} id={id} idx={i}/>; })}
@@ -551,6 +560,7 @@ function InterviewsSection() {
 
 // ── Footer CTA ─────────────────────────────────────────────────────────────────
 function MediaFooterCTA() {
+  const t = useT();
   const [ref, visible] = useReveal();
   return (
     <section ref={ref} style={{ padding:'clamp(80px,10vw,120px) clamp(24px,6vw,120px)', background:MC.ink, color:'#FAFAF8', position:'relative', overflow:'hidden', opacity:visible?1:0, transform:visible?'translateY(0)':'translateY(36px)', transition:'opacity 0.7s ease, transform 0.7s ease' }}>
@@ -559,10 +569,10 @@ function MediaFooterCTA() {
 
       <div style={{ maxWidth:700, position:'relative', zIndex:1 }}>
         <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(40px,7vw,88px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.92, margin:'0 0 24px', color:'#FAFAF8' }}>
-          No te<br/>pierdas nada.
+          {t(['No te', 'Don’t miss'])}<br/>{t(['pierdas nada.', 'a thing.'])}
         </h2>
         <p style={{ fontSize:17, color:'rgba(250,250,248,0.5)', lineHeight:1.6, margin:'0 0 32px', maxWidth:'44ch' }}>
-          Suscribete al podcast de BrightPuppy y recibe cada episodio nuevo directo en tu app favorita.
+          {t(['Suscribete al podcast de BrightPuppy y recibe cada episodio nuevo directo en tu app favorita.', 'Subscribe to the BrightPuppy podcast and get every new episode straight to your favorite app.'])}
         </p>
         <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
           {['Spotify','Apple Podcasts','YouTube'].map(function(p,i){
