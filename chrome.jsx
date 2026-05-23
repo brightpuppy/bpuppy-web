@@ -34,7 +34,7 @@ function GlobeDropdown({ isOverDark, onLangSelect }) {
   const select = (code) => { onLangSelect && onLangSelect(code); setOpen(false); };
 
   return (
-    <div ref={ref} style={{ position:'relative' }}>
+    <div ref={ref} className="hdr-globe" style={{ position:'relative' }}>
       <button
         onClick={() => setOpen(o => !o)}
         title="Más idiomas"
@@ -185,7 +185,7 @@ function Header({ overDark }) {
   return (
     <header className={klass}>
       <div className="container hdr-row">
-        <a href="#top" className="hdr-logo" aria-label="BPuppy">
+        <a href="Home.html" className="hdr-logo" aria-label="BPuppy">
           <img src={overDark && !scrolled ? 'assets/logo-clean-light.png' : 'assets/logo-clean.png'} alt="BPuppy logo" />
           <span className="wm notranslate">Bright Puppy</span>
         </a>
@@ -228,7 +228,12 @@ function Header({ overDark }) {
           {pv['Grooming'] !== false && <a href="Grooming.html" onClick={() => setMenuOpen(false)}><span className="notranslate">Grooming</span></a>}
           <a href="Media.html" onClick={() => setMenuOpen(false)}><span className="notranslate">Media</span></a>
           {pv['Nosotros'] !== false && <a href="Nosotros.html" onClick={() => setMenuOpen(false)}>{t(['Nosotros','About'])}</a>}
-          <a href="Solicitud.html" className="mobile-nav-cta" onClick={() => setMenuOpen(false)}>{t(STRINGS.hdr.cta)}</a>
+          <div className="mobile-nav-footer">
+            <GlobeDropdown isOverDark={false} onLangSelect={handleGtSelect} />
+            <a href="tel:+18084928294" className="hdr-phone" aria-label="Llamar">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" /></svg>
+            </a>
+          </div>
         </nav>
       )}
     </header>);
