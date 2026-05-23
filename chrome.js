@@ -1,3 +1,4 @@
+(function(){
 const { useState, useEffect, useRef, useCallback } = React;
 const LANG_OPTIONS = [
   ["fr", "Fran\xE7ais"],
@@ -360,3 +361,5 @@ function useSitePublish(pageId) {
   return isLive;
 }
 Object.assign(window, { Header, Footer, PawCursor, useReveal, ComingSoon, useSitePublish });
+
+})();

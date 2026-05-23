@@ -1,3 +1,4 @@
+(function(){
 const TWEAK_DEFAULTS = (
   /*EDITMODE-BEGIN*/
   {
@@ -65,3 +66,5 @@ function shade(hex, amt) {
   return "#" + [r, g, b].map((v) => v.toString(16).padStart(2, "0")).join("");
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(App, null));
+
+})();

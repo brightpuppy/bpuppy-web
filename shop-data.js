@@ -1,3 +1,4 @@
+(function(){
 const AMAZON_TAG = "bpuppy-20";
 const amz = (asin) => `https://www.amazon.com/dp/${asin}?tag=${AMAZON_TAG}`;
 const SHOP_CATS = [
@@ -598,3 +599,5 @@ const SHOP_PRODUCTS = [
   }
 ];
 Object.assign(window, { SHOP_PRODUCTS, SHOP_CATS, BADGES, AMAZON_TAG });
+
+})();

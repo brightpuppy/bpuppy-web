@@ -1,3 +1,4 @@
+(function(){
 const { useState, useEffect, useMemo } = React;
 const SIZES = ["Peque\xF1o\n(< 15 lbs)", "Mediano\n(15\u201340 lbs)", "Grande\n(40\u201370 lbs)", "XL\n(70+ lbs)"];
 const SIZEKEYS = ["s", "m", "l", "xl"];
@@ -336,3 +337,5 @@ function GroomingApp() {
   ))))));
 }
 Object.assign(window, { GroomingApp, BookingCalendar });
+
+})();

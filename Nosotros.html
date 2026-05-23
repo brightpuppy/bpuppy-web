@@ -20,35 +20,15 @@
 <script src="site-publish.js"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="image-slot.js"></script>
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel" src="tweaks-panel.jsx"></script>
-<script type="text/babel" src="i18n.jsx"></script>
-<script type="text/babel" src="chrome.jsx"></script>
-<script type="text/babel" src="nosotros-views.jsx"></script>
-<script type="text/babel">
-const NOS_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"lang":"es"}/*EDITMODE-END*/;
-function NosotrosRoot() {
-  const [tweaks, setTweak] = useTweaks(NOS_TWEAK_DEFAULTS);
-  const [lang, setLang] = React.useState(tweaks.lang || 'es');
-  React.useEffect(() => { setLang(tweaks.lang); }, [tweaks.lang]);
-  const setLangBoth = (l) => { setLang(l); setTweak('lang', l); };
-  React.useEffect(() => { document.documentElement.lang = lang; }, [lang]);
-  const isLive = useSitePublish('Nosotros');
-  if (!isLive) return <ComingSoon pageName="Nosotros"/>;
-  return (
-    <LangContext.Provider value={{ lang, setLang: setLangBoth }}>
-      <Header overDark={true} />
-      <main><NosotrosApp /></main>
-      <Footer />
-    </LangContext.Provider>
-  );
-}
-ReactDOM.createRoot(document.getElementById('root')).render(<NosotrosRoot />);
-</script>
+<script src="tweaks-panel.js"></script>
+<script src="i18n.js"></script>
+<script src="chrome.js"></script>
+<script src="nosotros-views.js"></script>
+<script src="Nosotros.inline0.js"></script>
 <script src="site-animations.js"></script>
 </body>
 </html>

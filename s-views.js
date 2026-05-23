@@ -1,3 +1,4 @@
+(function(){
 const { useState, useRef, useEffect, useContext, createContext } = React;
 const BSCtx = createContext(null);
 const useBS = () => useContext(BSCtx);
@@ -208,3 +209,5 @@ Object.assign(window, {
   PetsScreen,
   MessagesScreen
 });
+
+})();

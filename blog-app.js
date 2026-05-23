@@ -1,3 +1,4 @@
+(function(){
 const BLOG_TWEAK_DEFAULTS = (
   /*EDITMODE-BEGIN*/
   { "lang": "es" }
@@ -25,3 +26,5 @@ function BlogRoot() {
   return /* @__PURE__ */ React.createElement(LangContext.Provider, { value: { lang, setLang: setLangBoth } }, /* @__PURE__ */ React.createElement(Header, { overDark: false }), /* @__PURE__ */ React.createElement("main", null, /* @__PURE__ */ React.createElement(BlogApp, { initialArtId: initArtId })), /* @__PURE__ */ React.createElement(Footer, null));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(BlogRoot, null));
+
+})();

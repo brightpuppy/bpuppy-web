@@ -1,3 +1,4 @@
+(function(){
 const CAT_META = {
   razas: { label: "Razas", color: "#F58220", bg: "#FFF0E0" },
   bienestar: { label: "Bienestar", color: "#1EB87A", bg: "#E0F7EF" },
@@ -742,3 +743,5 @@ const BLOG = [
 ];
 const BLOG_CATS = ["todos", ...Object.keys(CAT_META)];
 Object.assign(window, { BLOG, CAT_META, BLOG_CATS });
+
+})();

@@ -1,3 +1,4 @@
+(function(){
 const { useState, useEffect } = React;
 const TIMELINE = [
   { year: "2012", city: "Santiago, RD", emoji: "\u{1F436}", title: "El primer cachorro", body: "Todo empez\xF3 con una camada de Golden Retrievers en Santiago. Sin experiencia formal, con mucho amor y m\xE1s preguntas que respuestas. El primer hogar que adopt\xF3 un cachorro nuestro se convirti\xF3 en familia." },
@@ -101,3 +102,5 @@ function NosotrosApp() {
       `));
 }
 Object.assign(window, { NosotrosApp, Timeline, ImpactStories });
+
+})();

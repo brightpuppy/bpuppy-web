@@ -1,3 +1,4 @@
+(function(){
 function About() {
   const t = useT();
   const S = STRINGS.about;
@@ -123,3 +124,5 @@ function FAQ() {
   }))));
 }
 Object.assign(window, { About, Promise_, InstagramFeed, FamiliesMap, FAQ });
+
+})();

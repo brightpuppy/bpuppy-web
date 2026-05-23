@@ -1,3 +1,4 @@
+(function(){
 function BPuppyTweaks({ tweaks, setTweak }) {
   const t = useT();
   return /* @__PURE__ */ React.createElement(TweaksPanel, { title: "BPuppy Tweaks" }, /* @__PURE__ */ React.createElement(TweakSection, { label: "Aesthetic theme" }), /* @__PURE__ */ React.createElement(
@@ -41,3 +42,5 @@ function BPuppyTweaks({ tweaks, setTweak }) {
   ));
 }
 Object.assign(window, { BPuppyTweaks });
+
+})();

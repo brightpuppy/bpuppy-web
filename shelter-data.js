@@ -1,3 +1,4 @@
+(function(){
 const SHELTERS_BY_STATE = {
   "Alabama": [
     { name: "Greater Birmingham Humane Society", city: "Birmingham", url: "https://gbhs.org", phone: "(205) 942-1211" },
@@ -245,3 +246,5 @@ const SHELTERS_BY_STATE = {
 };
 const US_STATES = Object.keys(SHELTERS_BY_STATE).sort();
 Object.assign(window, { SHELTERS_BY_STATE, US_STATES });
+
+})();

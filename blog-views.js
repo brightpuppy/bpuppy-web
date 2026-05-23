@@ -1,3 +1,4 @@
+(function(){
 const { useState, useEffect, useRef, useMemo } = React;
 function ReadingBar() {
   const [pct, setPct] = useState(0);
@@ -125,3 +126,5 @@ function BlogApp({ initialArtId }) {
   return /* @__PURE__ */ React.createElement(BlogListing, { onSelect: handleSelect });
 }
 Object.assign(window, { BlogApp, BlogListing, ArticleReader, ArticleCard, ArticleHero, CatPill, ReadingBar });
+
+})();

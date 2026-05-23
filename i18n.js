@@ -1,3 +1,4 @@
+(function(){
 const STRINGS = {
   nav: {
     puppies: ["Cachorros", "Puppies"],
@@ -387,3 +388,5 @@ const useT = () => {
   return (t) => pick(t, lang);
 };
 Object.assign(window, { STRINGS, pick, LangContext, useLang, useT });
+
+})();

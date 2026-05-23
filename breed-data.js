@@ -1,3 +1,4 @@
+(function(){
 const DOG_BREEDS = [
   // ── SMALL ──────────────────────────────────────────────
   {
@@ -932,3 +933,5 @@ const MESTIZO_INFO = {
 const ALL_SIZES = ["small", "medium", "large"];
 const ALL_COATS = ["short", "long", "curly", "smooth", "wiry", "hairless"];
 Object.assign(window, { DOG_BREEDS, DESIGNER_BREEDS, MESTIZO_INFO, ALL_SIZES, ALL_COATS });
+
+})();

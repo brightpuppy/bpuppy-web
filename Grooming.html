@@ -20,7 +20,6 @@
 <script src="site-publish.js"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
 <script src="image-slot.js"></script>
 <style>
   @keyframes bubbleUp { 0%{transform:translateY(0) scale(1);opacity:.55} 100%{transform:translateY(-110vh) scale(.7);opacity:0} }
@@ -32,32 +31,13 @@
 </head>
 <body>
 <div id="root"></div>
-<script type="text/babel" src="tweaks-panel.jsx"></script>
-<script type="text/babel" src="i18n.jsx"></script>
-<script type="text/babel" src="chrome.jsx"></script>
-<script type="text/babel" src="blog-data.jsx"></script>
-<script type="text/babel" src="blog-data-extra.jsx"></script>
-<script type="text/babel" src="grooming-views.jsx"></script>
-<script type="text/babel">
-const GROOM_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"lang":"es"}/*EDITMODE-END*/;
-function GroomRoot() {
-  const [tweaks, setTweak] = useTweaks(GROOM_TWEAK_DEFAULTS);
-  const [lang, setLang] = React.useState(tweaks.lang || 'es');
-  React.useEffect(() => { setLang(tweaks.lang); }, [tweaks.lang]);
-  const setLangBoth = (l) => { setLang(l); setTweak('lang', l); };
-  React.useEffect(() => { document.documentElement.lang = lang; }, [lang]);
-  const isLive = useSitePublish('Grooming');
-  if (!isLive) return <ComingSoon pageName="Grooming"/>;
-  return (
-    <LangContext.Provider value={{ lang, setLang: setLangBoth }}>
-      <Header overDark={false} />
-      <main><GroomingApp /></main>
-      <Footer />
-    </LangContext.Provider>
-  );
-}
-ReactDOM.createRoot(document.getElementById('root')).render(<GroomRoot />);
-</script>
+<script src="tweaks-panel.js"></script>
+<script src="i18n.js"></script>
+<script src="chrome.js"></script>
+<script src="blog-data.js"></script>
+<script src="blog-data-extra.js"></script>
+<script src="grooming-views.js"></script>
+<script src="Grooming.inline0.js"></script>
 <script src="site-animations.js"></script>
 </body>
 </html>

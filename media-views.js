@@ -1,3 +1,4 @@
+(function(){
 const MC = {
   // Dark hero theme
   hero: "#040C1E",
@@ -345,3 +346,5 @@ function MediaFooterCTA() {
   }))));
 }
 Object.assign(window, { MediaApp });
+
+})();

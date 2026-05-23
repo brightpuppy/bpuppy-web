@@ -1,3 +1,4 @@
+(function(){
 CAT_META["grooming"] = { label: "Grooming", color: "#9C27B0", bg: "#F3E5F5" };
 const BLOG_EXTRA = [
   // ── ACCESORIOS ───────────────────────────────────────────────────────────
@@ -463,3 +464,5 @@ const BLOG_EXTRA = [
 BLOG.push(...BLOG_EXTRA);
 window.BLOG_CATS = ["todos", ...Object.keys(CAT_META)];
 Object.assign(window, { BLOG, CAT_META, BLOG_CATS });
+
+})();

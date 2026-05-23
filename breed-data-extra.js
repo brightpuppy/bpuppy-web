@@ -1,3 +1,4 @@
+(function(){
 const EXTRA_DOG_BREEDS = [
   // ── PEQUEÑAS ──────────────────────────────────────────
   {
@@ -1083,3 +1084,5 @@ const EXTRA_DESIGNER_BREEDS = [
 ];
 DOG_BREEDS.push(...EXTRA_DOG_BREEDS);
 DESIGNER_BREEDS.push(...EXTRA_DESIGNER_BREEDS);
+
+})();

@@ -1,3 +1,4 @@
+(function(){
 (function() {
   const { useState, useEffect, useRef, useCallback } = React;
   const SUPA_URL = "https://oqqwmcplljirbreowrll.supabase.co";
@@ -484,4 +485,6 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
     document.body.appendChild(el);
     ReactDOM.createRoot(el).render(/* @__PURE__ */ React.createElement(BPuppyChat, null));
   }
+})();
+
 })();

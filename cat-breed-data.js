@@ -1,3 +1,4 @@
+(function(){
 const CAT_BREEDS = [
   {
     id: "persian",
@@ -518,3 +519,5 @@ const CAT_MESTIZO_INFO = {
   link: "Adopciones.html"
 };
 Object.assign(window, { CAT_BREEDS, CAT_MESTIZO_INFO });
+
+})();

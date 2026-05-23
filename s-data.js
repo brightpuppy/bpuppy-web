@@ -1,3 +1,4 @@
+(function(){
 const BSDATA = {
   me: { id: "u0", name: "Mar\xEDa P.", username: "mariap", initials: "MP", color: "#F58220", city: "Miami, FL", bio: "Luna mom \u{1F43E} Golden lover", verified: true, followers: 847, following: 312, posts: 64 },
   stories: [
@@ -67,3 +68,5 @@ const BSDATA = {
   ]
 };
 window.BSDATA = BSDATA;
+
+})();
