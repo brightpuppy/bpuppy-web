@@ -110,7 +110,10 @@ function ImpactStories() {
 
 // ── Main Nosotros page ─────────────────────────────────────────────────────────
 function NosotrosApp() {
-  const [tab, setTab] = useState('historia');
+  const [tab, setTab] = useState(() => {
+    const p = new URLSearchParams(window.location.search).get('tab');
+    return ['historia','impacto','equipo','prensa'].includes(p) ? p : 'historia';
+  });
   const TABS = [['historia', '📖 Historia'], ['impacto', '❤️ Impacto Social'], ['equipo', '👥 Equipo']];
 
   return (

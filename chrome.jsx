@@ -198,9 +198,9 @@ function Header({ overDark }) {
           {pv['Grooming']  !== false && <a href="Grooming.html"><span className="notranslate">Grooming</span></a>}
           <NavItem label={<span className="notranslate">Media</span>} href="Media.html" items={mediaItems.length > 1 ? mediaItems : undefined}/>
           {pv['Nosotros']  !== false && <NavItem label={t(['Nosotros','About'])} href="Nosotros.html" items={[
-            { label: t(['Nuestra Historia','Our Story']),    href:'Nosotros.html' },
-            { label: t(['Impacto Social','Social Impact']),  href:'Nosotros.html' },
-            { label: t(['Nuestro Equipo','Our Team']),       href:'Nosotros.html' },
+            { label: t(['Nuestra Historia','Our Story']),    href:'Nosotros.html?tab=historia' },
+            { label: t(['Impacto Social','Social Impact']),  href:'Nosotros.html?tab=impacto' },
+            { label: t(['Nuestro Equipo','Our Team']),       href:'Nosotros.html?tab=equipo' },
           ]}/>}
           {pv['Social']    !== false && <a href="Social.html">{t(['Social','Social'])}</a>}
         </nav>
