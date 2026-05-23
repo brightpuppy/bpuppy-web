@@ -231,17 +231,37 @@ function Footer() {
   return (
     <>
     <footer className="foot notranslate" translate="no">
-      <div className="container foot-row">
-        <div className="foot-logo">
-          <img src="assets/logo-clean.png" alt="" />
-          <span>BPuppy</span>
+      <div className="container">
+        {/* Top footer row — logo + address + review CTA */}
+        <div style={{ display:'flex', flexWrap:'wrap', gap:32, justifyContent:'space-between', alignItems:'flex-start', paddingBottom:24, borderBottom:'1px solid var(--line,#ebe7e3)', marginBottom:20 }}>
+          <div>
+            <div className="foot-logo" style={{ marginBottom:10 }}>
+              <img src="assets/logo-clean.png" alt="" />
+              <span>BPuppy</span>
+            </div>
+            <div style={{ fontSize:13, color:'var(--ink-2)', lineHeight:1.6 }}>
+              <div>📍 5604 Kalogridis Rd, Haines City, FL 33844</div>
+              <div>📞 <a href="tel:+18084928294" style={{ color:'inherit', textDecoration:'none' }}>+1 (808) 492-8294</a></div>
+            </div>
+          </div>
+          <a
+            href="https://www.google.com/maps?cid=10300429461328700851"
+            target="_blank"
+            rel="noreferrer"
+            style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'10px 18px', borderRadius:999, background:'#fff', border:'1.5px solid var(--line,#ebe7e3)', color:'var(--ink)', fontSize:13, fontWeight:700, textDecoration:'none', boxShadow:'0 2px 8px rgba(0,0,0,0.07)', whiteSpace:'nowrap' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" fill="#EA4335"/></svg>
+            {t(['⭐ Déjanos una reseña en Google', '⭐ Leave us a Google review'])}
+          </a>
         </div>
-        <p>{t(STRINGS.foot.rights)}</p>
-        <div className="foot-links">
-          <a href="Garantia.html">{t(['Garantía', 'Guarantee'])}</a>
-          <a href="#">{t(STRINGS.foot.health)}</a>
-          <a href="#">{t(STRINGS.foot.privacy)}</a>
-          <a href="#">{t(STRINGS.foot.terms)}</a>
+        {/* Bottom row */}
+        <div className="foot-row">
+          <p>{t(STRINGS.foot.rights)}</p>
+          <div className="foot-links">
+            <a href="Garantia.html">{t(['Garantía', 'Guarantee'])}</a>
+            <a href="#">{t(STRINGS.foot.health)}</a>
+            <a href="#">{t(STRINGS.foot.privacy)}</a>
+            <a href="#">{t(STRINGS.foot.terms)}</a>
+          </div>
         </div>
       </div>
     </footer>
