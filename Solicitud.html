@@ -177,7 +177,7 @@ function SolicitudForm() {
 
             <Field label="Tamaño">
               <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
-                {[['🐾','Pequeño','small'],['🐕','Mediano','medium'],['🦮','Grande','large'],['Sin preferencia','','any']].map(function(o){
+                {[['🐾','Pequeño','small'],['🐕','Mediano','medium'],['🦮','Grande','large'],['','Sin preferencia','any']].map(function(o){
                   return <Chip key={o[2]} icon={o[0]||null} label={o[1]||o[0]} selected={form.size===o[2]} onClick={function(){ toggle('size',o[2]); }}/>;
                 })}
               </div>
