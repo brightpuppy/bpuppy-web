@@ -355,6 +355,24 @@ function BlogApp({ initialArtId }) {
     initialArtId ? (BLOG.find(a => a.id === initialArtId) || null) : null
   );
 
+  // SEO: title/description/canonical dinamicos segun el articulo abierto
+  useEffect(() => {
+    const set = (sel, attr, val) => { const m = document.querySelector(sel); if (m) m.setAttribute(attr, val); };
+    if (selected) {
+      const desc = (selected.sub || selected.lead || '').slice(0, 158);
+      document.title = selected.title + ' | BPuppy';
+      set('meta[name="description"]', 'content', desc);
+      set('meta[property="og:title"]', 'content', selected.title + ' | BPuppy');
+      set('meta[property="og:description"]', 'content', desc);
+      set('link[rel="canonical"]', 'href', 'https://bpuppy.us/blog?art=' + selected.id);
+      set('meta[property="og:url"]', 'content', 'https://bpuppy.us/blog?art=' + selected.id);
+    } else {
+      document.title = 'Blog de Mascotas: Cuidado, Razas y Salud | BPuppy';
+      set('link[rel="canonical"]', 'href', 'https://bpuppy.us/blog');
+      set('meta[property="og:url"]', 'content', 'https://bpuppy.us/blog');
+    }
+  }, [selected]);
+
   const handleSelect = (art) => {
     setSelected(art);
     window.scrollTo({ top: 0 });
