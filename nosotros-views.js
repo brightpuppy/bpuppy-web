@@ -58,6 +58,7 @@ function ImpactStories() {
   )) : /* @__PURE__ */ React.createElement("image-slot", { id: story.img, shape: "rounded", radius: "20", fit: "cover", placeholder: `Foto: ${story.title}`, style: { aspectRatio: "3/4", display: "block", width: "100%", background: "var(--bg)" } })));
 }
 function NosotrosApp() {
+  const t = useT();
   const [tab, setTab] = useState(() => {
     const p = new URLSearchParams(window.location.search).get("tab");
     return ["historia", "impacto", "equipo", "prensa"].includes(p) ? p : "historia";

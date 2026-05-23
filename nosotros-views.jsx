@@ -110,6 +110,7 @@ function ImpactStories() {
 
 // ── Main Nosotros page ─────────────────────────────────────────────────────────
 function NosotrosApp() {
+  const t = useT();
   const [tab, setTab] = useState(() => {
     const p = new URLSearchParams(window.location.search).get('tab');
     return ['historia','impacto','equipo','prensa'].includes(p) ? p : 'historia';
