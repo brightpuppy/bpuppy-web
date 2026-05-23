@@ -100,6 +100,20 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
         lang:         data.lang || 'es',
         updated_at:   new Date().toISOString(),
       }, { onConflict: 'session_key' });
+
+      // Crear lead en website_leads cuando hay telefono (una sola vez por sesion)
+      if (data.clientPhone && !localStorage.getItem('bp_lead_' + key)) {
+        const convo = (data.messages || [])
+          .map(m => (m.role === 'user' ? 'Cliente: ' : 'Asesor: ') + (m.content || ''))
+          .join('\n').slice(0, 2000);
+        const { error } = await supa.from('website_leads').insert({
+          full_name: data.clientName || null,
+          phone:     data.clientPhone,
+          message:   'Lead del chat de la web:\n\n' + convo,
+          source:    'chat_web',
+        });
+        if (!error) localStorage.setItem('bp_lead_' + key, '1');
+      }
     } catch(e) { /* silent */ }
   }
 
