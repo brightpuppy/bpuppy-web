@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mapa de entregas BPuppy</title>
+<meta name="robots" content="noindex"/>
+<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  html,body{margin:0;height:100%;background:#F2E7D0;font-family:system-ui,sans-serif}
+  #map{height:100%;width:100%}
+  .leaflet-tile{filter:sepia(0.45) saturate(0.85) contrast(0.95) brightness(1.02)}
+  .leaflet-container{background:#e9dcc0}
+  .lg{position:absolute;left:12px;bottom:12px;z-index:500;background:rgba(242,231,208,0.92);border:1px solid #d8c7a6;border-radius:10px;padding:8px 12px;font-size:12px;font-weight:700;color:#3B2F2A;display:flex;gap:14px}
+  .lg i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:middle}
+  @keyframes pl{0%{box-shadow:0 0 0 0 rgba(78,122,81,.5)}70%{box-shadow:0 0 0 12px rgba(78,122,81,0)}100%{box-shadow:0 0 0 0 rgba(78,122,81,0)}}
+</style>
+</head>
+<body>
+<div id="map"></div>
+<div class="lg"><span><i style="background:#4E7A51"></i>En camino</span><span><i style="background:#C2521E"></i>Entregado</span></div>
+<script>
+(function(){
+  var SUPA_URL='https://oqqwmcplljirbreowrll.supabase.co';
+  var ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+  var map=L.map('map',{scrollWheelZoom:false,attributionControl:false,zoomControl:true}).setView([39.5,-98.35],4);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);
+  function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
+  function place(d){return [d.dest_city,d.dest_state,(d.dest_country&&d.dest_country!=='USA'?d.dest_country:null)].filter(Boolean).join(', ');}
+  function dot(color,pulse){return L.divIcon({className:'',iconSize:[16,16],html:'<div style="width:16px;height:16px;border-radius:50%;background:'+color+';border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)'+(pulse?';animation:pl 1.8s infinite':'')+'"></div>'});}
+  (async function(){
+    try{
+      var sb=window.supabase.createClient(SUPA_URL,ANON);
+      var res=await sb.from('deliveries_public').select('*');
+      var rows=res.data||[],pts=[];
+      rows.forEach(function(d){
+        if(d.dest_lat==null||d.dest_lng==null)return;
+        var en=d.status==='en_route';
+        L.marker([d.dest_lat,d.dest_lng],{icon:dot(en?'#4E7A51':'#C2521E',en)}).addTo(map)
+          .bindPopup('<b>'+esc(place(d)||'—')+'</b><br>'+(en?'✈️ En camino':'🏡 Entregado')+(d.puppy_breed?'<br>'+esc(d.puppy_breed):''));
+        pts.push([d.dest_lat,d.dest_lng]);
+      });
+      if(pts.length)map.fitBounds(pts,{padding:[40,40],maxZoom:6});
+    }catch(e){}
+  })();
+})();
+</script>
+</body>
+</html>
