@@ -208,7 +208,13 @@ function OpeningBanner() {
     setLoading(true);
     try {
       const sb = window._groomSb;
-      if (sb) await sb.from("website_leads").insert({ gclid: typeof window !== "undefined" && window.bpGclid ? window.bpGclid() : null, full_name: name, phone, message: "OFERTA APERTURA - Ba\xF1o + Corte GRATIS. C\xF3d: APERTURA", source: "grooming_apertura" });
+      if (sb) await sb.from("website_leads").insert({ gclid: (function() {
+        try {
+          window.bpLead && window.bpLead();
+        } catch (e2) {
+        }
+        return typeof window !== "undefined" && window.bpGclid ? window.bpGclid() : null;
+      })(), full_name: name, phone, message: "OFERTA APERTURA - Ba\xF1o + Corte GRATIS. C\xF3d: APERTURA", source: "grooming_apertura" });
     } catch (err) {
     } finally {
       setLoading(false);

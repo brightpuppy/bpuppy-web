@@ -205,7 +205,13 @@ function PdReserveModal({ puppy, onClose }) {
     };
     try {
       await pdSb.from("website_leads").insert({
-        gclid: typeof window !== "undefined" && window.bpGclid ? window.bpGclid() : null,
+        gclid: (function() {
+          try {
+            window.bpLead && window.bpLead();
+          } catch (e2) {
+          }
+          return typeof window !== "undefined" && window.bpGclid ? window.bpGclid() : null;
+        })(),
         full_name: v("name"),
         email: v("email"),
         phone: v("phone"),
@@ -360,7 +366,13 @@ function IntlShippingModal({ puppyName, puppyBreed, defaultSpecies, onClose }) {
     };
     try {
       await pdSb.from("website_leads").insert({
-        gclid: typeof window !== "undefined" && window.bpGclid ? window.bpGclid() : null,
+        gclid: (function() {
+          try {
+            window.bpLead && window.bpLead();
+          } catch (e2) {
+          }
+          return typeof window !== "undefined" && window.bpGclid ? window.bpGclid() : null;
+        })(),
         full_name: v("name"),
         email: v("email"),
         phone: v("phone"),

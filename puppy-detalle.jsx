@@ -385,7 +385,7 @@ function PdReserveModal({ puppy, onClose }) {
     setLoading(true);
     var v = function(id){ var el = document.getElementById('pdrf-'+id); return el ? el.value.trim() : ''; };
     try {
-      await pdSb.from('website_leads').insert({ gclid: (typeof window!=='undefined'&&window.bpGclid?window.bpGclid():null),
+      await pdSb.from('website_leads').insert({ gclid: (function(){try{window.bpLead&&window.bpLead()}catch(e){}return (typeof window!=='undefined'&&window.bpGclid?window.bpGclid():null)})(),
         full_name: v('name'), email: v('email'), phone: v('phone'), zip_code: v('zip'), message: v('msg'),
         puppy_id: puppy.id, puppy_name: puppy.name || null, puppy_breed: puppy.breed || null, source: 'puppy_detail',
       });
@@ -581,7 +581,7 @@ function IntlShippingModal({ puppyName, puppyBreed, defaultSpecies, onClose }) {
     setLoading(true);
     var v = function(id){ var el = document.getElementById('is-'+id); return el ? el.value.trim() : ''; };
     try {
-      await pdSb.from('website_leads').insert({ gclid: (typeof window!=='undefined'&&window.bpGclid?window.bpGclid():null),
+      await pdSb.from('website_leads').insert({ gclid: (function(){try{window.bpLead&&window.bpLead()}catch(e){}return (typeof window!=='undefined'&&window.bpGclid?window.bpGclid():null)})(),
         full_name: v('name'), email: v('email'), phone: v('phone'),
         message: `ENVÍO INTERNACIONAL\nEspecie: ${species}\nPaís destino: ${v('country')}\nNotas: ${v('notes')}`,
         puppy_name: puppyName || null, puppy_breed: puppyBreed || null,
