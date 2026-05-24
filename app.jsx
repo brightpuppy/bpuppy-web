@@ -21,6 +21,33 @@ function FamiliesMapSection() {
   return <FamiliesMap />;
 }
 
+// Nuevo mapa de entregas (vintage, alimentado por deliveries_public via iframe).
+// Oculto por defecto: solo aparece si SitePublish marca 'mapa' como live.
+function DeliveryMap() {
+  const t = (typeof useT === 'function') ? useT() : ((a) => Array.isArray(a) ? a[0] : a);
+  return (
+    <section className="reveal" style={{ padding: '80px 0', background: '#F2E7D0' }}>
+      <div className="container" style={{ textAlign: 'center' }}>
+        <div className="eyebrow" style={{ color: '#C2521E' }}>🧭 {t(['Bitácora de vuelo', 'Flight log'])}</div>
+        <h2 className="display" style={{ fontSize: 'clamp(32px,5vw,60px)', margin: '10px 0 8px' }}>{t(['Familias felices ', 'Happy families '])}<em className="serif-italic" style={{ color: '#C2521E' }}>{t(['alrededor del mundo', 'around the world'])}</em></h2>
+        <p style={{ color: 'var(--ink-2)', maxWidth: '56ch', margin: '0 auto 22px' }}>{t(['Cada cachorro entregado es un nuevo hogar en el mapa.', 'Every delivered puppy is a new home on the map.'])}</p>
+        <iframe src="mapa-entregas.html" loading="lazy" title="Mapa de entregas" style={{ width: '100%', height: '460px', border: '2px solid #d8c7a6', borderRadius: '18px' }}></iframe>
+      </div>
+    </section>
+  );
+}
+function DeliveryMapLive() {
+  const live = () => (window.SitePublish ? window.SitePublish.isSectionLive('Home', 'mapa') : false);
+  const [show, setShow] = React.useState(live);
+  React.useEffect(() => {
+    const h = () => setShow(live());
+    window.addEventListener('bpuppy:publish', h);
+    return () => window.removeEventListener('bpuppy:publish', h);
+  }, []);
+  if (!show) return null;
+  return <DeliveryMap />;
+}
+
 function App() {
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
   const [lang, setLang] = React.useState(tweaks.lang || 'es');
@@ -72,6 +99,7 @@ function App() {
         <Gallery />
         <InstagramFeed />
         <Testimonials />
+        <DeliveryMapLive />
         <FAQ />
         <FinalCTA />
       </main>
