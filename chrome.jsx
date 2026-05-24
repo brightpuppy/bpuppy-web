@@ -122,6 +122,9 @@ function Header({ overDark }) {
   useEffect(() => {
     if (localStorage.getItem('bpuppy-lang') || localStorage.getItem('bpuppy-gt-lang')) return;
     const navLang = (navigator.language || '').split('-')[0].toLowerCase();
+    // Idioma nativo segun el navegador: espanol o ingles (sin Google Translate)
+    if (navLang === 'es') { setLang('es'); try { localStorage.setItem('bpuppy-lang','es'); } catch(e){} return; }
+    if (navLang === 'en') { setLang('en'); try { localStorage.setItem('bpuppy-lang','en'); } catch(e){} return; }
     const gtCode  = GT_BROWSER[navLang];
     if (!gtCode) return;
     const label = GT_SHORT[gtCode] || navLang.toUpperCase();
