@@ -85,6 +85,7 @@ function SolicitudForm() {
     ].filter(Boolean).join("\n");
     try {
       await sqSb.from("website_leads").insert({
+        gclid: typeof window !== "undefined" && window.bpGclid ? window.bpGclid() : null,
         full_name: form.name,
         email: form.email,
         phone: form.phone,

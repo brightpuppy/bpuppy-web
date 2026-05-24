@@ -1,4 +1,4 @@
-// grooming-views.jsx — Página completa de Grooming BPuppy
+﻿// grooming-views.jsx — Página completa de Grooming BPuppy
 const { useState, useEffect, useMemo } = React;
 
 // ── Data ───────────────────────────────────────────────────────────────────────
@@ -345,7 +345,7 @@ function OpeningBanner() {
     setLoading(true);
     try {
       const sb = window._groomSb;
-      if (sb) await sb.from('website_leads').insert({ full_name: name, phone, message: 'OFERTA APERTURA - Baño + Corte GRATIS. Cód: APERTURA', source: 'grooming_apertura' });
+      if (sb) await sb.from('website_leads').insert({ gclid: (typeof window!=='undefined'&&window.bpGclid?window.bpGclid():null), full_name: name, phone, message: 'OFERTA APERTURA - Baño + Corte GRATIS. Cód: APERTURA', source: 'grooming_apertura' });
     } catch(err) {} finally { setLoading(false); }
     setClaimed(true);
     window._groomPromo = 'APERTURA';

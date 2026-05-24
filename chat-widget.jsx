@@ -1,4 +1,4 @@
-// chat-widget.jsx — BPuppy chat advisor v2
+﻿// chat-widget.jsx — BPuppy chat advisor v2
 // ─────────────────────────────────────────────────────────────────────────────
 // SUPABASE SETUP — run once in your SQL editor:
 //
@@ -117,7 +117,7 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
         const convo = (data.messages || [])
           .map(m => (m.role === 'user' ? 'Cliente: ' : 'Asesor: ') + (m.content || ''))
           .join('\n').slice(0, 2000);
-        const { error } = await supa.from('website_leads').insert({
+        const { error } = await supa.from('website_leads').insert({ gclid: (typeof window!=='undefined'&&window.bpGclid?window.bpGclid():null),
           full_name: data.clientName || null,
           phone:     data.clientPhone,
           message:   'Lead del chat de la web:\n\n' + convo,
