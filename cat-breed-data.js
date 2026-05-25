@@ -473,7 +473,7 @@ const CAT_BREEDS = [
     name: "Himalayan",
     es: "Himalayo",
     emoji: "\u{1F499}",
-    photo: "uploads/Page 12.jpeg",
+    photo: "uploads/Page 12.webp",
     size: "medium",
     coat: ["long"],
     hypo: false,

@@ -189,7 +189,7 @@ function Header({ overDark }) {
     <header className={klass}>
       <div className="container hdr-row">
         <a href="Home.html" className="hdr-logo" aria-label="BPuppy">
-          <img src={overDark && !scrolled ? 'assets/logo-clean-light.png' : 'assets/logo-clean.png'} alt="BPuppy logo" />
+          <img src={overDark && !scrolled ? 'assets/logo-clean-light.webp' : 'assets/logo-clean.webp'} alt="BPuppy logo" />
           <span className="wm notranslate">Bright Puppy</span>
         </a>
         <nav className="nav">
@@ -256,7 +256,7 @@ function Footer() {
     <footer className="foot notranslate" translate="no">
       <div className="container foot-row">
         <div className="foot-logo">
-          <img src="assets/logo-clean.png" alt="" />
+          <img src="assets/logo-clean.webp" alt="" />
           <span>BPuppy</span>
         </div>
         <p>{t(STRINGS.foot.rights)}</p>

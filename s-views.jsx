@@ -109,7 +109,7 @@ function WelcomeScreen({ onLogin }) {
   return (
     <div style={{ height:'100%', display:'flex', flexDirection:'column', overflow:'hidden' }}>
       <div style={{ flex:1, position:'relative', overflow:'hidden' }}>
-        <img src="assets/photos/g03.jpg" alt="" style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 20%', display:'block' }}/>
+        <img src="assets/photos/g03.webp" alt="" style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 20%', display:'block' }}/>
         <div style={{ position:'absolute', inset:0, background:'linear-gradient(to bottom,rgba(5,5,18,0.1) 0%,rgba(5,5,18,0.94) 100%)' }}/>
         <div style={{ position:'absolute', bottom:0, left:0, right:0, padding:'28px 26px 34px' }}>
           <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:18 }}>
@@ -451,7 +451,7 @@ function UploadScreen({ setScreen }) {
   const [scanState, setScanState] = useState('idle');
   const [caption, setCaption] = useState('');
   const [vis, setVis] = useState('public');
-  const DEMO = 'assets/photos/g04.jpg';
+  const DEMO = 'assets/photos/g04.webp';
   const startScan = () => { setStep(2); setScanState('scanning'); setTimeout(() => setScanState('approved'), 2800); };
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%', display:'flex', flexDirection:'column' }}>

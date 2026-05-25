@@ -3,7 +3,7 @@
 const DOG_BREEDS = [
   // ── SMALL ──────────────────────────────────────────────
   {
-    id:'french-bulldog', name:'French Bulldog', es:'Bulldog Francés', emoji:'🐶', photo:'fotos-razas/French Bulldog.png',
+    id:'french-bulldog', name:'French Bulldog', es:'Bulldog Francés', emoji:'🐶', photo:'fotos-razas/French Bulldog.webp',
     size:'small', coat:['short'], hypo:false, energy:2, grooming:1, shedding:2,
     trainability:3, barking:2, family:5, kids:5, pets:4, apartment:5,
     origin:'Francia / Inglaterra', originEn:'France / England', flag:'🇫🇷',
@@ -25,7 +25,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'yorkshire-terrier', name:'Yorkshire Terrier', es:'Yorkshire Terrier', emoji:'🐩', photo:'fotos-razas/Yorkshire Terrier.png',
+    id:'yorkshire-terrier', name:'Yorkshire Terrier', es:'Yorkshire Terrier', emoji:'🐩', photo:'fotos-razas/Yorkshire Terrier.webp',
     size:'small', coat:['long','smooth'], hypo:true, energy:3, grooming:4, shedding:1,
     trainability:3, barking:4, family:4, kids:3, pets:3, apartment:5,
     origin:'Inglaterra', originEn:'England', flag:'🇬🇧',
@@ -48,7 +48,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'pomeranian', name:'Pomeranian', es:'Pomerania', emoji:'🦊', photo:'fotos-razas/Pomeranian.png',
+    id:'pomeranian', name:'Pomeranian', es:'Pomerania', emoji:'🦊', photo:'fotos-razas/Pomeranian.webp',
     size:'small', coat:['long'], hypo:false, energy:3, grooming:4, shedding:3,
     trainability:4, barking:4, family:4, kids:3, pets:3, apartment:5,
     origin:'Alemania / Polonia', originEn:'Germany / Poland', flag:'🇩🇪',
@@ -70,7 +70,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'chihuahua', name:'Chihuahua', es:'Chihuahua', emoji:'🐕', photo:'fotos-razas/Chihuahua.png',
+    id:'chihuahua', name:'Chihuahua', es:'Chihuahua', emoji:'🐕', photo:'fotos-razas/Chihuahua.webp',
     size:'small', coat:['short','long'], hypo:false, energy:3, grooming:2, shedding:2,
     trainability:3, barking:4, family:3, kids:2, pets:3, apartment:5,
     origin:'México', originEn:'Mexico', flag:'🇲🇽',
@@ -92,7 +92,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'maltese', name:'Maltese', es:'Maltés', emoji:'🐩', photo:'fotos-razas/Maltese.png',
+    id:'maltese', name:'Maltese', es:'Maltés', emoji:'🐩', photo:'fotos-razas/Maltese.webp',
     size:'small', coat:['long','smooth'], hypo:true, energy:2, grooming:4, shedding:1,
     trainability:4, barking:3, family:5, kids:3, pets:4, apartment:5,
     origin:'Malta / Mediterráneo', originEn:'Malta / Mediterranean', flag:'🇲🇹',
@@ -114,7 +114,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'shih-tzu', name:'Shih Tzu', es:'Shih Tzu', emoji:'🐶', photo:'fotos-razas/Shih Tzu.png',
+    id:'shih-tzu', name:'Shih Tzu', es:'Shih Tzu', emoji:'🐶', photo:'fotos-razas/Shih Tzu.webp',
     size:'small', coat:['long'], hypo:false, energy:2, grooming:4, shedding:1,
     trainability:3, barking:2, family:5, kids:4, pets:5, apartment:5,
     origin:'China / Tibet', originEn:'China / Tibet', flag:'🇨🇳',
@@ -136,7 +136,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'miniature-schnauzer', name:'Miniature Schnauzer', es:'Schnauzer Miniatura', emoji:'🐕', photo:'fotos-razas/Miniature Schnauzer.png',
+    id:'miniature-schnauzer', name:'Miniature Schnauzer', es:'Schnauzer Miniatura', emoji:'🐕', photo:'fotos-razas/Miniature Schnauzer.webp',
     size:'small', coat:['wiry'], hypo:true, energy:3, grooming:3, shedding:1,
     trainability:5, barking:3, family:5, kids:5, pets:3, apartment:4,
     origin:'Alemania', originEn:'Germany', flag:'🇩🇪',
@@ -157,7 +157,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'cavalier-kcs', name:'Cavalier King Charles', es:'Cavalier King Charles', emoji:'🐶', photo:'fotos-razas/Cavalier King Charles Spaniel.png',
+    id:'cavalier-kcs', name:'Cavalier King Charles', es:'Cavalier King Charles', emoji:'🐶', photo:'fotos-razas/Cavalier King Charles Spaniel.webp',
     size:'small', coat:['long','smooth'], hypo:false, energy:2, grooming:3, shedding:2,
     trainability:4, barking:2, family:5, kids:5, pets:5, apartment:5,
     origin:'Inglaterra', originEn:'England', flag:'🇬🇧',
@@ -178,7 +178,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'dachshund', name:'Dachshund', es:'Dachshund (Teckel)', emoji:'🌭', photo:'fotos-razas/Dachshund.png',
+    id:'dachshund', name:'Dachshund', es:'Dachshund (Teckel)', emoji:'🌭', photo:'fotos-razas/Dachshund.webp',
     size:'small', coat:['short','long','wiry'], hypo:false, energy:3, grooming:2, shedding:2,
     trainability:3, barking:3, family:4, kids:3, pets:3, apartment:4,
     origin:'Alemania', originEn:'Germany', flag:'🇩🇪',
@@ -199,7 +199,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'boston-terrier', name:'Boston Terrier', es:'Boston Terrier', emoji:'🐶', photo:'fotos-razas/Boston Terrier.png',
+    id:'boston-terrier', name:'Boston Terrier', es:'Boston Terrier', emoji:'🐶', photo:'fotos-razas/Boston Terrier.webp',
     size:'small', coat:['short'], hypo:false, energy:3, grooming:1, shedding:2,
     trainability:4, barking:2, family:5, kids:5, pets:4, apartment:5,
     origin:'Estados Unidos', originEn:'United States', flag:'🇺🇸',
@@ -222,7 +222,7 @@ const DOG_BREEDS = [
 
   // ── MEDIUM ─────────────────────────────────────────────
   {
-    id:'beagle', name:'Beagle', es:'Beagle', emoji:'🐕', photo:'fotos-razas/Beagle.png',
+    id:'beagle', name:'Beagle', es:'Beagle', emoji:'🐕', photo:'fotos-razas/Beagle.webp',
     size:'medium', coat:['short'], hypo:false, energy:4, grooming:2, shedding:3,
     trainability:3, barking:4, family:5, kids:5, pets:4, apartment:3,
     origin:'Inglaterra', originEn:'England', flag:'🇬🇧',
@@ -244,7 +244,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'cocker-spaniel', name:'Cocker Spaniel', es:'Cocker Spaniel', emoji:'🐶', photo:'fotos-razas/Cocker Spaniel.png',
+    id:'cocker-spaniel', name:'Cocker Spaniel', es:'Cocker Spaniel', emoji:'🐶', photo:'fotos-razas/Cocker Spaniel.webp',
     size:'medium', coat:['long','smooth'], hypo:false, energy:3, grooming:4, shedding:3,
     trainability:4, barking:3, family:5, kids:5, pets:4, apartment:3,
     origin:'España / Inglaterra', originEn:'Spain / England', flag:'🇬🇧',
@@ -265,7 +265,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'border-collie', name:'Border Collie', es:'Border Collie', emoji:'🐕', photo:'fotos-razas/Border Collie.png',
+    id:'border-collie', name:'Border Collie', es:'Border Collie', emoji:'🐕', photo:'fotos-razas/Border Collie.webp',
     size:'medium', coat:['long','smooth'], hypo:false, energy:5, grooming:3, shedding:3,
     trainability:5, barking:3, family:4, kids:4, pets:3, apartment:1,
     origin:'Reino Unido', originEn:'United Kingdom', flag:'🇬🇧',
@@ -286,7 +286,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'english-bulldog', name:'English Bulldog', es:'Bulldog Inglés', emoji:'🐶', photo:'fotos-razas/English Bulldog.png',
+    id:'english-bulldog', name:'English Bulldog', es:'Bulldog Inglés', emoji:'🐶', photo:'fotos-razas/English Bulldog.webp',
     size:'medium', coat:['short'], hypo:false, energy:2, grooming:2, shedding:3,
     trainability:3, barking:2, family:5, kids:5, pets:4, apartment:4,
     origin:'Inglaterra', originEn:'England', flag:'🇬🇧',
@@ -309,7 +309,7 @@ const DOG_BREEDS = [
 
   // ── LARGE ──────────────────────────────────────────────
   {
-    id:'golden-retriever', name:'Golden Retriever', es:'Golden Retriever', emoji:'🦮', photo:'fotos-razas/Golden Retriever.png',
+    id:'golden-retriever', name:'Golden Retriever', es:'Golden Retriever', emoji:'🦮', photo:'fotos-razas/Golden Retriever.webp',
     size:'large', coat:['long'], hypo:false, energy:4, grooming:3, shedding:4,
     trainability:5, barking:2, family:5, kids:5, pets:5, apartment:2,
     origin:'Escocia', originEn:'Scotland', flag:'🏴󠁧󠁢󠁳󠁣󠁴󠁿',
@@ -331,7 +331,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'labrador-retriever', name:'Labrador Retriever', es:'Labrador Retriever', emoji:'🦮', photo:'fotos-razas/Labrador Retriever.png',
+    id:'labrador-retriever', name:'Labrador Retriever', es:'Labrador Retriever', emoji:'🦮', photo:'fotos-razas/Labrador Retriever.webp',
     size:'large', coat:['short'], hypo:false, energy:4, grooming:2, shedding:4,
     trainability:5, barking:2, family:5, kids:5, pets:5, apartment:2,
     origin:'Canadá / Inglaterra', originEn:'Canada / England', flag:'🇨🇦',
@@ -353,7 +353,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'german-shepherd', name:'German Shepherd', es:'Pastor Alemán', emoji:'🐕‍🦺', photo:'fotos-razas/German Shepherd.png',
+    id:'german-shepherd', name:'German Shepherd', es:'Pastor Alemán', emoji:'🐕‍🦺', photo:'fotos-razas/German Shepherd.webp',
     size:'large', coat:['long','smooth'], hypo:false, energy:4, grooming:3, shedding:5,
     trainability:5, barking:3, family:5, kids:5, pets:3, apartment:2,
     origin:'Alemania', originEn:'Germany', flag:'🇩🇪',
@@ -374,7 +374,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'siberian-husky', name:'Siberian Husky', es:'Husky Siberiano', emoji:'🐺', photo:'fotos-razas/Siberian Husky.png',
+    id:'siberian-husky', name:'Siberian Husky', es:'Husky Siberiano', emoji:'🐺', photo:'fotos-razas/Siberian Husky.webp',
     size:'large', coat:['long'], hypo:false, energy:5, grooming:3, shedding:5,
     trainability:3, barking:2, family:4, kids:4, pets:3, apartment:1,
     origin:'Siberia (Rusia)', originEn:'Siberia (Russia)', flag:'🇷🇺',
@@ -396,7 +396,7 @@ const DOG_BREEDS = [
     ]
   },
   {
-    id:'standard-poodle', name:'Standard Poodle', es:'Caniche Estándar', emoji:'🐩', photo:'fotos-razas/Standard Poodle.png',
+    id:'standard-poodle', name:'Standard Poodle', es:'Caniche Estándar', emoji:'🐩', photo:'fotos-razas/Standard Poodle.webp',
     size:'large', coat:['curly'], hypo:true, energy:4, grooming:5, shedding:1,
     trainability:5, barking:2, family:5, kids:5, pets:5, apartment:3,
     origin:'Francia / Alemania', originEn:'France / Germany', flag:'🇫🇷',
@@ -421,19 +421,19 @@ const DOG_BREEDS = [
 
 // ── DESIGNER BREEDS ────────────────────────────────────────
 const DESIGNER_BREEDS = [
-  { id:'goldendoodle', name:'Goldendoodle', parents:'Golden Retriever + Standard Poodle', emoji:'🐩', photo:'fotos-razas/Goldendoodle.png',
+  { id:'goldendoodle', name:'Goldendoodle', parents:'Golden Retriever + Standard Poodle', emoji:'🐩', photo:'fotos-razas/Goldendoodle.webp',
     size:'medium-large', coat:['curly','wavy'], hypo:true, energy:4,
     desc:'La mezcla de diseño más popular en EE. UU. Hereda la inteligencia y el bajo derramamiento del Poodle con el carácter gentil e incondicional del Golden Retriever. Ideal para familias, personas con alergias y como perro de apoyo emocional. Viene en varios tamaños según el tipo de Poodle.',
     descEn:'The most popular designer mix in the U.S. Inherits the intelligence and low shedding of the Poodle with the gentle, unconditional character of the Golden Retriever. Ideal for families, allergy sufferers, and as an emotional support dog. Available in various sizes depending on the Poodle type.'},
-  { id:'labradoodle', name:'Labradoodle', parents:'Labrador Retriever + Poodle', emoji:'🐩', photo:'fotos-razas/Labradoodle.png',
+  { id:'labradoodle', name:'Labradoodle', parents:'Labrador Retriever + Poodle', emoji:'🐩', photo:'fotos-razas/Labradoodle.webp',
     size:'medium-large', coat:['curly','wavy'], hypo:true, energy:4,
     desc:'Originalmente creado en Australia como perro guía hipoalergénico. Combina la obediencia y sociabilidad del Labrador con el bajo derramamiento del Poodle. Excelente perro de servicio y compañía familiar.',
     descEn:'Originally created in Australia as a hypoallergenic guide dog. Combines the obedience and sociability of the Labrador with the low shedding of the Poodle. Excellent service dog and family companion.'},
-  { id:'cavapoo', name:'Cavapoo', parents:'Cavalier King Charles + Miniature Poodle', emoji:'🐶', photo:'fotos-razas/Cavapoo.png',
+  { id:'cavapoo', name:'Cavapoo', parents:'Cavalier King Charles + Miniature Poodle', emoji:'🐶', photo:'fotos-razas/Cavapoo.webp',
     size:'small', coat:['curly','wavy'], hypo:true, energy:3,
     desc:'Dulce, gentil y de bajo mantenimiento. Hereda el temperamento cariñoso del Cavalier con el bajo derramamiento del Poodle. Ideal para apoyo emocional, adultos mayores y apartamentos.',
     descEn:'Sweet, gentle, and low maintenance. Inherits the affectionate temperament of the Cavalier with the low shedding of the Poodle. Ideal for emotional support, seniors, and apartments.'},
-  { id:'maltipoo', name:'Maltipoo', parents:'Maltese + Miniature Poodle', emoji:'🐩', photo:'fotos-razas/Maltipoo.png',
+  { id:'maltipoo', name:'Maltipoo', parents:'Maltese + Miniature Poodle', emoji:'🐩', photo:'fotos-razas/Maltipoo.webp',
     size:'small', coat:['curly','wavy'], hypo:true, energy:3,
     desc:'Pequeño, adorable e hipoalergénico. Muy popular para personas con alergias. Cariñoso y sociable, se adapta perfectamente a apartamentos y hogares tranquilos.',
     descEn:'Small, adorable, and hypoallergenic. Very popular for people with allergies. Affectionate and sociable, perfectly adapted to apartments and quiet homes.'},
@@ -445,7 +445,7 @@ const DESIGNER_BREEDS = [
     size:'small', coat:['long','silky'], hypo:false, energy:3,
     desc:'Pelaje largo y suave, temperamento cariñoso y adaptable. Muy sociable. Ideal para adultos y familias sin niños muy pequeños.',
     descEn:'Long, soft coat, affectionate and adaptable temperament. Very sociable. Ideal for adults and families without very young children.'},
-  { id:'pomsky', name:'Pomsky', parents:'Pomeranian + Siberian Husky', emoji:'🐺', photo:'fotos-razas/Pomsky.png',
+  { id:'pomsky', name:'Pomsky', parents:'Pomeranian + Siberian Husky', emoji:'🐺', photo:'fotos-razas/Pomsky.webp',
     size:'small-medium', coat:['long'], hypo:false, energy:4,
     desc:'Alta demanda por su apariencia de Husky en miniatura. Enérgico, inteligente y de fuerte personalidad. Requiere ejercicio regular y socialización temprana.',
     descEn:'High demand for its miniature Husky appearance. Energetic, intelligent, and strong-willed. Requires regular exercise and early socialization.'},

@@ -24,13 +24,13 @@ function Promise_() {
 }
 const IG_PHOTOS = [
   "fotos-raw/p01.jpg",
-  "fotos-raw/p02.jpg",
-  "fotos-raw/p03.jpg",
-  "fotos-raw/p04.jpg",
-  "fotos-raw/p05.jpg",
-  "fotos-raw/p07.jpg",
-  "fotos-raw/p08.jpg",
-  "fotos-raw/p09.jpg"
+  "fotos-raw/p02.webp",
+  "fotos-raw/p03.webp",
+  "fotos-raw/p04.webp",
+  "fotos-raw/p05.webp",
+  "fotos-raw/p07.webp",
+  "fotos-raw/p08.webp",
+  "fotos-raw/p09.webp"
 ];
 function InstagramFeed() {
   React.useEffect(() => {

@@ -1,5 +1,7 @@
 .git
 .git/**
 node_modules
+_archive
+_archive/**
 wrangler.jsonc
 .assetsignore

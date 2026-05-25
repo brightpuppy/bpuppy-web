@@ -231,7 +231,7 @@ const CAT_BREEDS = [
   },
   {
     id:'himalayan', name:'Himalayan', es:'Himalayo', emoji:'💙',
-    photo:'uploads/Page 12.jpeg',
+    photo:'uploads/Page 12.webp',
     size:'medium', coat:['long'], hypo:false, energy:1, grooming:5, shedding:3,
     trainability:2, vocal:2, family:5, kids:3, pets:4, apartment:5,
     origin:'USA / UK', originEn:'USA / UK', flag:'🇺🇸',

@@ -105,7 +105,7 @@ class SiteHeader extends HTMLElement {
 <header class="hdr${this._scrolled ? ' scrolled' : ''}" id="site-hdr" style="position:sticky;top:0;">
   <div class="container hdr-row">
     <a href="${b}Home.html#top" class="hdr-logo">
-      <img src="${b}assets/logo-clean.png" alt="Bright Puppy">
+      <img src="${b}assets/logo-clean.webp" alt="Bright Puppy">
       <span class="wm">Bright Puppy</span>
     </a>
     <nav class="nav">

@@ -2,16 +2,16 @@
 
 // Real family photos — 50 uploaded images
 const GALLERY_PHOTOS = [
-  'uploads/1A.jpg','uploads/2.jpg','uploads/3.jpg','uploads/4.jpg','uploads/5.jpg',
-  'uploads/6.jpg','uploads/7.jpg','uploads/8.jpg','uploads/9.jpg','uploads/10.JPG',
-  'uploads/11.jpg','uploads/12.jpg','uploads/13.jpg','uploads/14.jpg','uploads/15.jpg',
-  'uploads/16.jpg','uploads/17.jpg','uploads/18.jpg','uploads/19.jpg','uploads/20.jpg',
-  'uploads/21.jpg','uploads/22.jpg','uploads/23.jpg','uploads/24.jpg','uploads/25.jpg',
-  'uploads/26.jpg','uploads/27.JPG','uploads/28.JPG','uploads/29.jpg','uploads/30.jpg',
-  'uploads/31.jpg','uploads/32.jpg','uploads/33.JPG','uploads/34.jpg','uploads/35.jpg',
-  'uploads/36.jpg','uploads/37.jpg','uploads/38.jpg','uploads/39.jpg','uploads/40.jpg',
-  'uploads/41.jpg','uploads/42.JPG','uploads/43.jpg','uploads/44.jpg','uploads/45.jpg',
-  'uploads/46.jpg','uploads/47.jpg','uploads/48.jpg','uploads/49.jpg','uploads/50.jpg',
+  'uploads/1A.webp','uploads/2.webp','uploads/3.webp','uploads/4.webp','uploads/5.webp',
+  'uploads/6.webp','uploads/7.webp','uploads/8.webp','uploads/9.jpg','uploads/10.webp',
+  'uploads/11.webp','uploads/12.webp','uploads/13.webp','uploads/14.webp','uploads/15.webp',
+  'uploads/16.webp','uploads/17.webp','uploads/18.webp','uploads/19.webp','uploads/20.webp',
+  'uploads/21.webp','uploads/22.webp','uploads/23.webp','uploads/24.webp','uploads/25.webp',
+  'uploads/26.webp','uploads/27.webp','uploads/28.webp','uploads/29.webp','uploads/30.webp',
+  'uploads/31.webp','uploads/32.webp','uploads/33.webp','uploads/34.webp','uploads/35.webp',
+  'uploads/36.webp','uploads/37.webp','uploads/38.webp','uploads/39.webp','uploads/40.webp',
+  'uploads/41.webp','uploads/42.webp','uploads/43.webp','uploads/44.webp','uploads/45.webp',
+  'uploads/46.webp','uploads/47.webp','uploads/48.webp','uploads/49.webp','uploads/50.webp',
 ];
 
 function Gallery() {

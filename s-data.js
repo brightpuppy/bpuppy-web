@@ -11,12 +11,12 @@ const BSDATA = {
     { id: "s6", username: "diego_p", initials: "DP", color: "#F5A623", hasNew: false }
   ],
   posts: [
-    { id: "p1", name: "Carlos R.", username: "carlosrv", initials: "CR", color: "#2196F3", city: "Dallas, TX", verified: false, img: "assets/photos/g01.jpg", caption: "Milo descubri\xF3 que la lluvia no es tan mala \u{1F327}\uFE0F Ya no le tenemos que convencer de salir \u{1F602}", tags: ["GoldenRetriever", "PuppyLife"], likes: 234, comments: 18, time: "2h", liked: false, saved: false },
-    { id: "p2", name: "Sof\xEDa K.", username: "sof_kd", initials: "SK", color: "#9C27B0", city: "New York, NY", verified: true, img: "assets/photos/g02.jpg", caption: "Bella encontr\xF3 su spot favorito \u2600\uFE0F Todos los d\xEDas mismo ritual, misma sonrisa.", tags: ["Labrador", "DogMom", "NYC"], likes: 512, comments: 34, time: "4h", liked: true, saved: false },
-    { id: "p3", name: "Rachel M.", username: "rach_dog", initials: "RM", color: "#4CAF50", city: "Chicago, IL", verified: false, img: "assets/photos/g03.jpg", caption: "Primer a\xF1o de Rocky \u{1F382}\u{1F389} Un a\xF1o de mordiscos, caos y amor infinito. No lo cambiar\xEDa por nada.", tags: ["PuppyBirthday", "FrenchBulldog"], likes: 891, comments: 67, time: "6h", liked: false, saved: true },
-    { id: "p4", name: "Diego F.", username: "diego_pom", initials: "DF", color: "#FF5722", city: "Los Angeles, CA", verified: true, img: "assets/photos/g04.jpg", caption: "Luna pasea por el barrio como si fuera su ciudad \u{1F451} Porque lo es.", tags: ["Pomeranian", "DogDad", "LA"], likes: 1203, comments: 89, time: "8h", liked: false, saved: false },
-    { id: "p5", name: "Ana L.", username: "ana_cats", initials: "AL", color: "#E91E63", city: "Miami, FL", verified: false, img: "assets/photos/g05.jpg", caption: 'Simba y su cara de "\xBFpor qu\xE9 hay una c\xE1mara aqu\xED?" \u{1F639}', tags: ["CatLife", "Ragdoll", "CatMom"], likes: 445, comments: 23, time: "10h", liked: true, saved: false },
-    { id: "p6", name: "Marco B.", username: "marco_bp", initials: "MB", color: "#607D8B", city: "Houston, TX", verified: true, img: "assets/photos/g06.jpg", caption: "Fin de semana en el lago con Coco \u{1F3CA} Primera vez en agua y ya no quer\xEDa salir", tags: ["Labrador", "WeekendVibes"], likes: 672, comments: 41, time: "12h", liked: false, saved: false }
+    { id: "p1", name: "Carlos R.", username: "carlosrv", initials: "CR", color: "#2196F3", city: "Dallas, TX", verified: false, img: "assets/photos/g01.webp", caption: "Milo descubri\xF3 que la lluvia no es tan mala \u{1F327}\uFE0F Ya no le tenemos que convencer de salir \u{1F602}", tags: ["GoldenRetriever", "PuppyLife"], likes: 234, comments: 18, time: "2h", liked: false, saved: false },
+    { id: "p2", name: "Sof\xEDa K.", username: "sof_kd", initials: "SK", color: "#9C27B0", city: "New York, NY", verified: true, img: "assets/photos/g02.webp", caption: "Bella encontr\xF3 su spot favorito \u2600\uFE0F Todos los d\xEDas mismo ritual, misma sonrisa.", tags: ["Labrador", "DogMom", "NYC"], likes: 512, comments: 34, time: "4h", liked: true, saved: false },
+    { id: "p3", name: "Rachel M.", username: "rach_dog", initials: "RM", color: "#4CAF50", city: "Chicago, IL", verified: false, img: "assets/photos/g03.webp", caption: "Primer a\xF1o de Rocky \u{1F382}\u{1F389} Un a\xF1o de mordiscos, caos y amor infinito. No lo cambiar\xEDa por nada.", tags: ["PuppyBirthday", "FrenchBulldog"], likes: 891, comments: 67, time: "6h", liked: false, saved: true },
+    { id: "p4", name: "Diego F.", username: "diego_pom", initials: "DF", color: "#FF5722", city: "Los Angeles, CA", verified: true, img: "assets/photos/g04.webp", caption: "Luna pasea por el barrio como si fuera su ciudad \u{1F451} Porque lo es.", tags: ["Pomeranian", "DogDad", "LA"], likes: 1203, comments: 89, time: "8h", liked: false, saved: false },
+    { id: "p5", name: "Ana L.", username: "ana_cats", initials: "AL", color: "#E91E63", city: "Miami, FL", verified: false, img: "assets/photos/g05.webp", caption: 'Simba y su cara de "\xBFpor qu\xE9 hay una c\xE1mara aqu\xED?" \u{1F639}', tags: ["CatLife", "Ragdoll", "CatMom"], likes: 445, comments: 23, time: "10h", liked: true, saved: false },
+    { id: "p6", name: "Marco B.", username: "marco_bp", initials: "MB", color: "#607D8B", city: "Houston, TX", verified: true, img: "assets/photos/g06.webp", caption: "Fin de semana en el lago con Coco \u{1F3CA} Primera vez en agua y ya no quer\xEDa salir", tags: ["Labrador", "WeekendVibes"], likes: 672, comments: 41, time: "12h", liked: false, saved: false }
   ],
   pack: [
     { id: "u1", name: "Carlos R.", username: "carlosrv", initials: "CR", color: "#2196F3", city: "Dallas, TX", verified: false, mutual: 4, pet: "Golden Retriever" },
@@ -48,7 +48,7 @@ const BSDATA = {
     breed: "Golden Retriever",
     dob: "Mar 2023",
     gender: "Hembra",
-    img: "assets/photos/g01.jpg",
+    img: "assets/photos/g01.webp",
     microchip: "985141004832901",
     bpuppy: true,
     weight: [{ m: "Ene", v: 18 }, { m: "Abr", v: 22 }, { m: "Jul", v: 25 }, { m: "Oct", v: 27 }, { m: "Ene", v: 28 }],

@@ -18,8 +18,8 @@ const IMPACT_STORIES = [
 
 
 const TEAM = [
-{ name: 'Angelina', role: 'Co-Fundadora & Directora', bio: 'El corazón detrás de BPuppy. Desde 2012, Angelina ha guiado a cientos de familias en encontrar el compañero perfecto. Su enfoque en crianza responsable y bienestar animal define cada decisión que tomamos.', img: 'uploads/Angelina.jpg' },
-{ name: 'Luis', role: 'Fundador & CEO', bio: 'La visión detrás del negocio. Luis llevó BPuppy de Santo Domingo a Miami con una misión clara: demostrar que criar con amor y con estándares es la única forma de hacer esto bien. 12+ años construyendo familias.', img: 'uploads/LUIS.jpeg' }];
+{ name: 'Angelina', role: 'Co-Fundadora & Directora', bio: 'El corazón detrás de BPuppy. Desde 2012, Angelina ha guiado a cientos de familias en encontrar el compañero perfecto. Su enfoque en crianza responsable y bienestar animal define cada decisión que tomamos.', img: 'uploads/Angelina.webp' },
+{ name: 'Luis', role: 'Fundador & CEO', bio: 'La visión detrás del negocio. Luis llevó BPuppy de Santo Domingo a Miami con una misión clara: demostrar que criar con amor y con estándares es la única forma de hacer esto bien. 12+ años construyendo familias.', img: 'uploads/LUIS.webp' }];
 
 
 

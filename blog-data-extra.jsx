@@ -172,7 +172,7 @@ const BLOG_EXTRA = [
     ],
     close: 'El grooming creativo no es para todos los perros ni para todos los dueños. Pero cuando el perro lo tolera bien y el groomer es un artista, el resultado es genuinamente espectacular. Y si se vuelve viral, el costo del grooming se paga solo.'
   },
-  { id:42, cat:'razas', emoji:'🐕', color:'#2D6A4F', img:'fotos-razas-sm/German Shepherd.jpg',
+  { id:42, cat:'razas', emoji:'🐕', color:'#2D6A4F', img:'fotos-razas-sm/German Shepherd.webp',
     title:'Pastor Alemán: inteligencia, lealtad y mucha responsabilidad',
     sub:'Todo lo que necesitas saber antes de adoptar uno',
     date:'Mayo 2025', read:5, tags:['pastor alemán','german shepherd'],
@@ -187,7 +187,7 @@ const BLOG_EXTRA = [
     tips:['Socialización temprana con personas y animales','Agility y nose work para canalizar energía','Chequeos de cadera anuales desde los 2 años'],
     close:'Un Pastor Alemán bien trabajado es uno de los compañeros más extraordinarios. Pero requiere compromiso real, no solo buenas intenciones.'
   },
-  { id:43, cat:'razas', emoji:'🐕', color:'#D4830A', img:'fotos-razas-sm/Pembroke Welsh Corgi.jpg',
+  { id:43, cat:'razas', emoji:'🐕', color:'#D4830A', img:'fotos-razas-sm/Pembroke Welsh Corgi.webp',
     title:'Corgi: el perro de la reina que conquista las redes sociales',
     sub:'Temperamento, energía y cuidados del perro más adorable de internet',
     date:'Mayo 2025', read:4, tags:['corgi','pembroke','familia'],
@@ -202,7 +202,7 @@ const BLOG_EXTRA = [
     tips:['Excelente para familias activas','Agility es su deporte ideal','Controla las porciones: propenso al sobrepeso'],
     close:'El Corgi es mucho más que un perro viral. Es un compañero activo, inteligente y leal que pide ejercicio, estimulación y tiempo de calidad contigo.'
   },
-  { id:44, cat:'razas', emoji:'🌭', color:'#8B4513', img:'fotos-razas-sm/Dachshund.jpg',
+  { id:44, cat:'razas', emoji:'🌭', color:'#8B4513', img:'fotos-razas-sm/Dachshund.webp',
     title:'Dachshund (Salchicha): el cazador más valiente en el cuerpo más pequeño',
     sub:'Guía completa para vivir con el perro más terco y adorable del mundo',
     date:'Mayo 2025', read:4, tags:['dachshund','salchicha','teckel'],
@@ -217,7 +217,7 @@ const BLOG_EXTRA = [
     tips:['Rampa para saltos: obligatorio','Control de peso estricto toda la vida','Socialización temprana','Ideal en apartamentos con paseos diarios'],
     close:'Vivir con un Dachshund es una negociación constante con uno de los personajes más entrañables. Si lo entiendes, es un compañero para toda la vida.'
   },
-  { id:45, cat:'razas', emoji:'🐾', color:'#A0522D', img:'uploads/Page 8.jpeg',
+  { id:45, cat:'razas', emoji:'🐾', color:'#A0522D', img:'uploads/Page 8.webp',
     title:'Bulldog Inglés: el rey del sofá con corazón de campeón',
     sub:'Cómo cuidar bien a una raza que requiere atención especial',
     date:'Mayo 2025', read:5, tags:['bulldog inglés','english bulldog','braquicéfalo'],
@@ -232,7 +232,7 @@ const BLOG_EXTRA = [
     tips:['AC siempre disponible en verano','Limpieza de pliegues 2-3 veces por semana','Seguro veterinario recomendado'],
     close:'El Bulldog Inglés es un compañero excepcional para quien entiende sus necesidades específicas. Su amor es incondicional; sus cuidados, también deben serlo.'
   },
-  { id:46, cat:'razas', emoji:'🐺', color:'#4169E1', img:'fotos-razas-sm/Siberian Husky.jpg',
+  { id:46, cat:'razas', emoji:'🐺', color:'#4169E1', img:'fotos-razas-sm/Siberian Husky.webp',
     title:'Husky Siberiano: belleza glacial que necesita kilómetros de espacio',
     sub:'La verdad sobre vivir con uno de los perros más espectaculares del mundo',
     date:'Mayo 2025', read:5, tags:['husky siberiano','siberian husky'],
@@ -247,7 +247,7 @@ const BLOG_EXTRA = [
     tips:['Patio completamente cercado y seguro','Nunca sin correa en espacios abiertos','2 horas de ejercicio mínimo diario'],
     close:'Un Husky bien ejercitado y estimulado es uno de los compañeros más extraordinarios. Pero te lo dan todo solo si tú das todo lo que necesitan.'
   },
-  { id:47, cat:'razas', emoji:'🐩', color:'#FFB6C1', img:'fotos-razas-sm/Bichon Frise.jpg',
+  { id:47, cat:'razas', emoji:'🐩', color:'#FFB6C1', img:'fotos-razas-sm/Bichon Frise.webp',
     title:'Bichón Frisé: el eterno cachorro que nunca falla',
     sub:'El perro ideal para apartamentos, alergias y corazones fáciles de conquistar',
     date:'Mayo 2025', read:4, tags:['bichón frisé','hipoalergénico','apartamento'],
@@ -262,7 +262,7 @@ const BLOG_EXTRA = [
     tips:['Corte profesional cada 6-8 semanas','Ideal para apartamentos y personas mayores','Primer perro excelente'],
     close:'El Bichón Frisé es uno de los perros de compañía más equilibrados. Si buscas alegría concentrada en un paquete pequeño, esta raza rara vez decepciona.'
   },
-  { id:48, cat:'razas', emoji:'💪', color:'#708090', img:'fotos-razas-sm/Bull Terrier.jpg',
+  { id:48, cat:'razas', emoji:'💪', color:'#708090', img:'fotos-razas-sm/Bull Terrier.webp',
     title:'American Bully: el gigante gentil que el mundo malentendió',
     sub:'La verdad sobre una de las razas más incomprendidas y más leales',
     date:'Mayo 2025', read:5, tags:['american bully','bully','familia'],
@@ -277,7 +277,7 @@ const BLOG_EXTRA = [
     tips:['Socialización desde las 8 semanas','Entrenamiento básico de obediencia fundamental','Chequea regulaciones locales'],
     close:'Dar una oportunidad a un American Bully es entender que una raza no define al perro. El carácter lo construye el criador, el dueño y el entorno.'
   },
-  { id:49, cat:'razas', emoji:'🐶', color:'#DAA520', img:'fotos-razas-sm/Cavapoo.jpg',
+  { id:49, cat:'razas', emoji:'🐶', color:'#DAA520', img:'fotos-razas-sm/Cavapoo.webp',
     title:'Cavapoo: el híbrido perfecto que sí existe',
     sub:'Por qué esta mezcla de Cavalier y Poodle arrasa en todo el mundo',
     date:'Mayo 2025', read:4, tags:['cavapoo','híbrido','apoyo emocional'],
@@ -292,7 +292,7 @@ const BLOG_EXTRA = [
     tips:['Certifica salud cardíaca de los padres','Excelente con niños, mayores y otras mascotas','Corte profesional cada 8 semanas'],
     close:'El Cavapoo no es un perro de moda: es una combinación intencional que funciona. En manos de criador responsable, rara vez decepciona.'
   },
-  { id:50, cat:'razas', emoji:'🤍', color:'#C0C0C0', img:'fotos-razas-sm/Maltese.jpg',
+  { id:50, cat:'razas', emoji:'🤍', color:'#C0C0C0', img:'fotos-razas-sm/Maltese.webp',
     title:'Maltés: nieve en movimiento con carácter de gigante',
     sub:'Todo sobre el perro blanco más elegante del mundo',
     date:'Mayo 2025', read:4, tags:['maltés','maltese','pequeño'],
@@ -307,7 +307,7 @@ const BLOG_EXTRA = [
     tips:['Cepillado diario o puppy cut','Ideal para apartamentos y personas mayores','Limpieza de zona ocular diaria'],
     close:'El Maltés es uno de los grandes clásicos. Milenios de compañía humana no son accidente: esta raza tiene algo genuinamente especial.'
   },
-  { id:51, cat:'razas', emoji:'🧡', color:'#FF8C00', img:'fotos-razas-sm/Pomeranian.jpg',
+  { id:51, cat:'razas', emoji:'🧡', color:'#FF8C00', img:'fotos-razas-sm/Pomeranian.webp',
     title:'Pomerania: el bola de pelo que no sabe que es pequeño',
     sub:'Todo sobre el perro más fotogénico del mundo y sus cuidados reales',
     date:'Mayo 2025', read:4, tags:['pomerania','pomeranian','pequeño'],
@@ -322,7 +322,7 @@ const BLOG_EXTRA = [
     tips:['Arnés siempre, nunca collar','Entrenamiento de ladrido desde el primer mes','Corte profesional cada 8-10 semanas'],
     close:'El Pomerania es pura vida concentrada. Si tienes paciencia para el ladrido y los cuidados del pelaje, tendrás un compañero con más personalidad que muchos perros grandes.'
   },
-  { id:52, cat:'razas', emoji:'😊', color:'#D2691E', img:'fotos-razas-sm/Pug.jpg',
+  { id:52, cat:'razas', emoji:'😊', color:'#D2691E', img:'fotos-razas-sm/Pug.webp',
     title:'Pug (Carlino): el payaso de la familia que necesita cuidados especiales',
     sub:'Todo lo que debes saber sobre salud braquicéfala y vida feliz',
     date:'Mayo 2025', read:4, tags:['pug','carlino','braquicéfalo'],
@@ -337,7 +337,7 @@ const BLOG_EXTRA = [
     tips:['Nunca en calor extremo','Seguro veterinario recomendado','Limpieza de pliegues diaria','Arnés respiratorio especializado'],
     close:'Vivir con un Pug es reírse todos los días. Solo necesitas entender su anatomía para que esa vida sea larga y feliz.'
   },
-  { id:53, cat:'razas', emoji:'🖤', color:'#333333', img:'fotos-razas-sm/Rottweiler.jpg',
+  { id:53, cat:'razas', emoji:'🖤', color:'#333333', img:'fotos-razas-sm/Rottweiler.webp',
     title:'Rottweiler: el guardián leal que necesita un líder claro',
     sub:'Cómo criar uno de los perros más poderosos del mundo de forma responsable',
     date:'Mayo 2025', read:5, tags:['rottweiler','guardián','familia'],

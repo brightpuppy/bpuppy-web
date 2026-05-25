@@ -5,7 +5,7 @@ const EXTRA_DOG_BREEDS = [
   // ── PEQUEÑAS ──────────────────────────────────────────
   {
     id:'affenpinscher', name:'Affenpinscher', es:'Affenpinscher', emoji:'🐒',
-    photo:'fotos-razas/Affenpinscher.png',
+    photo:'fotos-razas/Affenpinscher.webp',
     size:'small', coat:['wiry'], hypo:false, energy:3, grooming:3, shedding:1,
     trainability:3, barking:3, family:3, kids:2, pets:3, apartment:5,
     origin:'Alemania', originEn:'Germany', flag:'🇩🇪',
@@ -24,7 +24,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'bichon-frise', name:'Bichon Frisé', es:'Bichón Frisé', emoji:'🐩',
-    photo:'fotos-razas/Bichon Frise.png',
+    photo:'fotos-razas/Bichon Frise.webp',
     size:'small', coat:['curly'], hypo:true, energy:3, grooming:4, shedding:1,
     trainability:4, barking:3, family:5, kids:5, pets:5, apartment:5,
     origin:'Francia / España', originEn:'France / Spain', flag:'🇫🇷',
@@ -47,7 +47,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'havanese', name:'Havanese', es:'Habanero', emoji:'🐶',
-    photo:'fotos-razas/Havanese.png',
+    photo:'fotos-razas/Havanese.webp',
     size:'small', coat:['long','smooth'], hypo:true, energy:3, grooming:4, shedding:1,
     trainability:4, barking:3, family:5, kids:5, pets:5, apartment:5,
     origin:'Cuba', originEn:'Cuba', flag:'🇨🇺',
@@ -69,7 +69,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'jack-russell', name:'Jack Russell Terrier', es:'Jack Russell Terrier', emoji:'🐕',
-    photo:'fotos-razas/Jack Russell Terrier.png',
+    photo:'fotos-razas/Jack Russell Terrier.webp',
     size:'small', coat:['short','wiry'], hypo:false, energy:5, grooming:2, shedding:2,
     trainability:3, barking:4, family:3, kids:3, pets:2, apartment:2,
     origin:'Inglaterra', originEn:'England', flag:'🇬🇧',
@@ -91,7 +91,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'pug', name:'Pug', es:'Pug (Carlino)', emoji:'🐶',
-    photo:'fotos-razas/Pug.png',
+    photo:'fotos-razas/Pug.webp',
     size:'small', coat:['short'], hypo:false, energy:2, grooming:2, shedding:3,
     trainability:3, barking:2, family:5, kids:5, pets:5, apartment:5,
     origin:'China', originEn:'China', flag:'🇨🇳',
@@ -114,7 +114,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'shiba-inu', name:'Shiba Inu', es:'Shiba Inu', emoji:'🦊',
-    photo:'fotos-razas/Shiba Inu.png',
+    photo:'fotos-razas/Shiba Inu.webp',
     size:'small', coat:['short','smooth'], hypo:false, energy:3, grooming:2, shedding:4,
     trainability:3, barking:2, family:3, kids:3, pets:2, apartment:3,
     origin:'Japón', originEn:'Japan', flag:'🇯🇵',
@@ -136,7 +136,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'toy-poodle', name:'Toy Poodle', es:'Caniche Toy', emoji:'🐩',
-    photo:'fotos-razas/Toy Poodle.png',
+    photo:'fotos-razas/Toy Poodle.webp',
     size:'small', coat:['curly'], hypo:true, energy:3, grooming:5, shedding:1,
     trainability:5, barking:3, family:5, kids:4, pets:5, apartment:5,
     origin:'Francia / Alemania', originEn:'France / Germany', flag:'🇫🇷',
@@ -160,7 +160,7 @@ const EXTRA_DOG_BREEDS = [
   // ── MEDIANAS ──────────────────────────────────────────
   {
     id:'australian-shepherd', name:'Australian Shepherd', es:'Pastor Australiano', emoji:'🐕‍🦺',
-    photo:'fotos-razas/Australian Shepherd.png',
+    photo:'fotos-razas/Australian Shepherd.webp',
     size:'medium', coat:['long','smooth'], hypo:false, energy:5, grooming:3, shedding:4,
     trainability:5, barking:3, family:4, kids:4, pets:3, apartment:1,
     origin:'Estados Unidos', originEn:'United States', flag:'🇺🇸',
@@ -182,7 +182,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'basset-hound', name:'Basset Hound', es:'Basset Hound', emoji:'🐶',
-    photo:'fotos-razas/Basset Hound.png',
+    photo:'fotos-razas/Basset Hound.webp',
     size:'medium', coat:['short'], hypo:false, energy:2, grooming:2, shedding:3,
     trainability:2, barking:4, family:5, kids:5, pets:5, apartment:3,
     origin:'Francia / Bélgica', originEn:'France / Belgium', flag:'🇫🇷',
@@ -204,7 +204,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'bull-terrier', name:'Bull Terrier', es:'Bull Terrier', emoji:'🐶',
-    photo:'fotos-razas/Bull Terrier.png',
+    photo:'fotos-razas/Bull Terrier.webp',
     size:'medium', coat:['short'], hypo:false, energy:3, grooming:1, shedding:2,
     trainability:3, barking:2, family:4, kids:4, pets:2, apartment:3,
     origin:'Inglaterra', originEn:'England', flag:'🇬🇧',
@@ -223,7 +223,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'chow-chow', name:'Chow Chow', es:'Chow Chow', emoji:'🦁',
-    photo:'fotos-razas/Chow Chow.png',
+    photo:'fotos-razas/Chow Chow.webp',
     size:'medium', coat:['long','smooth'], hypo:false, energy:2, grooming:4, shedding:4,
     trainability:2, barking:2, family:3, kids:2, pets:2, apartment:3,
     origin:'China', originEn:'China', flag:'🇨🇳',
@@ -245,7 +245,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'pembroke-corgi', name:'Pembroke Welsh Corgi', es:'Corgi Galés de Pembroke', emoji:'🐕',
-    photo:'fotos-razas/Pembroke Welsh Corgi.png',
+    photo:'fotos-razas/Pembroke Welsh Corgi.webp',
     size:'small', coat:['short','smooth'], hypo:false, energy:4, grooming:3, shedding:4,
     trainability:4, barking:3, family:5, kids:4, pets:4, apartment:3,
     origin:'Gales, Reino Unido', originEn:'Wales, United Kingdom', flag:'🏴󠁧󠁢󠁷󠁬󠁳󠁿',
@@ -269,7 +269,7 @@ const EXTRA_DOG_BREEDS = [
   // ── GRANDES ──────────────────────────────────────────
   {
     id:'afghan-hound', name:'Afghan Hound', es:'Galgo Afgano', emoji:'🐕',
-    photo:'fotos-razas/Afghan Hound.png',
+    photo:'fotos-razas/Afghan Hound.webp',
     size:'large', coat:['long'], hypo:true, energy:4, grooming:5, shedding:1,
     trainability:2, barking:2, family:3, kids:3, pets:2, apartment:2,
     origin:'Afganistán', originEn:'Afghanistan', flag:'🇦🇫',
@@ -288,7 +288,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'airedale-terrier', name:'Airedale Terrier', es:'Airedale Terrier', emoji:'🐕',
-    photo:'fotos-razas/Airedale Terrier.png',
+    photo:'fotos-razas/Airedale Terrier.webp',
     size:'large', coat:['wiry'], hypo:false, energy:4, grooming:3, shedding:2,
     trainability:4, barking:3, family:4, kids:4, pets:2, apartment:2,
     origin:'Inglaterra', originEn:'England', flag:'🇬🇧',
@@ -307,7 +307,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'akita', name:'Akita', es:'Akita', emoji:'🐺',
-    photo:'fotos-razas/Akita.png',
+    photo:'fotos-razas/Akita.webp',
     size:'large', coat:['short','smooth'], hypo:false, energy:3, grooming:3, shedding:4,
     trainability:3, barking:2, family:3, kids:3, pets:1, apartment:2,
     origin:'Japón', originEn:'Japan', flag:'🇯🇵',
@@ -326,7 +326,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'alaskan-malamute', name:'Alaskan Malamute', es:'Malamute de Alaska', emoji:'🐺',
-    photo:'fotos-razas/Alaskan Malamute.png',
+    photo:'fotos-razas/Alaskan Malamute.webp',
     size:'large', coat:['long'], hypo:false, energy:4, grooming:3, shedding:5,
     trainability:3, barking:2, family:4, kids:4, pets:2, apartment:1,
     origin:'Alaska (EE.UU.)', originEn:'Alaska (USA)', flag:'🇺🇸',
@@ -348,7 +348,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'belgian-malinois', name:'Belgian Malinois', es:'Malinois Belga', emoji:'🐕‍🦺',
-    photo:'fotos-razas/Belgian Malinois.png',
+    photo:'fotos-razas/Belgian Malinois.webp',
     size:'large', coat:['short'], hypo:false, energy:5, grooming:2, shedding:4,
     trainability:5, barking:3, family:3, kids:3, pets:2, apartment:1,
     origin:'Bélgica', originEn:'Belgium', flag:'🇧🇪',
@@ -367,7 +367,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'bernese-mountain-dog', name:'Bernese Mountain Dog', es:'Boyero de Berna', emoji:'🐕',
-    photo:'fotos-razas/Bernese Mountain Dog.png',
+    photo:'fotos-razas/Bernese Mountain Dog.webp',
     size:'large', coat:['long'], hypo:false, energy:3, grooming:3, shedding:4,
     trainability:4, barking:2, family:5, kids:5, pets:5, apartment:1,
     origin:'Suiza', originEn:'Switzerland', flag:'🇨🇭',
@@ -389,7 +389,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'boxer', name:'Boxer', es:'Boxer', emoji:'🐶',
-    photo:'fotos-razas/Boxer.png',
+    photo:'fotos-razas/Boxer.webp',
     size:'large', coat:['short'], hypo:false, energy:4, grooming:1, shedding:2,
     trainability:4, barking:3, family:5, kids:5, pets:3, apartment:2,
     origin:'Alemania', originEn:'Germany', flag:'🇩🇪',
@@ -411,7 +411,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'dalmatian', name:'Dalmatian', es:'Dálmata', emoji:'🐶',
-    photo:'fotos-razas/Dalmatian.png',
+    photo:'fotos-razas/Dalmatian.webp',
     size:'large', coat:['short'], hypo:false, energy:4, grooming:2, shedding:3,
     trainability:4, barking:3, family:4, kids:4, pets:3, apartment:1,
     origin:'Croacia', originEn:'Croatia', flag:'🇭🇷',
@@ -433,7 +433,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'doberman-pinscher', name:'Doberman Pinscher', es:'Doberman Pinscher', emoji:'🐕',
-    photo:'fotos-razas/Doberman Pinscher.png',
+    photo:'fotos-razas/Doberman Pinscher.webp',
     size:'large', coat:['short'], hypo:false, energy:4, grooming:1, shedding:2,
     trainability:5, barking:2, family:5, kids:4, pets:3, apartment:2,
     origin:'Alemania', originEn:'Germany', flag:'🇩🇪',
@@ -455,7 +455,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'great-dane', name:'Great Dane', es:'Gran Danés', emoji:'🐕',
-    photo:'fotos-razas/Great Dane.png',
+    photo:'fotos-razas/Great Dane.webp',
     size:'large', coat:['short'], hypo:false, energy:3, grooming:1, shedding:3,
     trainability:4, barking:3, family:5, kids:4, pets:4, apartment:2,
     origin:'Alemania', originEn:'Germany', flag:'🇩🇪',
@@ -477,7 +477,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'rottweiler', name:'Rottweiler', es:'Rottweiler', emoji:'🐕',
-    photo:'fotos-razas/Rottweiler.png',
+    photo:'fotos-razas/Rottweiler.webp',
     size:'large', coat:['short'], hypo:false, energy:3, grooming:1, shedding:3,
     trainability:5, barking:2, family:4, kids:4, pets:2, apartment:2,
     origin:'Alemania', originEn:'Germany', flag:'🇩🇪',
@@ -499,7 +499,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'saint-bernard', name:'Saint Bernard', es:'San Bernardo', emoji:'🐕',
-    photo:'fotos-razas/Saint Bernard.png',
+    photo:'fotos-razas/Saint Bernard.webp',
     size:'large', coat:['long','short'], hypo:false, energy:2, grooming:3, shedding:4,
     trainability:4, barking:2, family:5, kids:5, pets:4, apartment:1,
     origin:'Suiza / Italia', originEn:'Switzerland / Italy', flag:'🇨🇭',
@@ -521,7 +521,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'samoyed', name:'Samoyed', es:'Samoyedo', emoji:'🐺',
-    photo:'fotos-razas/Samoyed.png',
+    photo:'fotos-razas/Samoyed.webp',
     size:'large', coat:['long'], hypo:false, energy:4, grooming:4, shedding:5,
     trainability:3, barking:3, family:5, kids:5, pets:4, apartment:2,
     origin:'Siberia (Rusia)', originEn:'Siberia (Russia)', flag:'🇷🇺',
@@ -543,7 +543,7 @@ const EXTRA_DOG_BREEDS = [
   },
   {
     id:'weimaraner', name:'Weimaraner', es:'Weimaraner', emoji:'🐕',
-    photo:'fotos-razas/Weimaraner.png',
+    photo:'fotos-razas/Weimaraner.webp',
     size:'large', coat:['short'], hypo:false, energy:5, grooming:1, shedding:2,
     trainability:4, barking:3, family:4, kids:4, pets:2, apartment:1,
     origin:'Alemania', originEn:'Germany', flag:'🇩🇪',
@@ -567,12 +567,12 @@ const EXTRA_DOG_BREEDS = [
 
 const EXTRA_DESIGNER_BREEDS = [
   { id:'yorkipoo', name:'Yorkipoo', parents:'Yorkshire Terrier + Toy Poodle', emoji:'🐩',
-    photo:'fotos-razas/Yorkipoo.png',
+    photo:'fotos-razas/Yorkipoo.webp',
     size:'small', coat:['curly','wavy'], hypo:true, energy:3,
     desc:'El Yorkipoo combina la valentía y personalidad del Yorkshire Terrier con la inteligencia y bajo derramamiento del Caniche Toy. Pequeño, activo y cariñoso, ideal para apartamentos y personas con alergias leves.',
     descEn:'The Yorkipoo combines the boldness and personality of the Yorkshire Terrier with the intelligence and low shedding of the Toy Poodle. Small, active, and affectionate — ideal for apartments and people with mild allergies.'},
   { id:'chocolate-labradoodle', name:'Chocolate Labradoodle', parents:'Labrador Retriever + Poodle', emoji:'🐩',
-    photo:'fotos-razas/Chocolate Labradoodle.png',
+    photo:'fotos-razas/Chocolate Labradoodle.webp',
     size:'medium-large', coat:['curly','wavy'], hypo:true, energy:4,
     desc:'La variante chocolate del Labradoodle, con su pelaje marrón cálido y rizado, es una de las versiones más buscadas. Hereda la obediencia y sociabilidad del Labrador con el bajo derramamiento del Poodle. Excelente perro de servicio, familia y apoyo emocional.',
     descEn:'The chocolate variant of the Labradoodle, with its warm brown curly coat, is one of the most sought-after versions. Inherits the obedience and sociability of the Labrador with the low shedding of the Poodle. Excellent service dog, family dog, and emotional support animal.'},

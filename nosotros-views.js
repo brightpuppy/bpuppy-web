@@ -15,8 +15,8 @@ const IMPACT_STORIES = [
   { emoji: "\u{1F393}", tag: "Educaci\xF3n", title: "Taller en Lincoln Marti School", hidden: true, body: "Llevamos un cachorro a una escuela primaria en Hialeah para una charla sobre responsabilidad animal, empat\xEDa y cuidado de mascotas. 120 ni\xF1os, un cachorro, y muchas l\xE1grimas de emoci\xF3n de los maestros.", img: "nosotros-impact-3" }
 ];
 const TEAM = [
-  { name: "Angelina", role: "Co-Fundadora & Directora", bio: "El coraz\xF3n detr\xE1s de BPuppy. Desde 2012, Angelina ha guiado a cientos de familias en encontrar el compa\xF1ero perfecto. Su enfoque en crianza responsable y bienestar animal define cada decisi\xF3n que tomamos.", img: "uploads/Angelina.jpg" },
-  { name: "Luis", role: "Fundador & CEO", bio: "La visi\xF3n detr\xE1s del negocio. Luis llev\xF3 BPuppy de Santo Domingo a Miami con una misi\xF3n clara: demostrar que criar con amor y con est\xE1ndares es la \xFAnica forma de hacer esto bien. 12+ a\xF1os construyendo familias.", img: "uploads/LUIS.jpeg" }
+  { name: "Angelina", role: "Co-Fundadora & Directora", bio: "El coraz\xF3n detr\xE1s de BPuppy. Desde 2012, Angelina ha guiado a cientos de familias en encontrar el compa\xF1ero perfecto. Su enfoque en crianza responsable y bienestar animal define cada decisi\xF3n que tomamos.", img: "uploads/Angelina.webp" },
+  { name: "Luis", role: "Fundador & CEO", bio: "La visi\xF3n detr\xE1s del negocio. Luis llev\xF3 BPuppy de Santo Domingo a Miami con una misi\xF3n clara: demostrar que criar con amor y con est\xE1ndares es la \xFAnica forma de hacer esto bien. 12+ a\xF1os construyendo familias.", img: "uploads/LUIS.webp" }
 ];
 const PRESS = [
   { source: "Univision Miami", year: "2023", headline: '"La criadora que lleg\xF3 de RD y cambi\xF3 c\xF3mo Miami adopta mascotas"' },
