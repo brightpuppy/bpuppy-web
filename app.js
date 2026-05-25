@@ -68,7 +68,26 @@ function App() {
   }, []);
   const isLive = useSitePublish("Home");
   if (!isLive) return /* @__PURE__ */ React.createElement(ComingSoon, { pageName: "Inicio" });
-  return /* @__PURE__ */ React.createElement(LangContext.Provider, { value: { lang, setLang: setLangBoth } }, /* @__PURE__ */ React.createElement(Header, { overDark }), /* @__PURE__ */ React.createElement("main", null, /* @__PURE__ */ React.createElement(Hero, null), /* @__PURE__ */ React.createElement(About, null), /* @__PURE__ */ React.createElement(Process, null), /* @__PURE__ */ React.createElement(Promise_, null), /* @__PURE__ */ React.createElement(Quiz, null), /* @__PURE__ */ React.createElement(Gallery, null), /* @__PURE__ */ React.createElement(InstagramFeed, null), /* @__PURE__ */ React.createElement(Testimonials, null), /* @__PURE__ */ React.createElement(DeliveryMapLive, null), /* @__PURE__ */ React.createElement(FAQ, null), /* @__PURE__ */ React.createElement(FinalCTA, null)), /* @__PURE__ */ React.createElement(Footer, null), /* @__PURE__ */ React.createElement(PawCursor, { enabled: tweaks.paws }), /* @__PURE__ */ React.createElement(BPuppyTweaks, { tweaks, setTweak }));
+  return /* @__PURE__ */ React.createElement(LangContext.Provider, { value: { lang, setLang: setLangBoth } }, /* @__PURE__ */ React.createElement(Header, { overDark }), /* @__PURE__ */ React.createElement("main", null, /* @__PURE__ */ React.createElement(Hero, null), /* @__PURE__ */ React.createElement(VideoES, { lang }), /* @__PURE__ */ React.createElement(About, null), /* @__PURE__ */ React.createElement(Process, null), /* @__PURE__ */ React.createElement(Promise_, null), /* @__PURE__ */ React.createElement(Quiz, null), /* @__PURE__ */ React.createElement(Gallery, null), /* @__PURE__ */ React.createElement(InstagramFeed, null), /* @__PURE__ */ React.createElement(Testimonials, null), /* @__PURE__ */ React.createElement(DeliveryMapLive, null), /* @__PURE__ */ React.createElement(FAQ, null), /* @__PURE__ */ React.createElement(FinalCTA, null)), /* @__PURE__ */ React.createElement(Footer, null), /* @__PURE__ */ React.createElement(PawCursor, { enabled: tweaks.paws }), /* @__PURE__ */ React.createElement(BPuppyTweaks, { tweaks, setTweak }));
+}
+function VideoES({ lang }) {
+  if (lang === "en") return null; // solo version en espanol
+  return /* @__PURE__ */ React.createElement("section", { className: "section", style: { background: "var(--paper)", borderTop: "1px solid var(--line)", padding: "56px 0" } },
+    /* @__PURE__ */ React.createElement("div", { className: "container", style: { textAlign: "center" } },
+      /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "var(--display)", fontSize: "clamp(26px,4vw,40px)", fontWeight: 600, letterSpacing: "-0.02em", margin: "0 0 8px", color: "var(--ink)" } }, "Conócenos en un minuto"),
+      /* @__PURE__ */ React.createElement("p", { style: { color: "var(--ink-2)", margin: "0 0 26px", fontSize: "16px" } }, "Así cuidamos a cada cachorro y a cada familia."),
+      /* @__PURE__ */ React.createElement("div", { style: { maxWidth: "330px", margin: "0 auto", aspectRatio: "9 / 16", borderRadius: "22px", overflow: "hidden", boxShadow: "var(--shadow-soft)", background: "#000" } },
+        /* @__PURE__ */ React.createElement("iframe", {
+          src: "https://www.youtube.com/embed/qW0jwJeNrPk?rel=0&modestbranding=1&playsinline=1",
+          title: "BrightPuppy",
+          loading: "lazy",
+          allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share",
+          allowFullScreen: true,
+          style: { width: "100%", height: "100%", border: "0", display: "block" }
+        })
+      )
+    )
+  );
 }
 function shade(hex, amt) {
   const h = hex.replace("#", "");
