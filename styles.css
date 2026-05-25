@@ -316,6 +316,17 @@ html.media-dark .hdr .nav-dropdown a { color: var(--ink) !important; }
   text-align: right;
 }
 @media (max-width: 980px) { .hero-stats { align-items: flex-start; text-align: left; flex-direction: row; flex-wrap: wrap; gap: 20px; } }
+/* Movil: achicar el "arriba" (hero) y numeros grandes para que no se vea gigante */
+@media (max-width: 600px) {
+  .hero h1 { font-size: 33px !important; line-height: 1.06; margin: 10px 0 14px; }
+  .hero p.sub { font-size: 15px; margin-bottom: 18px; }
+  .hero-eyebrow { font-size: 11px; }
+  .hero-cta-row { gap: 10px; }
+  .hero-cta-row .btn, .hero-cta-row a { font-size: 14px; padding: 11px 16px; }
+  .step-num { font-size: 50px; }
+  .step { padding: 20px 18px; }
+  .hero-stats { gap: 14px; }
+}
 
 .stat {
   background: rgba(255,255,255,0.08);
