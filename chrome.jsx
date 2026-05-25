@@ -169,43 +169,43 @@ function Header({ overDark }) {
   const klass = `hdr ${scrolled ? 'scrolled' : ''} ${overDark && !scrolled ? 'over-dark' : ''}`;
 
   const cachItems = [
-    { label: t(['Conoce las razas', 'Meet the breeds']), href: 'Razas-Perros.html' },
-    { label: t(['Encuentra tu Match', 'Find Your Match']), href: 'Quiz-Completo.html' },
-    { label: t(['Solicita tu cachorro ideal', 'Request your ideal puppy']), href: 'Solicitud.html' },
-    ...(pv['Cachorros-Entregados'] !== false ? [{ label: t(['Cachorros Entregados', 'Delivered Puppies']), href: 'Cachorros-Entregados.html' }] : []),
-    ...(pv['Adopciones'] ? [{ label: t(['Adopciones', 'Adoptions']), href: 'Adopciones.html' }] : []),
+    { label: t(['Conoce las razas', 'Meet the breeds']), href: '/razas' },
+    { label: t(['Encuentra tu Match', 'Find Your Match']), href: '/quiz' },
+    { label: t(['Solicita tu cachorro ideal', 'Request your ideal puppy']), href: '/solicitud' },
+    ...(pv['Cachorros-Entregados'] !== false ? [{ label: t(['Cachorros Entregados', 'Delivered Puppies']), href: '/entregados' }] : []),
+    ...(pv['Adopciones'] ? [{ label: t(['Adopciones', 'Adoptions']), href: '/adopciones' }] : []),
   ];
   const gatosItems = [
-    { label: t(['Conoce las razas', 'Meet the breeds']), href: 'Razas-Gatos.html' },
-    ...(pv['Gatos-Entregados'] !== false ? [{ label: t(['Gatos Entregados', 'Delivered Cats']), href: 'Gatos-Entregados.html' }] : []),
-    ...(pv['Adopciones'] ? [{ label: t(['Adopciones', 'Adoptions']), href: 'Adopciones-Gatos.html' }] : []),
+    { label: t(['Conoce las razas', 'Meet the breeds']), href: '/razas-gatos' },
+    ...(pv['Gatos-Entregados'] !== false ? [{ label: t(['Gatos Entregados', 'Delivered Cats']), href: '/gatos-entregados' }] : []),
+    ...(pv['Adopciones'] ? [{ label: t(['Adopciones', 'Adoptions']), href: '/adopciones-gatos' }] : []),
   ];
   const mediaItems = [
-    { label: t(['B Media', 'B Media']), href: 'Media.html' },
-    ...(pv['Blog'] ? [{ label: t(['Blog', 'Blog']), href: 'Blog.html' }] : []),
+    { label: t(['B Media', 'B Media']), href: '/media' },
+    ...(pv['Blog'] ? [{ label: t(['Blog', 'Blog']), href: '/blog' }] : []),
   ];
 
   return (
     <header className={klass}>
       <div className="container hdr-row">
-        <a href="Home.html" className="hdr-logo" aria-label="BPuppy">
+        <a href="/" className="hdr-logo" aria-label="BPuppy">
           <img src={overDark && !scrolled ? 'assets/logo-clean-light.webp' : 'assets/logo-clean.webp'} alt="BPuppy logo" />
           <span className="wm notranslate">Bright Puppy</span>
         </a>
         <nav className="nav">
-          <a href="Home.html">{t(['Inicio', 'Home'])}</a>
-          {pv['Cachorros'] !== false && <NavItem label={t(STRINGS.nav.puppies)} href="Cachorros.html" items={cachItems}/>}
-          {pv['Gatos']     !== false && <NavItem label={t(['Gatos','Cats'])} href="Gatos.html" items={gatosItems}/>}
-          <a href="Financiamiento.html">{t(['Financiamiento','Financing'])}</a>
-          {pv['Tienda']    !== false && <a href="Tienda.html">{t(['Tienda','Shop'])}</a>}
-          {pv['Grooming']  !== false && <a href="Grooming.html"><span className="notranslate">Grooming</span></a>}
-          <NavItem label={<span className="notranslate">Media</span>} href="Media.html" items={mediaItems.length > 1 ? mediaItems : undefined}/>
-          {pv['Nosotros']  !== false && <NavItem label={t(['Nosotros','About'])} href="Nosotros.html" items={[
-            { label: t(['Nuestra Historia','Our Story']),    href:'Nosotros.html?tab=historia' },
-            { label: t(['Impacto Social','Social Impact']),  href:'Nosotros.html?tab=impacto' },
-            { label: t(['Nuestro Equipo','Our Team']),       href:'Nosotros.html?tab=equipo' },
+          <a href="/">{t(['Inicio', 'Home'])}</a>
+          {pv['Cachorros'] !== false && <NavItem label={t(STRINGS.nav.puppies)} href="/cachorros" items={cachItems}/>}
+          {pv['Gatos']     !== false && <NavItem label={t(['Gatos','Cats'])} href="/gatos" items={gatosItems}/>}
+          <a href="/financiamiento">{t(['Financiamiento','Financing'])}</a>
+          {pv['Tienda']    !== false && <a href="/tienda">{t(['Tienda','Shop'])}</a>}
+          {pv['Grooming']  !== false && <a href="/grooming"><span className="notranslate">Grooming</span></a>}
+          <NavItem label={<span className="notranslate">Media</span>} href="/media" items={mediaItems.length > 1 ? mediaItems : undefined}/>
+          {pv['Nosotros']  !== false && <NavItem label={t(['Nosotros','About'])} href="/nosotros" items={[
+            { label: t(['Nuestra Historia','Our Story']),    href:'/nosotros?tab=historia' },
+            { label: t(['Impacto Social','Social Impact']),  href:'/nosotros?tab=impacto' },
+            { label: t(['Nuestro Equipo','Our Team']),       href:'/nosotros?tab=equipo' },
           ]}/>}
-          {pv['Social']    !== false && <a href="Social.html">{t(['Social','Social'])}</a>}
+          {pv['Social']    !== false && <a href="/social">{t(['Social','Social'])}</a>}
         </nav>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <a href="tel:+18084928294" className="hdr-phone" aria-label="Llamar">
@@ -216,7 +216,7 @@ function Header({ overDark }) {
             <button data-active={rightActive} onClick={handleRightClick}><span className="notranslate">EN</span></button>
           </div>
           <GlobeDropdown isOverDark={overDark && !scrolled} onLangSelect={handleGtSelect} />
-          <a href="Solicitud.html" className="hdr-cta">{t(STRINGS.hdr.cta)}</a>
+          <a href="/solicitud" className="hdr-cta">{t(STRINGS.hdr.cta)}</a>
           <button className="hdr-burger" aria-label="Menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(o => !o)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
           </button>
@@ -224,13 +224,13 @@ function Header({ overDark }) {
       </div>
       {menuOpen && (
         <nav className="mobile-nav">
-          <a href="Home.html" onClick={() => setMenuOpen(false)}>{t(['Inicio','Home'])}</a>
-          {pv['Cachorros'] !== false && <a href="Cachorros.html" onClick={() => setMenuOpen(false)}>{t(STRINGS.nav.puppies)}</a>}
-          {pv['Gatos'] !== false && <a href="Gatos.html" onClick={() => setMenuOpen(false)}>{t(['Gatos','Cats'])}</a>}
-          <a href="Financiamiento.html" onClick={() => setMenuOpen(false)}>{t(['Financiamiento','Financing'])}</a>
-          {pv['Grooming'] !== false && <a href="Grooming.html" onClick={() => setMenuOpen(false)}><span className="notranslate">Grooming</span></a>}
-          <a href="Media.html" onClick={() => setMenuOpen(false)}><span className="notranslate">Media</span></a>
-          {pv['Nosotros'] !== false && <a href="Nosotros.html" onClick={() => setMenuOpen(false)}>{t(['Nosotros','About'])}</a>}
+          <a href="/" onClick={() => setMenuOpen(false)}>{t(['Inicio','Home'])}</a>
+          {pv['Cachorros'] !== false && <a href="/cachorros" onClick={() => setMenuOpen(false)}>{t(STRINGS.nav.puppies)}</a>}
+          {pv['Gatos'] !== false && <a href="/gatos" onClick={() => setMenuOpen(false)}>{t(['Gatos','Cats'])}</a>}
+          <a href="/financiamiento" onClick={() => setMenuOpen(false)}>{t(['Financiamiento','Financing'])}</a>
+          {pv['Grooming'] !== false && <a href="/grooming" onClick={() => setMenuOpen(false)}><span className="notranslate">Grooming</span></a>}
+          <a href="/media" onClick={() => setMenuOpen(false)}><span className="notranslate">Media</span></a>
+          {pv['Nosotros'] !== false && <a href="/nosotros" onClick={() => setMenuOpen(false)}>{t(['Nosotros','About'])}</a>}
           <div className="mobile-nav-footer">
             <GlobeDropdown isOverDark={false} onLangSelect={handleGtSelect} />
             <a href="tel:+18084928294" className="hdr-phone" aria-label="Llamar">
@@ -261,7 +261,7 @@ function Footer() {
         </div>
         <p>{t(STRINGS.foot.rights)}</p>
         <div className="foot-links">
-          <a href="Garantia.html">{t(['Garantía', 'Guarantee'])}</a>
+          <a href="/garantia">{t(['Garantía', 'Guarantee'])}</a>
           <a href="#">{t(STRINGS.foot.health)}</a>
           <a href="#">{t(STRINGS.foot.privacy)}</a>
           <a href="#">{t(STRINGS.foot.terms)}</a>
@@ -377,7 +377,7 @@ function ComingSoon({ pageName }) {
         <p style={{ color:'var(--ink-2,#6B5A4E)', lineHeight:1.65, marginBottom:32, fontSize:15 }}>
           Estamos trabajando para traerte la mejor experiencia. Gracias por tu paciencia.
         </p>
-        <a href="Home.html" style={{
+        <a href="/" style={{
           display:'inline-flex', alignItems:'center', gap:8,
           background:'var(--orange,#FF5520)', color:'#fff',
           fontWeight:700, fontSize:14, padding:'13px 26px',

@@ -704,11 +704,11 @@ function GroomingApp() {
           <div className="container">
             <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: 24 }}>
               <h2 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 22, fontWeight: 800, color: 'var(--ink)', margin: 0 }}>Artículos de grooming</h2>
-              <a href="Blog.html" style={{ fontSize: 13, fontWeight: 700, color: 'var(--orange)', textDecoration: 'none' }}>Ver todos →</a>
+              <a href="/blog" style={{ fontSize: 13, fontWeight: 700, color: 'var(--orange)', textDecoration: 'none' }}>Ver todos →</a>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 20 }}>
               {groomingArts.slice(0, 4).map(art => (
-                <a key={art.id} href={`Blog.html?art=${art.id}`} style={{ textDecoration: 'none', display: 'flex', gap: 14, padding: '16px', background: 'var(--paper)', borderRadius: 16, border: '1px solid var(--line)', transition: 'box-shadow .2s, transform .2s' }}
+                <a key={art.id} href={`/blog?art=${art.id}`} style={{ textDecoration: 'none', display: 'flex', gap: 14, padding: '16px', background: 'var(--paper)', borderRadius: 16, border: '1px solid var(--line)', transition: 'box-shadow .2s, transform .2s' }}
                   onMouseEnter={e => { e.currentTarget.style.boxShadow='0 8px 24px -8px rgba(45,36,33,0.16)'; e.currentTarget.style.transform='translateY(-2px)'; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow='none'; e.currentTarget.style.transform='none'; }}>
                   <span style={{ fontSize: 36, flexShrink: 0 }}>{art.emoji}</span>

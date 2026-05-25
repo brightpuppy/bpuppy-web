@@ -39,7 +39,7 @@ function Process() {
           )}
         </div>
         <div className="process-guarantee reveal" style={{ marginTop: 36, textAlign: 'center' }}>
-          <a href="Garantia.html" className="btn btn-primary">
+          <a href="/garantia" className="btn btn-primary">
             {t(['Conoce más sobre nuestra garantía', 'Learn more about our guarantee'])}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
           </a>
@@ -159,7 +159,7 @@ function Quiz() {
                 <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{step + 1}/4</span>
               </div>
               <div style={{ borderTop: '1px solid var(--line)', marginTop: 18, paddingTop: 14, textAlign: 'center' }}>
-                <a href="Quiz-Completo.html" style={{ fontSize: 13, fontWeight: 600, color: 'var(--orange)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
+                <a href="/quiz" style={{ fontSize: 13, fontWeight: 600, color: 'var(--orange)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
                   {t(['Haz un quiz más completo aquí →', 'Take a more complete quiz here →'])}
                 </a>
               </div>
@@ -170,15 +170,15 @@ function Quiz() {
               <div className="match-lbl">{t(STRINGS.quiz.matchLbl)}</div>
               <h3>{match.breed.name}</h3>
               <p>{t(match.breed.blurb)}</p>
-              <a href={`Blog.html?art=${match.breed.art}`} style={{ fontSize: 14, color: 'var(--orange)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
+              <a href={`/blog?art=${match.breed.art}`} style={{ fontSize: 14, color: 'var(--orange)', fontWeight: 600, display: 'inline-flex', alignItems: 'center', gap: 6, marginBottom: 8 }}>
                 {t(['Conocer más sobre esta raza', 'Learn more about this breed'])}
                 <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
               </a>
               <div className="actions">
-                <a href="Solicitud.html" className="btn btn-primary">{t(['Solicita un ' + match.breed.name, 'Request a ' + match.breed.name])}</a>
+                <a href="/solicitud" className="btn btn-primary">{t(['Solicita un ' + match.breed.name, 'Request a ' + match.breed.name])}</a>
                 <button className="btn btn-outline" onClick={reset}>{t(STRINGS.quiz.again)}</button>
               </div>
-              <a href="Quiz-Completo.html" className="btn btn-outline" style={{ marginTop: 10, fontSize: 13 }}>
+              <a href="/quiz" className="btn btn-outline" style={{ marginTop: 10, fontSize: 13 }}>
                 {t(['Hacer un quiz más completo (10 preguntas)', 'Take a more complete quiz (10 questions)'])}
               </a>
             </div>

@@ -31,7 +31,7 @@ function DeliveryMap() {
         <div className="eyebrow" style={{ color: '#C2521E' }}>🧭 {t(['Bitácora de vuelo', 'Flight log'])}</div>
         <h2 className="display" style={{ fontSize: 'clamp(32px,5vw,60px)', margin: '10px 0 8px' }}>{t(['Familias felices ', 'Happy families '])}<em className="serif-italic" style={{ color: '#C2521E' }}>{t(['alrededor del mundo', 'around the world'])}</em></h2>
         <p style={{ color: 'var(--ink-2)', maxWidth: '56ch', margin: '0 auto 22px' }}>{t(['Cada cachorro entregado es un nuevo hogar en el mapa.', 'Every delivered puppy is a new home on the map.'])}</p>
-        <iframe src="mapa-entregas.html" loading="lazy" title="Mapa de entregas" style={{ width: '100%', height: '460px', border: '2px solid #d8c7a6', borderRadius: '18px' }}></iframe>
+        <iframe src="/mapa-entregas" loading="lazy" title="Mapa de entregas" style={{ width: '100%', height: '460px', border: '2px solid #d8c7a6', borderRadius: '18px' }}></iframe>
       </div>
     </section>
   );

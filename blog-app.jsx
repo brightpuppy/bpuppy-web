@@ -1,4 +1,4 @@
-// blog-app.jsx — Root for Blog.html
+// blog-app.jsx — Root for /blog
 
 const BLOG_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"lang":"es"}/*EDITMODE-END*/;
 

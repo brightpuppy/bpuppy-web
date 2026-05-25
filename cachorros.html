@@ -265,7 +265,7 @@
     <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
       <a href="https://wa.me/18084928294" target="_blank" rel="noreferrer" class="btn btn-primary">Escríbenos por WhatsApp</a>
       <a href="tel:+18084928294" class="btn btn-outline">Llámanos · (808) 492-8294</a>
-      <a href="Home.html#quiz" class="btn btn-outline">Hacer el quiz</a>
+      <a href="/#quiz" class="btn btn-outline">Hacer el quiz</a>
     </div>
   </div>
 </section>
@@ -378,7 +378,7 @@
       : (reserved ? '<span class="badge badge-reserved">Reservado</span>' : '<span class="badge badge-new">Disponible</span>');
     var overlayHTML = taken ? '<div class="pup-taken-ov">🏡 Con una nueva familia ya</div>' : '';
     var meta = [age, sex, p.color].filter(Boolean).map(function(s){ return '<span>' + esc(s) + '</span>'; }).join('');
-    return '<a class="pup-card' + (taken ? ' taken' : '') + '" href="Puppy-Detalle.html?id=' + esc(p.id) + '" style="text-decoration:none;color:inherit;display:block">'
+    return '<a class="pup-card' + (taken ? ' taken' : '') + '" href="/puppy-detalle?id=' + esc(p.id) + '" style="text-decoration:none;color:inherit;display:block">'
       + '<div class="pup-card-img" style="position:relative">'
       + badgeHTML + overlayHTML
       + imgHTML + priceHTML + '</div>'
@@ -666,7 +666,7 @@ window.submitIntlShipping = submitIntlShipping;
       + '<div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#FF5520;margin-bottom:14px">En preparación</div>'
       + '<h1 style="font-family:Bricolage Grotesque,sans-serif;font-size:clamp(22px,3.5vw,38px);font-weight:700;letter-spacing:-0.02em;margin:0 0 14px;color:#2D2421">' + name + ' llega pronto</h1>'
       + '<p style="color:#6B5A4E;line-height:1.65;margin-bottom:32px;max-width:38ch;font-size:15px">Estamos trabajando para traerte la mejor experiencia. Gracias por tu paciencia.</p>'
-      + '<a href="Home.html" style="display:inline-flex;align-items:center;gap:8px;background:#FF5520;color:#fff;font-weight:700;font-size:14px;padding:13px 26px;border-radius:999px;text-decoration:none;box-shadow:0 8px 24px -8px rgba(255,85,32,0.38)">← Volver al inicio</a>'
+      + '<a href="/" style="display:inline-flex;align-items:center;gap:8px;background:#FF5520;color:#fff;font-weight:700;font-size:14px;padding:13px 26px;border-radius:999px;text-decoration:none;box-shadow:0 8px 24px -8px rgba(255,85,32,0.38)">← Volver al inicio</a>'
       + '</div>';
   }
 

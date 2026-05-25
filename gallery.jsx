@@ -98,7 +98,7 @@ function FinalCTA() {
           <h2>{t(STRINGS.cta.title_a)} <em>{t(STRINGS.cta.title_b)}</em></h2>
           <p>{t(STRINGS.cta.sub)}</p>
           <div className="cta-actions">
-            <a href="Cachorros.html" className="btn btn-primary">
+            <a href="/cachorros" className="btn btn-primary">
               {t(STRINGS.cta.cta1)}
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
             </a>

@@ -928,7 +928,7 @@ const MESTIZO_INFO = {
     'Los perros mestizos son una combinaci\xF3n \xFAnica de varias razas. Suelen tener excelente salud gracias a la "heterosis" (vigor h\xEDbrido), temperamentos equilibrados y personalidades \xFAnicas. Cada perro mestizo es irrepetible. La mayor\xEDa se encuentran en refugios locales esperando un hogar amoroso.',
     'Mixed breed dogs are a unique combination of several breeds. They often have excellent health thanks to "heterosis" (hybrid vigor), balanced temperaments, and unique personalities. Each mixed breed dog is one of a kind. Most are found in local shelters waiting for a loving home.'
   ],
-  link: "Adopciones.html"
+  link: "/adopciones"
 };
 const ALL_SIZES = ["small", "medium", "large"];
 const ALL_COATS = ["short", "long", "curly", "smooth", "wiry", "hairless"];

@@ -104,42 +104,42 @@ class SiteHeader extends HTMLElement {
     this.innerHTML = `
 <header class="hdr${this._scrolled ? ' scrolled' : ''}" id="site-hdr" style="position:sticky;top:0;">
   <div class="container hdr-row">
-    <a href="${b}Home.html#top" class="hdr-logo">
+    <a href="${b}/#top" class="hdr-logo">
       <img src="${b}assets/logo-clean.webp" alt="Bright Puppy">
       <span class="wm">Bright Puppy</span>
     </a>
     <nav class="nav">
-      <a href="${b}Home.html">${t('Inicio','Home')}</a>
+      <a href="${b}/">${t('Inicio','Home')}</a>
 
       <div class="nav-item">
-        <a href="${b}Cachorros.html">${t('Cachorros','Puppies')}${caretSvg}</a>
+        <a href="${b}/cachorros">${t('Cachorros','Puppies')}${caretSvg}</a>
         <div class="nav-dropdown">
-          <a href="${b}Cachorros.html">${t('Ver disponibles','See available')}</a>
-          <a href="${b}Razas-Perros.html">${t('Conoce las razas','Meet the breeds')}</a>
-          <a href="${b}Adopciones.html">${t('Adopciones','Adoptions')}</a>
+          <a href="${b}/cachorros">${t('Ver disponibles','See available')}</a>
+          <a href="${b}/razas">${t('Conoce las razas','Meet the breeds')}</a>
+          <a href="${b}/adopciones">${t('Adopciones','Adoptions')}</a>
         </div>
       </div>
 
       <div class="nav-item">
-        <a href="${b}Gatos.html">${t('Gatos','Cats')}${caretSvg}</a>
+        <a href="${b}/gatos">${t('Gatos','Cats')}${caretSvg}</a>
         <div class="nav-dropdown">
-          <a href="${b}Gatos.html">${t('Ver disponibles','See available')}</a>
-          <a href="${b}Razas-Gatos.html">${t('Conoce las razas','Meet the breeds')}</a>
-          <a href="${b}Adopciones.html">${t('Adopciones','Adoptions')}</a>
+          <a href="${b}/gatos">${t('Ver disponibles','See available')}</a>
+          <a href="${b}/razas-gatos">${t('Conoce las razas','Meet the breeds')}</a>
+          <a href="${b}/adopciones">${t('Adopciones','Adoptions')}</a>
         </div>
       </div>
 
-      <a href="${b}Tienda.html">${t('Tienda','Shop')}</a>
-      <a href="${b}Grooming.html">${t('Grooming','Grooming')}</a>
-      <a href="${b}Blog.html">${t('Blog','Blog')}</a>
+      <a href="${b}/tienda">${t('Tienda','Shop')}</a>
+      <a href="${b}/grooming">${t('Grooming','Grooming')}</a>
+      <a href="${b}/blog">${t('Blog','Blog')}</a>
 
       <div class="nav-item">
-        <a href="${b}Nosotros.html">${t('Nosotros','About')}${caretSvg}</a>
+        <a href="${b}/nosotros">${t('Nosotros','About')}${caretSvg}</a>
         <div class="nav-dropdown">
-          <a href="${b}Nosotros.html">${t('Nuestra Historia','Our Story')}</a>
-          <a href="${b}Nosotros.html">${t('Impacto Social','Social Impact')}</a>
-          <a href="${b}Nosotros.html">${t('Nuestro Equipo','Our Team')}</a>
-          <a href="${b}Social.html">${t('Social','Social')}</a>
+          <a href="${b}/nosotros">${t('Nuestra Historia','Our Story')}</a>
+          <a href="${b}/nosotros">${t('Impacto Social','Social Impact')}</a>
+          <a href="${b}/nosotros">${t('Nuestro Equipo','Our Team')}</a>
+          <a href="${b}/social">${t('Social','Social')}</a>
         </div>
       </div>
     </nav>
@@ -164,7 +164,7 @@ class SiteHeader extends HTMLElement {
           </div>
         </div>
       </div>
-      <a href="${b}Cachorros.html" class="hdr-cta">${t('Ver disponibles','See available')}</a>
+      <a href="${b}/cachorros" class="hdr-cta">${t('Ver disponibles','See available')}</a>
     </div>
   </div>
 </header>`;
@@ -186,7 +186,7 @@ class SiteHeader extends HTMLElement {
   }
 
   _isHeroPage() {
-    // Pages that have a dark hero at the top (Home.html handles this via React)
+    // Pages that have a dark hero at the top (/ handles this via React)
     return false;
   }
 
@@ -239,7 +239,7 @@ class SiteHeader extends HTMLElement {
   }
 
   _markActive() {
-    const file = window.location.pathname.split('/').pop() || 'Home.html';
+    const file = window.location.pathname.split('/').pop() || '/';
     this.querySelectorAll('a[href]').forEach(a => {
       const href = a.getAttribute('href').split('/').pop();
       if (href && href === file) {

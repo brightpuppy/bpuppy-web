@@ -121,7 +121,7 @@ function ShopModal({ p, onClose, allProducts }) {
 
           {/* Related blog article */}
           {blogArt && (
-            <a href="Blog.html" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 12, background: 'var(--bg)', border: '1px solid var(--line)', textDecoration: 'none', marginBottom: 20 }}>
+            <a href="/blog" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 12, background: 'var(--bg)', border: '1px solid var(--line)', textDecoration: 'none', marginBottom: 20 }}>
               <span style={{ fontSize: 28 }}>{blogArt.emoji}</span>
               <div>
                 <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--orange)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Artículo relacionado</div>

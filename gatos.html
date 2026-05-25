@@ -190,7 +190,7 @@
         <h2 class="display" style="font-size: clamp(32px,4vw,48px); margin: 12px 0 20px;">Temperamento <em class="serif-italic" style="color: var(--cat-purple);">predecible.</em></h2>
         <p style="font-size: 17px; line-height: 1.65; color: var(--ink-2); margin: 0 0 16px;">Elegir un gato de raza te permite anticipar su personalidad, nivel de actividad y necesidades de cuidado. Un Ragdoll será tranquilo y cariñoso, un Siamés será vocal y juguetón, un British Shorthair será independiente y calmado.</p>
         <p style="font-size: 17px; line-height: 1.65; color: var(--ink-2); margin: 0 0 16px;">Cada gatito viene con su documentación completa, vacunas al día y nuestra garantía de salud — la misma atención y cuidado que damos a nuestros cachorros.</p>
-        <a href="Garantia.html" class="btn btn-dark" style="margin-top: 12px;">
+        <a href="/garantia" class="btn btn-dark" style="margin-top: 12px;">
           Ver nuestra garantía
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
         </a>
@@ -250,7 +250,7 @@
     var reserved=p.status==='reserved';
     var age=getAge(p);var sex=p.gender==='female'?'Hembra':p.gender==='male'?'Macho':'';
     var meta=[age,sex,p.color].filter(Boolean).map(function(s){return '<span>'+esc(s)+'</span>';}).join('');
-    return '<a class="cat-card" href="Puppy-Detalle.html?id='+esc(p.id)+'" style="text-decoration:none;color:inherit;display:block">'
+    return '<a class="cat-card" href="/puppy-detalle?id='+esc(p.id)+'" style="text-decoration:none;color:inherit;display:block">'
       +'<div class="cat-card-img" style="position:relative">'
       +(reserved?'<span class="badge">Reservado</span>':'<span class="badge">Disponible</span>')
       +(photo?'<img src="'+esc(photo)+'" alt="'+esc(p.name)+'" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display=\'none\'">'  :'<div class="ph">🐱</div>')
@@ -358,7 +358,7 @@ window.submitIntlCat=submitIntlCat;
       + '<div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#FF5520;margin-bottom:14px">En preparación</div>'
       + '<h1 style="font-family:Bricolage Grotesque,sans-serif;font-size:clamp(22px,3.5vw,38px);font-weight:700;letter-spacing:-0.02em;margin:0 0 14px;color:#2D2421">' + name + ' llega pronto</h1>'
       + '<p style="color:#6B5A4E;line-height:1.65;margin-bottom:32px;max-width:38ch;font-size:15px">Estamos trabajando para traerte la mejor experiencia. Gracias por tu paciencia.</p>'
-      + '<a href="Home.html" style="display:inline-flex;align-items:center;gap:8px;background:#FF5520;color:#fff;font-weight:700;font-size:14px;padding:13px 26px;border-radius:999px;text-decoration:none;box-shadow:0 8px 24px -8px rgba(255,85,32,0.38)">← Volver al inicio</a>'
+      + '<a href="/" style="display:inline-flex;align-items:center;gap:8px;background:#FF5520;color:#fff;font-weight:700;font-size:14px;padding:13px 26px;border-radius:999px;text-decoration:none;box-shadow:0 8px 24px -8px rgba(255,85,32,0.38)">← Volver al inicio</a>'
       + '</div>';
   }
 

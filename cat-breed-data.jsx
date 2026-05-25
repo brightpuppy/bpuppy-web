@@ -256,7 +256,7 @@ const CAT_MESTIZO_INFO = {
   title: ['Gatos Mestizos', 'Mixed Breed Cats'],
   desc: ['Los gatos domésticos de origen desconocido suelen ser los más saludables y adaptables. Cada uno tiene una personalidad única. La mayoría de los gatos en refugios son mestizos buscando un hogar amoroso.',
          'Domestic cats of unknown origin are often the healthiest and most adaptable. Each one has a unique personality. Most cats in shelters are mixed breeds looking for a loving home.'],
-  link: 'Adopciones.html',
+  link: '/adopciones',
 };
 
 Object.assign(window, { CAT_BREEDS, CAT_MESTIZO_INFO });

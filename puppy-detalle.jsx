@@ -319,7 +319,7 @@ function PdFamilyFin({ mom, dad, price }) {
 function PdMiniCard({ p }) {
   const ph = (Array.isArray(p.photos) && p.photos[0]) || p.photo_url || null;
   return (
-    <a href={`Puppy-Detalle.html?id=${p.id}`}
+    <a href={`/puppy-detalle?id=${p.id}`}
       style={{ display:'block', textDecoration:'none', borderRadius:'var(--r-sm)', overflow:'hidden', background:'#fff', border:'1px solid var(--line)', transition:'transform .2s, box-shadow .2s' }}
       onMouseEnter={function(e){ e.currentTarget.style.transform='translateY(-4px)'; e.currentTarget.style.boxShadow='var(--shadow-card)'; }}
       onMouseLeave={function(e){ e.currentTarget.style.transform='none'; e.currentTarget.style.boxShadow='none'; }}>
@@ -465,7 +465,7 @@ function PdHero({ p, photos, age }) {
         <div style={{ maxWidth:1000, margin:'0 auto' }}>
 
           {/* Breadcrumb */}
-          <a href="Cachorros.html"
+          <a href="/cachorros"
             style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:13, fontWeight:600, color:'var(--ink-2)', textDecoration:'none', marginBottom:28, padding:'7px 14px', borderRadius:999, background:'var(--paper)', border:'1px solid var(--line)' }}>
             ← Todos los cachorros
           </a>
@@ -712,7 +712,7 @@ function PuppyDetalle() {
       <div style={{ fontSize:56 }}>🐾</div>
       <h2 style={{ fontFamily:'var(--display)', fontSize:28, fontWeight:700, letterSpacing:'-0.02em' }}>Cachorro no encontrado</h2>
       <p style={{ color:'var(--ink-2)', fontSize:15 }}>No pudimos cargar este cachorro. Puede que ya no esté disponible.</p>
-      <a href="Cachorros.html" style={{ background:'var(--orange)', color:'#fff', padding:'13px 26px', borderRadius:999, textDecoration:'none', fontWeight:700, fontSize:14, boxShadow:'0 8px 24px -8px rgba(245,130,32,0.4)' }}>
+      <a href="/cachorros" style={{ background:'var(--orange)', color:'#fff', padding:'13px 26px', borderRadius:999, textDecoration:'none', fontWeight:700, fontSize:14, boxShadow:'0 8px 24px -8px rgba(245,130,32,0.4)' }}>
         Ver todos los cachorros
       </a>
     </div>

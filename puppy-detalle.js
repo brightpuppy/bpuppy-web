@@ -168,7 +168,7 @@ function PdMiniCard({ p }) {
   return /* @__PURE__ */ React.createElement(
     "a",
     {
-      href: `Puppy-Detalle.html?id=${p.id}`,
+      href: `/puppy-detalle?id=${p.id}`,
       style: { display: "block", textDecoration: "none", borderRadius: "var(--r-sm)", overflow: "hidden", background: "#fff", border: "1px solid var(--line)", transition: "transform .2s, box-shadow .2s" },
       onMouseEnter: function(e) {
         e.currentTarget.style.transform = "translateY(-4px)";
@@ -280,7 +280,7 @@ function PdHero({ p, photos, age }) {
   return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("section", { style: { padding: "clamp(32px,5vw,64px) clamp(20px,5vw,80px) clamp(48px,6vw,80px)", background: "#fff" } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 1e3, margin: "0 auto" } }, /* @__PURE__ */ React.createElement(
     "a",
     {
-      href: "Cachorros.html",
+      href: "/cachorros",
       style: { display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13, fontWeight: 600, color: "var(--ink-2)", textDecoration: "none", marginBottom: 28, padding: "7px 14px", borderRadius: 999, background: "var(--paper)", border: "1px solid var(--line)" }
     },
     "\u2190 Todos los cachorros"
@@ -481,7 +481,7 @@ function PuppyDetalle() {
     })();
   }, [id]);
   if (state.status === "loading") return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16 } }, /* @__PURE__ */ React.createElement("div", { className: "bp-spinner" }), /* @__PURE__ */ React.createElement("p", { style: { color: "var(--ink-2)", fontSize: 15 } }, "Cargando cachorro\u2026"));
-  if (state.status === "error") return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, padding: 40, textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 56 } }, "\u{1F43E}"), /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "var(--display)", fontSize: 28, fontWeight: 700, letterSpacing: "-0.02em" } }, "Cachorro no encontrado"), /* @__PURE__ */ React.createElement("p", { style: { color: "var(--ink-2)", fontSize: 15 } }, "No pudimos cargar este cachorro. Puede que ya no est\xE9 disponible."), /* @__PURE__ */ React.createElement("a", { href: "Cachorros.html", style: { background: "var(--orange)", color: "#fff", padding: "13px 26px", borderRadius: 999, textDecoration: "none", fontWeight: 700, fontSize: 14, boxShadow: "0 8px 24px -8px rgba(245,130,32,0.4)" } }, "Ver todos los cachorros"));
+  if (state.status === "error") return /* @__PURE__ */ React.createElement("div", { style: { minHeight: "60vh", display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, padding: 40, textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 56 } }, "\u{1F43E}"), /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "var(--display)", fontSize: 28, fontWeight: 700, letterSpacing: "-0.02em" } }, "Cachorro no encontrado"), /* @__PURE__ */ React.createElement("p", { style: { color: "var(--ink-2)", fontSize: 15 } }, "No pudimos cargar este cachorro. Puede que ya no est\xE9 disponible."), /* @__PURE__ */ React.createElement("a", { href: "/cachorros", style: { background: "var(--orange)", color: "#fff", padding: "13px 26px", borderRadius: 999, textDecoration: "none", fontWeight: 700, fontSize: 14, boxShadow: "0 8px 24px -8px rgba(245,130,32,0.4)" } }, "Ver todos los cachorros"));
   var p = state.puppy;
   var photos = pdPhotos(p);
   var age = pdAge(p);
