@@ -189,6 +189,7 @@ function Header({ overDark }) {
   const rightActive = lang === "en" && !gtLang;
   const klass = `hdr ${scrolled ? "scrolled" : ""} ${overDark && !scrolled ? "over-dark" : ""}`;
   const cachItems = [
+    { label: t(["Encuentra un Cachorro", "Find a Puppy"]), href: "/cachorros" },
     { label: t(["Conoce las razas", "Meet the breeds"]), href: "/razas" },
     { label: t(["Encuentra tu Match", "Find Your Match"]), href: "/quiz" },
     { label: t(["Solicita tu cachorro ideal", "Request your ideal puppy"]), href: "/solicitud" },
@@ -196,6 +197,7 @@ function Header({ overDark }) {
     ...pv["Adopciones"] ? [{ label: t(["Adopciones", "Adoptions"]), href: "/adopciones" }] : []
   ];
   const gatosItems = [
+    { label: t(["Encuentra un Gato", "Find a Cat"]), href: "/gatos" },
     { label: t(["Conoce las razas", "Meet the breeds"]), href: "/razas-gatos" },
     ...pv["Gatos-Entregados"] !== false ? [{ label: t(["Gatos Entregados", "Delivered Cats"]), href: "/gatos-entregados" }] : [],
     ...pv["Adopciones"] ? [{ label: t(["Adopciones", "Adoptions"]), href: "/adopciones-gatos" }] : []
