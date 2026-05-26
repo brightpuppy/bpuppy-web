@@ -584,7 +584,7 @@
     var grid    = document.getElementById('pup-grid');
     var loading = document.getElementById('pup-loading');
     try {
-      var res = await sb.from('puppies').select('*').in('status', ['available','reserved','sold','in_transit','delivered']).order('created_at', { ascending: false });
+      var res = await sb.from('puppies_public').select('*').in('status', ['available','reserved','sold','in_transit','delivered']).order('created_at', { ascending: false });
       if (res.error) throw res.error;
       ALL_PUPPIES = res.data || [];
       if (loading) loading.remove();
