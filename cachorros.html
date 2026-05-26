@@ -95,7 +95,7 @@
 .breed-chip {
   padding: 12px 22px; border-radius: 999px;
   background: var(--bg); border: 1.5px solid var(--line);
-  font-size: 14px; font-weight: 600; color: var(--ink-2);
+  font-size: 14px; font-weight: 600; color: var(--ink-2); text-decoration: none; cursor: pointer;
   display: flex; align-items: center; gap: 8px; transition: all .25s;
 }
 .breed-chip:hover { background: var(--orange); color: #fff; border-color: var(--orange); transform: translateY(-2px); }
@@ -241,21 +241,37 @@
     <div class="eyebrow">Razas que trabajamos</div>
     <h2 class="display" style="font-size: clamp(28px,4vw,42px); margin: 12px 0 0;">Encuentra la raza <em class="serif-italic">perfecta.</em></h2>
     <div class="breed-chips">
-      <div class="breed-chip">🦮 Golden Retriever</div>
-      <div class="breed-chip">🐕 French Bulldog</div>
-      <div class="breed-chip">🐾 Pomeranian</div>
-      <div class="breed-chip">🐩 Poodle (Caniche)</div>
-      <div class="breed-chip">🐕‍🦺 Labrador Retriever</div>
-      <div class="breed-chip">🦊 Mini Schnauzer</div>
-      <div class="breed-chip">🐺 Husky Siberiano</div>
-      <div class="breed-chip">🐶 Cavalier King Charles</div>
-      <div class="breed-chip">🐕 Border Collie</div>
-      <div class="breed-chip">🦴 Beagle</div>
-      <div class="breed-chip">🐾 Yorkshire Terrier</div>
-      <div class="breed-chip">✨ Y más...</div>
+      <a class="breed-chip" href="/solicitud" data-breed="golden">🦮 Golden Retriever</a>
+      <a class="breed-chip" href="/solicitud" data-breed="french">🐕 French Bulldog</a>
+      <a class="breed-chip" href="/solicitud" data-breed="pomeran">🐾 Pomeranian</a>
+      <a class="breed-chip" href="/solicitud" data-breed="poodle">🐩 Poodle (Caniche)</a>
+      <a class="breed-chip" href="/solicitud" data-breed="labrador">🐕‍🦺 Labrador Retriever</a>
+      <a class="breed-chip" href="/solicitud" data-breed="schnauzer">🦊 Mini Schnauzer</a>
+      <a class="breed-chip" href="/solicitud" data-breed="husky">🐺 Husky Siberiano</a>
+      <a class="breed-chip" href="/solicitud" data-breed="cavalier">🐶 Cavalier King Charles</a>
+      <a class="breed-chip" href="/solicitud" data-breed="border">🐕 Border Collie</a>
+      <a class="breed-chip" href="/solicitud" data-breed="beagle">🦴 Beagle</a>
+      <a class="breed-chip" href="/solicitud" data-breed="york">🐾 Yorkshire Terrier</a>
+      <a class="breed-chip" href="/solicitud">✨ Y más...</a>
     </div>
   </div>
 </section>
+<script>
+/* Si hay un cachorro disponible de esa raza, el chip lleva a /cachorros; si no, a /solicitud */
+(function(){
+  function up(){
+    if(!window.bpPuppies){ return setTimeout(up, 400); }
+    window.bpPuppies('available', 60).then(function(list){
+      var breeds = (list||[]).map(function(p){ return (p.breed||'').toLowerCase(); });
+      document.querySelectorAll('.breed-chip[data-breed]').forEach(function(a){
+        var b = a.getAttribute('data-breed').toLowerCase();
+        if (breeds.some(function(x){ return x && (x.indexOf(b)>-1 || b.indexOf(x)>-1); })) a.setAttribute('href','/cachorros');
+      });
+    }).catch(function(){});
+  }
+  if(document.readyState!=='loading') up(); else document.addEventListener('DOMContentLoaded', up);
+})();
+</script>
 
 <!-- CTA -->
 <section class="back-cta">
