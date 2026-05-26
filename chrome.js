@@ -132,34 +132,11 @@ function Header({ overDark }) {
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
   useEffect(() => {
-    if (localStorage.getItem("bpuppy-lang") || localStorage.getItem("bpuppy-gt-lang")) return;
+    if (localStorage.getItem("bp-lang-manual")) return; // el usuario eligio idioma a mano: respetar
     const navLang = (navigator.language || "").split("-")[0].toLowerCase();
-    if (navLang === "es") {
-      setLang("es");
-      try {
-        localStorage.setItem("bpuppy-lang", "es");
-      } catch (e) {
-      }
-      return;
-    }
-    if (navLang === "en") {
-      setLang("en");
-      try {
-        localStorage.setItem("bpuppy-lang", "en");
-      } catch (e) {
-      }
-      return;
-    }
-    const gtCode = GT_BROWSER[navLang];
-    if (!gtCode) return;
-    const label = GT_SHORT[gtCode] || navLang.toUpperCase();
-    setGtLang(gtCode);
-    setGtLabel(label);
-    localStorage.setItem("bpuppy-gt-lang", gtCode);
-    localStorage.setItem("bpuppy-gt-label", label);
-    setTimeout(() => {
-      if (window.bpTriggerTranslate) window.bpTriggerTranslate(gtCode);
-    }, 1800);
+    const want = navLang === "es" ? "es" : "en"; // espanol SOLO si el navegador es espanol; cualquier otro idioma -> ingles
+    setLang(want);
+    try { localStorage.setItem("bpuppy-lang", want); } catch (e) {}
   }, []);
   const applyGtCode = (code) => {
     const label = GT_SHORT[code] || code.toUpperCase();
@@ -194,6 +171,7 @@ function Header({ overDark }) {
     applyGtCode(code);
   };
   const handleLeftClick = () => {
+    try { localStorage.setItem("bp-lang-manual", "1"); } catch (e) {}
     if (gtLang) {
       if (window.bpTriggerTranslate) window.bpTriggerTranslate(gtLang);
     } else {
@@ -202,6 +180,7 @@ function Header({ overDark }) {
     }
   };
   const handleRightClick = () => {
+    try { localStorage.setItem("bp-lang-manual", "1"); } catch (e) {}
     clearGtCode();
     setLang("en");
   };
@@ -229,7 +208,7 @@ function Header({ overDark }) {
     { label: t(["Nuestra Historia", "Our Story"]), href: "/nosotros?tab=historia" },
     { label: t(["Impacto Social", "Social Impact"]), href: "/nosotros?tab=impacto" },
     { label: t(["Nuestro Equipo", "Our Team"]), href: "/nosotros?tab=equipo" }
-  ] }), pv["Social"] !== false && /* @__PURE__ */ React.createElement("a", { href: "/social" }, t(["Social", "Social"]))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12 } }, /* @__PURE__ */ React.createElement("a", { href: "tel:+18084928294", className: "hdr-phone", "aria-label": "Llamar" }, /* @__PURE__ */ React.createElement("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" }))), /* @__PURE__ */ React.createElement("div", { className: "lang", role: "group", "aria-label": "Language" }, /* @__PURE__ */ React.createElement("button", { "data-active": leftActive, onClick: handleLeftClick }, /* @__PURE__ */ React.createElement("span", { className: "notranslate" }, leftLabel)), /* @__PURE__ */ React.createElement("button", { "data-active": rightActive, onClick: handleRightClick }, /* @__PURE__ */ React.createElement("span", { className: "notranslate" }, "EN"))), /* @__PURE__ */ React.createElement(GlobeDropdown, { isOverDark: overDark && !scrolled, onLangSelect: handleGtSelect }), /* @__PURE__ */ React.createElement("a", { href: "/solicitud", className: "hdr-cta" }, t(STRINGS.hdr.cta)), /* @__PURE__ */ React.createElement("button", { className: "hdr-burger", "aria-label": "Menu", "aria-expanded": menuOpen, onClick: () => setMenuOpen((o) => !o) }, /* @__PURE__ */ React.createElement("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M3 6h18" }), /* @__PURE__ */ React.createElement("path", { d: "M3 12h18" }), /* @__PURE__ */ React.createElement("path", { d: "M3 18h18" }))))), menuOpen && /* @__PURE__ */ React.createElement("nav", { className: "mobile-nav" }, /* @__PURE__ */ React.createElement("a", { href: "/", onClick: () => setMenuOpen(false) }, t(["Inicio", "Home"])), pv["Cachorros"] !== false && /* @__PURE__ */ React.createElement("a", { href: "/cachorros", onClick: () => setMenuOpen(false) }, t(STRINGS.nav.puppies)), pv["Gatos"] !== false && /* @__PURE__ */ React.createElement("a", { href: "/gatos", onClick: () => setMenuOpen(false) }, t(["Gatos", "Cats"])), /* @__PURE__ */ React.createElement("a", { href: "/financiamiento", onClick: () => setMenuOpen(false) }, t(["Financiamiento", "Financing"])), pv["Grooming"] !== false && /* @__PURE__ */ React.createElement("a", { href: "/grooming", onClick: () => setMenuOpen(false) }, /* @__PURE__ */ React.createElement("span", { className: "notranslate" }, "Grooming")), /* @__PURE__ */ React.createElement("a", { href: "/media", onClick: () => setMenuOpen(false) }, /* @__PURE__ */ React.createElement("span", { className: "notranslate" }, "Media")), pv["Nosotros"] !== false && /* @__PURE__ */ React.createElement("a", { href: "/nosotros", onClick: () => setMenuOpen(false) }, t(["Nosotros", "About"])), /* @__PURE__ */ React.createElement("div", { className: "mobile-nav-footer" }, /* @__PURE__ */ React.createElement(GlobeDropdown, { isOverDark: false, onLangSelect: handleGtSelect }), /* @__PURE__ */ React.createElement("a", { href: "tel:+18084928294", className: "hdr-phone", "aria-label": "Llamar" }, /* @__PURE__ */ React.createElement("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" }))))));
+  ] }), pv["Social"] !== false && /* @__PURE__ */ React.createElement("a", { href: "/social" }, t(["Social", "Social"]))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12 } }, /* @__PURE__ */ React.createElement("a", { href: "tel:+18084928294", className: "hdr-phone", "aria-label": "Llamar" }, /* @__PURE__ */ React.createElement("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" }))), /* @__PURE__ */ React.createElement("div", { className: "lang", role: "group", "aria-label": "Language" }, /* @__PURE__ */ React.createElement("button", { "data-active": leftActive, onClick: handleLeftClick }, /* @__PURE__ */ React.createElement("span", { className: "notranslate" }, leftLabel)), /* @__PURE__ */ React.createElement("button", { "data-active": rightActive, onClick: handleRightClick }, /* @__PURE__ */ React.createElement("span", { className: "notranslate" }, "EN"))), /* @__PURE__ */ React.createElement(GlobeDropdown, { isOverDark: overDark && !scrolled, onLangSelect: handleGtSelect }), /* @__PURE__ */ React.createElement("a", { href: "/solicitud", className: "hdr-cta" }, t(STRINGS.hdr.cta)), /* @__PURE__ */ React.createElement("button", { className: "hdr-burger", "aria-label": "Menu", "aria-expanded": menuOpen, onClick: () => setMenuOpen((o) => !o) }, /* @__PURE__ */ React.createElement("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M3 6h18" }), /* @__PURE__ */ React.createElement("path", { d: "M3 12h18" }), /* @__PURE__ */ React.createElement("path", { d: "M3 18h18" }))))), menuOpen && /* @__PURE__ */ React.createElement("div", { onClick: () => setMenuOpen(false), "aria-hidden": "true", style: { position: "fixed", inset: 0, zIndex: 200, background: "rgba(0,0,0,0.18)" } }), menuOpen && /* @__PURE__ */ React.createElement("nav", { className: "mobile-nav" }, /* @__PURE__ */ React.createElement("a", { href: "/", onClick: () => setMenuOpen(false) }, t(["Inicio", "Home"])), pv["Cachorros"] !== false && /* @__PURE__ */ React.createElement("a", { href: "/cachorros", onClick: () => setMenuOpen(false) }, t(STRINGS.nav.puppies)), pv["Gatos"] !== false && /* @__PURE__ */ React.createElement("a", { href: "/gatos", onClick: () => setMenuOpen(false) }, t(["Gatos", "Cats"])), /* @__PURE__ */ React.createElement("a", { href: "/financiamiento", onClick: () => setMenuOpen(false) }, t(["Financiamiento", "Financing"])), pv["Grooming"] !== false && /* @__PURE__ */ React.createElement("a", { href: "/grooming", onClick: () => setMenuOpen(false) }, /* @__PURE__ */ React.createElement("span", { className: "notranslate" }, "Grooming")), /* @__PURE__ */ React.createElement("a", { href: "/media", onClick: () => setMenuOpen(false) }, /* @__PURE__ */ React.createElement("span", { className: "notranslate" }, "Media")), pv["Nosotros"] !== false && /* @__PURE__ */ React.createElement("a", { href: "/nosotros", onClick: () => setMenuOpen(false) }, t(["Nosotros", "About"])), /* @__PURE__ */ React.createElement("div", { className: "mobile-nav-footer" }, /* @__PURE__ */ React.createElement(GlobeDropdown, { isOverDark: false, onLangSelect: handleGtSelect }), /* @__PURE__ */ React.createElement("a", { href: "tel:+18084928294", className: "hdr-phone", "aria-label": "Llamar" }, /* @__PURE__ */ React.createElement("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M22 16.92v3a2 2 0 01-2.18 2 19.79 19.79 0 01-8.63-3.07 19.5 19.5 0 01-6-6 19.79 19.79 0 01-3.07-8.67A2 2 0 014.11 2h3a2 2 0 012 1.72c.127.96.361 1.903.7 2.81a2 2 0 01-.45 2.11L8.09 9.91a16 16 0 006 6l1.27-1.27a2 2 0 012.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0122 16.92z" }))))));
 }
 function Footer() {
   const t = useT();
