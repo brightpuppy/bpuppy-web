@@ -1,0 +1,178 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Tu reserva de grooming — BPuppy</title>
+<meta name="robots" content="noindex"/>
+<link rel="icon" href="assets/favicon.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<style>
+  :root{--orange:#F58220;--orange2:#C2521E;--ink:#2D2421;--ink2:#6f6055;--soft:#9a8c7e;--paper:#F7F1E6;--bg:#fff;--line:#e4d7bf;--green:#1EB87A;}
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);min-height:100vh}
+  header{display:flex;align-items:center;justify-content:space-between;padding:16px 22px;border-bottom:1px solid var(--line);background:#fff}
+  header img{height:34px}
+  header a{color:var(--ink2);text-decoration:none;font-size:13px;font-weight:700}
+  header a:hover{color:var(--orange)}
+  .wrap{max-width:620px;margin:0 auto;padding:34px 18px 70px}
+  h1{font-family:'Instrument Serif',serif;font-size:clamp(30px,6vw,46px);font-weight:400;line-height:1.05;margin-bottom:6px}
+  h1 em{font-style:italic;color:var(--orange)}
+  .lead{color:var(--ink2);font-size:15px;margin-bottom:22px;line-height:1.55}
+  .card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:18px;box-shadow:0 4px 18px rgba(45,36,33,.05)}
+  .lookup{display:flex;gap:8px;margin-bottom:20px}
+  .lookup input{flex:1;padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);font-family:inherit;font-size:14px;outline:none}
+  .lookup input:focus{border-color:var(--orange)}
+  .btn{padding:11px 18px;border-radius:12px;border:none;background:var(--orange);color:#fff;font-family:inherit;font-size:14px;font-weight:700;cursor:pointer;white-space:nowrap}
+  .btn:disabled{opacity:.5;cursor:default}
+  .btn.ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--line)}
+  .btn.danger{background:#fff;color:#C0392B;border:1.5px solid #e9c4be}
+  .row{display:flex;justify-content:space-between;gap:12px;padding:9px 0;border-bottom:1px dashed var(--line);font-size:14px}
+  .row:last-child{border-bottom:none}
+  .row .k{color:var(--ink2);font-weight:600}
+  .row .v{font-weight:700;text-align:right}
+  .badge{display:inline-block;padding:3px 11px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+  .b-req{background:#FCEFD9;color:var(--orange2)} .b-sch{background:#E3F4EC;color:var(--green)} .b-can{background:#f3e2df;color:#C0392B}
+  h2{font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:800;margin-bottom:12px}
+  label{display:block;font-size:12px;font-weight:700;color:var(--ink2);margin:0 0 5px}
+  select,.di{width:100%;padding:11px 14px;border-radius:12px;border:1.5px solid var(--line);font-family:inherit;font-size:14px;outline:none;background:var(--bg)}
+  .grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px}
+  .msg{font-size:13px;line-height:1.5;font-weight:600;border-radius:12px;padding:12px 14px;margin-top:12px}
+  .msg.ok{background:#E3F4EC;color:#0f7a52} .msg.warn{background:#FCEFD9;color:var(--orange2)} .msg.err{background:#f8e3df;color:#C0392B}
+  .policy{font-size:12.5px;color:var(--ink2);line-height:1.6;margin-top:8px}
+  .policy a{color:var(--orange);font-weight:700;text-decoration:none}
+  .muted{color:var(--soft);font-size:12px;text-align:center;margin-top:8px}
+  .center{text-align:center;padding:40px 10px;color:var(--ink2)}
+  .spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--orange);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 14px}
+  @keyframes sp{to{transform:rotate(360deg)}}
+  footer{text-align:center;padding:26px 18px;border-top:1px solid var(--line);color:var(--ink2);font-size:13px}
+</style>
+</head>
+<body>
+<header>
+  <a href="/"><img src="assets/logo-clean.webp" alt="BPuppy" onerror="this.style.display='none';this.parentNode.textContent='BPuppy'"></a>
+  <a href="/grooming">← Grooming</a>
+</header>
+
+<div class="wrap">
+  <h1>Tu <em>reserva</em></h1>
+  <p class="lead">Consulta, reprograma o cancela tu cita de grooming. Si llegaste por el link de tu correo o recordatorio, tu reserva ya está cargada.</p>
+
+  <div class="lookup">
+    <input id="lk" placeholder="¿Otra reserva? Pega tu número de reserva" autocomplete="off">
+    <button class="btn" id="lkb">Buscar</button>
+  </div>
+
+  <div id="content"><div class="center"><div class="spin"></div>Cargando tu reserva…</div></div>
+</div>
+
+<footer>BPuppy Grooming · 5604 Kalogridis Rd, Haines City, FL · WhatsApp (808) 492-8294 🐾</footer>
+
+<script>
+(function(){
+  var FN="https://oqqwmcplljirbreowrll.supabase.co/functions/v1/grooming_manage";
+  var ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
+  var TIMES=["9:00 AM","10:00 AM","11:00 AM","12:00 PM","2:00 PM","3:00 PM","4:00 PM","5:00 PM"];
+  var content=document.getElementById('content');
+  var current=null;
+
+  function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
+  function qs(k){return new URLSearchParams(location.search).get(k);}
+  function api(body){return fetch(FN,{method:"POST",headers:{"Content-Type":"application/json","apikey":ANON},body:JSON.stringify(body)}).then(function(r){return r.json();});}
+
+  function badge(st){
+    if(st==='cancelled') return '<span class="badge b-can">Cancelada</span>';
+    if(st==='scheduled'||st==='confirmed') return '<span class="badge b-sch">Confirmada</span>';
+    return '<span class="badge b-req">Pendiente</span>';
+  }
+  function fmtDate(d){ if(!d) return '—'; try{return new Date(d+'T12:00:00').toLocaleDateString('es-US',{weekday:'long',day:'numeric',month:'long',year:'numeric'});}catch(e){return d;} }
+
+  function render(r){
+    current=r;
+    var svc=Array.isArray(r.services)?r.services.join(', '):(r.services||'—');
+    var cancelled=r.status==='cancelled';
+    var html=''+
+      '<div class="card">'+
+        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px">'+
+          '<h2 style="margin:0">Detalle de la cita</h2>'+badge(r.status)+
+        '</div>'+
+        '<div class="row"><span class="k">Mascota</span><span class="v">'+esc(r.pet_name||'—')+(r.size?(' · '+esc(r.size)):'')+'</span></div>'+
+        '<div class="row"><span class="k">Servicios</span><span class="v">'+esc(svc)+'</span></div>'+
+        '<div class="row"><span class="k">Fecha</span><span class="v">'+esc(fmtDate(r.appointment_date))+'</span></div>'+
+        '<div class="row"><span class="k">Hora</span><span class="v">'+esc(r.appointment_time||'—')+'</span></div>'+
+        '<div class="row"><span class="k">Pickup & Delivery</span><span class="v">'+(r.pickup?'Sí':'No')+'</span></div>'+
+        '<div class="row"><span class="k">Total estimado</span><span class="v">$'+esc(r.amount||'—')+'</span></div>'+
+        '<div class="row"><span class="k">N° de reserva</span><span class="v" style="font-size:11px;color:var(--soft);font-weight:600">'+esc(r.id)+'</span></div>'+
+      '</div>';
+
+    if(!cancelled){
+      html+=''+
+      '<div class="card">'+
+        '<h2>Reprogramar</h2>'+
+        '<div class="grid2">'+
+          '<div><label>Nueva fecha</label><input type="date" id="rd" class="di" min="'+new Date().toISOString().slice(0,10)+'"></div>'+
+          '<div><label>Nueva hora</label><select id="rt">'+TIMES.map(function(t){return '<option>'+t+'</option>';}).join('')+'</select></div>'+
+        '</div>'+
+        '<button class="btn" id="rbtn" style="width:100%">Guardar nueva fecha</button>'+
+        '<div id="rmsg"></div>'+
+        '<div class="policy">Cambios con al menos <b>6 horas</b> de antelación. Reprogramar no genera cargo.</div>'+
+      '</div>'+
+      '<div class="card">'+
+        '<h2>Cancelar reserva</h2>'+
+        '<div class="policy">Política: cancelar con <b>+24h</b> = sin cargo · <b>−24h</b> = 50% · <b>no-show</b> = 100%. '+
+          '<a href="/grooming#policies" target="_blank">Ver políticas completas</a></div>'+
+        '<button class="btn danger" id="cbtn" style="width:100%;margin-top:12px">Cancelar mi reserva</button>'+
+        '<div id="cmsg"></div>'+
+      '</div>';
+    } else {
+      html+='<div class="card"><div class="policy">Esta reserva está cancelada. Si quieres agendar de nuevo, <a href="/grooming#booking">reserva aquí</a> o escríbenos por WhatsApp.</div></div>';
+    }
+    content.innerHTML=html;
+
+    if(!cancelled){
+      var rbtn=document.getElementById('rbtn');
+      rbtn.onclick=function(){
+        var d=document.getElementById('rd').value, t=document.getElementById('rt').value, mm=document.getElementById('rmsg');
+        if(!d){ mm.className='msg err'; mm.textContent='Elige una fecha.'; return; }
+        rbtn.disabled=true; rbtn.textContent='Guardando…';
+        api({action:'reschedule',id:r.id,appointment_date:d,appointment_time:t}).then(function(res){
+          rbtn.disabled=false; rbtn.textContent='Guardar nueva fecha';
+          if(res.error){ mm.className='msg err'; mm.textContent=res.error; return; }
+          mm.className='msg ok'; mm.textContent='Listo, tu cita quedó para el '+fmtDate(d)+' a las '+t+'.';
+          render(res.reservation);
+        });
+      };
+      var cbtn=document.getElementById('cbtn');
+      cbtn.onclick=function(){
+        var cm=document.getElementById('cmsg');
+        if(cbtn.dataset.confirm!=='1'){ cbtn.dataset.confirm='1'; cbtn.textContent='¿Seguro? Toca de nuevo para cancelar'; return; }
+        cbtn.disabled=true; cbtn.textContent='Cancelando…';
+        api({action:'cancel',id:r.id}).then(function(res){
+          cbtn.disabled=false;
+          if(res.error){ cm.className='msg err'; cm.textContent=res.error; cbtn.textContent='Cancelar mi reserva'; cbtn.dataset.confirm=''; return; }
+          cm.className=res.fee_percent>0?'msg warn':'msg ok';
+          cm.textContent='Reserva cancelada. '+(res.message||'');
+          api({action:'get',id:r.id}).then(function(g){ if(g.reservation) render(g.reservation); });
+        });
+      };
+    }
+  }
+
+  function load(id){
+    if(!id){ content.innerHTML='<div class="center">Pega tu número de reserva arriba para verla.</div>'; return; }
+    content.innerHTML='<div class="center"><div class="spin"></div>Cargando…</div>';
+    api({action:'get',id:id}).then(function(res){
+      if(res.error){ content.innerHTML='<div class="card"><div class="msg err">'+esc(res.error)+'</div></div>'; return; }
+      render(res.reservation);
+    }).catch(function(){ content.innerHTML='<div class="card"><div class="msg err">No pudimos cargar la reserva. Intenta de nuevo o escríbenos por WhatsApp.</div></div>'; });
+  }
+
+  document.getElementById('lkb').onclick=function(){ var v=document.getElementById('lk').value.trim(); if(v){ history.replaceState(null,'','?id='+encodeURIComponent(v)); load(v); } };
+  document.getElementById('lk').addEventListener('keydown',function(e){ if(e.key==='Enter') document.getElementById('lkb').click(); });
+
+  load(qs('id'));
+})();
+</script>
+</body>
+</html>
