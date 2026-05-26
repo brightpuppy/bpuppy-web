@@ -68,6 +68,18 @@
   // Evento GA4 generico (whatsapp_click, call_click) — importable como conversion.
   w.bpTrack = function (name) { try { if (w.gtag) w.gtag('event', name); } catch (e) {} };
 
+  // ── Inventario publico de cachorros (lee vista segura puppies_public) ──────
+  // Uso: window.bpPuppies('available', 12).then(list => ...)  /  status: 'available' | 'delivered'
+  w.bpPuppies = function (status, limit) {
+    var url = EDGE.replace('/functions/v1/website-chat', '') + '/rest/v1/puppies_public'
+      + '?select=id,name,breed,gender,color,age_weeks,price,photo_url,status'
+      + '&status=eq.' + (status || 'available')
+      + '&order=created_at.desc' + (limit ? ('&limit=' + limit) : '');
+    return fetch(url, { headers: { apikey: ANON } })
+      .then(function (r) { return r.ok ? r.json() : []; })
+      .catch(function () { return []; });
+  };
+
   // Detector GLOBAL de clics a WhatsApp y a llamadas (sin tocar cada pagina)
   try {
     document.addEventListener('click', function (ev) {
