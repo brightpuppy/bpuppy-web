@@ -4,63 +4,77 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <title>Plan de pagos — Espera por tu sueño cumplido · BPuppy</title>
-<meta name="description" content="Planea la llegada de tu cachorro ideal. Elige un plan de 1 a 6 meses, ve tu abono mensual y tu gran día. Abonos reembolsables." />
+<meta name="description" content="Planea la llegada de tu cachorro ideal. Elige un plan de 1 a 6 meses con o sin pago inicial. Abonos reembolsables." />
 <link rel="icon" href="assets/favicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-  :root{--orange:#F58220;--orange2:#C2521E;--ink:#2D2421;--ink2:#6f6055;--soft:#9a8c7e;--paper:#F7F1E6;--bg:#fff;--line:#e4d7bf;--green:#1EB87A;}
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper)}
-  a{color:inherit}
-  header{display:flex;align-items:center;justify-content:space-between;padding:15px 22px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:10}
-  header img{height:34px}
-  .nav{display:flex;gap:18px;flex-wrap:wrap}
-  .nav a{text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.03em;opacity:.7}
-  .nav a:hover{opacity:1;color:var(--orange)}
-  @media(max-width:820px){.nav{display:none}}
-  .hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#2D2421 0%,#43352d 100%);color:#fff;padding:72px 20px 64px;text-align:center}
-  .hero .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#FFD8B0;font-weight:800}
-  .hero h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(38px,7vw,76px);line-height:1.02;margin:12px 0 10px}
-  .hero h1 em{font-style:italic;color:#FFB877}
-  .hero p{color:rgba(255,255,255,.8);max-width:56ch;margin:0 auto;font-size:17px;line-height:1.6}
-  .wrap{max-width:760px;margin:-44px auto 0;padding:0 18px 70px;position:relative;z-index:2}
-  .card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 16px 50px rgba(45,36,33,.14)}
-  .step-label{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:10px}
-  label{display:block;font-size:13px;font-weight:700;color:var(--ink2);margin:0 0 6px}
-  select,input{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);outline:none}
-  select:focus,input:focus{border-color:var(--orange)}
-  .months{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:6px}
-  .mbtn{padding:14px 0;border-radius:13px;border:2px solid var(--line);background:var(--bg);cursor:pointer;font-family:inherit;font-weight:800;font-size:17px;color:var(--ink);transition:all .15s;text-align:center}
-  .mbtn small{display:block;font-size:9.5px;font-weight:700;color:var(--soft);letter-spacing:.04em}
-  .mbtn.on{border-color:var(--orange);background:rgba(245,130,32,.08);color:var(--orange2)}
-  .result{margin-top:22px;background:linear-gradient(135deg,rgba(245,130,32,.10),rgba(78,122,81,.08));border:1.5px solid rgba(245,130,32,.28);border-radius:18px;padding:22px;text-align:center}
-  .result .big{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(40px,9vw,60px);font-weight:800;color:var(--orange2);line-height:1}
-  .result .big span{font-size:18px;color:var(--ink2);font-weight:700}
-  .result .meta{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;margin-top:14px;font-size:13.5px;color:var(--ink2)}
-  .result .meta b{display:block;font-size:17px;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
-  .disc{font-size:11.5px;color:var(--soft);margin-top:12px;line-height:1.5}
-  .cta{display:block;width:100%;margin-top:18px;padding:16px;border-radius:14px;border:none;background:var(--orange);color:#fff;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px -8px rgba(245,130,32,.5)}
-  .cta:disabled{opacity:.5;cursor:default;box-shadow:none}
-  .form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-  @media(max-width:560px){.form-grid{grid-template-columns:1fr}.months{grid-template-columns:repeat(3,1fr)}}
-  .hidden{display:none}
-  .msg{margin-top:14px;font-size:14px;font-weight:600;border-radius:13px;padding:14px 16px;line-height:1.5}
-  .msg.ok{background:#E3F4EC;color:#0f7a52}.msg.err{background:#f8e3df;color:#C0392B}
-  .perks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:760px;margin:34px auto 0;padding:0 18px}
-  @media(max-width:560px){.perks{grid-template-columns:1fr}}
-  .perk{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
-  .perk h3{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;margin:0 0 5px}
-  .perk p{font-size:12.5px;color:var(--ink2);line-height:1.5;margin:0}
-  footer{text-align:center;padding:30px 18px;color:var(--ink2);font-size:13px;border-top:1px solid var(--line);margin-top:40px}
+:root{--orange:#F58220;--orange2:#C2521E;--ink:#2D2421;--ink2:#6f6055;--soft:#9a8c7e;--paper:#F7F1E6;--bg:#fff;--line:#e4d7bf;--green:#1EB87A;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper)}
+a{color:inherit}
+header{display:flex;align-items:center;justify-content:space-between;padding:15px 22px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:10}
+header img{height:34px}
+.nav{display:flex;gap:18px;flex-wrap:wrap}
+.nav a{text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.03em;opacity:.7}
+.nav a:hover{opacity:1;color:var(--orange)}
+@media(max-width:820px){.nav{display:none}}
+.hero{position:relative;overflow:hidden;background:linear-gradient(135deg,#2D2421 0%,#43352d 100%);color:#fff;padding:72px 20px 64px;text-align:center}
+.hero .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#FFD8B0;font-weight:800}
+.hero h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(38px,7vw,76px);line-height:1.02;margin:12px 0 10px}
+.hero h1 em{font-style:italic;color:#FFB877}
+.hero p{color:rgba(255,255,255,.8);max-width:56ch;margin:0 auto;font-size:17px;line-height:1.6}
+.wrap{max-width:980px;margin:-44px auto 0;padding:0 18px 70px;position:relative;z-index:2;display:grid;grid-template-columns:1.4fr 1fr;gap:18px;align-items:start}
+@media(max-width:820px){.wrap{grid-template-columns:1fr}}
+.card{background:#fff;border:1px solid var(--line);border-radius:22px;padding:26px;box-shadow:0 16px 50px rgba(45,36,33,.14)}
+.step-label{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:10px}
+label{display:block;font-size:13px;font-weight:700;color:var(--ink2);margin:0 0 6px}
+.req::after{content:" *";color:var(--orange)}
+input{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);outline:none}
+input:focus{border-color:var(--orange)}
+.months{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:6px}
+.mbtn{padding:14px 0;border-radius:13px;border:2px solid var(--line);background:var(--bg);cursor:pointer;font-family:inherit;font-weight:800;font-size:17px;color:var(--ink);transition:all .15s;text-align:center}
+.mbtn small{display:block;font-size:9.5px;font-weight:700;color:var(--soft);letter-spacing:.04em}
+.mbtn.on{border-color:var(--orange);background:rgba(245,130,32,.08);color:var(--orange2)}
+.result{margin-top:22px;background:linear-gradient(135deg,rgba(245,130,32,.10),rgba(78,122,81,.08));border:1.5px solid rgba(245,130,32,.28);border-radius:18px;padding:22px;text-align:center}
+.result .big{font-family:'Bricolage Grotesque',sans-serif;font-size:clamp(40px,9vw,60px);font-weight:800;color:var(--orange2);line-height:1}
+.result .big span{font-size:18px;color:var(--ink2);font-weight:700}
+.result .meta{display:flex;justify-content:center;gap:26px;flex-wrap:wrap;margin-top:14px;font-size:13.5px;color:var(--ink2)}
+.result .meta b{display:block;font-size:17px;color:var(--ink);font-family:'Bricolage Grotesque',sans-serif}
+.disc{font-size:11.5px;color:var(--soft);margin-top:12px;line-height:1.55}
+.disc a{color:var(--orange);font-weight:700;text-decoration:none}
+.call-cta{display:inline-flex;align-items:center;gap:6px;background:var(--orange);color:#fff;font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:999px;text-decoration:none;margin-top:8px}
+.cta{display:block;width:100%;margin-top:18px;padding:16px;border-radius:14px;border:none;background:var(--orange);color:#fff;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px -8px rgba(245,130,32,.5)}
+.cta:disabled{opacity:.5;cursor:default;box-shadow:none}
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+@media(max-width:560px){.form-grid{grid-template-columns:1fr}.months{grid-template-columns:repeat(3,1fr)}}
+.hidden{display:none}
+.msg{margin-top:14px;font-size:14px;font-weight:600;border-radius:13px;padding:14px 16px;line-height:1.5}
+.msg.ok{background:#E3F4EC;color:#0f7a52}.msg.err{background:#f8e3df;color:#C0392B}
+.side{display:flex;flex-direction:column;gap:14px}
+.side .card{padding:20px}
+.fin-h{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:var(--ink);margin-bottom:8px}
+.fin-p{font-size:13px;color:var(--ink2);line-height:1.55;margin-bottom:14px}
+.pmrow{display:flex;gap:8px;flex-wrap:wrap}
+.pm{display:flex;align-items:center;gap:6px;padding:7px 12px;border-radius:8px;font-size:12px;font-weight:800;color:#fff}
+.pm.tarjeta{background:linear-gradient(135deg,#635BFF,#7A73FF)}
+.pm.klarna{background:#FFA8CD;color:#17120F}
+.pm.affirm{background:#0FA0EA}
+.pm.cash{background:#00D54B;color:#0a0a0a}
+.perks{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;max-width:980px;margin:34px auto 0;padding:0 18px}
+@media(max-width:560px){.perks{grid-template-columns:1fr}}
+.perk{background:#fff;border:1px solid var(--line);border-radius:16px;padding:18px}
+.perk h3{font-family:'Bricolage Grotesque',sans-serif;font-size:15px;margin:0 0 5px}
+.perk p{font-size:12.5px;color:var(--ink2);line-height:1.5;margin:0}
+footer{text-align:center;padding:30px 18px;color:var(--ink2);font-size:13px;border-top:1px solid var(--line);margin-top:40px}
 </style>
 </head>
 <body>
 <header>
   <a href="/"><img src="assets/logo-clean.webp" alt="BPuppy" onerror="this.style.display='none';this.parentNode.textContent='BPuppy'"></a>
   <nav class="nav">
-    <a href="/cachorros">Cachorros</a><a href="/gatos">Gatos</a><a href="/financiamiento">Financiamiento</a><a href="/grooming">Grooming</a><a href="/nosotros">Nosotros</a>
+    <a href="/cachorros">Cachorros</a><a href="/gatos">Gatos</a><a href="/financiamiento">Financiamiento</a><a href="/grooming">Grooming</a><a href="/portal">Mi cuenta</a><a href="/nosotros">Nosotros</a>
   </nav>
   <a href="/cachorros" style="text-decoration:none;font-size:13px;font-weight:700;color:var(--orange)">Ver disponibles →</a>
 </header>
@@ -68,10 +82,11 @@
 <section class="hero">
   <div class="eyebrow">BPuppy · Plan de pagos</div>
   <h1>Espera por tu <em>sueño cumplido</em></h1>
-  <p>Planea la llegada de tu compañero ideal a tu ritmo. Eliges un plan, vas abonando, y nosotros preparamos su llegada para tu gran día. 🐾</p>
+  <p>Planea la llegada de tu compañero ideal a tu ritmo. Eliges un plan, vas abonando, y nosotros preparamos su llegada para tu gran día.</p>
 </section>
 
 <div class="wrap">
+  <!-- IZQUIERDA: formulario -->
   <div class="card">
     <div class="step-label">Arma tu plan</div>
     <div style="margin-bottom:16px">
@@ -79,9 +94,14 @@
       <input id="breed" list="breeds-dl" autocomplete="off" placeholder="Escribe o elige una raza…">
       <datalist id="breeds-dl"></datalist>
     </div>
-    <div>
+    <div style="margin-bottom:16px">
       <label>¿En cuántos meses quieres abonarlo?</label>
       <div class="months" id="months"></div>
+    </div>
+    <div style="margin-bottom:16px">
+      <label for="downpayment">Pago inicial (opcional, mínimo $500)</label>
+      <input id="downpayment" type="number" min="0" step="50" placeholder="0">
+      <div class="disc" style="margin-top:4px">Si quieres apartar tu cupo ya, agrega un pago inicial. Se cobra junto con tu primer abono.</div>
     </div>
 
     <div class="result">
@@ -89,35 +109,57 @@
       <div style="font-size:13px;color:var(--ink2);margin-top:2px">por mes</div>
       <div class="meta">
         <div><span>Precio estimado</span><b id="price">—</b></div>
+        <div><span>Pago inicial</span><b id="downpay">$0</b></div>
         <div><span>Tu gran día estimado</span><b id="bigday">—</b></div>
       </div>
-      <div class="disc" id="disc">Selecciona una raza para ver tu plan. Los precios son estimados y pueden variar según el cachorro.</div>
+      <div class="disc" id="disc">Selecciona una raza para ver tu plan.</div>
+      <a href="tel:+18084928294" class="call-cta">📞 Consultar precio exacto · (808) 492-8294</a>
     </div>
 
-    <button class="cta" id="startBtn" disabled>Empezar mi plan</button>
+    <button class="cta" id="startBtn" disabled>Continuar al pago</button>
 
     <div id="formBox" class="hidden" style="margin-top:18px">
-      <div class="step-label">Casi listo — ¿a dónde te avisamos?</div>
+      <div class="step-label">Tus datos (para que sigamos tu plan)</div>
       <div class="form-grid">
-        <div><label>Tu nombre</label><input id="f-name" placeholder="Nombre y apellido"></div>
-        <div><label>Teléfono (opcional)</label><input id="f-phone" placeholder="(___) ___-____"></div>
+        <div><label class="req">Tu nombre</label><input id="f-name" placeholder="Nombre y apellido"></div>
+        <div><label class="req">Teléfono</label><input id="f-phone" type="tel" placeholder="(___) ___-____"></div>
       </div>
-      <div style="margin-top:12px"><label>Tu correo</label><input id="f-email" type="email" placeholder="tu@correo.com"></div>
-      <label style="display:flex;gap:10px;align-items:flex-start;margin:6px 0 12px;font-size:12px;color:var(--ink2);line-height:1.5;cursor:pointer"><input type="checkbox" id="f-terms" style="margin-top:2px;width:16px;height:16px;flex-shrink:0;accent-color:var(--orange)"><span>He leído y acepto los <a href="/terminos" target="_blank" style="color:var(--orange);font-weight:700;text-decoration:none">Términos</a>, la <a href="/reembolsos" target="_blank" style="color:var(--orange);font-weight:700;text-decoration:none">Política de reembolsos</a> y la <a href="/privacidad" target="_blank" style="color:var(--orange);font-weight:700;text-decoration:none">Privacidad</a>.</span></label>
-      <button class="cta" id="submitBtn">Reservar mi plan y recibir mi resumen</button>
-      <div class="disc">Tus abonos son <b>100% reembolsables</b> si decides retirarte. Te enviaremos un enlace para entrar y hacer tu primer abono. Aún no se cobra nada en este paso.</div>
+      <div style="margin-top:12px"><label class="req">Tu correo</label><input id="f-email" type="email" placeholder="tu@correo.com"></div>
+      <label style="display:flex;gap:10px;align-items:flex-start;margin:12px 0;font-size:12px;color:var(--ink2);line-height:1.5;cursor:pointer"><input type="checkbox" id="f-terms" style="margin-top:2px;width:16px;height:16px;flex-shrink:0;accent-color:var(--orange)"><span>He leído y acepto los <a href="/terminos" target="_blank" style="color:var(--orange);font-weight:700;text-decoration:none">Términos</a>, la <a href="/reembolsos" target="_blank" style="color:var(--orange);font-weight:700;text-decoration:none">Política de reembolsos</a> y la <a href="/privacidad" target="_blank" style="color:var(--orange);font-weight:700;text-decoration:none">Privacidad</a>.</span></label>
+      <button class="cta" id="payBtn">💳 Ir al pago</button>
+      <div class="disc">Tus abonos son <b>100% reembolsables</b> si decides retirarte <b>antes de elegir un cachorro específico</b>. A partir de elegir tu cachorro, aplican las <a href="/reembolsos" target="_blank">condiciones de reembolso</a>.</div>
       <div id="msg"></div>
+    </div>
+  </div>
+
+  <!-- DERECHA: financiamiento + nota razas -->
+  <div class="side">
+    <div class="card">
+      <div class="fin-h">¿Prefieres financiamiento?</div>
+      <div class="fin-p">Aceptamos los siguientes métodos en el pago — divídelo en cuotas con Klarna o Affirm, o paga con tarjeta:</div>
+      <div class="pmrow">
+        <span class="pm tarjeta">Tarjeta</span>
+        <span class="pm klarna">Klarna</span>
+        <span class="pm affirm">Affirm</span>
+        <span class="pm cash">Cash App</span>
+      </div>
+      <div class="fin-p" style="margin-top:14px;margin-bottom:0">Klarna y Affirm te permiten <b>pagar en cuotas sin intereses</b> según califiques al momento del pago.</div>
+    </div>
+    <div class="card">
+      <div class="fin-h">Sobre los precios</div>
+      <div class="fin-p">Los precios mostrados son <b>estimados de las razas más comunes</b> que manejamos. Hay razas cuyo precio puede llegar a <b>$8,000 o más</b> según colores, demanda, exóticas, etc.</div>
+      <a href="tel:+18084928294" class="call-cta" style="margin-top:0">📞 Llamar para el precio exacto</a>
     </div>
   </div>
 </div>
 
 <div class="perks">
-  <div class="perk"><h3>Abonos reembolsables</h3><p>Si cambias de opinión antes de recibir tu cachorro, te devolvemos lo abonado.</p></div>
+  <div class="perk"><h3>Abonos reembolsables</h3><p>Si cambias de opinión antes de elegir un cachorro específico, te devolvemos lo abonado.</p></div>
   <div class="perk"><h3>Adelanta tu gran día</h3><p>Paga el restante cuando quieras y solicita tu cachorro antes.</p></div>
   <div class="perk"><h3>Te acompañamos</h3><p>Recordatorios, mensajes y consejos para preparar la llegada de tu compañero.</p></div>
 </div>
 
-<footer>BPuppy · Conectamos familias con su cachorro ideal · Envío a todo USA 🐾</footer>
+<footer>BPuppy · Conectamos familias con su cachorro ideal · Envío a todo USA</footer>
 
 <script>
 (function(){
@@ -138,51 +180,51 @@
     mc.appendChild(b);
   })(i);}
 
+  function getDown(){ var v = parseFloat($('downpayment').value||'0')||0; return v >= 500 ? v : 0; }
+
   function calc(){
     var sel=$('breed').value.trim(); breed=sel;
-    if(!sel){ $('monthly').textContent='—'; $('price').textContent='—'; $('bigday').textContent='—'; $('startBtn').disabled=true; return; }
+    if(!sel){ $('monthly').textContent='—'; $('price').textContent='—'; $('bigday').textContent='—'; $('downpay').textContent='$0'; $('startBtn').disabled=true; return; }
     var price=prices[sel]||BASE;
-    var monthly=Math.ceil(price/months);
+    var down = getDown();
+    var monthly=Math.ceil(Math.max(0, price - down)/months);
     var d=new Date(); d.setMonth(d.getMonth()+months);
     var bigday=d.toLocaleDateString('es-US',{month:'long',year:'numeric'});
     $('monthly').innerHTML=money(monthly)+' <span>/mes</span>';
     $('price').textContent=money(price);
+    $('downpay').textContent=money(down);
     $('bigday').textContent=bigday;
-    $('disc').innerHTML='Plan de <b>'+months+(months>1?' meses':' mes')+'</b> para tu <b>'+sel+'</b>. Precio estimado '+money(price)+' — puede variar según el cachorro. Total a abonar: '+money(monthly*months)+'.';
+    var firstPay = down + monthly;
+    $('disc').innerHTML='Plan de <b>'+months+(months>1?' meses':' mes')+'</b> para tu <b>'+sel+'</b>. Hoy pagas <b>'+money(firstPay)+'</b>'+(down>0?' (pago inicial '+money(down)+' + primer abono '+money(monthly)+')':' (primer abono)')+'. Total: '+money(price)+' — precio estimado, puede variar según el cachorro.';
     $('startBtn').disabled=false;
   }
 
   $('breed').oninput=calc; $('breed').onchange=calc;
+  $('downpayment').oninput=calc; $('downpayment').onchange=calc;
   $('startBtn').onclick=function(){ $('formBox').classList.remove('hidden'); $('formBox').scrollIntoView({behavior:'smooth'}); $('startBtn').style.display='none'; };
 
-  $('submitBtn').onclick=function(){
+  $('payBtn').onclick=function(){
     var email=($('f-email').value||'').trim(), name=($('f-name').value||'').trim(), phone=($('f-phone').value||'').trim();
     var msg=$('msg');
     if(!breed){ msg.className='msg err'; msg.textContent='Elige una raza primero.'; return; }
-    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg.className='msg err'; msg.textContent='Escribe un correo válido para enviarte tu resumen.'; return; }
-    if(!document.getElementById('f-terms').checked){ msg.className='msg err'; msg.textContent='Debes aceptar los terminos y politicas para continuar.'; return; }
-    var btn=$('submitBtn'); btn.disabled=true; btn.textContent='Enviando…';
+    if(!name){ msg.className='msg err'; msg.textContent='Escribe tu nombre.'; return; }
+    if(!phone || phone.replace(/[^0-9]/g,'').length < 7){ msg.className='msg err'; msg.textContent='Escribe un teléfono válido.'; return; }
+    if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)){ msg.className='msg err'; msg.textContent='Escribe un correo válido.'; return; }
+    if(!$('f-terms').checked){ msg.className='msg err'; msg.textContent='Debes aceptar los términos y políticas para continuar.'; return; }
+    var btn=$('payBtn'); btn.disabled=true; btn.textContent='Preparando tu pago…'; msg.className=''; msg.textContent='';
+
+    // 1) crear plan (lead) sin enviar correo
     fetch(SUPA+'/functions/v1/payment_plan',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},
-      body:JSON.stringify({action:'create_lead',client_name:name,client_email:email,phone:phone,breed:breed,est_price:(prices[breed]||BASE),months:months})})
+      body:JSON.stringify({action:'create_lead',client_name:name,client_email:email,phone:phone,breed:breed,est_price:(prices[breed]||BASE),months:months,downpayment_amount:getDown()})})
       .then(function(r){return r.json();}).then(function(d){
-        btn.disabled=false; btn.textContent='Reservar mi plan y recibir mi resumen';
-        if(d.error){ msg.className='msg err'; msg.textContent=d.error; return; }
-        var planId=d.plan_id, monthly=d.monthly_amount;
-        msg.className='msg ok'; msg.innerHTML='🎉 ¡Tu plan está reservado! Te enviamos el resumen a <b>'+email+'</b>.<br><br>Da el primer paso hacia tu gran día:';
-        btn.style.display='none';
-        var pay=document.createElement('button'); pay.className='cta'; pay.style.marginTop='12px'; pay.textContent='Hacer mi primer abono ($'+monthly+')';
-        pay.onclick=function(){ pay.disabled=true; pay.textContent='Redirigiendo a pago seguro…';
-          fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({type:'plan_abono',plan_id:planId,success_url:'https://bpuppy.us/plan',cancel_url:'https://bpuppy.us/plan'})})
-            .then(function(r){return r.json();}).then(function(c){ if(c.url){ window.location.href=c.url; } else { pay.disabled=false; pay.textContent='Reintentar pago'; msg.className='msg err'; msg.textContent=c.error||'No se pudo iniciar el pago.'; } })
-            .catch(function(){ pay.disabled=false; pay.textContent='Reintentar pago'; }); };
-        msg.parentNode.appendChild(pay);
-        var pp=document.createElement('button'); pp.className='cta'; pp.style.cssText='margin-top:8px;background:#0070BA;box-shadow:0 10px 26px -8px rgba(0,112,186,.5)'; pp.textContent='Pagar con PayPal';
-        pp.onclick=function(){ pp.disabled=true; pp.textContent='Redirigiendo a PayPal...';
-          fetch(SUPA+'/functions/v1/paypal',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({action:'create',type:'plan_abono',plan_id:planId})})
-            .then(function(r){return r.json();}).then(function(c){ if(c.url){ location.href=c.url; } else { pp.disabled=false; pp.textContent='Reintentar PayPal'; msg.className='msg err'; msg.textContent=c.error||'No se pudo iniciar PayPal.'; } })
-            .catch(function(){ pp.disabled=false; pp.textContent='Reintentar PayPal'; }); };
-        msg.parentNode.appendChild(pp);
-      }).catch(function(){ btn.disabled=false; btn.textContent='Reservar mi plan y recibir mi resumen'; msg.className='msg err'; msg.textContent='No se pudo enviar. Intenta de nuevo o escríbenos por WhatsApp.'; });
+        if(d.error){ btn.disabled=false; btn.textContent='💳 Ir al pago'; msg.className='msg err'; msg.textContent=d.error; return; }
+        // 2) ir directo a Checkout
+        return fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({type:'plan_first',plan_id:d.plan_id,client_email:email,success_url:'https://bpuppy.us/plan',cancel_url:'https://bpuppy.us/plan'})})
+          .then(function(r){return r.json();}).then(function(c){
+            if(c.url){ window.location.href=c.url; }
+            else { btn.disabled=false; btn.textContent='💳 Ir al pago'; msg.className='msg err'; msg.textContent=c.error||'No se pudo iniciar el pago.'; }
+          });
+      }).catch(function(){ btn.disabled=false; btn.textContent='💳 Ir al pago'; msg.className='msg err'; msg.textContent='No se pudo conectar. Intenta de nuevo.'; });
   };
 
   // cargar razas + precios (input con buscador via datalist)
@@ -199,7 +241,7 @@
   }catch(e){}
 
   // gracias tras pago
-  if(new URLSearchParams(location.search).get('paid')){ var w=document.querySelector('.wrap'); if(w){ var bn=document.createElement('div'); bn.className='card'; bn.style.marginBottom='16px'; bn.innerHTML='<div class="step-label">¡Gracias! 🎉</div><div style="font-size:16px;font-weight:700;color:var(--ink)">Recibimos tu pago. Te enviamos el recibo por correo y vamos preparando la llegada de tu cachorro. ¡Cada vez más cerca de tu gran día!</div>'; w.insertBefore(bn, w.firstChild); } }
+  if(new URLSearchParams(location.search).get('paid')){ var w=document.querySelector('.wrap'); if(w){ var bn=document.createElement('div'); bn.className='card'; bn.style.cssText='grid-column:1/-1;margin-bottom:16px'; bn.innerHTML='<div class="step-label">¡Gracias!</div><div style="font-size:16px;font-weight:700;color:var(--ink)">Recibimos tu pago. Te enviamos el recibo por correo y vamos preparando la llegada de tu cachorro. Entra a <a href="/portal" style="color:var(--orange)">tu portal</a> para ver tu plan y hacer más abonos cuando quieras.</div>'; w.insertBefore(bn, w.firstChild); } }
 })();
 </script>
 </body>
