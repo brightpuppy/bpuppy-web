@@ -3,120 +3,28 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Familias Felices Alrededor del Mundo — BPuppy</title>
-<meta name="description" content="Mapa de cachorros BPuppy entregados a familias felices por todo USA y el mundo. Cada punto, una familia nueva." />
-<link rel="icon" href="assets/favicon.webp">
+<title>Cachorros Entregados — Familias felices · BPuppy</title>
+<meta name="description" content="Cachorros BPuppy entregados a familias felices por todo USA. Conoce a las familias que ya encontraron a su compañero perfecto." />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="icon" href="assets/favicon.webp">
 <link rel="stylesheet" href="styles.css?v=1779645981252">
-<link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
-<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script src="site-publish.js?v=1779645981252"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="shared-header.js?v=1779645981252" defer></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
 <style>
-  :root{ --paper:#F2E7D0; --paper2:#EaDcc0; --ink:#3B2F2A; --ink2:#6f6055; --orange:#C2521E; --green:#4E7A51; --line:#d8c7a6; }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);
-    background-image:radial-gradient(circle at 20% 10%, rgba(194,82,30,0.05), transparent 40%), radial-gradient(circle at 85% 80%, rgba(78,122,81,0.05), transparent 40%);}
-  .wrap{max-width:1100px;margin:0 auto;padding:0 18px}
-  /* Header viejo removido — usa shared-header.js / <site-header> */
-  .hero{text-align:center;padding:48px 18px 24px}
-  .hero .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);font-weight:800}
-  .hero h1{font-family:'Instrument Serif',serif;font-size:clamp(38px,7vw,72px);line-height:1.02;margin:10px 0 6px;font-weight:400}
-  .hero h1 em{font-style:italic;color:var(--orange)}
-  .hero p{color:var(--ink2);max-width:60ch;margin:8px auto 0;font-size:16px}
-  .legend{display:flex;gap:18px;justify-content:center;margin:18px 0 6px;flex-wrap:wrap;font-size:13px;font-weight:600}
-  .dot{display:inline-block;width:11px;height:11px;border-radius:50%;margin-right:6px;vertical-align:middle}
-  .dot.g{background:var(--green)} .dot.o{background:var(--orange)}
-  #map{height:460px;border-radius:18px;margin:18px 0;border:2px solid var(--line);box-shadow:0 14px 40px rgba(59,47,42,0.14);overflow:hidden}
-  .leaflet-tile{filter:sepia(0.45) saturate(0.85) contrast(0.95) brightness(1.02)}
-  .leaflet-container{background:#e9dcc0;font-family:inherit}
-  .stat-row{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin:6px 0 30px}
-  .stat{background:rgba(255,255,255,0.5);border:1px solid var(--line);border-radius:14px;padding:14px 22px;text-align:center;min-width:120px}
-  .stat b{display:block;font-family:'Instrument Serif',serif;font-size:34px;color:var(--orange);line-height:1}
-  .stat span{font-size:12px;color:var(--ink2);text-transform:uppercase;letter-spacing:.08em}
-  h2.sec{font-family:'Instrument Serif',serif;font-size:30px;text-align:center;margin:18px 0 6px}
-  .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:16px;padding:14px 0 60px}
-  .card{background:#fff;border:1px solid var(--line);border-radius:16px;overflow:hidden;box-shadow:0 6px 18px rgba(59,47,42,0.08)}
-  .card .ph{height:150px;background:var(--paper2) center/cover no-repeat;display:flex;align-items:center;justify-content:center;font-size:40px;color:var(--ink2)}
-  .card .bd{padding:12px 14px}
-  .card .bd h3{font-size:15px;margin:0 0 3px}
-  .card .bd p{font-size:12.5px;color:var(--ink2);margin:0}
-  .pin{font-size:11px;font-weight:700;color:var(--orange)}
-  .empty{text-align:center;color:var(--ink2);padding:50px 18px}
-  .pulse{border-radius:50%;background:var(--green);box-shadow:0 0 0 rgba(78,122,81,0.5);animation:pl 1.8s infinite}
-  @keyframes pl{0%{box-shadow:0 0 0 0 rgba(78,122,81,0.5)}70%{box-shadow:0 0 0 14px rgba(78,122,81,0)}100%{box-shadow:0 0 0 0 rgba(78,122,81,0)}}
-  footer{text-align:center;padding:28px 18px;border-top:1px dashed var(--line);color:var(--ink2);font-size:13px}
+  @keyframes bpSpin { to { transform:rotate(360deg); } }
+  .bp-spinner { width:36px;height:36px;border:3px solid var(--line);border-top-color:var(--orange);border-radius:50%;animation:bpSpin .8s linear infinite; }
 </style>
 </head>
 <body>
-<site-header></site-header>
-
-<div class="hero">
-  <div class="eyebrow">🧭 BPuppy · Bitácora de Vuelo</div>
-  <h1>Familias felices <em>alrededor del mundo</em></h1>
-  <p>Cada cachorro que entregamos es un nuevo hogar en el mapa. Aquí seguimos sus viajes — los que ya llegaron y los que van en camino ahora mismo. ✈️</p>
-  <div class="legend"><span><i class="dot g"></i>En camino ahora</span><span><i class="dot o"></i>Entregado</span></div>
-</div>
-
-<div class="wrap">
-  <div id="map"></div>
-  <div class="stat-row" id="stats"></div>
-  <h2 class="sec">Aterrizajes recientes</h2>
-  <div class="cards" id="cards"><div class="empty">Cargando entregas…</div></div>
-</div>
-
-<footer>BPuppy · Conectamos familias con su cachorro ideal · Envío a todo USA 🐾</footer>
-
-<script>
-(function(){
-  var SUPA_URL='https://oqqwmcplljirbreowrll.supabase.co';
-  var ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
-  var map=L.map('map',{scrollWheelZoom:false,attributionControl:false}).setView([39.5,-98.35],4);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{maxZoom:18}).addTo(map);
-  L.control.attribution({prefix:false}).addAttribution('© OpenStreetMap').addTo(map);
-
-  function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
-  function placeLabel(d){ return [d.dest_city, d.dest_state, (d.dest_country&&d.dest_country!=='USA'?d.dest_country:null)].filter(Boolean).join(', '); }
-
-  function dot(color,pulse){ return L.divIcon({className:'',iconSize:[16,16],html:'<div class="'+(pulse?'pulse':'')+'" style="width:16px;height:16px;border-radius:50%;background:'+color+';border:2px solid #fff;box-shadow:0 1px 4px rgba(0,0,0,.3)"></div>'}); }
-
-  async function load(){
-    try{
-      var sb=window.supabase.createClient(SUPA_URL,ANON);
-      var res=await sb.from('deliveries_public').select('*').order('delivered_at',{ascending:false});
-      var rows=res.data||[];
-      var enRoute=rows.filter(function(r){return r.status==='en_route';});
-      var delivered=rows.filter(function(r){return r.status==='delivered';});
-      // stats
-      document.getElementById('stats').innerHTML=
-        '<div class="stat"><b>'+delivered.length+'</b><span>Entregados</span></div>'+
-        '<div class="stat"><b>'+enRoute.length+'</b><span>En camino</span></div>';
-      // markers
-      var pts=[];
-      rows.forEach(function(d){
-        if(d.dest_lat==null||d.dest_lng==null) return;
-        var isEn=d.status==='en_route';
-        var m=L.marker([d.dest_lat,d.dest_lng],{icon:dot(isEn?'#4E7A51':'#C2521E',isEn)}).addTo(map);
-        m.bindPopup('<b>'+esc(placeLabel(d)||'—')+'</b><br>'+(isEn?'✈️ En camino':'🏡 Entregado')+(d.puppy_breed?'<br>'+esc(d.puppy_breed):''));
-        pts.push([d.dest_lat,d.dest_lng]);
-      });
-      if(pts.length) map.fitBounds(pts,{padding:[40,40],maxZoom:6});
-      // cards (entregados)
-      var cont=document.getElementById('cards');
-      if(!delivered.length){ cont.innerHTML='<div class="empty">Pronto verás aquí las familias felices. 🐾</div>'; return; }
-      cont.innerHTML=delivered.map(function(d){
-        var ph=d.delivery_photo_url?('<div class="ph" style="background-image:url('+esc(d.delivery_photo_url)+')"></div>'):('<div class="ph">🐶</div>');
-        var when=d.delivered_at?new Date(d.delivered_at).toLocaleDateString('es-US',{month:'short',year:'numeric'}):'';
-        return '<div class="card">'+ph+'<div class="bd"><h3>'+esc(d.puppy_breed||'Cachorro feliz')+'</h3><p class="pin">📍 '+esc(placeLabel(d)||'—')+'</p><p>'+esc(when)+'</p></div></div>';
-      }).join('');
-    }catch(e){
-      document.getElementById('cards').innerHTML='<div class="empty">No se pudieron cargar las entregas.</div>';
-    }
-  }
-  load();
-})();
-</script>
+<div id="root"></div>
+<script src="tweaks-panel.js?v=1779645981252"></script>
+<script src="i18n.js?v=1779645981252"></script>
+<script src="chrome.js?v=1779645981252"></script>
+<script src="Cachorros-Entregados.inline0.js?v=1779645981252"></script>
+<script src="site-animations.js?v=1779645981252"></script>
 </body>
 </html>
