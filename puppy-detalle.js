@@ -294,7 +294,7 @@ function PdHero({ p, photos, age }) {
     },
     "\u{1F49B} Me interesa ",
     p.name || "este cachorro"
-  ), reserved && /* @__PURE__ */ React.createElement(
+  ), available && p.price && /* @__PURE__ */ React.createElement("button", { onClick: function(e){ var b=e.currentTarget; b.disabled=true; b.textContent="Redirigiendo a pago seguro..."; fetch(PD_SUPA_URL+"/functions/v1/stripe_checkout",{method:"POST",headers:{"Content-Type":"application/json","apikey":PD_SUPA_KEY},body:JSON.stringify({type:"deposit",puppy_id:p.id,success_url:"https://bpuppy.us/cachorros",cancel_url:location.href})}).then(function(r){return r.json();}).then(function(d){ if(d.url){location.href=d.url;} else { b.disabled=false; b.textContent="Reintentar depósito"; alert(d.error||"No se pudo iniciar el pago"); } }).catch(function(){ b.disabled=false; b.textContent="Reintentar depósito"; }); }, style: { padding: "15px 24px", background: "#4E7A51", color: "#fff", border: "none", borderRadius: 999, fontFamily: "var(--body)", fontSize: 15, fontWeight: 700, cursor: "pointer", boxShadow: "0 8px 24px -8px rgba(78,122,81,0.5)" } }, "🐶 Apartar con depósito (30%) · $", Math.round(Number(p.price)*0.3).toLocaleString()), reserved && /* @__PURE__ */ React.createElement(
     "button",
     {
       onClick: function() {
