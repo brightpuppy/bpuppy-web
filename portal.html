@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Mi portal — BPuppy</title>
+<meta name="robots" content="noindex"/>
+<link rel="icon" href="assets/favicon.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+:root{--orange:#F58220;--orange2:#C2521E;--ink:#2D2421;--ink2:#6f6055;--soft:#9a8c7e;--paper:#F7F1E6;--bg:#fff;--line:#e4d7bf;--green:#1EB87A;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);min-height:100vh}
+header{display:flex;align-items:center;justify-content:space-between;padding:15px 22px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:10}
+header img{height:34px}
+header a{text-decoration:none;font-size:13px;font-weight:700;color:var(--ink2)}
+header a:hover{color:var(--orange)}
+.hero{background:linear-gradient(135deg,#2D2421 0%,#43352d 100%);color:#fff;padding:60px 20px 50px;text-align:center}
+.hero .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#FFD8B0;font-weight:800}
+.hero h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(34px,5vw,56px);line-height:1.05;margin:10px 0 6px}
+.hero h1 em{font-style:italic;color:#FFB877}
+.hero p{color:rgba(255,255,255,.78);max-width:48ch;margin:0 auto;font-size:15px;line-height:1.6}
+.wrap{max-width:780px;margin:-32px auto 0;padding:0 18px 70px;position:relative;z-index:2}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 14px 40px rgba(45,36,33,.10);margin-bottom:16px}
+label{display:block;font-size:13px;font-weight:700;color:var(--ink2);margin:0 0 6px}
+input{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);outline:none}
+input:focus{border-color:var(--orange)}
+.cta{display:block;width:100%;margin-top:14px;padding:14px;border-radius:13px;border:none;background:var(--orange);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px -8px rgba(245,130,32,.5)}
+.cta:disabled{opacity:.55;cursor:default;box-shadow:none}
+.ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--line);box-shadow:none}
+.msg{margin-top:12px;font-size:14px;font-weight:600;border-radius:12px;padding:12px 14px;line-height:1.5}
+.msg.ok{background:#E3F4EC;color:#0f7a52}.msg.err{background:#f8e3df;color:#C0392B}.msg.info{background:#FCEFD9;color:var(--orange2)}
+.step-label{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:10px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
+.row:last-child{border:none}
+.row .k{color:var(--ink2);font-weight:600}.row .v{font-weight:700;text-align:right}
+.badge{display:inline-block;padding:3px 11px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
+.b-active{background:#E3F4EC;color:var(--green)}.b-lead{background:#FCEFD9;color:var(--orange2)}.b-done{background:#E8EEF6;color:#2c5d8f}.b-cancel{background:#f3e2df;color:#C0392B}
+.bar{height:8px;background:var(--paper);border-radius:999px;overflow:hidden;margin:8px 0 4px}.bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--orange),#FFB877)}
+.center{text-align:center;padding:30px;color:var(--ink2)}
+.spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--orange);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 12px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.muted{font-size:12px;color:var(--soft);margin-top:8px}
+.pay{display:inline-block;margin-top:8px;padding:9px 14px;background:var(--orange);color:#fff;border-radius:999px;font-size:12.5px;font-weight:800;text-decoration:none;cursor:pointer;border:none;font-family:inherit}
+footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-top:1px solid var(--line)}
+</style>
+</head>
+<body>
+<header>
+  <a href="/"><img src="assets/logo-clean.webp" alt="BPuppy" onerror="this.style.display='none';this.parentNode.textContent='BPuppy'"></a>
+  <a href="#" id="logout" style="display:none">Cerrar sesión</a>
+</header>
+
+<section class="hero">
+  <div class="eyebrow">BPuppy · Mi portal</div>
+  <h1>Tu <em>cuenta</em></h1>
+  <p>Tus planes de pago, abonos y membresías de grooming en un solo lugar.</p>
+</section>
+
+<div class="wrap" id="root">
+  <div class="card"><div class="center"><div class="spin"></div>Cargando…</div></div>
+</div>
+
+<footer>BPuppy · ¿Dudas? WhatsApp +1 (808) 492-8294 · <a href="/" style="color:var(--orange)">Volver al sitio</a></footer>
+
+<script>
+(function(){
+  var SUPA='https://oqqwmcplljirbreowrll.supabase.co';
+  var ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+  var sb=window.supabase.createClient(SUPA, ANON);
+  var root=document.getElementById('root');
+  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
+  function money(n){return '$'+Number(n||0).toLocaleString('en-US');}
+  function fmtD(d){if(!d)return '—';try{return new Date(d+'T12:00:00').toLocaleDateString('es-US',{day:'numeric',month:'long',year:'numeric'});}catch(e){return d;}}
+  function badge(st){
+    if(st==='active'||st==='scheduled'||st==='confirmed') return '<span class="badge b-active">Activo</span>';
+    if(st==='lead') return '<span class="badge b-lead">Reservado</span>';
+    if(st==='completed') return '<span class="badge b-done">Completado</span>';
+    if(st==='cancelled'||st==='refunded') return '<span class="badge b-cancel">'+esc(st)+'</span>';
+    return '<span class="badge b-lead">'+esc(st||'—')+'</span>';
+  }
+
+  function showLogin(prefMsg){
+    root.innerHTML = '<div class="card"><div class="step-label">Entra a tu cuenta</div>'+
+      '<p style="font-size:14px;color:var(--ink2);margin-bottom:14px">Te enviamos un <b>enlace mágico</b> a tu correo — sin contraseñas. Toca el enlace y entras automáticamente.</p>'+
+      '<label>Tu correo</label><input id="le" type="email" placeholder="tu@correo.com" autocomplete="email">'+
+      '<button class="cta" id="lb">Enviarme mi enlace</button>'+
+      (prefMsg?('<div id="lm" class="msg '+prefMsg.k+'">'+prefMsg.t+'</div>'):'<div id="lm"></div>')+
+      '<p class="muted">Usa el mismo correo con el que reservaste tu plan o tu membresía.</p></div>';
+    document.getElementById('lb').onclick=function(){
+      var em=(document.getElementById('le').value||'').trim();
+      var m=document.getElementById('lm');
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ m.className='msg err'; m.textContent='Escribe un correo válido.'; return; }
+      var btn=document.getElementById('lb'); btn.disabled=true; btn.textContent='Enviando…';
+      sb.auth.signInWithOtp({email:em, options:{emailRedirectTo: window.location.origin + '/portal'}}).then(function(r){
+        btn.disabled=false; btn.textContent='Enviarme mi enlace';
+        if(r.error){ m.className='msg err'; m.textContent=r.error.message; return; }
+        m.className='msg ok'; m.innerHTML='📬 Revisa tu correo (<b>'+esc(em)+'</b>) y toca el enlace mágico para entrar.';
+      });
+    };
+  }
+
+  function renderPlan(p, pays){
+    var paid=Number(p.paid_total||0), est=Number(p.est_price||0), bal=Math.max(0,est-paid), pct=est>0?Math.min(100,Math.round(paid/est*100)):0;
+    var rows=(pays||[]).filter(function(x){return x.plan_id===p.id;}).sort(function(a,b){return a.created_at<b.created_at?-1:1;});
+    var html='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">Plan de pagos</div>'+badge(p.status)+'</div>'+
+      '<div class="row"><span class="k">Raza</span><span class="v">'+esc(p.breed||'—')+'</span></div>'+
+      '<div class="row"><span class="k">Plan</span><span class="v">'+(p.months||'—')+' meses · '+money(p.monthly_amount)+'/mes</span></div>'+
+      '<div class="row"><span class="k">Total estimado</span><span class="v">'+money(est)+'</span></div>'+
+      '<div class="row"><span class="k">Abonado</span><span class="v" style="color:var(--green)">'+money(paid)+'</span></div>'+
+      '<div class="row"><span class="k">Restante</span><span class="v">'+money(bal)+'</span></div>'+
+      '<div class="row"><span class="k">Tu gran día</span><span class="v">'+esc(fmtD(p.target_date))+'</span></div>'+
+      '<div class="bar"><span style="width:'+pct+'%"></span></div><div style="font-size:11px;color:var(--ink2);text-align:right">'+pct+'% completado</div>';
+    if(bal>0 && p.status!=='cancelled'){
+      html+='<button class="pay" data-plan="'+esc(p.id)+'" data-amt="monthly">Hacer abono ('+money(p.monthly_amount)+')</button> '+
+            '<button class="pay" style="background:var(--ink2)" data-plan="'+esc(p.id)+'" data-amt="all">Pagar restante ('+money(bal)+')</button>';
+    }
+    if(rows.length){
+      html+='<div style="margin-top:14px"><div class="step-label">Tus abonos</div>'+rows.map(function(x){return '<div class="row"><span class="k">'+esc(fmtD((x.created_at||'').slice(0,10)))+'</span><span class="v">'+money(x.amount)+' · '+esc(x.method||'')+'</span></div>';}).join('')+'</div>';
+    }
+    html+='</div>';
+    return html;
+  }
+
+  function renderMembership(m){
+    return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">Membresía</div>'+badge(m.status)+'</div>'+
+      '<div class="row"><span class="k">Plan</span><span class="v">'+esc(m.plan||'—')+' ('+esc(m.billing||'—')+')</span></div>'+
+      '<div class="row"><span class="k">Mascota</span><span class="v">'+esc(m.pet_name||'—')+(m.pet_size?(' · '+esc(m.pet_size)):'')+'</span></div>'+
+      '<div class="row"><span class="k">Baños disponibles</span><span class="v" style="color:var(--orange2);font-size:18px">'+(m.credits_balance||0)+'</span></div>'+
+      '<div class="row"><span class="k">Próxima renovación</span><span class="v">'+esc(fmtD(m.renew_date))+'</span></div>'+
+      '</div>';
+  }
+
+  function showDashboard(email){
+    document.getElementById('logout').style.display='inline';
+    root.innerHTML='<div class="card"><div class="center"><div class="spin"></div>Cargando tu portal…</div></div>';
+    sb.auth.getSession().then(function(s){
+      var tok = s.data && s.data.session && s.data.session.access_token;
+      if(!tok){ showLogin({k:'err',t:'Sesión expirada, vuelve a entrar.'}); return; }
+      fetch(SUPA+'/functions/v1/portal_data',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:'{}'})
+        .then(function(r){return r.json();}).then(function(d){
+          if(d.error){ root.innerHTML='<div class="card"><div class="msg err">'+esc(d.error)+'</div></div>'; return; }
+          var html='<div class="card" style="background:linear-gradient(135deg,rgba(245,130,32,0.08),rgba(255,184,119,0.10))"><div style="font-size:13px;color:var(--ink2)">Hola</div><div style="font-family:Bricolage Grotesque,sans-serif;font-size:22px;font-weight:800;color:var(--ink)">'+esc(d.email)+'</div></div>';
+          if(d.plans && d.plans.length){ d.plans.forEach(function(p){ html+=renderPlan(p, d.payments); }); }
+          if(d.memberships && d.memberships.length){ d.memberships.forEach(function(m){ html+=renderMembership(m); }); }
+          if((!d.plans||!d.plans.length) && (!d.memberships||!d.memberships.length)){
+            html+='<div class="card"><div class="center">Aún no tienes planes ni membresías con este correo. <br><br><a href="/plan" class="pay" style="text-decoration:none">Arma tu plan</a></div></div>';
+          }
+          root.innerHTML=html;
+          // wire pay buttons (plan abonos)
+          root.querySelectorAll('button.pay[data-plan]').forEach(function(btn){
+            btn.onclick=function(){ var pid=btn.getAttribute('data-plan'); var t=btn; t.disabled=true; t.textContent='Redirigiendo...';
+              fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({type:'plan_abono',plan_id:pid,success_url:window.location.origin+'/portal',cancel_url:window.location.origin+'/portal'})})
+                .then(function(r){return r.json();}).then(function(c){ if(c.url){window.location.href=c.url;} else { t.disabled=false; t.textContent='Reintentar'; alert(c.error||'Error'); } });
+            };
+          });
+        }).catch(function(){ root.innerHTML='<div class="card"><div class="msg err">No pudimos cargar tu portal. Intenta de nuevo.</div></div>'; });
+    });
+  }
+
+  document.getElementById('logout').onclick=function(e){ e.preventDefault(); sb.auth.signOut().then(function(){ showLogin({k:'info',t:'Sesión cerrada.'}); document.getElementById('logout').style.display='none'; }); };
+
+  // arranque
+  sb.auth.getSession().then(function(s){
+    if(s.data && s.data.session && s.data.session.user){ showDashboard(s.data.session.user.email); }
+    else { showLogin(null); }
+  });
+  // capturar el hash del magic link al volver (#access_token=...)
+  sb.auth.onAuthStateChange(function(_evt, session){ if(session && session.user){ showDashboard(session.user.email); } });
+})();
+</script>
+</body>
+</html>
