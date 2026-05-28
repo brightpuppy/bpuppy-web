@@ -9,21 +9,18 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600;12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="stylesheet" href="styles.css?v=1779645981252">
 <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"/>
 <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="shared-header.js?v=1779645981252" defer></script>
 <style>
   :root{ --paper:#F2E7D0; --paper2:#EaDcc0; --ink:#3B2F2A; --ink2:#6f6055; --orange:#C2521E; --green:#4E7A51; --line:#d8c7a6; }
   *{box-sizing:border-box;margin:0;padding:0}
   body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);
     background-image:radial-gradient(circle at 20% 10%, rgba(194,82,30,0.05), transparent 40%), radial-gradient(circle at 85% 80%, rgba(78,122,81,0.05), transparent 40%);}
   .wrap{max-width:1100px;margin:0 auto;padding:0 18px}
-  header{display:flex;align-items:center;justify-content:space-between;padding:16px 18px;border-bottom:1px dashed var(--line)}
-  header img{height:38px}
-  header a{color:var(--ink);text-decoration:none;font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;opacity:.7}
-  header a:hover{opacity:1;color:var(--orange)}
-  .ent-nav{display:flex;gap:20px;flex-wrap:wrap;justify-content:center}
-  @media(max-width:820px){.ent-nav{display:none}}
+  /* Header viejo removido — usa shared-header.js / <site-header> */
   .hero{text-align:center;padding:48px 18px 24px}
   .hero .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--orange);font-weight:800}
   .hero h1{font-family:'Instrument Serif',serif;font-size:clamp(38px,7vw,72px);line-height:1.02;margin:10px 0 6px;font-weight:400}
@@ -54,18 +51,7 @@
 </style>
 </head>
 <body>
-<header>
-  <a href="/"><img src="assets/logo-clean.webp" alt="BPuppy" onerror="this.style.display='none'"></a>
-  <nav class="ent-nav">
-    <a href="/">Inicio</a>
-    <a href="/cachorros">Cachorros</a>
-    <a href="/gatos">Gatos</a>
-    <a href="/financiamiento">Financiamiento</a>
-    <a href="/grooming">Grooming</a>
-    <a href="/nosotros">Nosotros</a>
-  </nav>
-  <a href="/" class="ent-back">← Inicio</a>
-</header>
+<site-header></site-header>
 
 <div class="hero">
   <div class="eyebrow">🧭 BPuppy · Bitácora de Vuelo</div>

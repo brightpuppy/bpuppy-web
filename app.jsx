@@ -1,7 +1,7 @@
 ﻿// app.jsx — root composition, theme/lang state, mounts everything
 
 const TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{
-  "theme": "familia",
+  "theme": "pop",
   "brandColor": "#F58220",
   "paws": true,
   "lang": "es"

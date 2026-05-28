@@ -294,7 +294,7 @@ function NosotrosApp() {
           </div>
           <div style={{ marginTop:16, display:'flex', gap:12, flexWrap:'wrap' }}>
             <a href="https://maps.google.com/?q=5604+Kalogridis+Rd+Haines+City+FL+33844" target="_blank" rel="noreferrer" className="btn btn-ghost" style={{ fontSize:13 }}>{t(['Ver en Google Maps','View on Google Maps'])}</a>
-            <a href="https://www.google.com/maps?cid=10300429461328700851" target="_blank" rel="noreferrer" className="btn btn-dark" style={{ fontSize:13 }}>&#11088; {t(['Dejar resena','Leave a review'])}</a>
+            <a href="https://www.google.com/maps?cid=10300429461328700851" target="_blank" rel="noreferrer" className="btn btn-dark" style={{ fontSize:13 }}>&#11088; {t(['Dejar reseña','Leave a review'])}</a>
           </div>
         </div>
       </div>
