@@ -176,6 +176,12 @@
             .then(function(r){return r.json();}).then(function(c){ if(c.url){ window.location.href=c.url; } else { pay.disabled=false; pay.textContent='Reintentar pago'; msg.className='msg err'; msg.textContent=c.error||'No se pudo iniciar el pago.'; } })
             .catch(function(){ pay.disabled=false; pay.textContent='Reintentar pago'; }); };
         msg.parentNode.appendChild(pay);
+        var pp=document.createElement('button'); pp.className='cta'; pp.style.cssText='margin-top:8px;background:#0070BA;box-shadow:0 10px 26px -8px rgba(0,112,186,.5)'; pp.textContent='Pagar con PayPal';
+        pp.onclick=function(){ pp.disabled=true; pp.textContent='Redirigiendo a PayPal...';
+          fetch(SUPA+'/functions/v1/paypal',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({action:'create',type:'plan_abono',plan_id:planId})})
+            .then(function(r){return r.json();}).then(function(c){ if(c.url){ location.href=c.url; } else { pp.disabled=false; pp.textContent='Reintentar PayPal'; msg.className='msg err'; msg.textContent=c.error||'No se pudo iniciar PayPal.'; } })
+            .catch(function(){ pp.disabled=false; pp.textContent='Reintentar PayPal'; }); };
+        msg.parentNode.appendChild(pp);
       }).catch(function(){ btn.disabled=false; btn.textContent='Reservar mi plan y recibir mi resumen'; msg.className='msg err'; msg.textContent='No se pudo enviar. Intenta de nuevo o escríbenos por WhatsApp.'; });
   };
 
