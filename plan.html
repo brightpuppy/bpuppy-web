@@ -76,7 +76,8 @@
     <div class="step-label">Arma tu plan</div>
     <div style="margin-bottom:16px">
       <label for="breed">¿Qué raza sueñas con tener?</label>
-      <select id="breed"><option value="">Cargando razas…</option></select>
+      <input id="breed" list="breeds-dl" autocomplete="off" placeholder="Escribe o elige una raza…">
+      <datalist id="breeds-dl"></datalist>
     </div>
     <div>
       <label>¿En cuántos meses quieres abonarlo?</label>
@@ -122,6 +123,7 @@
   var SUPA='https://oqqwmcplljirbreowrll.supabase.co';
   var ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
   var BASE=2500;
+  var EN=(navigator.language||'').toLowerCase().indexOf('en')===0;
   var months=3, prices={}, breed='';
   var $=function(id){return document.getElementById(id);};
   function money(n){return '$'+Number(n||0).toLocaleString('en-US');}
@@ -136,7 +138,7 @@
   })(i);}
 
   function calc(){
-    var sel=$('breed').value; breed=sel;
+    var sel=$('breed').value.trim(); breed=sel;
     if(!sel){ $('monthly').textContent='—'; $('price').textContent='—'; $('bigday').textContent='—'; $('startBtn').disabled=true; return; }
     var price=prices[sel]||BASE;
     var monthly=Math.ceil(price/months);
@@ -149,7 +151,7 @@
     $('startBtn').disabled=false;
   }
 
-  $('breed').onchange=calc;
+  $('breed').oninput=calc; $('breed').onchange=calc;
   $('startBtn').onclick=function(){ $('formBox').classList.remove('hidden'); $('formBox').scrollIntoView({behavior:'smooth'}); $('startBtn').style.display='none'; };
 
   $('submitBtn').onclick=function(){
@@ -175,15 +177,18 @@
       }).catch(function(){ btn.disabled=false; btn.textContent='Reservar mi plan y recibir mi resumen'; msg.className='msg err'; msg.textContent='No se pudo enviar. Intenta de nuevo o escríbenos por WhatsApp.'; });
   };
 
-  // cargar razas + precios
+  // cargar razas + precios (input con buscador via datalist)
+  var NOTSURE = EN ? 'Not sure yet' : 'Aún no sé';
+  if(EN) $('breed').placeholder='Type or pick a breed…';
+  prices[NOTSURE]=BASE;
   try{
     var sb=window.supabase.createClient(SUPA,ANON);
     sb.from('breed_prices').select('breed,estimated_price').eq('species','dog').order('breed').then(function(res){
-      var rows=res.data||[]; var sel=$('breed'); sel.innerHTML='<option value="">Elige una raza…</option>';
-      rows.forEach(function(r){ prices[r.breed]=r.estimated_price||BASE; var o=document.createElement('option'); o.value=r.breed; o.textContent=r.breed; sel.appendChild(o); });
-      if(!rows.length){ sel.innerHTML='<option value="">No se pudieron cargar las razas</option>'; }
+      var rows=res.data||[]; var dl=document.getElementById('breeds-dl'); dl.innerHTML='';
+      var first=document.createElement('option'); first.value=NOTSURE; dl.appendChild(first);
+      rows.forEach(function(r){ prices[r.breed]=r.estimated_price||BASE; var o=document.createElement('option'); o.value=r.breed; dl.appendChild(o); });
     });
-  }catch(e){ $('breed').innerHTML='<option value="">No se pudieron cargar las razas</option>'; }
+  }catch(e){}
 
   // gracias tras pago
   if(new URLSearchParams(location.search).get('paid')){ var w=document.querySelector('.wrap'); if(w){ var bn=document.createElement('div'); bn.className='card'; bn.style.marginBottom='16px'; bn.innerHTML='<div class="step-label">¡Gracias! 🎉</div><div style="font-size:16px;font-weight:700;color:var(--ink)">Recibimos tu pago. Te enviamos el recibo por correo y vamos preparando la llegada de tu cachorro. ¡Cada vez más cerca de tu gran día!</div>'; w.insertBefore(bn, w.firstChild); } }
