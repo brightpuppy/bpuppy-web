@@ -163,8 +163,15 @@
       .then(function(r){return r.json();}).then(function(d){
         btn.disabled=false; btn.textContent='Reservar mi plan y recibir mi resumen';
         if(d.error){ msg.className='msg err'; msg.textContent=d.error; return; }
-        msg.className='msg ok'; msg.innerHTML='🎉 ¡Tu plan está reservado! Te enviamos el resumen a <b>'+email+'</b>. Pronto recibirás el enlace para hacer tu primer abono.';
+        var planId=d.plan_id, monthly=d.monthly_amount;
+        msg.className='msg ok'; msg.innerHTML='🎉 ¡Tu plan está reservado! Te enviamos el resumen a <b>'+email+'</b>.<br><br>Da el primer paso hacia tu gran día:';
         btn.style.display='none';
+        var pay=document.createElement('button'); pay.className='cta'; pay.style.marginTop='12px'; pay.textContent='Hacer mi primer abono ($'+monthly+')';
+        pay.onclick=function(){ pay.disabled=true; pay.textContent='Redirigiendo a pago seguro…';
+          fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({type:'plan_abono',plan_id:planId,success_url:'https://bpuppy.us/plan',cancel_url:'https://bpuppy.us/plan'})})
+            .then(function(r){return r.json();}).then(function(c){ if(c.url){ window.location.href=c.url; } else { pay.disabled=false; pay.textContent='Reintentar pago'; msg.className='msg err'; msg.textContent=c.error||'No se pudo iniciar el pago.'; } })
+            .catch(function(){ pay.disabled=false; pay.textContent='Reintentar pago'; }); };
+        msg.parentNode.appendChild(pay);
       }).catch(function(){ btn.disabled=false; btn.textContent='Reservar mi plan y recibir mi resumen'; msg.className='msg err'; msg.textContent='No se pudo enviar. Intenta de nuevo o escríbenos por WhatsApp.'; });
   };
 
@@ -177,6 +184,9 @@
       if(!rows.length){ sel.innerHTML='<option value="">No se pudieron cargar las razas</option>'; }
     });
   }catch(e){ $('breed').innerHTML='<option value="">No se pudieron cargar las razas</option>'; }
+
+  // gracias tras pago
+  if(new URLSearchParams(location.search).get('paid')){ var w=document.querySelector('.wrap'); if(w){ var bn=document.createElement('div'); bn.className='card'; bn.style.marginBottom='16px'; bn.innerHTML='<div class="step-label">¡Gracias! 🎉</div><div style="font-size:16px;font-weight:700;color:var(--ink)">Recibimos tu pago. Te enviamos el recibo por correo y vamos preparando la llegada de tu cachorro. ¡Cada vez más cerca de tu gran día!</div>'; w.insertBefore(bn, w.firstChild); } }
 })();
 </script>
 </body>
