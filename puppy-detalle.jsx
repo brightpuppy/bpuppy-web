@@ -70,7 +70,7 @@ function PdGallery({ photos, name, status }) {
 // ── Financing Calculator ──────────────────────────────────────────────────────
 const PD_FIN_PLANS = [
   { id:'k4',   name:'Klarna',   sub:'4 pagos · Sin interés', type:'split', count:4,  apr:0,  brandColor:'#FFB3C7', brandText:'#1A1A1A' },
-  { id:'pp6',  name:'PayPal',   sub:'6 pagos · Sin interés', type:'split', count:6,  apr:0,  brandColor:'#003087', brandText:'#fff'    },
+  { id:'cash', name:'Cash App', sub:'Paga al instante',      type:'split', count:1,  apr:0,  brandColor:'#00D54B', brandText:'#0a0a0a' },
   { id:'af12', name:'Affirm',   sub:'12 meses · ~15% APR',   type:'loan',  count:12, apr:15, brandColor:'#0FA0EA', brandText:'#fff'    },
   { id:'af24', name:'Affirm',   sub:'24 meses · ~18% APR',   type:'loan',  count:24, apr:18, brandColor:'#0FA0EA', brandText:'#fff'    },
 ];

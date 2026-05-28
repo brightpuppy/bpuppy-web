@@ -28,6 +28,11 @@
 .legal strong{color:var(--ink)}
 .legal .upd{font-size:13px;color:var(--ink-soft,#9a8c7e)}
 .legal .box{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.legal-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:24px 16px 0;max-width:820px;margin:0 auto}
+.legal-nav a{padding:8px 16px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--ink-2);text-decoration:none;background:var(--bg);transition:all .15s}
+.legal-nav a:hover{border-color:var(--orange);color:var(--orange)}
+.legal-nav a.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.legal-nav .lang-sep{align-self:center;color:var(--line);font-size:18px;margin:0 4px}
 </style>
 </head>
 <body>
@@ -39,6 +44,15 @@
     <p>Clear, fair rules for deposits, payment plans, grooming and our health guarantee. Your peace of mind comes first.</p>
   </div>
 </section>
+
+<nav class="legal-nav" aria-label="Legal documents">
+  <a href="/terms">Terms</a>
+  <a href="/privacy">Privacy</a>
+  <a href="/refunds" class="active">Refunds</a>
+  <a href="/garantia">Health Guarantee</a>
+  <span class="lang-sep">·</span>
+  <a href="/reembolsos">Español</a>
+</nav>
 
 <div class="container">
   <div class="legal">
@@ -72,7 +86,7 @@
     <p>Message us on WhatsApp at <strong>+1 (808) 492-8294</strong> or by email, with your name and purchase/appointment details. We will review your case under this policy.</p>
 
     <h2>7. Processing</h2>
-    <p>Approved refunds are issued to the original payment method (via Stripe or PayPal) and may take several business days to appear, depending on your bank.</p>
+    <p>Approved refunds are issued to the original payment method (via Stripe) and may take several business days to appear, depending on your bank.</p>
 
     <h2>8. Chargebacks</h2>
     <p>If you have any issue with a charge, contact us first: we resolve the vast majority of cases directly and faster than a chargeback.</p>

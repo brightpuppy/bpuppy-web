@@ -28,6 +28,11 @@
 .legal strong{color:var(--ink)}
 .legal .upd{font-size:13px;color:var(--ink-soft,#9a8c7e)}
 .legal .box{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.legal-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:24px 16px 0;max-width:820px;margin:0 auto}
+.legal-nav a{padding:8px 16px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--ink-2);text-decoration:none;background:var(--bg);transition:all .15s}
+.legal-nav a:hover{border-color:var(--orange);color:var(--orange)}
+.legal-nav a.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.legal-nav .lang-sep{align-self:center;color:var(--line);font-size:18px;margin:0 4px}
 </style>
 </head>
 <body>
@@ -39,6 +44,15 @@
     <p>The rules that govern your use of bpuppy.us and our puppy &amp; kitten sales, grooming and payment-plan services.</p>
   </div>
 </section>
+
+<nav class="legal-nav" aria-label="Legal documents">
+  <a href="/terms" class="active">Terms</a>
+  <a href="/privacy">Privacy</a>
+  <a href="/refunds">Refunds</a>
+  <a href="/garantia">Health Guarantee</a>
+  <span class="lang-sep">·</span>
+  <a href="/terminos">Español</a>
+</nav>
 
 <div class="container">
   <div class="legal">
@@ -65,7 +79,7 @@
     <p>Our plans let you pay toward your future puppy in installments (1 to 6 months). <strong>Payment-plan installments are refundable</strong> if you decide to withdraw before delivery. You may pay the balance at any time to bring your puppy home sooner. Installments do not guarantee a specific puppy until one is assigned.</p>
 
     <h2>6. Payments</h2>
-    <p>Payments are processed by secure providers (such as <strong>Stripe</strong> and <strong>PayPal</strong>). BrightPuppy <strong>does not store your card data</strong>. For your protection and ours, transactions may require <strong>3D Secure (3DS)</strong> authentication, especially for international payments. By paying, you authorize the charge and confirm you are entitled to use the payment method.</p>
+    <p>Payments are processed by secure providers (such as <strong>Stripe</strong> and integrated instruments like Klarna, Affirm or Cash App). BrightPuppy <strong>does not store your card data</strong>. For your protection and ours, transactions may require <strong>3D Secure (3DS)</strong> authentication, especially for international payments. By paying, you authorize the charge and confirm you are entitled to use the payment method.</p>
 
     <h2>7. Grooming</h2>
     <p>Grooming appointments are governed by the policies published on our <a href="/grooming#policies">Grooming</a> page: same-day booking lead time, cancellation and no-show policy, pickup time, and pickup &amp; delivery coverage radius.</p>

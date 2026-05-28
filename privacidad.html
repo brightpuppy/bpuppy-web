@@ -28,6 +28,11 @@
 .legal strong{color:var(--ink)}
 .legal .upd{font-size:13px;color:var(--ink-soft,#9a8c7e)}
 .legal .box{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.legal-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:24px 16px 0;max-width:820px;margin:0 auto}
+.legal-nav a{padding:8px 16px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--ink-2);text-decoration:none;background:var(--bg);transition:all .15s}
+.legal-nav a:hover{border-color:var(--orange);color:var(--orange)}
+.legal-nav a.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.legal-nav .lang-sep{align-self:center;color:var(--line);font-size:18px;margin:0 4px}
 </style>
 </head>
 <body>
@@ -40,6 +45,15 @@
   </div>
 </section>
 
+<nav class="legal-nav" aria-label="Documentos legales">
+  <a href="/terminos">Términos</a>
+  <a href="/privacidad" class="active">Privacidad</a>
+  <a href="/reembolsos">Reembolsos</a>
+  <a href="/garantia">Garantía</a>
+  <span class="lang-sep">·</span>
+  <a href="/privacy">English</a>
+</nav>
+
 <div class="container">
   <div class="legal">
     <p class="upd">Última actualización: 27 de mayo de 2026 · BrightPuppy LLC · Haines City, Florida, EE. UU.</p>
@@ -47,7 +61,7 @@
     <h2>1. Qué información recopilamos</h2>
     <ul>
       <li><strong>Datos que nos das:</strong> nombre, correo, teléfono, dirección/código postal y los detalles de tu solicitud (raza de interés, preferencias, mascota para grooming).</li>
-      <li><strong>Datos de pago:</strong> procesados de forma segura por <strong>Stripe</strong> y <strong>PayPal</strong>. <strong>No almacenamos los números de tu tarjeta</strong> en nuestros servidores.</li>
+      <li><strong>Datos de pago:</strong> procesados de forma segura por <strong>Stripe</strong> (e instrumentos integrados como Klarna, Affirm o Cash App). <strong>No almacenamos los números de tu tarjeta</strong> en nuestros servidores.</li>
       <li><strong>Datos de uso:</strong> páginas visitadas, dispositivo y navegador, mediante herramientas de analítica (p. ej. Google Analytics) y registros básicos.</li>
     </ul>
 
@@ -63,7 +77,7 @@
     <h2>3. Con quién la compartimos</h2>
     <p>Solo compartimos lo necesario con proveedores que nos ayudan a operar, bajo sus propias políticas de privacidad:</p>
     <ul>
-      <li><strong>Stripe / PayPal</strong> — procesamiento de pagos.</li>
+      <li><strong>Stripe</strong> — procesamiento de pagos (incluye Klarna, Affirm, Cash App).</li>
       <li><strong>Supabase</strong> — base de datos y almacenamiento seguro.</li>
       <li><strong>Cloudflare</strong> — alojamiento y seguridad del sitio.</li>
       <li><strong>Resend / Google Workspace</strong> — envío de correos.</li>

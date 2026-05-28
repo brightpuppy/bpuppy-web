@@ -28,6 +28,11 @@
 .legal strong{color:var(--ink)}
 .legal .upd{font-size:13px;color:var(--ink-soft,#9a8c7e)}
 .legal .box{background:var(--paper);border:1px solid var(--line);border-radius:14px;padding:16px 18px;margin:14px 0}
+.legal-nav{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;padding:24px 16px 0;max-width:820px;margin:0 auto}
+.legal-nav a{padding:8px 16px;border-radius:999px;border:1px solid var(--line);font-size:13px;font-weight:700;color:var(--ink-2);text-decoration:none;background:var(--bg);transition:all .15s}
+.legal-nav a:hover{border-color:var(--orange);color:var(--orange)}
+.legal-nav a.active{background:var(--ink);color:#fff;border-color:var(--ink)}
+.legal-nav .lang-sep{align-self:center;color:var(--line);font-size:18px;margin:0 4px}
 </style>
 </head>
 <body>
@@ -40,6 +45,15 @@
   </div>
 </section>
 
+<nav class="legal-nav" aria-label="Legal documents">
+  <a href="/terms">Terms</a>
+  <a href="/privacy" class="active">Privacy</a>
+  <a href="/refunds">Refunds</a>
+  <a href="/garantia">Health Guarantee</a>
+  <span class="lang-sep">·</span>
+  <a href="/privacidad">Español</a>
+</nav>
+
 <div class="container">
   <div class="legal">
     <p class="upd">Last updated: May 27, 2026 · BrightPuppy LLC · Haines City, Florida, USA · <a href="/privacidad">Español</a></p>
@@ -47,7 +61,7 @@
     <h2>1. Information we collect</h2>
     <ul>
       <li><strong>Data you give us:</strong> name, email, phone, address/ZIP code and the details of your request (breed of interest, preferences, grooming pet).</li>
-      <li><strong>Payment data:</strong> processed securely by <strong>Stripe</strong> and <strong>PayPal</strong>. We <strong>do not store your card numbers</strong> on our servers.</li>
+      <li><strong>Payment data:</strong> processed securely by <strong>Stripe</strong> (and integrated instruments like Klarna, Affirm or Cash App). We <strong>do not store your card numbers</strong> on our servers.</li>
       <li><strong>Usage data:</strong> pages visited, device and browser, via analytics tools (e.g., Google Analytics) and basic logs.</li>
     </ul>
 
@@ -63,7 +77,7 @@
     <h2>3. Who we share it with</h2>
     <p>We share only what is necessary with providers that help us operate, under their own privacy policies:</p>
     <ul>
-      <li><strong>Stripe / PayPal</strong> — payment processing.</li>
+      <li><strong>Stripe</strong> — payment processing (includes Klarna, Affirm, Cash App).</li>
       <li><strong>Supabase</strong> — secure database and storage.</li>
       <li><strong>Cloudflare</strong> — site hosting and security.</li>
       <li><strong>Resend / Google Workspace</strong> — email delivery.</li>
