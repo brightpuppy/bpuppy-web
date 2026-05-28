@@ -99,7 +99,7 @@ function FinForm() {
     });
   }
   function composeMsg() {
-    return "Hola BPuppy! Me interesa financiar una mascota.\n\nNombre: " + form.name + "\nEmail: " + form.email + "\nTel\xE9fono: " + form.phone + "\nMascota: " + (form.pet === "perro" ? "Cachorro" : "Gatito") + (form.breed ? " \u2014 " + form.breed : "") + "\nPlan preferido: " + form.plan + "\n" + (form.notes ? "Notas: " + form.notes : "");
+    return "Hola! Me interesa financiar una mascota.\n\nNombre: " + form.name + "\nEmail: " + form.email + "\nTel\xE9fono: " + form.phone + "\nMascota: " + (form.pet === "perro" ? "Cachorro" : "Gatito") + (form.breed ? " \u2014 " + form.breed : "") + "\nPlan preferido: " + form.plan + "\n" + (form.notes ? "Notas: " + form.notes : "");
   }
   function guard() {
     if (!form.name || !form.phone) {

@@ -126,7 +126,7 @@ function BookingCalendar() {
   const buildWhatsApp = () => {
     const dateStr = `${day} de ${MONTHS[month]}, ${year}`;
     const svList = [...selectedServices].join(', ');
-    const msg = encodeURIComponent(`Hola BPuppy! Quiero agendar grooming:
+    const msg = encodeURIComponent(`Hola! Quiero agendar grooming:
 
 🐾 Mascota: ${petName}
 📐 Tamaño: ${size}
@@ -178,13 +178,14 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 8, marginBottom: 14 }}>
             {SERVICES.map(sv => {
               const sel = selectedServices.has(sv.name);
-              const price = size ? sv.prices[sizeKey] : null;
+              const price = size ? sv.prices[sizeKey] : sv.prices['s'];
+              const isFrom = !size;
               return (
                 <button key={sv.name} onClick={() => toggleService(sv.name)} style={{ padding:'12px 10px', borderRadius:14, border:`2px solid ${sel?'var(--orange)':'var(--line)'}`, background: sel?'rgba(245,130,32,0.07)':'var(--bg)', cursor:'pointer', fontFamily:'inherit', transition:'all .15s', textAlign:'left', position:'relative' }}>
                   {sel && <span style={{ position:'absolute', top:8, right:8, width:18, height:18, borderRadius:'50%', background:'var(--orange)', color:'#fff', fontSize:10, fontWeight:800, display:'grid', placeItems:'center' }}>✓</span>}
                   <div style={{ fontSize:20, marginBottom:4 }}>{sv.emoji}</div>
                   <div style={{ fontSize:12.5, fontWeight:700, color:'var(--ink)', lineHeight:1.2, marginBottom:3 }}>{sv.name}</div>
-                  {price !== null && <div style={{ fontSize:13, fontWeight:800, color: sel?'var(--orange)':'var(--ink-2)' }}>${price}</div>}
+                  <div style={{ fontSize:13, fontWeight:800, color: sel?'var(--orange)':'var(--ink-2)' }}>{isFrom?'desde ':''}${price}</div>
                 </button>
               );
             })}
@@ -665,7 +666,21 @@ function GroomingApp() {
                     </li>
                   ))}
                 </ul>
-                <a href="https://wa.me/18084928294" target="_blank" rel="noopener noreferrer" style={{ display: 'block', textAlign: 'center', padding: '12px', borderRadius: 12, background: m.popular ? 'rgba(255,255,255,0.2)' : m.color, color: '#fff', fontFamily: 'inherit', fontSize: 13, fontWeight: 700, textDecoration: 'none' }}>Suscribirse ahora</a>
+                <a href="#" onClick={(e) => {
+                  e.preventDefault();
+                  const tk = (/esencial/i.test(m.name) ? 'esencial' : /vip/i.test(m.name) ? 'vip' : 'total') + '_' + billing;
+                  const el = e.currentTarget;
+                  el.textContent = 'Redirigiendo a pago seguro...';
+                  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+                  fetch('https://oqqwmcplljirbreowrll.supabase.co/functions/v1/stripe_membership', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY },
+                    body: JSON.stringify({ action: 'checkout', plan_key: tk, success_url: 'https://bpuppy.us/grooming', cancel_url: location.href })
+                  })
+                  .then(r => r.json())
+                  .then(c => { if (c.url) location.href = c.url; else { console.error('stripe_membership error:', c); el.textContent = (c && c.error) || 'Reintentar'; } })
+                  .catch(err => { console.error(err); el.textContent = 'Reintentar'; });
+                }} style={{ display: 'block', textAlign: 'center', padding: '12px', borderRadius: 12, background: m.popular ? 'rgba(255,255,255,0.2)' : m.color, color: '#fff', fontFamily: 'inherit', fontSize: 13, fontWeight: 700, textDecoration: 'none', cursor: 'pointer' }}>Suscribirse ahora</a>
               </div>
             ))}
           </div>
