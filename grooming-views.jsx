@@ -584,12 +584,6 @@ function GroomingApp() {
                 </div>
               ))}
             </div>
-            <div style={{ marginTop: 24, padding: '16px 18px', background: 'rgba(37,211,102,0.08)', borderRadius: 12, border: '1px solid rgba(37,211,102,0.25)' }}>
-              <p style={{ fontSize: 12.5, color: 'var(--ink-2)', margin: '0 0 10px', lineHeight: 1.55 }}>
-                💡 <strong>Recomendamos Acuity Scheduling</strong> para gestionar tu agenda desde el celular: confirmaciones automáticas, recordatorios a clientes, pagos de depósito y reportes. Desde $20/mes.
-              </p>
-              <a href="https://acuityscheduling.com" target="_blank" rel="noopener noreferrer" style={{ fontSize: 12, fontWeight: 700, color: '#1EB87A', textDecoration: 'none' }}>Ver Acuity Scheduling →</a>
-            </div>
           </div>
           <BookingCalendar />
         </div>
