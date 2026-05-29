@@ -26,7 +26,7 @@ function CachorrosEntregados() {
       setStatus("error");
       return;
     }
-    ceSb.from("puppies").select("*").eq("status", "sold").order("updated_at", { ascending: false }).then(({ data, error }) => {
+    ceSb.from("puppies_public").select("*").eq("status", "sold").order("created_at", { ascending: false }).then(({ data, error }) => {
       if (error) {
         setStatus("error");
         return;

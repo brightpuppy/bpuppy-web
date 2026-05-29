@@ -450,7 +450,7 @@ function PuppyDetalle() {
     }
     (async function() {
       try {
-        var r = await pdSb.from("puppies").select("*").eq("id", id).single();
+        var r = await pdSb.from("puppies_public").select("*").eq("id", id).single();
         if (r.error || !r.data) throw new Error("Not found");
         var p2 = r.data;
         document.title = (p2.name || "Cachorro") + " \u2014 BPuppy";
@@ -465,10 +465,10 @@ function PuppyDetalle() {
         if (p2.dad_id) tasks.push(pdSb.from("parent_dogs").select("*").eq("id", p2.dad_id).maybeSingle().then(function(x) {
           dad = x.data;
         }));
-        if (p2.litter_id) tasks.push(pdSb.from("puppies").select("*").eq("litter_id", p2.litter_id).neq("id", id).then(function(x) {
+        if (p2.litter_id) tasks.push(pdSb.from("puppies_public").select("*").eq("litter_id", p2.litter_id).neq("id", id).then(function(x) {
           siblings = x.data || [];
         }));
-        if (p2.breed) tasks.push(pdSb.from("puppies").select("*").eq("breed", p2.breed).neq("id", id).in("status", ["available", "reserved"]).limit(6).then(function(x) {
+        if (p2.breed) tasks.push(pdSb.from("puppies_public").select("*").eq("breed", p2.breed).neq("id", id).in("status", ["available", "reserved"]).limit(6).then(function(x) {
           similar = x.data || [];
         }));
         await Promise.all(tasks);

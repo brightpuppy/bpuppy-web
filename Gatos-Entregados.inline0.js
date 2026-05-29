@@ -20,7 +20,7 @@ function GatosEntregados() {
       setStatus("error");
       return;
     }
-    geSb.from("cats").select("*").eq("status", "sold").order("updated_at", { ascending: false }).then(({ data, error }) => {
+    geSb.from("cats_public").select("*").eq("status", "sold").order("created_at", { ascending: false }).then(({ data, error }) => {
       if (error) {
         setStatus("error");
         return;

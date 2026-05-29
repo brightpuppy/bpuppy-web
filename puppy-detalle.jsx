@@ -680,7 +680,7 @@ function PuppyDetalle() {
 
     (async function() {
       try {
-        var r = await pdSb.from('puppies').select('*').eq('id', id).single();
+        var r = await pdSb.from('puppies_public').select('*').eq('id', id).single();
         if (r.error || !r.data) throw new Error('Not found');
         var p = r.data;
         document.title = (p.name || 'Cachorro') + ' — BPuppy';
@@ -690,8 +690,8 @@ function PuppyDetalle() {
         if (p.breed)   tasks.push(pdSb.from('breeds').select('*').ilike('name', p.breed).maybeSingle().then(function(x){ breed = x.data; }));
         if (p.mom_id)  tasks.push(pdSb.from('parent_dogs').select('*').eq('id', p.mom_id).maybeSingle().then(function(x){ mom = x.data; }));
         if (p.dad_id)  tasks.push(pdSb.from('parent_dogs').select('*').eq('id', p.dad_id).maybeSingle().then(function(x){ dad = x.data; }));
-        if (p.litter_id) tasks.push(pdSb.from('puppies').select('*').eq('litter_id', p.litter_id).neq('id', id).then(function(x){ siblings = x.data || []; }));
-        if (p.breed)   tasks.push(pdSb.from('puppies').select('*').eq('breed', p.breed).neq('id', id).in('status', ['available','reserved']).limit(6).then(function(x){ similar = x.data || []; }));
+        if (p.litter_id) tasks.push(pdSb.from('puppies_public').select('*').eq('litter_id', p.litter_id).neq('id', id).then(function(x){ siblings = x.data || []; }));
+        if (p.breed)   tasks.push(pdSb.from('puppies_public').select('*').eq('breed', p.breed).neq('id', id).in('status', ['available','reserved']).limit(6).then(function(x){ similar = x.data || []; }));
         await Promise.all(tasks);
         setState({ status:'ok', puppy:p, breed, mom, dad, siblings, similar });
       } catch(e) {
