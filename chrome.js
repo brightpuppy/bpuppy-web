@@ -364,6 +364,8 @@ Object.assign(window, { Header, Footer, PawCursor, useReveal, ComingSoon, useSit
 // Solo se trackea DESPUÉS de que el visitante acepta ("all").
 // ───────────────────────────────────────────────────────────
 (function(){
+  if (window.__bpCookieInit) return;   // evita doble init (p.ej. si tambien carga bp-cookies.js)
+  window.__bpCookieInit = 1;
   var SUPA_URL = "https://oqqwmcplljirbreowrll.supabase.co";
   var SUPA_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
   var KEY = "bp-cookie-consent";
