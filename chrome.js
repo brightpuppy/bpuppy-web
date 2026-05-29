@@ -397,24 +397,27 @@ Object.assign(window, { Header, Footer, PawCursor, useReveal, ComingSoon, useSit
     if(document.getElementById("bp-cookie-banner")) return;
     var wrap=document.createElement("div");
     wrap.id="bp-cookie-banner";
-    wrap.style.cssText="position:fixed;left:16px;right:16px;bottom:16px;max-width:560px;margin:0 auto;background:#2D2421;color:#fff;border-radius:16px;padding:18px 20px;box-shadow:0 12px 40px -8px rgba(0,0,0,.5);z-index:99999;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif";
+    wrap.style.cssText="position:fixed;left:16px;right:16px;bottom:16px;max-width:430px;margin:0 auto;background:#2D2421;color:#fff;border-radius:14px;padding:14px 16px;box-shadow:0 12px 40px -8px rgba(0,0,0,.5);z-index:99999;font-family:system-ui,-apple-system,Segoe UI,Roboto,sans-serif";
     wrap.innerHTML =
-      '<div style="font-size:13.5px;line-height:1.55;margin-bottom:14px">'+
-        '<strong style="display:block;font-size:15px;margin-bottom:4px">🍪 '+tt("Cookies","Cookies")+'</strong>'+
-        tt("Usamos cookies para mejorar tu experiencia y entender el tráfico del sitio. Puedes aceptar todas o configurar cuáles permites.",
-           "We use cookies to improve your experience and understand site traffic. You can accept all or configure which ones you allow.")+
+      '<button id="bp-cookie-x" aria-label="Cerrar" style="position:absolute;top:6px;right:9px;background:transparent;border:none;color:rgba(255,255,255,.65);font-size:17px;line-height:1;cursor:pointer;padding:4px">✕</button>'+
+      '<div style="font-size:11.5px;line-height:1.45;margin-bottom:11px;padding-right:20px">'+
+        '<strong style="display:block;font-size:12.5px;margin-bottom:3px">🍪 '+tt("Cookies","Cookies")+'</strong>'+
+        tt("Usamos cookies para mejorar tu experiencia y medir el tráfico del sitio.",
+           "We use cookies to improve your experience and measure site traffic.")+
       '</div>'+
-      '<div id="bp-cookie-config" style="display:none;background:rgba(255,255,255,.07);border-radius:10px;padding:12px;margin-bottom:14px;font-size:13px">'+
-        '<label style="display:flex;align-items:center;gap:10px;margin-bottom:8px;opacity:.7"><input type="checkbox" checked disabled style="width:16px;height:16px">'+tt("Esenciales (siempre activas)","Essential (always on)")+'</label>'+
-        '<label style="display:flex;align-items:center;gap:10px;cursor:pointer"><input type="checkbox" id="bp-cookie-analytics" style="width:16px;height:16px;accent-color:#FF6B1A">'+tt("Analíticas (medir visitas)","Analytics (measure visits)")+'</label>'+
+      '<div id="bp-cookie-config" style="display:none;background:rgba(255,255,255,.07);border-radius:10px;padding:10px;margin-bottom:11px;font-size:11.5px">'+
+        '<label style="display:flex;align-items:center;gap:9px;margin-bottom:7px;opacity:.7"><input type="checkbox" checked disabled style="width:15px;height:15px">'+tt("Esenciales (siempre activas)","Essential (always on)")+'</label>'+
+        '<label style="display:flex;align-items:center;gap:9px;cursor:pointer"><input type="checkbox" id="bp-cookie-analytics" checked style="width:15px;height:15px;accent-color:#FF6B1A">'+tt("Analíticas (medir visitas)","Analytics (measure visits)")+'</label>'+
       '</div>'+
-      '<div style="display:flex;gap:10px;flex-wrap:wrap;justify-content:flex-end">'+
-        '<button id="bp-cookie-cfg-btn" style="background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);padding:9px 16px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer">'+tt("Configurar","Configure")+'</button>'+
-        '<button id="bp-cookie-save" style="display:none;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);padding:9px 16px;border-radius:999px;font-size:13px;font-weight:600;cursor:pointer">'+tt("Guardar selección","Save selection")+'</button>'+
-        '<button id="bp-cookie-accept" style="background:#FF6B1A;color:#fff;border:none;padding:9px 20px;border-radius:999px;font-size:13px;font-weight:800;cursor:pointer">'+tt("Aceptar","Accept")+'</button>'+
+      '<div style="display:flex;gap:8px;align-items:center;justify-content:flex-end">'+
+        '<button id="bp-cookie-cfg-btn" style="background:transparent;color:rgba(255,255,255,.65);border:none;padding:2px 6px;font-size:10.5px;font-weight:500;cursor:pointer;text-decoration:underline">'+tt("Configurar","Configure")+'</button>'+
+        '<button id="bp-cookie-save" style="display:none;background:transparent;color:#fff;border:1px solid rgba(255,255,255,.4);padding:6px 13px;border-radius:999px;font-size:12px;font-weight:600;cursor:pointer">'+tt("Guardar","Save")+'</button>'+
+        '<button id="bp-cookie-accept" style="background:#FF6B1A;color:#fff;border:none;padding:8px 22px;border-radius:999px;font-size:13px;font-weight:800;cursor:pointer">'+tt("Aceptar","Accept")+'</button>'+
       '</div>';
     document.body.appendChild(wrap);
-    document.getElementById("bp-cookie-accept").onclick=function(){ setConsent("all"); removeBanner(); track(); };
+    var acceptAll=function(){ setConsent("all"); removeBanner(); track(); };
+    document.getElementById("bp-cookie-accept").onclick=acceptAll;
+    document.getElementById("bp-cookie-x").onclick=acceptAll;   // cerrar = aceptar
     document.getElementById("bp-cookie-cfg-btn").onclick=function(){
       document.getElementById("bp-cookie-config").style.display="block";
       this.style.display="none";
