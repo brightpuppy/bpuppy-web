@@ -49,7 +49,7 @@
 .bcard{border-radius:20px;background:var(--paper);border:1px solid var(--line);overflow:hidden;cursor:pointer;transition:transform .3s,box-shadow .3s}
 .bcard:hover{transform:translateY(-5px);box-shadow:0 20px 50px -15px rgba(124,92,191,.2)}
 .bcard-photo{aspect-ratio:4/3;background:linear-gradient(135deg,var(--cat-light),var(--cat-mid));display:grid;place-items:center;position:relative;overflow:hidden}
-.bcard-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.bcard-photo img{width:100%;height:100%;object-fit:cover;object-position:center 72%;display:block}
 .bcard-photo-ph{font-size:56px;filter:drop-shadow(0 4px 12px rgba(124,92,191,.15))}
 .bcard-badges{position:absolute;bottom:10px;left:10px;display:flex;gap:6px}
 .bcard-badge{padding:3px 10px;border-radius:999px;font-size:10px;font-weight:700;letter-spacing:.04em;backdrop-filter:blur(8px)}
@@ -72,7 +72,7 @@
 .modal-close:hover{background:var(--line)}
 .modal-grid{display:grid;grid-template-columns:1fr 1.4fr;min-height:400px}
 .modal-photo{background:linear-gradient(135deg,var(--cat-light),var(--cat-mid));border-radius:28px 0 0 28px;display:grid;place-items:center;min-height:320px;overflow:hidden}
-.modal-photo img{width:100%;height:100%;object-fit:cover;display:block}
+.modal-photo img{width:100%;height:100%;object-fit:cover;object-position:center 70%;display:block}
 .modal-photo-ph{font-size:100px;filter:drop-shadow(0 8px 24px rgba(124,92,191,.15))}
 .modal-body{padding:28px;overflow-y:auto}
 .modal-name{font-family:var(--display);font-size:clamp(24px,3vw,36px);font-weight:600;letter-spacing:-.025em;margin:0 0 4px}
