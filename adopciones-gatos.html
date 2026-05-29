@@ -16,8 +16,9 @@
 :root { --adopt-rose: #E85D75; --adopt-light: #FFF0F2; --adopt-mid: #FFDDE3; }
 
 /* Hero */
-.page-hero { background: linear-gradient(135deg, #D14B63 0%, #B83A52 100%); color: #fff; padding: 140px 0 80px; position: relative; overflow: hidden; }
-.page-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(60% 70% at 80% 20%, rgba(255,255,255,0.08), transparent 60%); pointer-events:none; }
+.page-hero { background: linear-gradient(100deg, rgba(184,58,82,0.86) 0%, rgba(184,58,82,0.55) 45%, rgba(184,58,82,0.12) 100%), url("assets/header-adopciones-gatos.webp") right 25%/cover no-repeat, #B83A52; color: #fff; padding: 140px 0 80px; position: relative; overflow: hidden; }
+.page-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(45% 60% at 18% 50%, rgba(0,0,0,0.35), transparent 70%); pointer-events:none; }
+.page-hero h1,.page-hero p{text-shadow:0 2px 12px rgba(0,0,0,0.35)}
 .page-hero .container { position: relative; z-index: 2; }
 .page-hero .back-link { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color:rgba(255,255,255,0.6); margin-bottom:28px; transition:color .2s; }
 .page-hero .back-link:hover { color:#fff; }

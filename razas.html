@@ -21,10 +21,12 @@
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
 <style>
-.razas-hero{background:linear-gradient(100deg,rgba(45,36,33,0.78) 0%,rgba(45,36,33,0.55) 40%,rgba(45,36,33,0.15) 100%),url("assets/header-razas.jpg") center right/cover no-repeat,var(--dark-sec,#EDE4DA);padding:120px 0 60px;position:relative;overflow:hidden;color:#fff}
-.razas-hero h1{font-family:var(--display);font-size:clamp(40px,7vw,84px);font-weight:600;letter-spacing:-0.03em;line-height:.95;margin:0 0 16px;color:#fff}
+.razas-hero{background:linear-gradient(95deg,rgba(45,36,33,0.82) 0%,rgba(45,36,33,0.55) 45%,rgba(45,36,33,0.12) 100%),url("assets/header-razas.webp") right 25%/cover no-repeat,var(--dark-sec,#3a2f2a);padding:120px 0 60px;position:relative;overflow:hidden;color:#fff}
+.razas-hero h1{font-family:var(--display);font-size:clamp(40px,7vw,84px);font-weight:600;letter-spacing:-0.03em;line-height:.95;margin:0 0 16px;color:#fff;text-shadow:0 2px 12px rgba(0,0,0,0.35)}
 .razas-hero h1 em{font-family:var(--serif);font-style:italic;color:#FFB877;font-weight:400}
-.razas-hero p{color:#F0EEF8;font-size:18px;max-width:50ch;line-height:1.55;margin:0}
+.razas-hero p{color:#F5F0EA;font-size:18px;max-width:50ch;line-height:1.55;margin:0;text-shadow:0 1px 8px rgba(0,0,0,0.4)}
+.razas-hero .eyebrow,.razas-hero [class*="eyebrow"]{color:#FFB877 !important}
+@media(max-width:700px){.razas-hero{background:linear-gradient(180deg,rgba(45,36,33,0.6) 0%,rgba(45,36,33,0.85) 100%),url("assets/header-razas.webp") center 20%/cover no-repeat}}
 .filter-bar{position:sticky;top:60px;z-index:90;background:rgba(255,245,235,.92);backdrop-filter:blur(18px);border-bottom:1px solid var(--line);padding:16px 0}
 .filter-row{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-bottom:8px}
 .filter-row:last-child{margin-bottom:0}

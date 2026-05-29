@@ -234,6 +234,7 @@ const BLOG = [
   {
     id: 11,
     cat: "bienestar",
+    img: "assets/blog-11.webp",
     emoji: "\u{1F474}",
     color: "#1EB87A",
     title: "Perros para personas mayores: la ciencia dice que alargan la vida",
@@ -255,6 +256,7 @@ const BLOG = [
   {
     id: 12,
     cat: "familia",
+    img: "assets/blog-12.webp",
     emoji: "\u{1F468}\u200D\u{1F469}\u200D\u{1F467}",
     color: "#E85D75",
     title: "Por qu\xE9 un perro transforma una familia con hijos",
@@ -276,6 +278,7 @@ const BLOG = [
   {
     id: 13,
     cat: "familia",
+    img: "assets/blog-13.webp",
     emoji: "\u{1F9E9}",
     color: "#7C3AED",
     title: "Perros y ni\xF1os con autismo: v\xEDnculos que la ciencia confirma",
@@ -297,6 +300,7 @@ const BLOG = [
   {
     id: 14,
     cat: "bienestar",
+    img: "assets/blog-14.webp",
     emoji: "\u{1F9E0}",
     color: "#1EB87A",
     title: "C\xF3mo un perro puede reducir tu ansiedad (con datos reales)",
@@ -319,6 +323,7 @@ const BLOG = [
   {
     id: 15,
     cat: "lifestyle",
+    img: "assets/blog-15.webp",
     emoji: "\u{1F3D9}\uFE0F",
     color: "#7C3AED",
     title: "Vivir con un perro en apartamento: la gu\xEDa honesta",
@@ -340,6 +345,7 @@ const BLOG = [
   {
     id: 16,
     cat: "lifestyle",
+    img: "assets/blog-16.webp",
     emoji: "\u{1F4BB}",
     color: "#E86535",
     title: "El perro y el home office: la combinaci\xF3n perfecta (si lo haces bien)",
@@ -361,6 +367,7 @@ const BLOG = [
   {
     id: 17,
     cat: "lifestyle",
+    img: "assets/blog-17.webp",
     emoji: "\u{1F4F1}",
     color: "#1E90FF",
     title: "Las mejores apps para due\xF1os de perros en 2025",
@@ -382,6 +389,7 @@ const BLOG = [
   {
     id: 18,
     cat: "lifestyle",
+    img: "assets/blog-18.webp",
     emoji: "\u2615",
     color: "#2D6A4F",
     title: "El boom de los dog caf\xE9s: una tendencia global que lleg\xF3 para quedarse",
@@ -404,6 +412,7 @@ const BLOG = [
   {
     id: 19,
     cat: "guias",
+    img: "assets/blog-19.webp",
     emoji: "\u{1F4CB}",
     color: "#2D6A4F",
     title: "C\xF3mo obtener el certificado ESA en USA: gu\xEDa paso a paso",
@@ -425,6 +434,7 @@ const BLOG = [
   {
     id: 20,
     cat: "viaje",
+    img: "assets/blog-20.webp",
     emoji: "\u2708\uFE0F",
     color: "#E86535",
     title: "Viajar con tu perro: vuelos, hoteles y fronteras",
@@ -446,6 +456,7 @@ const BLOG = [
   {
     id: 21,
     cat: "guias",
+    img: "assets/blog-21.webp",
     emoji: "\u{1F969}",
     color: "#E85D75",
     title: "Alimentaci\xF3n real para tu perro: m\xE1s all\xE1 del croquetismo",
@@ -467,6 +478,7 @@ const BLOG = [
   {
     id: 22,
     cat: "guias",
+    img: "assets/blog-22.webp",
     emoji: "\u{1F423}",
     color: "#F58220",
     title: "La primera semana con un cachorro: lo que nadie te cuenta",
@@ -488,6 +500,7 @@ const BLOG = [
   {
     id: 23,
     cat: "guias",
+    img: "assets/blog-23.webp",
     emoji: "\u{1F30D}",
     color: "#1EB87A",
     title: "Socializaci\xF3n canina: el error que comete el 90% de los due\xF1os",
@@ -510,6 +523,7 @@ const BLOG = [
   {
     id: 24,
     cat: "familia",
+    img: "assets/blog-24.webp",
     emoji: "\u{1F9EC}",
     color: "#E85D75",
     title: "Por qu\xE9 los millennials prefieren perros (los datos lo confirman)",
@@ -532,6 +546,7 @@ const BLOG = [
   {
     id: 25,
     cat: "historias",
+    img: "assets/blog-25.webp",
     emoji: "\u{1F1EF}\u{1F1F5}",
     color: "#1E90FF",
     title: "Hachiko: la historia real del amor m\xE1s leal del mundo",
@@ -553,6 +568,7 @@ const BLOG = [
   {
     id: 26,
     cat: "historias",
+    img: "assets/blog-26.webp",
     emoji: "\u{1F3C1}",
     color: "#E86535",
     title: "Arthur: el perro que se uni\xF3 a una carrera de aventura en Ecuador",
@@ -574,6 +590,7 @@ const BLOG = [
   {
     id: 27,
     cat: "historias",
+    img: "assets/blog-27.webp",
     emoji: "\u{1F687}",
     color: "#7C3AED",
     title: "Amsterdam: la ciudad m\xE1s dog-friendly del mundo",
@@ -595,6 +612,7 @@ const BLOG = [
   {
     id: 28,
     cat: "historias",
+    img: "assets/blog-28.webp",
     emoji: "\u{1F3E0}",
     color: "#1EB87A",
     title: "La pandemia que nos dio perros: una generaci\xF3n de adoptantes",
@@ -616,6 +634,7 @@ const BLOG = [
   {
     id: 29,
     cat: "historias",
+    img: "assets/blog-29.webp",
     emoji: "\u{1F30F}",
     color: "#1E90FF",
     title: "Los pueblos de Jap\xF3n gobernados por perros (y gatos)",
@@ -637,6 +656,7 @@ const BLOG = [
   {
     id: 30,
     cat: "historias",
+    img: "assets/blog-30.webp",
     emoji: "\u{1F3E5}",
     color: "#E85D75",
     title: "La ciencia de los perros de terapia en hospitales",
@@ -658,6 +678,7 @@ const BLOG = [
   {
     id: 31,
     cat: "historias",
+    img: "assets/blog-31.webp",
     emoji: "\u{1F31F}",
     color: "#F58220",
     title: "El refugio de Texas que adopt\xF3 1,000 perros en un a\xF1o",
@@ -680,6 +701,7 @@ const BLOG = [
   {
     id: 32,
     cat: "viaje",
+    img: "assets/blog-32.webp",
     emoji: "\u{1F334}",
     color: "#1EB87A",
     title: "Los mejores parques dog-friendly de Miami y sus alrededores",
@@ -701,6 +723,7 @@ const BLOG = [
   {
     id: 33,
     cat: "viaje",
+    img: "assets/blog-33.webp",
     emoji: "\u{1F6CE}\uFE0F",
     color: "#7C3AED",
     title: "Hoteles y restaurantes pet-friendly en USA: c\xF3mo encontrarlos (de verdad)",
@@ -722,6 +745,7 @@ const BLOG = [
   {
     id: 34,
     cat: "guias",
+    img: "assets/blog-34.webp",
     emoji: "\u{1F489}",
     color: "#2D6A4F",
     title: "Las vacunas que tu perro necesita y el calendario real",

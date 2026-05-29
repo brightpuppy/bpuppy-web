@@ -5,6 +5,7 @@ const BLOG_EXTRA = [
   {
     id: 35,
     cat: "guias",
+    img: "assets/blog-35.webp",
     emoji: "\u{1F392}",
     color: "#F58220",
     title: "Los 15 accesorios esenciales para el nuevo due\xF1o de perro",
@@ -37,6 +38,7 @@ const BLOG_EXTRA = [
   {
     id: 36,
     cat: "guias",
+    img: "assets/blog-36.webp",
     emoji: "\u{1F431}",
     color: "#E85D75",
     title: "Los 12 accesorios que todo due\xF1o de gato necesita desde el d\xEDa uno",
@@ -68,6 +70,7 @@ const BLOG_EXTRA = [
   {
     id: 37,
     cat: "grooming",
+    img: "assets/blog-37.webp",
     emoji: "\u2702\uFE0F",
     color: "#9C27B0",
     title: "Las tendencias de grooming que arrasan en 2025",
@@ -94,6 +97,7 @@ const BLOG_EXTRA = [
   {
     id: 38,
     cat: "grooming",
+    img: "assets/blog-38.webp",
     emoji: "\u{1F415}",
     color: "#7C3AED",
     title: "El corte perfecto para cada raza: gu\xEDa visual para due\xF1os",
@@ -121,6 +125,7 @@ const BLOG_EXTRA = [
   {
     id: 39,
     cat: "grooming",
+    img: "assets/blog-39.webp",
     emoji: "\u{1F6C1}",
     color: "#1EB87A",
     title: "C\xF3mo ba\xF1ar a tu perro en casa sin traumatizarlo",
@@ -147,6 +152,7 @@ const BLOG_EXTRA = [
   {
     id: 40,
     cat: "grooming",
+    img: "assets/blog-40.webp",
     emoji: "\u{1F63A}",
     color: "#E86535",
     title: "Grooming para gatos: lo que la mayor\xEDa de due\xF1os no sabe",
@@ -173,6 +179,7 @@ const BLOG_EXTRA = [
   {
     id: 41,
     cat: "grooming",
+    img: "assets/blog-41.webp",
     emoji: "\u{1F31F}",
     color: "#1E90FF",
     title: "Grooming creativo: las transformaciones que se volvieron virales",
