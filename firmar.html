@@ -1,0 +1,175 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1"/>
+<title>Firmar contrato — BrightPuppy</title>
+<meta name="robots" content="noindex"/>
+<link rel="icon" href="assets/favicon.webp">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@600;700;800&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://cdn.jsdelivr.net/npm/signature_pad@4.1.7/dist/signature_pad.umd.min.js"></script>
+<style>
+:root{--orange:#F58220;--orange2:#C2521E;--ink:#2D2421;--ink2:#6f6055;--paper:#F7F1E6;--bg:#fff;--line:#e4d7bf;--green:#1EB87A;}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);min-height:100vh}
+header{background:#fff;border-bottom:1px solid var(--line);padding:14px 20px;display:flex;align-items:center;gap:12px;position:sticky;top:0;z-index:10}
+header img{height:36px}
+header b{font-family:'Bricolage Grotesque',sans-serif;font-size:16px;font-weight:800;letter-spacing:-0.01em}
+.wrap{max-width:820px;margin:0 auto;padding:24px 18px 80px}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;margin-bottom:16px;box-shadow:0 4px 18px rgba(45,36,33,0.06)}
+.hero{text-align:center;padding:26px 18px 18px}
+.hero .eyebrow{font-size:11px;font-weight:800;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:8px}
+.hero h1{font-family:'Instrument Serif',serif;font-size:clamp(28px,5vw,42px);font-weight:400;line-height:1.05;margin:0 0 8px}
+.hero h1 em{font-style:italic;color:var(--orange)}
+.hero p{color:var(--ink2);font-size:15px;max-width:46ch;margin:0 auto;line-height:1.55}
+.preview{background:var(--paper);border-radius:14px;padding:18px;font-family:Georgia,serif;font-size:13px;line-height:1.65;max-height:340px;overflow-y:auto;white-space:pre-wrap;color:#2D2421;border:1px solid var(--line)}
+.sig-h{font-size:13px;font-weight:800;color:var(--ink);margin-bottom:6px;letter-spacing:.04em;text-transform:uppercase}
+.sig-sub{font-size:12.5px;color:var(--ink2);margin-bottom:10px;line-height:1.5}
+.pad-box{background:#fff;border:2px dashed var(--orange);border-radius:14px;padding:6px;position:relative;touch-action:none}
+canvas{display:block;width:100%;height:200px;border-radius:10px;cursor:crosshair;background:#fff}
+.pad-tools{display:flex;justify-content:space-between;align-items:center;margin-top:10px}
+.pad-tools button{padding:7px 14px;border-radius:999px;font-size:12.5px;font-weight:700;cursor:pointer;border:1px solid var(--line);background:var(--bg);color:var(--ink2)}
+.pad-tools button:hover{border-color:var(--orange);color:var(--orange)}
+.accept{display:flex;gap:11px;align-items:flex-start;margin:14px 0;cursor:pointer;font-size:13px;color:var(--ink2);line-height:1.5}
+.accept input{margin-top:2px;width:18px;height:18px;flex-shrink:0;accent-color:var(--orange)}
+.cta{display:block;width:100%;padding:16px;border-radius:14px;border:none;background:var(--orange);color:#fff;font-family:inherit;font-size:16px;font-weight:800;cursor:pointer;box-shadow:0 10px 24px -8px rgba(245,130,32,.5)}
+.cta:disabled{opacity:.5;cursor:default;box-shadow:none}
+.msg{margin-top:14px;border-radius:12px;padding:14px 16px;font-size:14px;font-weight:600;line-height:1.5}
+.msg.ok{background:rgba(30,184,122,.10);color:#0f7a52;border:1px solid rgba(30,184,122,.3)}
+.msg.err{background:rgba(194,82,30,.10);color:var(--orange2);border:1px solid rgba(194,82,30,.3)}
+.loading{display:flex;align-items:center;justify-content:center;flex-direction:column;gap:14px;padding:80px 20px;color:var(--ink2)}
+.spin{width:32px;height:32px;border:3px solid var(--line);border-top-color:var(--orange);border-radius:50%;animation:s 1s linear infinite}
+@keyframes s{to{transform:rotate(360deg)}}
+.success-state{text-align:center;padding:50px 20px}
+.success-state .check{font-size:80px;margin-bottom:14px}
+.success-state h2{font-family:'Instrument Serif',serif;font-size:36px;font-weight:400;margin-bottom:10px;color:var(--green)}
+.success-state h2 em{font-style:italic;color:var(--orange)}
+.success-state p{color:var(--ink2);font-size:15px;max-width:46ch;margin:0 auto 18px;line-height:1.55}
+</style>
+</head>
+<body>
+<header>
+  <a href="/" style="display:flex;align-items:center;gap:10px;color:inherit;text-decoration:none"><img src="assets/logo-clean.webp" alt="BrightPuppy" onerror="this.style.display='none'"><b>BrightPuppy · Firma de contrato</b></a>
+</header>
+
+<div class="wrap">
+  <div id="loading" class="card loading"><div class="spin"></div><p>Cargando tu contrato…</p></div>
+  <div id="error" style="display:none" class="card"><div class="msg err" id="error-msg"></div></div>
+
+  <div id="signed-state" class="card success-state" style="display:none">
+    <div class="check">✓</div>
+    <h2>Tu contrato fue <em>firmado</em></h2>
+    <p>Recibirás una copia por correo en los próximos minutos. Tu cachorro queda oficialmente reservado a tu nombre. ¡Bienvenida a la familia BrightPuppy!</p>
+    <a href="/portal" style="display:inline-block;background:var(--orange);color:#fff;padding:12px 26px;border-radius:999px;text-decoration:none;font-weight:700;font-size:14px">Ir a mi portal →</a>
+  </div>
+
+  <div id="sign-state" style="display:none">
+    <div class="card hero">
+      <div class="eyebrow">Contrato BrightPuppy</div>
+      <h1>Revisa y <em>firma</em> tu contrato</h1>
+      <p>Léelo con calma. Cuando estés lista, firma abajo con el dedo o el mouse y envía.</p>
+    </div>
+
+    <div class="card">
+      <div class="sig-h">Tu contrato</div>
+      <div class="sig-sub" id="meta">—</div>
+      <div class="preview" id="content">—</div>
+    </div>
+
+    <div class="card">
+      <div class="sig-h">Tu firma</div>
+      <div class="sig-sub">Firma dentro del recuadro. Si te equivocas, dale "Limpiar".</div>
+      <div class="pad-box">
+        <canvas id="pad"></canvas>
+      </div>
+      <div class="pad-tools">
+        <button type="button" id="clear-btn">Limpiar</button>
+        <span style="font-size:11px;color:var(--ink2)" id="empty-hint">↑ Firma aquí</span>
+      </div>
+
+      <label class="accept">
+        <input type="checkbox" id="accept">
+        <span>He leído el contrato completo, entiendo y acepto los términos y condiciones, incluyendo la política de reembolsos y las cláusulas de garantía. Mi firma electrónica tiene el mismo valor legal que una firma manuscrita.</span>
+      </label>
+
+      <button class="cta" id="submit-btn" disabled>Firmar y enviar</button>
+      <div id="msg"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+  const SUPA="https://oqqwmcplljirbreowrll.supabase.co";
+  const ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
+  const sb=window.supabase.createClient(SUPA,ANON);
+  const token = new URLSearchParams(location.search).get("t");
+  const $=id=>document.getElementById(id);
+  function show(el){ el.style.display='block'; } function hide(el){ el.style.display='none'; }
+  function err(msg){ hide($('loading')); show($('error')); $('error-msg').textContent = msg; }
+
+  if(!token){ err("Falta el token de firma en el link. Revisa el correo o WhatsApp que recibiste."); return; }
+
+  let pad = null;
+
+  async function load(){
+    try {
+      const { data, error } = await sb.from("contracts").select("id,client_name,client_email,breed,content,language,signer,signed_by_buyer_at,share_token_expires").eq("share_token", token).maybeSingle();
+      if(error){ err("No pudimos cargar el contrato: " + error.message); return; }
+      if(!data){ err("Token inválido o expirado. Pide un link nuevo al equipo BrightPuppy (WhatsApp: +1 808 492 8294)."); return; }
+      if(data.signed_by_buyer_at){ hide($('loading')); show($('signed-state')); return; }
+      $('meta').textContent = (data.client_name||'') + " · " + (data.breed||'cachorro') + " · " + (data.language==='spanish'?'Español':'English');
+      $('content').textContent = data.content || "(sin contenido)";
+      hide($('loading')); show($('sign-state'));
+      initPad();
+    } catch(e){ err("Error de conexión: " + e.message); }
+  }
+
+  function initPad(){
+    const canvas = $('pad');
+    function resize(){
+      const ratio = Math.max(window.devicePixelRatio || 1, 1);
+      canvas.width = canvas.offsetWidth * ratio;
+      canvas.height = canvas.offsetHeight * ratio;
+      canvas.getContext('2d').scale(ratio, ratio);
+      if(pad) pad.clear();
+    }
+    window.addEventListener('resize', resize);
+    resize();
+    pad = new SignaturePad(canvas, { backgroundColor:'rgba(255,255,255,0)', penColor:'#1a1a1a', minWidth:1, maxWidth:2.5 });
+    pad.addEventListener('endStroke', updateBtn);
+    $('accept').addEventListener('change', updateBtn);
+    $('clear-btn').addEventListener('click', function(){ pad.clear(); updateBtn(); });
+    $('submit-btn').addEventListener('click', submit);
+  }
+
+  function updateBtn(){
+    const ok = !pad.isEmpty() && $('accept').checked;
+    $('submit-btn').disabled = !ok;
+    $('empty-hint').textContent = pad.isEmpty() ? '↑ Firma aquí' : '✓ Firma capturada';
+  }
+
+  async function submit(){
+    const btn = $('submit-btn');
+    btn.disabled = true; btn.textContent = 'Enviando…';
+    const sig = pad.toDataURL('image/png');
+    try {
+      const r = await fetch(SUPA + "/functions/v1/contract_sign", { method:'POST', headers:{ 'Content-Type':'application/json', 'apikey': ANON }, body: JSON.stringify({ token, signature_data: sig }) });
+      const d = await r.json();
+      if(!r.ok || d.error){ throw new Error(d.error||('Error '+r.status)); }
+      hide($('sign-state')); show($('signed-state'));
+    } catch(e){
+      $('msg').className='msg err';
+      $('msg').textContent='No se pudo enviar: ' + e.message;
+      btn.disabled=false; btn.textContent='Firmar y enviar';
+    }
+  }
+
+  load();
+})();
+</script>
+</body>
+</html>
