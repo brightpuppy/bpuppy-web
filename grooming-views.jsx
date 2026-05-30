@@ -177,6 +177,17 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   const DAYS_OF_WEEK = ['Dom','Lun','Mar','Mié','Jue','Vie','Sáb'];
   const TIMES = ['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
 
+  // Antelación mínima para reservar: 6 horas. Un slot solo se ofrece si cae a >= ahora + 6h.
+  const LEAD_MS = 6 * 60 * 60 * 1000;
+  const cutoff = new Date(today.getTime() + LEAD_MS);
+  const slotDate = (d, label) => {
+    const m = /(\d+):(\d+)\s*(AM|PM)/i.exec(label);
+    if (!m) return null;
+    let h = parseInt(m[1], 10) % 12; if (/pm/i.test(m[3])) h += 12;
+    return new Date(year, month, d, h, parseInt(m[2], 10), 0, 0);
+  };
+  const availableTimes = (d) => TIMES.filter(t => { const s = slotDate(d, t); return s && s >= cutoff; });
+
   const sizeKey = { 'Pequeño': 's', 'Mediano': 'm', 'Grande': 'l', 'XL': 'xl' }[size] || 's';
 
   const SPA_VIP = 'Spa VIP';
@@ -209,7 +220,8 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   const firstDayOfWeek = new Date(year, month, 1).getDay();
   const isAvailable = (d) => {
     const date = new Date(year, month, d);
-    return date >= new Date(today.getFullYear(), today.getMonth(), today.getDate()) && date.getDay() !== 0;
+    if (date.getDay() === 0) return false; // domingo cerrado
+    return availableTimes(d).length > 0; // debe quedar al menos un horario con 6h de antelación
   };
 
   const canStep2 = selectedServices.size > 0 && size;
@@ -400,7 +412,7 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
             <div>
               <div style={{ fontSize: 13, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>Hora disponible</div>
               <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4,1fr)', gap: 6, marginBottom: 16 }}>
-                {TIMES.map(t => (
+                {availableTimes(day).map(t => (
                   <button key={t} onClick={() => setTime(t)} style={{ padding: '8px 4px', borderRadius: 10, border: `2px solid ${time === t ? 'var(--orange)' : 'var(--line)'}`, background: time === t ? 'rgba(245,130,32,0.07)' : 'var(--bg)', cursor: 'pointer', fontFamily: 'inherit', fontSize: 12, fontWeight: time === t ? 700 : 500, color: 'var(--ink)', transition: 'all .15s' }}>{t}</button>
                 ))}
               </div>
