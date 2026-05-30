@@ -1,36 +1,74 @@
 ﻿// grooming-views.jsx — Página completa de Grooming BPuppy
 const { useState, useEffect, useMemo } = React;
 
+// ── Iconos de línea (SVG limpio, sin emojis) ───────────────────────────────────
+const ICON_PATHS = {
+  bath: '<path d="M4 13h16v2a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M6 13V6.5A2.5 2.5 0 0 1 8.5 4 2.5 2.5 0 0 1 11 6.5"/><path d="M9.5 6.5h.01"/><path d="M6.5 19l-1 2M17.5 19l1 2"/>',
+  scissors: '<circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><path d="M20 4 8.5 15.5M8.5 8.5 20 20M7.6 7.6 12 12"/>',
+  comb: '<path d="M4 4h16v5H4z"/><path d="M6 9v9M9.5 9v6M13 9v9M16.5 9v6M19.5 9v9"/>',
+  nails: '<path d="M9 21h6"/><path d="M10 21V9a2 2 0 0 1 4 0v12"/><path d="M10 9c0-3 .8-5 2-5s2 2 2 5"/>',
+  ear: '<path d="M7 9a5 5 0 0 1 10 0c0 3-2.5 3.2-2.5 6A3.5 3.5 0 0 1 8 16"/><path d="M9.5 9a2.5 2.5 0 0 1 5 0"/>',
+  deshed: '<path d="M5 5l6 6"/><path d="M4 8h4M8 4v4"/><path d="M11 11l8 8M19 14l1 5-5-1"/>',
+  spa: '<path d="M12 3l2.5 5.2 5.5.8-4 3.9.9 5.6L12 21l-5.4 2.5L7.5 18l-4-3.9 5.5-.8z"/>',
+  star: '<path d="M12 3l2.5 5.2 5.5.8-4 3.9.9 5.6L12 21l-5.4 2.5L7.5 18l-4-3.9 5.5-.8z"/>',
+  paw: '<circle cx="7" cy="9" r="1.6"/><circle cx="12" cy="7.4" r="1.6"/><circle cx="17" cy="9" r="1.6"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4.8 0 1.1-.4 1.7-.4s.9.4 1.7.4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/>',
+  gem: '<path d="M6 4h12l3 5-9 11L3 9z"/><path d="M3 9h18M9 4 6 9l6 11M15 4l3 5-6 11"/>',
+  leaf: '<path d="M5 19c0-8 6-13 14-13 0 8-6 14-14 13z"/><path d="M5 19c3-4.5 6.5-6.5 10-7.5"/>',
+  van: '<path d="M3 7h11v9H3z"/><path d="M14 10h4l3 3v3h-7z"/><circle cx="7" cy="18" r="1.7"/><circle cx="17" cy="18" r="1.7"/>',
+  pin: '<path d="M12 21s7-6.4 7-11a7 7 0 1 0-14 0c0 4.6 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/>',
+  clock: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5V12l3 2"/>',
+  chat: '<path d="M4 5h16v11H8l-4 3.5z"/>',
+  user: '<circle cx="12" cy="8" r="3.2"/><path d="M5.5 20c0-3.6 2.9-6 6.5-6s6.5 2.4 6.5 6"/>',
+  phone: '<path d="M6 3h3l1.5 5-2 1.4a12 12 0 0 0 6 6l1.4-2 5 1.5v3a2 2 0 0 1-2 2A17 17 0 0 1 4 5a2 2 0 0 1 2-2z"/>',
+  calendar: '<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9.5h16M8.5 3v4M15.5 3v4"/>',
+  ruler: '<path d="M3.5 9 9 3.5 20.5 15 15 20.5z"/><path d="M8 8l1.6 1.6M11 5.5l2 2M5.5 11.5l2 2"/>',
+  card: '<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/>',
+  cash: '<rect x="3" y="6" width="18" height="12" rx="2"/><circle cx="12" cy="12" r="2.5"/><path d="M6.5 12h.01M17.5 12h.01"/>',
+  ticket: '<path d="M4 7h16v3a2 2 0 0 0 0 4v3H4v-3a2 2 0 0 0 0-4z"/><path d="M13 7v10"/>',
+  note: '<path d="M4 20h4L19 9l-4-4L4 16z"/><path d="M13 6l4 4"/>',
+  money: '<circle cx="12" cy="12" r="8.5"/><path d="M12 7.5v9M9.6 14.2c0 1 1 1.6 2.4 1.6s2.4-.6 2.4-1.6-1-1.3-2.4-1.6-2.4-.6-2.4-1.6 1-1.6 2.4-1.6 2.4.6 2.4 1.6"/>',
+  trophy: '<path d="M7 4h10v3a5 5 0 0 1-10 0z"/><path d="M7 5H4v1.5a3 3 0 0 0 3 3M17 5h3v1.5a3 3 0 0 1-3 3M9.5 14h5M11 14v3.5M13 14v3.5M8 20h8"/>',
+  bulb: '<path d="M9.5 18h5M10.5 21h3M12 3a6 6 0 0 0-3.8 10.6c.6.6.9 1.1.9 2.4h5.8c0-1.3.3-1.8.9-2.4A6 6 0 0 0 12 3z"/>',
+  dog: '<path d="M10 5 7 4 6 7l1.5 1.5M14 5l3-1 1 3-1.5 1.5"/><path d="M7 8c-1 1.5-1.5 3.5-1.5 5.5 0 3 2.5 4.5 6.5 4.5s6.5-1.5 6.5-4.5c0-2-.5-4-1.5-5.5"/><path d="M10 13h.01M14 13h.01M11 16h2"/>',
+  check: '<path d="M5 12.5l4.5 4.5L19 6.5"/>',
+  mail: '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/>',
+};
+function Icon({ name, size = 22, color = 'currentColor', stroke = 1.7, style }) {
+  const p = ICON_PATHS[name];
+  if (!p) return null;
+  return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" style={style} dangerouslySetInnerHTML={{ __html: p }} />;
+}
+
 // ── Data ───────────────────────────────────────────────────────────────────────
 const SIZES = ['Pequeño\n(< 15 lbs)', 'Mediano\n(15–40 lbs)', 'Grande\n(40–70 lbs)', 'XL\n(70+ lbs)'];
 const SIZEKEYS = ['s', 'm', 'l', 'xl'];
 
 const SERVICES = [
-  { name: 'Baño completo', desc: 'Shampoo, acondicionador, secado y cepillado', emoji: '🛁', prices: { s: 40, m: 55, l: 70, xl: 90 } },
-  { name: 'Baño + Corte', desc: 'Baño completo más corte a tu elección', emoji: '✂️', prices: { s: 65, m: 85, l: 105, xl: 135 } },
-  { name: 'Corte solo', desc: 'Corte sin baño (requiere pelaje limpio)', emoji: '💈', prices: { s: 35, m: 45, l: 55, xl: 70 } },
-  { name: 'Uñas', desc: 'Corte y lima de uñas', emoji: '💅', prices: { s: 15, m: 15, l: 15, xl: 15 } },
-  { name: 'Limpieza de oídos', desc: 'Limpieza profunda con solución ótica', emoji: '👂', prices: { s: 15, m: 15, l: 15, xl: 15 } },
-  { name: 'Deslanado / Desenredo', desc: 'Eliminación de pelo muerto o nudos', emoji: '🪮', prices: { s: 30, m: 45, l: 60, xl: 75 } },
-  { name: 'Spa VIP', desc: 'Baño, corte, deslanado, uñas, oídos, colonia y bandana', emoji: '⭐', prices: { s: 95, m: 120, l: 150, xl: 185 }, highlight: true },
+  { name: 'Baño completo', desc: 'Shampoo, acondicionador, secado y cepillado', icon: 'bath', prices: { s: 40, m: 55, l: 70, xl: 90 } },
+  { name: 'Baño + Corte', desc: 'Baño completo más corte a tu elección', icon: 'scissors', prices: { s: 65, m: 85, l: 105, xl: 135 } },
+  { name: 'Corte solo', desc: 'Corte sin baño (requiere pelaje limpio)', icon: 'comb', prices: { s: 35, m: 45, l: 55, xl: 70 } },
+  { name: 'Uñas', desc: 'Corte y lima de uñas', icon: 'nails', prices: { s: 15, m: 15, l: 15, xl: 15 } },
+  { name: 'Limpieza de oídos', desc: 'Limpieza profunda con solución ótica', icon: 'ear', prices: { s: 15, m: 15, l: 15, xl: 15 } },
+  { name: 'Deslanado / Desenredo', desc: 'Eliminación de pelo muerto o nudos', icon: 'deshed', prices: { s: 30, m: 45, l: 60, xl: 75 } },
+  { name: 'Spa VIP', desc: 'Baño, corte, deslanado, uñas, oídos, colonia y bandana', icon: 'spa', prices: { s: 95, m: 120, l: 150, xl: 185 }, highlight: true },
 ];
 
 const PACKAGES = [
   {
-    name: 'Paquete Básico', emoji: '🐾', color: '#1EB87A', bg: '#E0F7EF',
+    name: 'Paquete Básico', icon: 'paw', color: '#1EB87A', bg: '#E0F7EF',
     includes: ['Baño completo', 'Uñas', 'Limpieza de oídos'],
     prices: { s: 60, m: 75, l: 95, xl: 120 },
     note: 'Ideal para mantenimiento mensual rápido',
   },
   {
-    name: 'Paquete Estándar', emoji: '✨', color: '#F58220', bg: '#FFF0E0',
+    name: 'Paquete Estándar', icon: 'star', color: '#F58220', bg: '#FFF0E0',
     includes: ['Baño completo', 'Corte a elección', 'Uñas', 'Limpieza de oídos'],
     prices: { s: 75, m: 95, l: 120, xl: 150 },
     note: 'El más popular. Todo lo esencial en una visita',
     popular: true,
   },
   {
-    name: 'Spa VIP', emoji: '💎', color: '#7C3AED', bg: '#F0EAFF',
+    name: 'Spa VIP', icon: 'gem', color: '#7C3AED', bg: '#F0EAFF',
     includes: ['Baño premium con aromaterapia', 'Corte profesional', 'Deslanado completo', 'Uñas + lima', 'Limpieza de oídos', 'Colonia + bandana de regalo'],
     prices: { s: 110, m: 135, l: 165, xl: 210 },
     note: 'La experiencia completa. Para una ocasión especial o mensual',
@@ -39,37 +77,37 @@ const PACKAGES = [
 
 const MEMBERSHIPS = [
   {
-    name: 'Plan Esencial', emoji: '🌿', color: '#1EB87A',
+    name: 'Plan Esencial', icon: 'leaf', color: '#1EB87A',
     price_month: 59, price_year: 570,
     savings: 138,
     includes: ['1 baño completo al mes', 'Uñas incluidas', '10% dto en servicios adicionales', 'Recordatorios automáticos'],
     cta: 'El plan perfecto para mantenimiento básico constante',
   },
   {
-    name: 'Plan Total', emoji: '⭐', color: '#F58220',
+    name: 'Plan Total', icon: 'star', color: '#F58220',
     price_month: 99, price_year: 990,
     price_month_promo: 79, price_year_promo: 790,
     savings: 198, savings_promo: 158,
     promo: true,
-    includes: ['1 baño + corte al mes', 'Uñas y oídos incluidos', '🚐 Pickup & Delivery incluido (10 mi)', '15% dto en servicios adicionales', 'Prioridad en agenda', 'Foto profesional mensual'],
+    includes: ['1 baño + corte al mes', 'Uñas y oídos incluidos', 'Pickup & Delivery incluido (10 mi)', '15% dto en servicios adicionales', 'Prioridad en agenda', 'Foto profesional mensual'],
     cta: 'El más popular. Todo incluido + recogida y entrega.',
     popular: true,
   },
   {
-    name: 'Plan VIP', emoji: '💎', color: '#7C3AED',
+    name: 'Plan VIP', icon: 'gem', color: '#7C3AED',
     price_month: 149, price_year: 1499,
     savings: 289,
-    includes: ['Spa VIP mensual completo', '🚐 Pickup & Delivery incluido (radio ilimitado)', '20% dto en todos los servicios', 'Agenda reservada siempre disponible', 'Reporte mensual de salud del pelaje', 'Regalo de cumpleaños para tu mascota'],
+    includes: ['Spa VIP mensual completo', 'Pickup & Delivery incluido (radio ilimitado)', '20% dto en todos los servicios', 'Agenda reservada siempre disponible', 'Reporte mensual de salud del pelaje', 'Regalo de cumpleaños para tu mascota'],
     cta: 'La experiencia premium completa con pickup y delivery incluido',
   },
 ];
 
 const PAYMENT_METHODS = [
-  { name: 'Zelle', emoji: '💜', color: '#6D1ED4' },
-  { name: 'Venmo', emoji: '💙', color: '#3D95CE' },
-  { name: 'CashApp', emoji: '💚', color: '#00D632' },
-  { name: 'Tarjeta de crédito', emoji: '💳', color: '#2D2421' },
-  { name: 'Efectivo', emoji: '💵', color: '#2D6A4F' },
+  { name: 'Zelle', icon: null, color: '#6D1ED4' },
+  { name: 'Venmo', icon: null, color: '#3D95CE' },
+  { name: 'CashApp', icon: null, color: '#00D632' },
+  { name: 'Tarjeta de crédito', icon: 'card', color: '#2D2421' },
+  { name: 'Efectivo', icon: 'cash', color: '#2D6A4F' },
 ];
 
 // ── Calendar booking ───────────────────────────────────────────────────────────
@@ -95,6 +133,24 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   const planQualifies = !!(activePlan && /total|vip/i.test((activeMembership && activeMembership.plan) || activePlan.name || ''));
   const sizeFromWeight = (lb) => { const w = +lb || 0; if (!w) return ''; if (w < 15) return 'Pequeño'; if (w < 40) return 'Mediano'; if (w < 70) return 'Grande'; return 'XL'; };
 
+  // ── Reglas de servicios según la membresía activa ──
+  // included: servicios cubiertos por el plan (precio $0). primary: el servicio mensual incluido (preseleccionado).
+  // discount: % de descuento sobre servicios extra.
+  const PLAN_RULES = {
+    'Plan Esencial': { primary: 'Baño completo', included: ['Baño completo', 'Uñas'], discount: 0.10 },
+    'Plan Total':    { primary: 'Baño + Corte', included: ['Baño + Corte', 'Uñas', 'Limpieza de oídos'], discount: 0.15 },
+    'Plan VIP':      { primary: 'Spa VIP', included: ['Spa VIP', 'Baño completo', 'Baño + Corte', 'Corte solo', 'Uñas', 'Limpieza de oídos', 'Deslanado / Desenredo'], discount: 0.20 },
+  };
+  const planRule = activePlan ? PLAN_RULES[activePlan.name] : null;
+  const includedSet = new Set(planRule ? planRule.included : []);
+  const isIncluded = (name) => includedSet.has(name);
+  const memberDiscount = planRule ? planRule.discount : 0;
+  const priceFor = (sv, sk) => {
+    const base = sk ? sv.prices[sk] : sv.prices['s'];
+    if (isIncluded(sv.name)) return 0;
+    return planRule ? Math.round(base * (1 - memberDiscount)) : base;
+  };
+
   // Prefill nombre/teléfono + miembro al iniciar sesión
   useEffect(() => {
     if (!me || !me.client) return;
@@ -104,6 +160,7 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
     const ph = c.phone || c.phone_number || c.mobile || '';
     if (ph) setPhone(prev => prev || ph);
     if (planQualifies) setIsMember(true);
+    if (planRule && planRule.primary) setSelectedServices(prev => prev.size ? prev : new Set([planRule.primary]));
     if (pets.length && !petName) {
       const p = pets[0];
       setPetName(p.name || '');
@@ -142,11 +199,11 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   const total = useMemo(() => {
     const base = [...selectedServices].reduce((sum, name) => {
       const sv = SERVICES.find(s => s.name === name);
-      return sum + (sv ? sv.prices[sizeKey] : 0);
+      return sum + (sv ? priceFor(sv, sizeKey) : 0);
     }, 0);
     const pickupCost = pickup && !isMember ? 20 : 0;
     return base + pickupCost;
-  }, [selectedServices, sizeKey, pickup, isMember]);
+  }, [selectedServices, sizeKey, pickup, isMember, planRule]);
 
   const daysInMonth = new Date(year, month + 1, 0).getDate();
   const firstDayOfWeek = new Date(year, month, 1).getDay();
@@ -160,9 +217,10 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
 
   const buildWhatsApp = () => {
     const dateStr = `${day} de ${MONTHS[month]}, ${year}`;
-    const svList = [...selectedServices].join(', ');
+    const svList = [...selectedServices].map(n => isIncluded(n) ? `${n} (incluido en plan)` : n).join(', ');
+    const planLine = activeMembership ? `\n🏅 Membresía: ${activeMembership.plan}` : '';
     const msg = encodeURIComponent(`Hola! Quiero agendar grooming:
-
+${planLine}
 🐾 Mascota: ${petName}
 📐 Tamaño: ${size}
 ✂️ Servicios: ${svList}
@@ -196,13 +254,13 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
           <span style={{ width:30, height:30, borderRadius:'50%', background:'var(--orange)', color:'#fff', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:12, fontWeight:800, flexShrink:0 }}>{(firstName||'?')[0]}</span>
           <div style={{ flex:1, minWidth:0 }}>
             <div style={{ fontSize:13, fontWeight:700, color:'var(--ink)' }}>Reservando como {firstName || 'cliente'}</div>
-            <div style={{ fontSize:11, color:'var(--ink-2)' }}>{activePlan ? `${activePlan.emoji} ${activeMembership.plan}` : 'Sin plan activo'}{pets.length ? ` · ${pets.length} ${pets.length===1?'mascota':'mascotas'}` : ''}</div>
+            <div style={{ fontSize:11, color:'var(--ink-2)', display:'flex', alignItems:'center', gap:5 }}>{activePlan ? <><Icon name={activePlan.icon} size={13} stroke={2}/><span>{activeMembership.plan}</span></> : <span>Sin plan activo</span>}{pets.length ? <span>{` · ${pets.length} ${pets.length===1?'mascota':'mascotas'}`}</span> : null}</div>
           </div>
           {planQualifies && <span style={{ fontSize:10.5, fontWeight:800, color:'#1EB87A', background:'rgba(30,184,122,0.1)', borderRadius:999, padding:'4px 10px', whiteSpace:'nowrap' }}>✓ Pickup gratis</span>}
         </div>
       ) : (
         <button onClick={() => onLogin && onLogin()} style={{ display:'flex', alignItems:'center', gap:10, width:'100%', textAlign:'left', padding:'10px 12px', borderRadius:12, background:'var(--bg)', border:'1px dashed var(--line)', cursor:'pointer', fontFamily:'inherit', marginBottom:16 }}>
-          <span style={{ fontSize:18, flexShrink:0 }}>👋</span>
+          <span style={{ flexShrink:0, color:'var(--orange)', display:'inline-flex' }}><Icon name="user" size={20}/></span>
           <div style={{ flex:1 }}>
             <div style={{ fontSize:13, fontWeight:700, color:'var(--ink)' }}>¿Ya eres cliente? Entra rápido</div>
             <div style={{ fontSize:11, color:'var(--ink-2)' }}>Autocompletamos tus datos y verás los beneficios de tu plan</div>
@@ -228,21 +286,40 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
             </div>
           </div>
 
-          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink)', marginBottom: 8 }}>
-            Selecciona uno o más servicios
+          <div style={{ fontSize: 12, fontWeight: 700, color: 'var(--ink)', marginBottom: planRule ? 4 : 8 }}>
+            {firstName ? `Elige tus servicios, ${firstName}` : 'Selecciona uno o más servicios'}
           </div>
+          {planRule && (
+            <div style={{ fontSize: 11.5, color: 'var(--ink-2)', lineHeight: 1.5, marginBottom: 10, background:'rgba(30,184,122,0.08)', border:'1px solid rgba(30,184,122,0.25)', borderRadius:10, padding:'8px 11px' }}>
+              Tu <strong>{activeMembership.plan}</strong> ya incluye <strong>{planRule.included.join(', ')}</strong>.
+              {memberDiscount ? ` Los servicios extra llevan −${Math.round(memberDiscount*100)}% automático.` : ''}
+            </div>
+          )}
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2,1fr)', gap: 8, marginBottom: 14 }}>
             {SERVICES.map(sv => {
               const sel = selectedServices.has(sv.name);
-              const price = size ? sv.prices[sizeKey] : sv.prices['s'];
+              const included = isIncluded(sv.name);
+              const baseP = size ? sv.prices[sizeKey] : sv.prices['s'];
+              const memP = priceFor(sv, size ? sizeKey : 's');
+              const discounted = planRule && !included && memP < baseP;
               const isFrom = !size;
               return (
-                <button key={sv.name} onClick={() => toggleService(sv.name)} style={{ padding:'12px 10px', borderRadius:14, border:`2px solid ${sel?'var(--orange)':'var(--line)'}`, background: sel?'rgba(245,130,32,0.07)':'var(--bg)', cursor:'pointer', fontFamily:'inherit', transition:'all .15s', textAlign:'left', position:'relative' }}>
+                <button key={sv.name} onClick={() => toggleService(sv.name)} style={{ padding:'12px 10px', borderRadius:14, border:`2px solid ${sel?'var(--orange)':included?'rgba(30,184,122,0.5)':'var(--line)'}`, background: sel?'rgba(245,130,32,0.07)':included?'rgba(30,184,122,0.05)':'var(--bg)', cursor:'pointer', fontFamily:'inherit', transition:'all .15s', textAlign:'left', position:'relative' }}>
                   {sel && <span style={{ position:'absolute', top:8, right:8, width:18, height:18, borderRadius:'50%', background:'var(--orange)', color:'#fff', fontSize:10, fontWeight:800, display:'grid', placeItems:'center' }}>✓</span>}
-                  <div style={{ fontSize:20, marginBottom:4 }}>{sv.emoji}</div>
+                  <div style={{ marginBottom:5, color: sel?'var(--orange)':included?'#1EB87A':'var(--ink)' }}><Icon name={sv.icon} size={22}/></div>
                   <div style={{ fontSize:12.5, fontWeight:700, color:'var(--ink)', lineHeight:1.2, marginBottom:3 }}>{sv.name}</div>
-                  {sv.highlight && <div style={{ display:'inline-block', fontSize:9, fontWeight:800, color:'var(--orange)', background:'rgba(245,130,32,0.12)', borderRadius:999, padding:'1px 7px', marginBottom:3, letterSpacing:'0.03em' }}>TODO INCLUIDO</div>}
-                  <div style={{ fontSize:13, fontWeight:800, color: sel?'var(--orange)':'var(--ink-2)' }}>{isFrom?'desde ':''}${price}</div>
+                  {included ? (
+                    <div style={{ display:'inline-block', fontSize:9, fontWeight:800, color:'#1EB87A', background:'rgba(30,184,122,0.14)', borderRadius:999, padding:'1px 7px', marginBottom:3, letterSpacing:'0.03em' }}>INCLUIDO EN TU PLAN</div>
+                  ) : sv.highlight && <div style={{ display:'inline-block', fontSize:9, fontWeight:800, color:'var(--orange)', background:'rgba(245,130,32,0.12)', borderRadius:999, padding:'1px 7px', marginBottom:3, letterSpacing:'0.03em' }}>TODO INCLUIDO</div>}
+                  {included ? (
+                    <div style={{ fontSize:13, fontWeight:800, color:'#1EB87A' }}>Incluido</div>
+                  ) : discounted ? (
+                    <div style={{ fontSize:13, fontWeight:800, color: sel?'var(--orange)':'var(--ink-2)' }}>
+                      <span style={{ textDecoration:'line-through', color:'var(--ink-soft)', fontWeight:600, marginRight:5 }}>${baseP}</span>{isFrom?'desde ':''}${memP}
+                    </div>
+                  ) : (
+                    <div style={{ fontSize:13, fontWeight:800, color: sel?'var(--orange)':'var(--ink-2)' }}>{isFrom?'desde ':''}${memP}</div>
+                  )}
                 </button>
               );
             })}
@@ -252,7 +329,7 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
           <div style={{ borderRadius:14, border:`2px solid ${pickup?'var(--orange)':'var(--line)'}`, background: pickup?'rgba(245,130,32,0.06)':'var(--bg)', marginBottom:14, overflow:'hidden' }}>
             <button onClick={() => setPickup(p => !p)} style={{ width:'100%', display:'flex', alignItems:'center', justifyContent:'space-between', padding:'12px 14px', background:'none', border:'none', cursor:'pointer', fontFamily:'inherit' }}>
               <div style={{ display:'flex', alignItems:'center', gap:10 }}>
-                <span style={{ fontSize:20 }}>🚐</span>
+                <span style={{ color:'var(--orange)', display:'inline-flex' }}><Icon name="van" size={20}/></span>
                 <div style={{ textAlign:'left' }}>
                   <div style={{ fontSize:13, fontWeight:700, color:'var(--ink)' }}>Pickup & Delivery</div>
                   <div style={{ fontSize:11, color:'var(--ink-2)' }}>Recogemos y entregamos en tu casa</div>
@@ -272,7 +349,7 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
                   <div style={{ fontSize:12, color:'#1EB87A', fontWeight:600 }}>✓ Pickup & Delivery gratis con tu membresía (radio 10 millas)</div>
                 ) : (
                   <div style={{ fontSize:12, color:'var(--ink-2)', lineHeight:1.55 }}>
-                    💡 <strong>Consejo:</strong> Con el Plan Total o VIP, el pickup & delivery es gratis en un radio de 10 millas. La disponibilidad de recogida se verifica al confirmar por WhatsApp.
+                    <strong>Consejo:</strong> Con el Plan Total o VIP, el pickup & delivery es gratis en un radio de 10 millas. La disponibilidad de recogida se verifica al confirmar por WhatsApp.
                   </div>
                 )}
               </div>
@@ -342,19 +419,19 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
           <h3 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 18, fontWeight: 700, color: 'var(--ink)', margin: '0 0 4px' }}>Confirmar cita</h3>
           <div style={{ background: 'var(--bg)', borderRadius: 12, padding: '12px 16px', marginBottom: 18, fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.7 }}>
             <strong style={{ color: 'var(--ink)' }}>{[...selectedServices].join(' + ')}</strong> · {size}<br />
-            📅 {day} de {['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][month]}, {year} a las {time}
+            <span style={{ display:'inline-flex', verticalAlign:'-3px', marginRight:5, color:'var(--orange)' }}><Icon name="calendar" size={15}/></span>{day} de {['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][month]}, {year} a las {time}
           </div>
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}>
             {/* Mascota — selector si hay sesión con mascotas, si no texto libre */}
             <div>
-              <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>Nombre de tu mascota 🐾</div>
+              <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>Nombre de tu mascota</div>
               {pets.length > 0 ? (
                 <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
                   {pets.map((p, i) => {
                     const sel = petName === p.name;
                     return (
                       <button key={i} onClick={() => pickPet(p)} style={{ padding:'8px 14px', borderRadius:999, border:`2px solid ${sel?'var(--orange)':'var(--line)'}`, background: sel?'rgba(245,130,32,0.08)':'var(--bg)', cursor:'pointer', fontFamily:'inherit', fontSize:13, fontWeight:700, color: sel?'var(--orange)':'var(--ink)' }}>
-                        {sel ? '✓ ' : '🐾 '}{p.name}{p.weight_lbs ? ` · ${p.weight_lbs}lb` : ''}
+                        {sel ? '✓ ' : ''}{p.name}{p.weight_lbs ? ` · ${p.weight_lbs}lb` : ''}
                       </button>
                     );
                   })}
@@ -365,8 +442,8 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
                   onFocus={e => e.target.style.borderColor = 'var(--orange)'} onBlur={e => e.target.style.borderColor = 'var(--line)'} />
               )}
             </div>
-            {[['Tu nombre 👤', ownerName, setOwnerName, 'Nombre completo'],
-              ['Teléfono 📞', phone, setPhone, '+1 (305) 000-0000'],
+            {[['Tu nombre', ownerName, setOwnerName, 'Nombre completo'],
+              ['Teléfono', phone, setPhone, '+1 (305) 000-0000'],
             ].map(([label, val, setter, ph]) => (
               <div key={label}>
                 <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>{label}</div>
@@ -382,13 +459,13 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
                 onBlur={e => e.target.style.borderColor = 'var(--line)'} />
             </div>
             <div>
-              <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>🎫 Código de promoción (opcional)</div>
+              <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>Código de promoción (opcional)</div>
               <input value={promoCode} onChange={e => setPromoCode(e.target.value.toUpperCase())} placeholder="Ej. APERTURA" style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: `1.5px solid ${promoCode ? 'var(--orange)' : 'var(--line)'}`, background: promoCode ? 'rgba(245,130,32,0.06)' : 'var(--bg)', fontFamily: 'inherit', fontSize: 14, color: 'var(--ink)', outline: 'none', fontWeight: promoCode ? 700 : 400, letterSpacing: promoCode ? '0.08em' : 0 }}/>
               {promoCode === 'APERTURA' && <div style={{ fontSize:11, color:'#1EB87A', fontWeight:700, marginTop:4 }}>✓ ¡Código de apertura aplicado! Primer baño + corte gratis en tu visita.</div>}
             </div>
             {planQualifies ? (
               <div style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', borderRadius:10, border:'1.5px solid #1EB87A', background:'rgba(30,184,122,0.08)' }}>
-                <span style={{ fontSize:18, flexShrink:0 }}>{activePlan ? activePlan.emoji : '🏆'}</span>
+                <span style={{ flexShrink:0, color:'#1EB87A', display:'inline-flex' }}><Icon name={activePlan ? activePlan.icon : 'trophy'} size={20}/></span>
                 <div>
                   <div style={{ fontSize:12.5, fontWeight:700, color:'var(--ink)' }}>Miembro {activeMembership.plan} — verificado</div>
                   <div style={{ fontSize:11, color:'#1EB87A', fontWeight:600 }}>Pickup & Delivery gratis + descuentos aplicados</div>
@@ -407,7 +484,7 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
           <div style={{ display: 'flex', gap: 8 }}>
             <button onClick={() => setStep(2)} style={{ flex: 1, padding: '13px', borderRadius: 14, border: '1.5px solid var(--line)', background: 'none', fontFamily: 'inherit', fontSize: 14, fontWeight: 600, color: 'var(--ink-2)', cursor: 'pointer' }}>← Atrás</button>
             <a href={canConfirm ? buildWhatsApp() : '#'} target="_blank" rel="noopener noreferrer" style={{ flex: 2, padding: '13px', borderRadius: 14, background: canConfirm ? '#25D366' : 'var(--line)', color: canConfirm ? '#fff' : 'var(--ink-2)', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, pointerEvents: canConfirm ? 'all' : 'none', transition: 'all .2s' }}>
-              💬 Confirmar por WhatsApp
+              <Icon name="chat" size={18} color="#fff"/> Confirmar por WhatsApp
             </a>
           </div>
           <p style={{ fontSize: 10.5, color: 'var(--ink-soft)', textAlign: 'center', margin: '10px 0 0' }}>Recibirás confirmación en menos de 2 horas en horario laboral</p>
@@ -444,7 +521,7 @@ function OpeningBanner() {
       <div className="container" style={{ padding:'22px 0', position:'relative', zIndex:1 }}>
         {claimed ? (
           <div style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:16, flexWrap:'wrap', textAlign:'center' }}>
-            <span style={{ fontSize:28 }}>🎉</span>
+            <span style={{ color:'#fff', display:'inline-flex' }}><Icon name="check" size={26}/></span>
             <div>
               <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:'#fff' }}>¡Código APERTURA aplicado!</div>
               <div style={{ fontSize:13, color:'rgba(255,255,255,0.85)', marginTop:2 }}>Muestra esta pantalla al llegar. Tu primer baño + corte es GRATIS.</div>
@@ -455,7 +532,7 @@ function OpeningBanner() {
           <div style={{ display:'flex', alignItems:'center', gap:20, flexWrap:'wrap' }}>
             <div style={{ flex:'1 1 260px' }}>
               <div style={{ display:'inline-flex', alignItems:'center', gap:6, background:'rgba(255,255,255,0.2)', borderRadius:999, padding:'3px 12px', marginBottom:6 }}>
-                <span style={{ fontSize:10, fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color:'#fff' }}>🎉 Oferta de Apertura · Tiempo Limitado</span>
+                <span style={{ fontSize:10, fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color:'#fff' }}>Oferta de Apertura · Tiempo Limitado</span>
               </div>
               <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(20px,3vw,32px)', fontWeight:800, color:'#fff', letterSpacing:'-0.03em', lineHeight:1.1 }}>
                 Primer baño + corte <span style={{ background:'rgba(255,255,255,0.25)', borderRadius:6, padding:'2px 8px' }}>GRATIS</span>
@@ -469,12 +546,86 @@ function OpeningBanner() {
                 style={{ flex:'1 1 120px', padding:'9px 14px', borderRadius:999, border:'none', fontFamily:'inherit', fontSize:13, outline:'none', background:'rgba(255,255,255,0.95)' }}/>
               <button type="submit" disabled={loading}
                 style={{ padding:'9px 18px', borderRadius:999, background:'#2D2421', color:'#fff', border:'none', fontFamily:'inherit', fontWeight:800, fontSize:13, cursor:'pointer', whiteSpace:'nowrap', flexShrink:0 }}>
-                {loading ? 'Aplicando...' : '🎫 Reclamar Oferta'}
+                {loading ? 'Aplicando...' : 'Reclamar Oferta'}
               </button>
             </form>
             <button onClick={() => setOpen(false)} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.7)', fontSize:22, cursor:'pointer', padding:4, flexShrink:0, lineHeight:1 }}>×</button>
           </div>
         )}
+      </div>
+    </div>
+  );
+}
+
+// ── Modal: datos de la mascota al comprar una membresía ────────────────────────
+function MembershipPetModal({ buyFor, me, billing, onClose }) {
+  const presetPets = (me && me.pets) || [];
+  const [email, setEmail] = useState((me && me.email) || '');
+  const [name, setName] = useState(presetPets[0] ? presetPets[0].name : '');
+  const [breed, setBreed] = useState('');
+  const [size, setSize] = useState('');
+  const [sex, setSex] = useState('');
+  const [weight, setWeight] = useState(presetPets[0] && presetPets[0].weight_lbs ? String(presetPets[0].weight_lbs) : '');
+  const [notes, setNotes] = useState('');
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
+  const m = buyFor.m;
+
+  const pickPreset = (p) => { setName(p.name || ''); if (p.weight_lbs) setWeight(String(p.weight_lbs)); if (p.breed) setBreed(p.breed); };
+
+  const go = async () => {
+    const em = (email || '').trim().toLowerCase();
+    if (!name.trim()) { setErr('Escribe el nombre de tu mascota'); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { setErr('Escribe un correo válido para tu membresía'); return; }
+    setBusy(true); setErr('');
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+    try {
+      const r = await fetch('https://oqqwmcplljirbreowrll.supabase.co/functions/v1/stripe_membership', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY },
+        body: JSON.stringify({ action: 'checkout', plan_key: buyFor.planKey, client_email: em,
+          pet: { name: name.trim(), breed: breed.trim(), size, sex, weight_lbs: weight, notes: notes.trim() },
+          success_url: 'https://bpuppy.us/grooming', cancel_url: location.href }),
+      });
+      const c = await r.json();
+      if (c.url) { location.href = c.url; return; }
+      setErr((c && c.error) || 'No se pudo iniciar el pago'); setBusy(false);
+    } catch(e) { setErr('Error de red, intenta de nuevo'); setBusy(false); }
+  };
+
+  const fld = { width:'100%', padding:'11px 13px', borderRadius:11, border:'1.5px solid var(--line)', fontFamily:'inherit', fontSize:14, color:'var(--ink)', background:'var(--bg)', outline:'none' };
+  const lbl = { fontSize:11.5, fontWeight:700, color:'var(--ink-2)', marginBottom:4 };
+
+  return (
+    <div onClick={(e) => { if (e.target === e.currentTarget) onClose(); }} style={{ position:'fixed', inset:0, background:'rgba(45,36,33,0.55)', backdropFilter:'blur(3px)', display:'flex', alignItems:'flex-start', justifyContent:'center', padding:'40px 16px', zIndex:1000, overflowY:'auto' }}>
+      <div style={{ background:'#fff', borderRadius:20, width:'100%', maxWidth:460, padding:24, boxShadow:'0 30px 80px rgba(45,36,33,0.3)' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', marginBottom:4 }}>
+          <h3 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:'var(--ink)', margin:0 }}>¿Para qué mascota es tu {m.name}?</h3>
+          <button onClick={onClose} style={{ border:'none', background:'var(--paper)', width:30, height:30, borderRadius:'50%', fontSize:18, lineHeight:1, cursor:'pointer', color:'var(--ink-2)', flexShrink:0 }}>×</button>
+        </div>
+        <p style={{ fontSize:12.5, color:'var(--ink-2)', margin:'0 0 14px', lineHeight:1.5 }}>Registramos a tu mascota con tu membresía. La confirmamos y queda lista en tu portal.</p>
+
+        {presetPets.length > 0 && (
+          <div style={{ display:'flex', flexWrap:'wrap', gap:6, marginBottom:12 }}>
+            {presetPets.map((p, i) => {
+              const sel = name === p.name;
+              return <button key={i} onClick={() => pickPreset(p)} style={{ padding:'7px 13px', borderRadius:999, border:`2px solid ${sel?'var(--orange)':'var(--line)'}`, background: sel?'rgba(245,130,32,0.08)':'var(--bg)', cursor:'pointer', fontFamily:'inherit', fontSize:12.5, fontWeight:700, color: sel?'var(--orange)':'var(--ink)' }}>{p.name}</button>;
+            })}
+          </div>
+        )}
+
+        <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
+          <div style={{ gridColumn:'1/-1' }}><div style={lbl}>Nombre de la mascota *</div><input value={name} onChange={e=>setName(e.target.value)} placeholder="Ej: Max" style={fld}/></div>
+          <div><div style={lbl}>Raza</div><input value={breed} onChange={e=>setBreed(e.target.value)} placeholder="Ej: Poodle" style={fld}/></div>
+          <div><div style={lbl}>Tamaño</div><select value={size} onChange={e=>setSize(e.target.value)} style={fld}><option value="">—</option><option>Pequeño</option><option>Mediano</option><option>Grande</option><option>XL</option></select></div>
+          <div><div style={lbl}>Sexo</div><select value={sex} onChange={e=>setSex(e.target.value)} style={fld}><option value="">—</option><option>Macho</option><option>Hembra</option></select></div>
+          <div><div style={lbl}>Peso (lb)</div><input value={weight} onChange={e=>setWeight(e.target.value)} type="number" min="0" placeholder="Ej: 12" style={fld}/></div>
+          <div style={{ gridColumn:'1/-1' }}><div style={lbl}>Tu correo *</div><input value={email} onChange={e=>setEmail(e.target.value)} type="email" placeholder="tu@correo.com" style={fld} disabled={!!(me && me.email)}/></div>
+          <div style={{ gridColumn:'1/-1' }}><div style={lbl}>Notas (opcional)</div><textarea value={notes} onChange={e=>setNotes(e.target.value)} placeholder="Alergias, comportamiento..." rows={2} style={{ ...fld, resize:'vertical', minHeight:54 }}/></div>
+        </div>
+
+        {err && <div style={{ marginTop:10, fontSize:13, fontWeight:600, color:'#C0392B', background:'#f8e3df', borderRadius:10, padding:'9px 12px' }}>{err}</div>}
+        <button onClick={go} disabled={busy} style={{ width:'100%', marginTop:14, padding:14, borderRadius:13, border:'none', background: busy?'var(--line)':'var(--orange)', color:'#fff', fontFamily:'inherit', fontSize:15, fontWeight:800, cursor: busy?'default':'pointer' }}>{busy ? 'Redirigiendo a pago seguro…' : 'Continuar al pago →'}</button>
+        <p style={{ fontSize:10.5, color:'var(--ink-soft)', textAlign:'center', margin:'8px 0 0' }}>Pago seguro con Stripe. Tu mascota queda registrada al confirmar.</p>
       </div>
     </div>
   );
@@ -498,6 +649,7 @@ function GroomingApp() {
   const [authErr, setAuthErr] = useState('');
   const [me, setMe] = useState(null);                    // { email, client, pets, memberships }
   const [meBusy, setMeBusy] = useState(false);
+  const [buyFor, setBuyFor] = useState(null);            // { m, planKey } -> abre modal de captura de mascota
 
   // Init Supabase for banner form + recuperar sesión del magic-link
   useEffect(() => {
@@ -596,7 +748,7 @@ function GroomingApp() {
           {/* Left — text */}
           <div style={{ paddingBottom:20, maxWidth:'50%', position:'relative', zIndex:2 }}>            {/* Address badge */}
             <div style={{ display:'inline-flex', alignItems:'center', gap:8, background:'rgba(245,130,32,0.08)', border:'1px solid rgba(245,130,32,0.22)', borderRadius:999, padding:'7px 16px', marginBottom:22 }}>
-              <span style={{ fontSize:15 }}>📍</span>
+              <span style={{ color:'var(--orange)', display:'inline-flex' }}><Icon name="pin" size={16}/></span>
               <div>
                 <div style={{ fontSize:9.5, fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--orange)', marginBottom:1 }}>Próximamente abriendo</div>
                 <div style={{ fontSize:12, fontWeight:600, color:'var(--ink)' }}>5604 Kalogridis Rd, Haines City, FL 33844</div>
@@ -629,7 +781,7 @@ function GroomingApp() {
               ) : (
                 <button onClick={() => { setAuthOpen(true); setAuthSent(false); setAuthErr(''); }}
                   style={{ display:'inline-flex', alignItems:'center', gap:7, padding:'8px 16px', borderRadius:999, background:'transparent', border:'1.5px solid var(--line)', cursor:'pointer', fontFamily:'inherit', fontSize:13, fontWeight:600, color:'var(--ink-2)' }}>
-                  <span style={{ fontSize:15 }}>👤</span> Ya soy cliente · Entrar
+                  <span style={{ display:'inline-flex' }}><Icon name="user" size={15}/></span> Ya soy cliente · Entrar
                 </button>
               )}
             </div>
@@ -644,9 +796,9 @@ function GroomingApp() {
       {/* Trust bar */}
       <div style={{ background: 'var(--paper)', borderBottom: '1px solid var(--line)' }}>
         <div className="container" style={{ display: 'flex', gap: 0, overflowX: 'auto', scrollbarWidth: 'none' }}>
-          {[['✂️', 'Grooming profesional'], ['🚐', 'Pickup & Delivery'], ['🌿', 'Productos premium'], ['⏰', 'Lun–Sáb 9am–6pm'], ['💬', 'Confirmación inmediata']].map(([ic, label]) => (
+          {[['scissors', 'Grooming profesional'], ['van', 'Pickup & Delivery'], ['leaf', 'Productos premium'], ['clock', 'Lun–Sáb 9am–6pm'], ['chat', 'Confirmación inmediata']].map(([ic, label]) => (
             <div key={label} style={{ display: 'flex', alignItems: 'center', gap: 8, padding: '14px 20px', borderRight: '1px solid var(--line)', whiteSpace: 'nowrap', flexShrink: 0 }}>
-              <span style={{ fontSize: 18 }}>{ic}</span>
+              <span style={{ color: 'var(--orange)', display:'inline-flex' }}><Icon name={ic} size={18}/></span>
               <span style={{ fontSize: 12.5, fontWeight: 600, color: 'var(--ink-2)' }}>{label}</span>
             </div>
           ))}
@@ -657,7 +809,7 @@ function GroomingApp() {
 
         {/* Tab nav */}
         <div style={{ display: 'flex', gap: 4, background: 'var(--paper)', borderRadius: 14, padding: 5, marginBottom: 40, width: 'fit-content' }}>
-          {[['servicios', '📋 Servicios'], ['paquetes', '📦 Paquetes'], ['memberships', '🏆 Membresías']].map(([id, label]) => (
+          {[['servicios', 'Servicios'], ['paquetes', 'Paquetes'], ['memberships', 'Membresías']].map(([id, label]) => (
             <button key={id} onClick={() => { setTab(id); if (id === 'memberships') document.getElementById('memberships')?.scrollIntoView(); }} style={{ padding: '9px 18px', borderRadius: 10, border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, fontWeight: tab === id ? 700 : 500, background: tab === id ? 'var(--orange)' : 'transparent', color: tab === id ? '#fff' : 'var(--ink-2)', transition: 'all .15s' }}>
               {label}
             </button>
@@ -680,7 +832,7 @@ function GroomingApp() {
               {SERVICES.map(sv => (
                 <div key={sv.name} style={{ background: sv.highlight ? 'linear-gradient(135deg,rgba(245,130,32,0.10),rgba(232,93,117,0.10))' : 'var(--paper)', borderRadius: 16, padding: '18px 14px', border: sv.highlight ? '1.5px solid rgba(245,130,32,0.3)' : '1px solid var(--line)', textAlign: 'center', position: 'relative' }}>
                   {sv.highlight && <div style={{ position: 'absolute', top: -8, left: '50%', transform: 'translateX(-50%)', background: 'var(--orange)', color: '#fff', fontSize: 9, fontWeight: 800, padding: '2px 8px', borderRadius: 999, whiteSpace: 'nowrap' }}>TODO INCLUIDO</div>}
-                  <div style={{ fontSize: 28, marginBottom: 8 }}>{sv.emoji}</div>
+                  <div style={{ marginBottom: 8, color: 'var(--orange)', display:'flex', justifyContent:'center' }}><Icon name={sv.icon} size={28}/></div>
                   <div style={{ fontSize: 12.5, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.25, marginBottom: 6 }}>{sv.name}</div>
                   <div style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 22, fontWeight: 800, color: sv.highlight ? 'var(--orange)' : 'var(--ink)' }}>${sv.prices[sizeKey]}</div>
                   <div style={{ fontSize: 10, color: 'var(--ink-soft)', marginTop: 4, lineHeight: 1.4 }}>{sv.desc}</div>
@@ -704,7 +856,7 @@ function GroomingApp() {
               {PACKAGES.map(pkg => (
                 <div key={pkg.name} style={{ background: 'var(--paper)', borderRadius: 20, padding: '24px', border: pkg.popular ? `2px solid ${pkg.color}` : '1px solid var(--line)', position: 'relative', overflow: 'hidden' }}>
                   {pkg.popular && <div style={{ position: 'absolute', top: 16, right: 16, background: pkg.color, color: '#fff', fontSize: 10, fontWeight: 800, padding: '3px 10px', borderRadius: 999 }}>MÁS POPULAR</div>}
-                  <div style={{ fontSize: 32, marginBottom: 10 }}>{pkg.emoji}</div>
+                  <div style={{ marginBottom: 10, color: pkg.color, display:'flex' }}><Icon name={pkg.icon} size={30}/></div>
                   <div style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 18, fontWeight: 800, color: 'var(--ink)', marginBottom: 4 }}>{pkg.name}</div>
                   <div style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 30, fontWeight: 800, color: pkg.color, marginBottom: 4 }}>${pkg.prices[sizeKey]}</div>
                   <div style={{ fontSize: 11, color: 'var(--ink-soft)', marginBottom: 16 }}>{pkg.note}</div>
@@ -735,9 +887,9 @@ function GroomingApp() {
               Selecciona servicio, fecha y hora. Te confirmamos disponibilidad en menos de 2 horas. También ofrecemos <strong>recogida y entrega</strong> — pregunta al reservar.
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {[['📍', 'Próximamente · Haines City, FL', '5604 Kalogridis Rd, Haines City, FL 33844'], ['🚐', 'Pickup & Delivery', 'Recogemos y entregamos en tu casa (+$20)'], ['⏰', 'Horario', 'Lun – Sáb: 9:00 AM – 6:00 PM']].map(([ic, title, sub]) => (
+              {[['pin', 'Próximamente · Haines City, FL', '5604 Kalogridis Rd, Haines City, FL 33844'], ['van', 'Pickup & Delivery', 'Recogemos y entregamos en tu casa (+$20)'], ['clock', 'Horario', 'Lun – Sáb: 9:00 AM – 6:00 PM']].map(([ic, title, sub]) => (
                 <div key={title} style={{ display: 'flex', gap: 12, padding: '14px 16px', background: 'var(--paper)', borderRadius: 12, border: '1px solid var(--line)' }}>
-                  <span style={{ fontSize: 22, flexShrink: 0 }}>{ic}</span>
+                  <span style={{ flexShrink: 0, color: 'var(--orange)', display:'inline-flex' }}><Icon name={ic} size={22}/></span>
                   <div>
                     <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ink)' }}>{title}</div>
                     <div style={{ fontSize: 12, color: 'var(--ink-2)', marginTop: 2 }}>{sub}</div>
@@ -767,7 +919,7 @@ function GroomingApp() {
             </a>
           </div>
           <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:20, padding:'12px 18px', background:'rgba(245,130,32,0.06)', border:'1px solid rgba(245,130,32,0.2)', borderRadius:12 }}>
-            <span style={{ fontSize:18 }}>📍</span>
+            <span style={{ color:'var(--orange)', display:'inline-flex' }}><Icon name="pin" size={18}/></span>
             <div>
               <div style={{ fontSize:14, fontWeight:700, color:'var(--ink)' }}>5604 Kalogridis Rd, Haines City, FL 33844</div>
               <div style={{ fontSize:12, color:'var(--orange)', fontWeight:600 }}>Próximamente abriendo · ¡Síguenos para el anuncio oficial!</div>
@@ -801,9 +953,9 @@ function GroomingApp() {
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(260px,1fr))', gap: 20, marginBottom: 40 }}>
             {MEMBERSHIPS.map(m => (
               <div key={m.name} style={{ background: m.popular ? m.color : 'rgba(255,255,255,0.07)', borderRadius: 20, padding: '28px 24px', border: m.popular ? 'none' : '1px solid rgba(255,255,255,0.12)', position: 'relative' }}>
-                {m.popular && <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', background: '#FFD700', color: '#2D2421', fontSize: 10, fontWeight: 900, padding: '4px 14px', borderRadius: 999, whiteSpace: 'nowrap' }}>⭐ MÁS POPULAR</div>}
+                {m.popular && <div style={{ position: 'absolute', top: -10, left: '50%', transform: 'translateX(-50%)', background: '#FFD700', color: '#2D2421', fontSize: 10, fontWeight: 900, padding: '4px 14px', borderRadius: 999, whiteSpace: 'nowrap' }}>MÁS POPULAR</div>}
                 {m.promo && <div style={{ position: 'absolute', top: -10, right: 16, background: '#FF3B30', color: '#fff', fontSize: 9, fontWeight: 900, padding: '3px 10px', borderRadius: 999, whiteSpace: 'nowrap', letterSpacing: '0.06em' }}>APERTURA</div>}
-                <div style={{ fontSize: 32, marginBottom: 10 }}>{m.emoji}</div>
+                <div style={{ marginBottom: 10, color: '#fff', display:'flex' }}><Icon name={m.icon} size={30}/></div>
                 <div style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 18, fontWeight: 800, color: '#fff', marginBottom: 4 }}>{m.name}</div>
                 <div style={{ display: 'flex', alignItems: 'baseline', gap: 8, marginBottom: 4 }}>
                   {m.promo && (
@@ -817,7 +969,7 @@ function GroomingApp() {
                   <span style={{ fontSize: 13, color: 'rgba(255,255,255,0.6)' }}>/mes</span>
                 </div>
                 {billing === 'year' && <div style={{ fontSize: 11, color: 'rgba(255,255,255,0.5)', marginBottom: 4 }}>${m.price_year_promo || m.price_year}/año · ahorras ${m.savings_promo || m.savings}</div>}
-                {m.promo && <div style={{ fontSize: 11, color: '#FFD700', fontWeight: 700, marginBottom: 8 }}>🎉 Precio de apertura · Solo por tiempo limitado</div>}
+                {m.promo && <div style={{ fontSize: 11, color: '#FFD700', fontWeight: 700, marginBottom: 8 }}>Precio de apertura · Solo por tiempo limitado</div>}
                 <p style={{ fontSize: 12.5, color: 'rgba(255,255,255,0.65)', margin: '0 0 18px', lineHeight: 1.55 }}>{m.cta}</p>
                 <ul style={{ padding: 0, margin: '0 0 22px', listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 8 }}>
                   {m.includes.map(item => (
@@ -829,17 +981,7 @@ function GroomingApp() {
                 <a href="#" onClick={(e) => {
                   e.preventDefault();
                   const tk = (/esencial/i.test(m.name) ? 'esencial' : /vip/i.test(m.name) ? 'vip' : 'total') + '_' + billing;
-                  const el = e.currentTarget;
-                  el.textContent = 'Redirigiendo a pago seguro...';
-                  const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
-                  fetch('https://oqqwmcplljirbreowrll.supabase.co/functions/v1/stripe_membership', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY },
-                    body: JSON.stringify({ action: 'checkout', plan_key: tk, success_url: 'https://bpuppy.us/grooming', cancel_url: location.href })
-                  })
-                  .then(r => r.json())
-                  .then(c => { if (c.url) location.href = c.url; else { console.error('stripe_membership error:', c); el.textContent = (c && c.error) || 'Reintentar'; } })
-                  .catch(err => { console.error(err); el.textContent = 'Reintentar'; });
+                  setBuyFor({ m, planKey: tk });
                 }} style={{ display: 'block', textAlign: 'center', padding: '12px', borderRadius: 12, background: m.popular ? 'rgba(255,255,255,0.2)' : m.color, color: '#fff', fontFamily: 'inherit', fontSize: 13, fontWeight: 700, textDecoration: 'none', cursor: 'pointer' }}>Suscribirse ahora</a>
               </div>
             ))}
@@ -848,7 +990,7 @@ function GroomingApp() {
             <p style={{ fontSize: 13, color: 'rgba(255,255,255,0.4)', marginBottom: 16 }}>Métodos de pago aceptados</p>
             <div style={{ display: 'flex', gap: 10, justifyContent: 'center', flexWrap: 'wrap' }}>
               {PAYMENT_METHODS.map(pm => (
-                <span key={pm.name} style={{ padding: '6px 14px', borderRadius: 999, background: 'rgba(255,255,255,0.08)', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>{pm.emoji} {pm.name}</span>
+                <span key={pm.name} style={{ display:'inline-flex', alignItems:'center', gap:6, padding: '6px 14px', borderRadius: 999, background: 'rgba(255,255,255,0.08)', fontSize: 12, fontWeight: 600, color: 'rgba(255,255,255,0.7)' }}>{pm.icon && <Icon name={pm.icon} size={15}/>}{pm.name}</span>
               ))}
             </div>
           </div>
@@ -880,11 +1022,11 @@ function GroomingApp() {
                 <a key={art.id} href={`/blog?art=${art.id}`} style={{ textDecoration: 'none', display: 'flex', gap: 14, padding: '16px', background: 'var(--paper)', borderRadius: 16, border: '1px solid var(--line)', transition: 'box-shadow .2s, transform .2s' }}
                   onMouseEnter={e => { e.currentTarget.style.boxShadow='0 8px 24px -8px rgba(45,36,33,0.16)'; e.currentTarget.style.transform='translateY(-2px)'; }}
                   onMouseLeave={e => { e.currentTarget.style.boxShadow='none'; e.currentTarget.style.transform='none'; }}>
-                  <span style={{ fontSize: 36, flexShrink: 0 }}>{art.emoji}</span>
+                  <span style={{ flexShrink: 0, color:'var(--orange)', display:'inline-flex', width:36, height:36, alignItems:'center', justifyContent:'center', background:'rgba(245,130,32,0.1)', borderRadius:10 }}><Icon name="scissors" size={20}/></span>
                   <div>
                     <div style={{ fontSize: 10, fontWeight: 800, color: '#9C27B0', textTransform: 'uppercase', letterSpacing: '0.05em', marginBottom: 4 }}>Grooming</div>
                     <div style={{ fontSize: 13.5, fontWeight: 700, color: 'var(--ink)', lineHeight: 1.3, marginBottom: 4 }}>{art.title}</div>
-                    <div style={{ fontSize: 11, color: 'var(--ink-soft)' }}>⏱ {art.read} min · Leer artículo →</div>
+                    <div style={{ fontSize: 11, color: 'var(--ink-soft)' }}>{art.read} min · Leer artículo →</div>
                   </div>
                 </a>
               ))}
@@ -900,7 +1042,7 @@ function GroomingApp() {
             <div style={{ display:'flex', alignItems:'flex-start', justifyContent:'space-between', gap:16, flexWrap:'wrap', marginBottom:24 }}>
               <div>
                 <div style={{ fontSize:12, fontWeight:800, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--orange)', marginBottom:6 }}>Mi cuenta</div>
-                <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:26, fontWeight:800, color:'var(--ink)', margin:0 }}>Hola, {firstName || 'cliente'} 👋</h2>
+                <h2 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:26, fontWeight:800, color:'var(--ink)', margin:0 }}>Hola, {firstName || 'cliente'}</h2>
                 <div style={{ fontSize:13, color:'var(--ink-soft)', marginTop:4 }}>{me.email}</div>
               </div>
               <button onClick={logout} style={{ padding:'8px 16px', borderRadius:999, background:'transparent', border:'1.5px solid var(--line)', cursor:'pointer', fontFamily:'inherit', fontSize:12.5, fontWeight:600, color:'var(--ink-2)' }}>Cerrar sesión</button>
@@ -910,7 +1052,7 @@ function GroomingApp() {
             {activeMembership ? (
               <div style={{ background:'linear-gradient(135deg,#2D2421,#43352d)', borderRadius:18, padding:'24px 26px', color:'#fff', marginBottom:20 }}>
                 <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:14, flexWrap:'wrap' }}>
-                  <span style={{ fontSize:22 }}>{activePlan ? activePlan.emoji : '🏆'}</span>
+                  <span style={{ display:'inline-flex' }}><Icon name={activePlan ? activePlan.icon : 'trophy'} size={24} color="#fff"/></span>
                   <span style={{ fontSize:18, fontWeight:800 }}>{activeMembership.plan || 'Membresía'}</span>
                   <span style={{ padding:'3px 11px', borderRadius:999, background:'rgba(255,255,255,0.14)', fontSize:11, fontWeight:700, textTransform:'uppercase', letterSpacing:'0.05em' }}>{(activeMembership.status || 'activa')}</span>
                   {typeof activeMembership.credits_balance === 'number' && (
@@ -945,7 +1087,7 @@ function GroomingApp() {
                 <div key={pet.id} style={{ background:'#fff', border:'1px solid var(--line)', borderRadius:14, padding:'16px 18px' }}>
                   <div style={{ display:'flex', alignItems:'center', gap:10 }}>
                     <span style={{ width:40, height:40, borderRadius:'50%', background:'var(--bg)', display:'inline-flex', alignItems:'center', justifyContent:'center', fontSize:20, overflow:'hidden' }}>
-                      {pet.photo_url ? <img src={pet.photo_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : '🐶'}
+                      {pet.photo_url ? <img src={pet.photo_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : <span style={{ color:'var(--orange)', display:'inline-flex' }}><Icon name="paw" size={30}/></span>}
                     </span>
                     <div>
                       <div style={{ fontSize:14, fontWeight:800, color:'var(--ink)' }}>{pet.name}</div>
@@ -974,7 +1116,7 @@ function GroomingApp() {
             </div>
             {authSent ? (
               <div style={{ textAlign:'center', padding:'10px 0' }}>
-                <div style={{ fontSize:40, marginBottom:10 }}>📬</div>
+                <div style={{ marginBottom:10, color:'var(--orange)', display:'flex', justifyContent:'center' }}><Icon name="mail" size={40} stroke={1.4}/></div>
                 <h3 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:'var(--ink)', margin:'0 0 8px' }}>Revisa tu correo</h3>
                 <p style={{ fontSize:13.5, color:'var(--ink-soft)', lineHeight:1.6, margin:0 }}>Te enviamos un enlace a <b>{authEmail.trim().toLowerCase()}</b>. Tócalo para entrar — sin contraseñas.</p>
               </div>
@@ -994,6 +1136,8 @@ function GroomingApp() {
           </div>
         </div>
       )}
+
+      {buyFor && <MembershipPetModal buyFor={buyFor} me={me} billing={billing} onClose={() => setBuyFor(null)} />}
     </div>
   );
 }

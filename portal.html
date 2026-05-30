@@ -105,6 +105,18 @@ input:focus{border-color:var(--orange)}
 .spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--orange);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 12px}
 .muted{font-size:12px;color:var(--soft);margin-top:8px}
 .pay{display:inline-block;margin-top:8px;padding:9px 14px;background:var(--orange);color:#fff;border-radius:999px;font-size:12.5px;font-weight:800;text-decoration:none;cursor:pointer;border:none;font-family:inherit}
+.b-pending{background:#FCEFD9;color:var(--orange2)}
+.modal-bg{position:fixed;inset:0;background:rgba(45,36,33,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow-y:auto}
+.modal{background:#fff;border-radius:20px;width:100%;max-width:480px;padding:24px;box-shadow:0 30px 80px rgba(45,36,33,.3)}
+.modal h3{font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:800;color:var(--ink);margin-bottom:4px}
+.modal .x{float:right;border:none;background:var(--paper);width:32px;height:32px;border-radius:50%;font-size:18px;line-height:1;cursor:pointer;color:var(--ink2)}
+.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0 4px}
+.fgrid .full{grid-column:1/-1}
+.fgrid label{margin:0 0 6px}
+select{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);outline:none}
+select:focus{border-color:var(--orange)}
+textarea{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);outline:none;resize:vertical;min-height:62px}
+textarea:focus{border-color:var(--orange)}
 footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-top:1px solid var(--line)}
 </style>
 </head>
@@ -135,6 +147,16 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
   function money(n){return '$'+Number(n||0).toLocaleString('en-US');}
   function fmtD(d){if(!d)return '—';try{return new Date(d+'T12:00:00').toLocaleDateString('es-US',{day:'numeric',month:'long',year:'numeric'});}catch(e){return d;}}
+  var IC={
+    mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/>',
+    paw:'<circle cx="7" cy="9" r="1.6"/><circle cx="12" cy="7.4" r="1.6"/><circle cx="17" cy="9" r="1.6"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/>',
+    bath:'<path d="M4 13h16v2a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M6 13V6.5A2.5 2.5 0 0 1 8.5 4 2.5 2.5 0 0 1 11 6.5"/><path d="M6.5 19l-1 2M17.5 19l1 2"/>',
+    card:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/>',
+    bookmark:'<path d="M6 4h12v16l-6-4-6 4z"/>',
+    scissors:'<circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><path d="M20 4 8.5 15.5M8.5 8.5 20 20M7.6 7.6 12 12"/>',
+    star:'<path d="M12 3l2.5 5.2 5.5 .8-4 3.9 .9 5.6L12 21l-5.4 2.5L7.5 18l-4-3.9 5.5-.8z"/>'
+  };
+  function svg(name,s){s=s||22;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle">'+(IC[name]||'')+'</svg>';}
   function badge(st){
     if(st==='active'||st==='scheduled'||st==='confirmed') return '<span class="badge b-active">Activo</span>';
     if(st==='lead') return '<span class="badge b-lead">Reservado</span>';
@@ -160,7 +182,7 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
         .then(function(r){return r.json();}).then(function(d){
           btn.disabled=false; btn.textContent='Enviarme mi enlace';
           if(d.error){ m.className='msg err'; m.textContent=d.error; return; }
-          m.className='msg ok'; m.innerHTML='📬 Revisa tu correo (<b>'+esc(em)+'</b>) y toca el enlace para entrar.';
+          m.className='msg ok'; m.innerHTML='<span style="color:var(--green);vertical-align:middle;margin-right:4px">'+svg('mail',16)+'</span>Revisa tu correo (<b>'+esc(em)+'</b>) y toca el enlace para entrar.';
         }).catch(function(){ btn.disabled=false; btn.textContent='Enviarme mi enlace'; m.className='msg err'; m.textContent='No se pudo enviar el enlace. Intenta de nuevo.'; });
     };
   }
@@ -188,30 +210,74 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   }
 
   function petEmoji(breed){
-    var b=(breed||'').toLowerCase();
-    if(/cat|gato|felino/.test(b)) return '🐱';
-    return '🐶';
+    return '<span style="color:var(--orange)">'+svg('paw',44)+'</span>';
   }
   function renderPetCard(p){
+    var pending = p.status==='pending';
     var age = p.birthdate ? fmtD(p.birthdate) : '';
     var meta=[p.sex, age, (p.weight_lbs?(p.weight_lbs+' lb'):'')].filter(Boolean).map(esc).join(' · ');
     var ph = p.photo_url
       ? '<img src="'+esc(p.photo_url)+'" alt="">'
       : petEmoji(p.breed);
-    return '<div class="pet pop"><div class="ph">'+ph+'</div><div class="bd">'+
+    var action = pending
+      ? '<span class="badge b-pending" style="display:inline-block;margin-top:11px">Pendiente de confirmar</span>'
+      : '<a href="/grooming.html" class="pay" style="margin-top:11px;background:var(--paper);color:var(--orange2)">Agendar para '+esc((p.name||'').split(' ')[0]||'mi mascota')+'</a>';
+    return '<div class="pet pop"'+(pending?' style="opacity:.82"':'')+'><div class="ph">'+ph+'</div><div class="bd">'+
       '<div class="nm">'+esc(p.name||'Mi mascota')+'</div>'+
       (p.breed?('<span class="br">'+esc(p.breed)+(p.size?(' · '+esc(p.size)):'')+'</span>'):'')+
       (meta?('<div class="mt">'+meta+'</div>'):'')+
-      '<a href="/grooming.html" class="pay" style="margin-top:11px;background:var(--paper);color:var(--orange2)">✂️ Agendar para '+esc((p.name||'').split(' ')[0]||'mi mascota')+'</a>'+
+      action+
       '</div></div>';
   }
   function renderPetsTab(pets){
     var cards=(pets||[]).map(renderPetCard).join('');
-    cards+='<a href="/grooming.html" class="addtile"><div class="plus">+</div>Agregar otra mascota</a>';
+    cards+='<div class="addtile js-add-pet"><div class="plus">+</div>Agregar otra mascota</div>';
     if(!(pets&&pets.length)){
-      return '<div class="card"><div class="empty"><div class="ico">🐾</div><div class="t">Aún no tienes mascotas registradas</div><div>Cuando agendes un servicio o membresía, tus mascotas aparecerán aquí.</div><br><a href="/grooming.html" class="pay" style="text-decoration:none">Agregar mi mascota</a></div></div>';
+      return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('paw',40)+'</div><div class="t">Aún no tienes mascotas registradas</div><div>Registra a tu mascota y nuestro equipo la confirma.</div><br><button class="pay js-add-pet" style="text-decoration:none">Agregar mi mascota</button></div></div>';
     }
     return '<div class="pets-grid">'+cards+'</div>';
+  }
+  function openPetModal(){
+    var bg=document.createElement('div'); bg.className='modal-bg';
+    bg.innerHTML='<div class="modal pop">'+
+      '<button class="x" id="pmx">×</button>'+
+      '<h3>Agregar mascota</h3>'+
+      '<p style="font-size:13px;color:var(--ink2)">La registramos y nuestro equipo la confirma. Te avisamos cuando esté lista para agendar.</p>'+
+      '<div class="fgrid">'+
+        '<div class="full"><label>Nombre *</label><input id="pf_name" placeholder="Ej: Max"></div>'+
+        '<div><label>Raza</label><input id="pf_breed" placeholder="Ej: Poodle"></div>'+
+        '<div><label>Tamaño</label><select id="pf_size"><option value="">—</option><option>Pequeño</option><option>Mediano</option><option>Grande</option><option>XL</option></select></div>'+
+        '<div><label>Sexo</label><select id="pf_sex"><option value="">—</option><option>Macho</option><option>Hembra</option></select></div>'+
+        '<div><label>Peso (lb)</label><input id="pf_weight" type="number" min="0" placeholder="Ej: 12"></div>'+
+        '<div><label>Pelaje</label><input id="pf_coat" placeholder="Ej: Rizado"></div>'+
+        '<div><label>Nacimiento</label><input id="pf_birth" type="date"></div>'+
+        '<div class="full"><label>Notas</label><textarea id="pf_notes" placeholder="Alergias, comportamiento, preferencias..."></textarea></div>'+
+      '</div>'+
+      '<button class="cta" id="pf_save">Guardar mascota</button>'+
+      '<div id="pf_msg"></div>'+
+    '</div>';
+    document.body.appendChild(bg);
+    function close(){ bg.remove(); }
+    bg.querySelector('#pmx').onclick=close;
+    bg.onclick=function(e){ if(e.target===bg) close(); };
+    bg.querySelector('#pf_save').onclick=function(){
+      var name=(bg.querySelector('#pf_name').value||'').trim();
+      var m=bg.querySelector('#pf_msg');
+      if(!name){ m.className='msg err'; m.textContent='El nombre es obligatorio.'; return; }
+      var payload={ name:name, breed:(bg.querySelector('#pf_breed').value||'').trim(), size:bg.querySelector('#pf_size').value, sex:bg.querySelector('#pf_sex').value, coat:(bg.querySelector('#pf_coat').value||'').trim(), weight_lbs:bg.querySelector('#pf_weight').value, birthdate:bg.querySelector('#pf_birth').value, notes:(bg.querySelector('#pf_notes').value||'').trim() };
+      var btn=bg.querySelector('#pf_save'); btn.disabled=true; btn.textContent='Guardando…';
+      sb.auth.getSession().then(function(s){
+        var tok=s.data&&s.data.session&&s.data.session.access_token;
+        if(!tok){ m.className='msg err'; m.textContent='Sesión expirada. Vuelve a entrar.'; btn.disabled=false; btn.textContent='Guardar mascota'; return; }
+        fetch(SUPA+'/functions/v1/portal_add_pet',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify(payload)})
+          .then(function(r){return r.json();}).then(function(d){
+            if(d.error){ m.className='msg err'; m.textContent=d.error; btn.disabled=false; btn.textContent='Guardar mascota'; return; }
+            m.className='msg ok'; m.textContent='¡Listo! '+esc(name)+' quedó registrada. Te avisamos al confirmarla.';
+            btn.textContent='Guardada';
+            setTimeout(function(){ close(); showDashboard(); }, 1500);
+          }).catch(function(){ m.className='msg err'; m.textContent='No se pudo guardar. Intenta de nuevo.'; btn.disabled=false; btn.textContent='Guardar mascota'; });
+      });
+    };
   }
 
   function renderMembership(m){
@@ -231,7 +297,7 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   }
   function renderGroomingTab(d){
     var ms=d.memberships||[];
-    var html='<div class="gbook"><div class="em">✂️</div>'+
+    var html='<div class="gbook"><div class="em" style="color:#fff">'+svg('scissors',84)+'</div>'+
       '<h2>Agenda tu próxima cita</h2>'+
       '<p>Reserva baño, corte o spa para tu mascota en segundos. '+(ms.length?'Tus baños de membresía se aplican automáticamente.':'Elige el servicio y la fecha que más te convenga.')+'</p>'+
       '<a href="/grooming.html" class="go">Agendar grooming →</a></div>';
@@ -239,7 +305,7 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
       var cards=ms.map(renderMembership).join('');
       html+='<div class="cards-grid">'+cards+'</div>';
     } else {
-      html+='<div class="card"><div class="empty"><div class="ico">🛁</div><div class="t">Aún no tienes membresía de grooming</div><div>Con una membresía ahorras en cada baño y recibes beneficios VIP. Mira los planes al reservar.</div></div></div>';
+      html+='<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('bath',40)+'</div><div class="t">Aún no tienes membresía de grooming</div><div>Con una membresía ahorras en cada baño y recibes beneficios VIP. Mira los planes al reservar.</div></div></div>';
     }
     return html;
   }
@@ -247,10 +313,10 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
     var cards='';
     if(d.plans && d.plans.length){ d.plans.forEach(function(p){ cards+=renderPlan(p, d.payments); }); }
     if(cards) return '<div class="cards-grid">'+cards+'</div>';
-    return '<div class="card"><div class="empty"><div class="ico">💳</div><div class="t">No tienes planes de pago activos</div><div>¿Buscas un cachorro? Arma un plan de pagos a tu medida.</div><br><a href="/plan" class="pay" style="text-decoration:none">Armar mi plan</a></div></div>';
+    return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('card',40)+'</div><div class="t">No tienes planes de pago activos</div><div>¿Buscas un cachorro? Arma un plan de pagos a tu medida.</div><br><a href="/plan" class="pay" style="text-decoration:none">Armar mi plan</a></div></div>';
   }
   function renderGuardadosTab(){
-    return '<div class="card"><div class="empty"><div class="ico">🔖</div><div class="t">Tus guardados llegan pronto</div><div>Aquí podrás guardar tus razas favoritas y artículos del blog para verlos después.</div></div></div>';
+    return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('bookmark',40)+'</div><div class="t">Tus guardados llegan pronto</div><div>Aquí podrás guardar tus razas favoritas y artículos del blog para verlos después.</div></div></div>';
   }
 
   function showDashboard(email){
@@ -270,9 +336,9 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
 
           var head='<div class="phead"><div class="pat"></div></div>'+
             '<div class="pcard fade"><div class="avatar">'+esc(initials(d))+'</div>'+
-            '<h1>Hola, '+esc((name||'').split(' ')[0]||name)+' 👋</h1>'+
+            '<h1>Hola, '+esc((name||'').split(' ')[0]||name)+'</h1>'+
             '<div class="sub">'+esc(d.email)+(loc?(' · '+esc(loc)):'')+'</div>'+
-            (vip?'<div class="vipchip">⭐ Cliente VIP</div>':'')+
+            (vip?'<div class="vipchip">'+svg('star',13)+' Cliente VIP</div>':'')+
             '<div class="pstats">'+
               '<div class="pstat"><b>'+nPets+'</b><span>'+(nPets===1?'mascota':'mascotas')+'</span></div>'+
               '<div class="pstat"><b>'+baths+'</b><span>baños disp.</span></div>'+
@@ -280,10 +346,10 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
             '</div></div>';
 
           var tabs='<div class="tabs">'+
-            '<button class="tab on" data-t="mascotas">🐾 Mascotas'+(nPets?'<span class="n">'+nPets+'</span>':'')+'</button>'+
-            '<button class="tab" data-t="grooming">✂️ Grooming</button>'+
-            '<button class="tab" data-t="pagos">💳 Pagos'+((d.plans||[]).length?'<span class="n">'+d.plans.length+'</span>':'')+'</button>'+
-            '<button class="tab" data-t="guardados">🔖 Guardados</button>'+
+            '<button class="tab on" data-t="mascotas">'+svg('paw',16)+' Mascotas'+(nPets?'<span class="n">'+nPets+'</span>':'')+'</button>'+
+            '<button class="tab" data-t="grooming">'+svg('scissors',16)+' Grooming</button>'+
+            '<button class="tab" data-t="pagos">'+svg('card',16)+' Pagos'+((d.plans||[]).length?'<span class="n">'+d.plans.length+'</span>':'')+'</button>'+
+            '<button class="tab" data-t="guardados">'+svg('bookmark',16)+' Guardados</button>'+
           '</div>';
 
           var panes='<div class="tabpane on" data-p="mascotas">'+renderPetsTab(d.pets)+'</div>'+
@@ -301,6 +367,8 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
               root.querySelectorAll('.tabpane').forEach(function(p){p.classList.toggle('on',p.getAttribute('data-p')===t);});
             };
           });
+          // wire create-pet buttons
+          root.querySelectorAll('.js-add-pet').forEach(function(b){ b.onclick=function(e){ e.preventDefault(); openPetModal(); }; });
           // wire pay buttons (plan abonos)
           root.querySelectorAll('button.pay[data-plan]').forEach(function(btn){
             btn.onclick=function(){ var pid=btn.getAttribute('data-plan'); var t=btn; t.disabled=true; t.textContent='Redirigiendo...';
@@ -323,6 +391,6 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   sb.auth.onAuthStateChange(function(_evt, session){ if(session && session.user){ showDashboard(session.user.email); } });
 })();
 </script>
-  <script src="bp-cookies.js?v=1780175202805"></script>
+  <script src="bp-cookies.js?v=1780182812348"></script>
 </body>
 </html>
