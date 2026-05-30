@@ -17,13 +17,19 @@ header{display:flex;align-items:center;justify-content:space-between;padding:15p
 header img{height:34px}
 header a{text-decoration:none;font-size:13px;font-weight:700;color:var(--ink2)}
 header a:hover{color:var(--orange)}
-.hero{background:linear-gradient(135deg,#2D2421 0%,#43352d 100%);color:#fff;padding:60px 20px 50px;text-align:center}
-.hero .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:#FFD8B0;font-weight:800}
-.hero h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(34px,5vw,56px);line-height:1.05;margin:10px 0 6px}
-.hero h1 em{font-style:italic;color:#FFB877}
-.hero p{color:rgba(255,255,255,.78);max-width:48ch;margin:0 auto;font-size:15px;line-height:1.6}
-.wrap{max-width:780px;margin:-32px auto 0;padding:0 18px 70px;position:relative;z-index:2}
-.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:22px;box-shadow:0 14px 40px rgba(45,36,33,.10);margin-bottom:16px}
+.hero{background:linear-gradient(135deg,#FFF3E6 0%,#FCE7CF 55%,#F8DCBE 100%);color:var(--ink);padding:66px 20px 64px;text-align:center;border-bottom:1px solid var(--line)}
+.hero .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--orange2);font-weight:800}
+.hero h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(34px,5vw,56px);line-height:1.05;margin:10px 0 6px;color:var(--ink)}
+.hero h1 em{font-style:italic;color:var(--orange2)}
+.hero p{color:var(--ink2);max-width:48ch;margin:0 auto;font-size:15px;line-height:1.6}
+.wrap{max-width:1020px;margin:-32px auto 0;padding:0 18px 70px;position:relative;z-index:2}
+.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 14px 40px rgba(45,36,33,.10);margin-bottom:16px}
+.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;align-items:start;margin-bottom:16px}
+.cards-grid .card{margin-bottom:0}
+.greet-card{margin-bottom:16px}
+.login-wrap{max-width:460px;margin:0 auto}
+.card.plan-card{transition:transform .15s ease,box-shadow .15s ease}
+.card.plan-card:hover{transform:translateY(-3px);box-shadow:0 18px 46px rgba(45,36,33,.14)}
 label{display:block;font-size:13px;font-weight:700;color:var(--ink2);margin:0 0 6px}
 input{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);outline:none}
 input:focus{border-color:var(--orange)}
@@ -83,12 +89,12 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   }
 
   function showLogin(prefMsg){
-    root.innerHTML = '<div class="card"><div class="step-label">Entra a tu cuenta</div>'+
+    root.innerHTML = '<div class="login-wrap"><div class="card"><div class="step-label">Entra a tu cuenta</div>'+
       '<p style="font-size:14px;color:var(--ink2);margin-bottom:14px">Te enviamos un <b>enlace mágico</b> a tu correo — sin contraseñas. Toca el enlace y entras automáticamente.</p>'+
       '<label>Tu correo</label><input id="le" type="email" placeholder="tu@correo.com" autocomplete="email">'+
       '<button class="cta" id="lb">Enviarme mi enlace</button>'+
       (prefMsg?('<div id="lm" class="msg '+prefMsg.k+'">'+prefMsg.t+'</div>'):'<div id="lm"></div>')+
-      '<p class="muted">Usa el mismo correo con el que reservaste tu plan o tu membresía.</p></div>';
+      '<p class="muted">Usa el mismo correo con el que reservaste tu plan o tu membresía.</p></div></div>';
     document.getElementById('lb').onclick=function(){
       var em=(document.getElementById('le').value||'').trim();
       var m=document.getElementById('lm');
@@ -105,7 +111,7 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   function renderPlan(p, pays){
     var paid=Number(p.paid_total||0), est=Number(p.est_price||0), bal=Math.max(0,est-paid), pct=est>0?Math.min(100,Math.round(paid/est*100)):0;
     var rows=(pays||[]).filter(function(x){return x.plan_id===p.id;}).sort(function(a,b){return a.created_at<b.created_at?-1:1;});
-    var html='<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">Plan de pagos</div>'+badge(p.status)+'</div>'+
+    var html='<div class="card plan-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">Plan de pagos</div>'+badge(p.status)+'</div>'+
       '<div class="row"><span class="k">Raza</span><span class="v">'+esc(p.breed||'—')+'</span></div>'+
       '<div class="row"><span class="k">Plan</span><span class="v">'+(p.months||'—')+' meses · '+money(p.monthly_amount)+'/mes</span></div>'+
       '<div class="row"><span class="k">Total estimado</span><span class="v">'+money(est)+'</span></div>'+
@@ -125,7 +131,7 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   }
 
   function renderMembership(m){
-    return '<div class="card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">Membresía</div>'+badge(m.status)+'</div>'+
+    return '<div class="card plan-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">Membresía</div>'+badge(m.status)+'</div>'+
       '<div class="row"><span class="k">Plan</span><span class="v">'+esc(m.plan||'—')+' ('+esc(m.billing||'—')+')</span></div>'+
       '<div class="row"><span class="k">Mascota</span><span class="v">'+esc(m.pet_name||'—')+(m.pet_size?(' · '+esc(m.pet_size)):'')+'</span></div>'+
       '<div class="row"><span class="k">Baños disponibles</span><span class="v" style="color:var(--orange2);font-size:18px">'+(m.credits_balance||0)+'</span></div>'+
@@ -142,10 +148,12 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
       fetch(SUPA+'/functions/v1/portal_data',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:'{}'})
         .then(function(r){return r.json();}).then(function(d){
           if(d.error){ root.innerHTML='<div class="card"><div class="msg err">'+esc(d.error)+'</div></div>'; return; }
-          var html='<div class="card" style="background:linear-gradient(135deg,rgba(245,130,32,0.08),rgba(255,184,119,0.10))"><div style="font-size:13px;color:var(--ink2)">Hola</div><div style="font-family:Bricolage Grotesque,sans-serif;font-size:22px;font-weight:800;color:var(--ink)">'+esc(d.email)+'</div></div>';
-          if(d.plans && d.plans.length){ d.plans.forEach(function(p){ html+=renderPlan(p, d.payments); }); }
-          if(d.memberships && d.memberships.length){ d.memberships.forEach(function(m){ html+=renderMembership(m); }); }
-          if((!d.plans||!d.plans.length) && (!d.memberships||!d.memberships.length)){
+          var html='<div class="card greet-card" style="background:linear-gradient(135deg,rgba(245,130,32,0.12),rgba(255,184,119,0.16))"><div style="font-size:12px;font-weight:800;letter-spacing:.08em;text-transform:uppercase;color:var(--orange2);margin-bottom:3px">Hola 👋</div><div style="font-family:Bricolage Grotesque,sans-serif;font-size:21px;font-weight:800;color:var(--ink);word-break:break-word">'+esc(d.email)+'</div></div>';
+          var cards='';
+          if(d.plans && d.plans.length){ d.plans.forEach(function(p){ cards+=renderPlan(p, d.payments); }); }
+          if(d.memberships && d.memberships.length){ d.memberships.forEach(function(m){ cards+=renderMembership(m); }); }
+          if(cards){ html+='<div class="cards-grid">'+cards+'</div>'; }
+          else {
             html+='<div class="card"><div class="center">Aún no tienes planes ni membresías con este correo. <br><br><a href="/plan" class="pay" style="text-decoration:none">Arma tu plan</a></div></div>';
           }
           root.innerHTML=html;

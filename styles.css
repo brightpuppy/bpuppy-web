@@ -154,6 +154,8 @@ a { color: inherit; text-decoration: none; }
 .hdr-logo img { width: 46px; height: auto; }
 .hdr-logo .wm { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); transition: color .3s ease; white-space: nowrap; margin-top: 4px; }
 .hdr.over-dark .wm { color: #fff; }
+.hdr.over-dark .hdr-portal { color: rgba(255,255,255,.85); }
+.hdr.over-dark .hdr-portal:hover { color: #fff; }
 .hdr.over-dark .nav a { color: rgba(255,255,255,.85); }
 .hdr.over-dark .nav a:hover { color: #fff; }
 .hdr.over-dark .lang button { color: rgba(255,255,255,.85); }
