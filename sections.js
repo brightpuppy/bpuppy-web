@@ -7,7 +7,7 @@ function About() {
   )), /* @__PURE__ */ React.createElement("a", { href: "/historia", className: "btn btn-dark", style: { marginTop: 28 } }, t(["Conocer m\xE1s sobre nuestra historia", "Learn more about our story"]), /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M5 12h14M13 5l7 7-7 7" })))), /* @__PURE__ */ React.createElement("div", { className: "about-video reveal" }, /* @__PURE__ */ React.createElement("div", { className: "about-video-frame", style: { borderRadius: 20, overflow: "hidden", aspectRatio: "9/16", position: "relative", maxWidth: 340, margin: "0 auto", boxShadow: "0 12px 48px rgba(0,0,0,0.14)" } }, /* @__PURE__ */ React.createElement(
     "iframe",
     {
-      src: "https://www.youtube.com/embed/" + t(["qW0jwJeNrPk", "YImasdUtIrI"]) + "?rel=0&modestbranding=1&playsinline=1&cc_load_policy=1",
+      src: "https://www.youtube.com/embed/YImasdUtIrI?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es",
       title: "Qui\xE9nes somos \u2014 BPuppy",
       allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
       allowFullScreen: true,

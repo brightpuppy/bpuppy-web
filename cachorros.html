@@ -16,17 +16,19 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
 <link rel="icon" href="assets/favicon.webp">
-<link rel="stylesheet" href="styles.css?v=1780014500000">
-<script src="site-publish.js?v=1780014500000"></script>
+<link rel="stylesheet" href="styles.css?v=1780175202805">
+<script src="site-publish.js?v=1780175202805"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
 @keyframes spin { to { transform: rotate(360deg); } }
 .pup-spinner { width:36px; height:36px; border:3px solid var(--line); border-top-color:var(--orange); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 16px; }
 </style>
 <style>
-.page-hero { background: var(--dark-sec, #5C4F48); color: var(--ink, #2D2421); padding: 140px 0 80px; position: relative; overflow: hidden; }
-.page-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(70% 80% at 80% 20%, rgba(245,130,32,0.06), transparent 60%); pointer-events:none; }
+.page-hero { background: linear-gradient(100deg, rgba(45,36,33,0.78) 0%, rgba(45,36,33,0.55) 40%, rgba(45,36,33,0.15) 100%), url("assets/header-cachorros.webp") center right/cover no-repeat, var(--dark-sec, #5C4F48); color: #fff; padding: 140px 0 80px; position: relative; overflow: hidden; }
+.page-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(45% 60% at 18% 50%, rgba(0,0,0,0.4), transparent 70%); pointer-events:none; }
 .page-hero .container { position: relative; z-index: 2; }
+.page-hero h1, .page-hero p, .page-hero .back { color: #fff !important; }
+.page-hero h1 em { color: #FFB877 !important; }
 .page-hero .back { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color: var(--ink-soft, rgba(45,36,33,0.62)); margin-bottom:28px; transition:color .2s; }
 .page-hero .back:hover { color: var(--ink); }
 .page-hero h1 { font-family:var(--display); font-size:clamp(42px,7vw,88px); font-weight:600; letter-spacing:-0.03em; line-height:0.95; margin:0 0 20px; }
@@ -289,7 +291,7 @@
 <div id="__chrome-ftr"></div>
 
 
-<script src="site-animations.js?v=1780014500000"></script>
+<script src="site-animations.js?v=1780175202805"></script>
 <script>
 // ── Supabase puppy loader ─────────────────────────────────────────────────────
 (function() {
@@ -722,11 +724,11 @@ window.submitIntlShipping = submitIntlShipping;
 </script>
 
 
-<script src="tweaks-panel.js?v=1780014500000"></script>
-<script src="i18n.js?v=1780014500000"></script>
-<script src="chrome.js?v=1780014500000"></script>
-<script src="Cachorros.inline0.js?v=1780014500000"></script>
-<script src="claude-bridge.js?v=1780014500000"></script>
-<script src="chat-widget.js?v=1780014500000"></script>
+<script src="tweaks-panel.js?v=1780175202805"></script>
+<script src="i18n.js?v=1780175202805"></script>
+<script src="chrome.js?v=1780175202805"></script>
+<script src="Cachorros.inline0.js?v=1780175202805"></script>
+<script src="claude-bridge.js?v=1780175202805"></script>
+<script src="chat-widget.js?v=1780175202805"></script>
 </body>
 </html>

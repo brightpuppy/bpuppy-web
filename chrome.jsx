@@ -18,6 +18,168 @@ const GT_BROWSER = {
   'ja':'ja','ko':'ko','ar':'ar','ru':'ru','hi':'hi','tr':'tr','th':'th','vi':'vi',
 };
 
+// ── Auth (shared with portal.html) ────────────────────────────────────────
+const SB_URL  = 'https://oqqwmcplljirbreowrll.supabase.co';
+const SB_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+const SB_SKEY = 'sb-oqqwmcplljirbreowrll-auth-token';
+
+function readBpSession() {
+  try {
+    const raw = localStorage.getItem(SB_SKEY);
+    if (!raw) return null;
+    const o = JSON.parse(raw);
+    const s = o && (o.currentSession || o.session || o);
+    const user = s && s.user;
+    if (!user || !user.email) return null;
+    return { token: s.access_token || '', email: user.email, meta: user.user_metadata || {} };
+  } catch (e) { return null; }
+}
+
+function firstNameFrom(sess) {
+  if (!sess) return '';
+  const cached = (() => { try { return localStorage.getItem('bpuppy-name') || ''; } catch (e) { return ''; } })();
+  const fromMeta = sess.meta && (sess.meta.first_name || (sess.meta.full_name || sess.meta.name || '').split(' ')[0]);
+  const raw = cached || fromMeta || sess.email.split('@')[0];
+  return (raw || '').split(' ')[0];
+}
+
+function initialsFrom(name, email) {
+  const base = (name || (email || '').split('@')[0] || '').trim();
+  const parts = base.split(/[\s._-]+/).filter(Boolean);
+  const s = (parts[0] ? parts[0][0] : '') + (parts[1] ? parts[1][0] : '');
+  return (s || base.slice(0, 2) || '?').toUpperCase();
+}
+
+function AuthControl({ isOverDark }) {
+  const t = useT();
+  const [sess, setSess] = useState(readBpSession);
+  const [name, setName] = useState(() => firstNameFrom(readBpSession()));
+  const [open, setOpen] = useState(false);
+  const [email, setEmail] = useState('');
+  const [sending, setSending] = useState(false);
+  const [sent, setSent] = useState(false);
+  const ref = useRef();
+
+  // re-read session on focus + cross-tab storage changes
+  useEffect(() => {
+    const sync = () => { const s = readBpSession(); setSess(s); setName(firstNameFrom(s)); };
+    window.addEventListener('focus', sync);
+    window.addEventListener('storage', sync);
+    return () => { window.removeEventListener('focus', sync); window.removeEventListener('storage', sync); };
+  }, []);
+
+  // close popovers on outside click
+  useEffect(() => {
+    const close = (e) => { if (ref.current && !ref.current.contains(e.target)) { setOpen(false); } };
+    document.addEventListener('mousedown', close);
+    return () => document.removeEventListener('mousedown', close);
+  }, []);
+
+  // fetch real first name once when logged in (and cache it)
+  useEffect(() => {
+    if (!sess || !sess.token) return;
+    let cancel = false;
+    fetch(SB_URL + '/functions/v1/portal_data', { method:'POST', headers:{ 'Authorization':'Bearer '+sess.token, 'apikey':SB_ANON, 'Content-Type':'application/json' }, body:'{}' })
+      .then(r => r.json()).then(d => {
+        if (cancel || !d || !d.client) return;
+        const fn = (d.client.first_name || '').trim();
+        if (fn) { try { localStorage.setItem('bpuppy-name', fn); } catch (e) {} setName(fn.split(' ')[0]); }
+      }).catch(() => {});
+    return () => { cancel = true; };
+  }, [sess && sess.token]);
+
+  const logout = () => {
+    try {
+      Object.keys(localStorage).forEach(k => { if (k.indexOf('sb-oqqwmcplljirbreowrll-') === 0) localStorage.removeItem(k); });
+      localStorage.removeItem('bpuppy-name');
+    } catch (e) {}
+    setSess(null); setName(''); setOpen(false);
+    if (/\/portal/.test(location.pathname)) location.href = '/'; else location.reload();
+  };
+
+  const sendLink = (e) => {
+    e && e.preventDefault();
+    const em = (email || '').trim().toLowerCase();
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) return;
+    setSending(true);
+    fetch(SB_URL + '/functions/v1/portal_magiclink', { method:'POST', headers:{ 'Content-Type':'application/json', 'apikey':SB_ANON }, body: JSON.stringify({ email: em, redirectTo: location.origin + '/portal' }) })
+      .then(r => r.json()).then(() => { setSending(false); setSent(true); }).catch(() => { setSending(false); setSent(true); });
+  };
+
+  const iconColor = isOverDark ? 'rgba(255,255,255,0.92)' : 'var(--ink-2)';
+  const hoverBg   = isOverDark ? 'rgba(255,255,255,0.15)' : 'rgba(45,36,33,0.07)';
+  const panel = { position:'absolute', top:'calc(100% + 10px)', right:0, background:'var(--paper,#fff)', border:'1px solid var(--line,#ebe7e3)', borderRadius:16, boxShadow:'0 16px 40px -10px rgba(0,0,0,0.22)', padding:14, minWidth:240, zIndex:400 };
+
+  // ── Logged in: name pill + dropdown ──────────────────────────────────────
+  if (sess) {
+    const display = name || firstNameFrom(sess);
+    return (
+      <div ref={ref} className="hdr-auth" style={{ position:'relative' }}>
+        <button onClick={() => setOpen(o => !o)} title={t(['Mi cuenta','My account'])}
+          style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'5px 12px 5px 6px', borderRadius:999, background: open ? hoverBg : 'none', border:'none', cursor:'pointer', color:iconColor, fontFamily:'inherit', transition:'background .15s, color .3s' }}
+          onMouseEnter={e => { if (!open) e.currentTarget.style.background = hoverBg; }}
+          onMouseLeave={e => { if (!open) e.currentTarget.style.background = 'none'; }}>
+          <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:30, height:30, borderRadius:'50%', background:'linear-gradient(135deg,#F55820 0%,#E83860 100%)', color:'#fff', fontWeight:800, fontSize:12, letterSpacing:'0.02em' }} className="notranslate">{initialsFrom(display, sess.email)}</span>
+          <span className="notranslate" style={{ fontWeight:700, fontSize:13.5, maxWidth:120, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{display}</span>
+        </button>
+        {open && (
+          <div style={panel}>
+            <div style={{ padding:'2px 8px 10px' }}>
+              <div className="notranslate" style={{ fontWeight:800, fontSize:14, color:'var(--ink)' }}>{display}</div>
+              <div className="notranslate" style={{ fontSize:12, color:'var(--ink-2)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{sess.email}</div>
+            </div>
+            <div style={{ height:1, background:'var(--line,#ebe7e3)', margin:'0 0 8px' }}/>
+            <a href="/portal" style={{ display:'flex', alignItems:'center', gap:9, padding:'9px 10px', borderRadius:9, textDecoration:'none', color:'var(--ink)', fontWeight:700, fontSize:13.5 }}
+              onMouseEnter={e => e.currentTarget.style.background='var(--bg,#f8f5f2)'} onMouseLeave={e => e.currentTarget.style.background='none'}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+              {t(['Mi cuenta','My account'])}
+            </a>
+            <button onClick={logout} style={{ display:'flex', width:'100%', alignItems:'center', gap:9, padding:'9px 10px', borderRadius:9, border:'none', background:'none', cursor:'pointer', color:'var(--ink)', fontFamily:'inherit', fontWeight:700, fontSize:13.5, textAlign:'left' }}
+              onMouseEnter={e => e.currentTarget.style.background='var(--bg,#f8f5f2)'} onMouseLeave={e => e.currentTarget.style.background='none'}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><path d="M16 17l5-5-5-5"/><path d="M21 12H9"/></svg>
+              {t(['Cerrar sesión','Sign out'])}
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
+  // ── Logged out: icon + quick magic-link popover ──────────────────────────
+  return (
+    <div ref={ref} className="hdr-auth" style={{ position:'relative' }}>
+      <button onClick={() => { setOpen(o => !o); setSent(false); }} title={t(['Entrar','Sign in'])} aria-label={t(['Entrar','Sign in'])}
+        style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:32, height:32, borderRadius:'50%', background: open ? hoverBg : 'none', border:'none', cursor:'pointer', color:iconColor, transition:'background .15s, color .3s' }}
+        onMouseEnter={e => { if (!open) e.currentTarget.style.background = hoverBg; }}
+        onMouseLeave={e => { if (!open) e.currentTarget.style.background = 'none'; }}>
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
+      </button>
+      {open && (
+        <div style={panel}>
+          {sent ? (
+            <div style={{ textAlign:'center', padding:'8px 4px' }}>
+              <div style={{ fontSize:30, marginBottom:6 }}>✉️</div>
+              <div style={{ fontWeight:800, fontSize:14, color:'var(--ink)', marginBottom:4 }}>{t(['Revisa tu correo','Check your email'])}</div>
+              <div style={{ fontSize:12.5, color:'var(--ink-2)', lineHeight:1.5 }}>{t(['Te enviamos un enlace para entrar sin contraseña.','We sent you a passwordless sign-in link.'])}</div>
+            </div>
+          ) : (
+            <form onSubmit={sendLink}>
+              <div style={{ fontWeight:800, fontSize:14, color:'var(--ink)', marginBottom:2 }}>{t(['Entra a tu cuenta','Sign in to your account'])}</div>
+              <div style={{ fontSize:12, color:'var(--ink-2)', marginBottom:10, lineHeight:1.45 }}>{t(['Sin contraseñas. Te enviamos un enlace mágico.','No passwords. We send you a magic link.'])}</div>
+              <input type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder={t(['tu@correo.com','you@email.com'])} autoFocus
+                style={{ width:'100%', boxSizing:'border-box', padding:'10px 12px', borderRadius:10, border:'1px solid var(--line,#ebe7e3)', fontSize:13.5, fontFamily:'inherit', marginBottom:9, outline:'none' }}/>
+              <button type="submit" disabled={sending}
+                style={{ width:'100%', padding:'10px 12px', borderRadius:10, border:'none', cursor: sending ? 'default':'pointer', background:'linear-gradient(135deg,#F55820 0%,#E83860 100%)', color:'#fff', fontWeight:800, fontSize:13.5, fontFamily:'inherit', opacity: sending ? 0.7 : 1 }}>
+                {sending ? t(['Enviando…','Sending…']) : t(['Enviar enlace','Send link'])}
+              </button>
+            </form>
+          )}
+        </div>
+      )}
+    </div>
+  );
+}
+
 function GlobeDropdown({ isOverDark, onLangSelect }) {
   const [open, setOpen] = useState(false);
   const ref = useRef();
@@ -216,9 +378,7 @@ function Header({ overDark }) {
             <button data-active={rightActive} onClick={handleRightClick}><span className="notranslate">EN</span></button>
           </div>
           <GlobeDropdown isOverDark={overDark && !scrolled} onLangSelect={handleGtSelect} />
-          <a href="/portal" className="hdr-portal" title={t(['Mi cuenta','My account'])} aria-label={t(['Mi cuenta','My account'])} style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:32, height:32, borderRadius:'50%', color:'currentColor', textDecoration:'none' }}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
-          </a>
+          <AuthControl isOverDark={overDark && !scrolled} />
           <a href="/solicitud" className="hdr-cta">{t(STRINGS.hdr.cta)}</a>
           <button className="hdr-burger" aria-label="Menu" aria-expanded={menuOpen} onClick={() => setMenuOpen(o => !o)}>
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round"><path d="M3 6h18"/><path d="M3 12h18"/><path d="M3 18h18"/></svg>
