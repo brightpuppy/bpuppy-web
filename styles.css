@@ -182,6 +182,14 @@ html.media-dark .hdr-portal { color: rgba(255,255,255,.85); background: rgba(255
 .nav a:hover { color: var(--ink); }
 .nav a::after { content:''; position:absolute; left:0; right:0; bottom:-4px; height:2px; background: var(--orange); border-radius:2px; transform: scaleX(0); transform-origin:left; transition: transform .25s ease; }
 .nav a:hover::after { transform: scaleX(1); }
+/* Social: identificador con borde/acento vivo */
+.nav a.nav-social { display:inline-flex; align-items:center; gap:7px; padding:6px 13px; border:1.5px solid #0EA5E9; border-radius:999px; color:#0EA5E9; font-weight:700; transition: background .2s, color .2s, box-shadow .2s; }
+.nav a.nav-social:hover { background:#0EA5E9; color:#fff; box-shadow:0 6px 16px -6px rgba(14,165,233,.6); }
+.nav a.nav-social:hover span { background:#fff !important; }
+.nav a.nav-social::after { display:none; }
+.hdr.over-dark .nav a.nav-social { color:#fff; border-color:rgba(255,255,255,.6); }
+.hdr.over-dark .nav a.nav-social:hover { background:#0EA5E9; border-color:#0EA5E9; }
+.mobile-nav a.mnav-social { display:flex; align-items:center; color:#0EA5E9 !important; font-weight:800; }
 
 .lang { display: flex; align-items: center; padding: 4px; border-radius: 999px; background: rgba(45,36,33,0.06); }
 .lang button { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-2); transition: all .2s; }

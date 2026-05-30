@@ -127,6 +127,8 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   const [isMember, setIsMember] = useState(false);
   const [promoCode, setPromoCode] = useState('');
   const [step, setStep] = useState(1); // 1=services, 2=date, 3=confirm
+  const [bookStatus, setBookStatus] = useState('idle'); // idle | sending | sent | error
+  const [bookErr, setBookErr] = useState('');
 
   // ── Datos del cliente logueado ──
   const pets = (me && me.pets) || [];
@@ -242,6 +244,30 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
 👤 Nombre: ${ownerName}
 📞 Teléfono: ${phone}${promoCode ? '\n🎫 Código promo: ' + promoCode : ''}${notes ? '\n📝 Notas: ' + notes : ''}`)
     return `https://wa.me/18084928294?text=${msg}`;
+  };
+
+  const submitBooking = async () => {
+    if (!canConfirm || bookStatus === 'sending') return;
+    setBookStatus('sending'); setBookErr('');
+    const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+    const payload = {
+      petName, ownerName, phone, size,
+      services: [...selectedServices].join(', '),
+      dateStr: `${day} de ${MONTHS[month]}, ${year}`, time,
+      notes, promoCode, total,
+      plan: activeMembership ? activeMembership.plan : '',
+      pickup, isMember,
+      email: (me && me.email) || '',
+    };
+    try {
+      const r = await fetch('https://oqqwmcplljirbreowrll.supabase.co/functions/v1/grooming_book', {
+        method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY },
+        body: JSON.stringify(payload),
+      });
+      const d = await r.json();
+      if (d && d.ok) setBookStatus('sent');
+      else { setBookErr((d && d.error) || 'No se pudo enviar la solicitud'); setBookStatus('error'); }
+    } catch(e) { setBookErr('Error de red, intenta de nuevo'); setBookStatus('error'); }
   };
 
   const StepDots = () => (
@@ -436,7 +462,7 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
           <div style={{ display: 'flex', flexDirection: 'column', gap: 10, marginBottom: 18 }}>
             {/* Mascota — selector si hay sesión con mascotas, si no texto libre */}
             <div>
-              <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>Nombre de tu mascota</div>
+              <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>Nombre de tu mascota <span style={{ color:'var(--orange)' }}>*</span></div>
               {pets.length > 0 ? (
                 <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
                   {pets.map((p, i) => {
@@ -458,7 +484,7 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
               ['Teléfono', phone, setPhone, '+1 (305) 000-0000'],
             ].map(([label, val, setter, ph]) => (
               <div key={label}>
-                <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>{label}</div>
+                <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>{label} <span style={{ color:'var(--orange)' }}>*</span></div>
                 <input value={val} onChange={e => setter(e.target.value)} placeholder={ph} style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: '1.5px solid var(--line)', background: 'var(--bg)', fontFamily: 'inherit', fontSize: 14, color: 'var(--ink)', outline: 'none' }}
                   onFocus={e => e.target.style.borderColor = 'var(--orange)'}
                   onBlur={e => e.target.style.borderColor = 'var(--line)'} />
@@ -470,11 +496,13 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
                 onFocus={e => e.target.style.borderColor = 'var(--orange)'}
                 onBlur={e => e.target.style.borderColor = 'var(--line)'} />
             </div>
+            {!activeMembership && (
             <div>
               <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>Código de promoción (opcional)</div>
               <input value={promoCode} onChange={e => setPromoCode(e.target.value.toUpperCase())} placeholder="Ej. APERTURA" style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: `1.5px solid ${promoCode ? 'var(--orange)' : 'var(--line)'}`, background: promoCode ? 'rgba(245,130,32,0.06)' : 'var(--bg)', fontFamily: 'inherit', fontSize: 14, color: 'var(--ink)', outline: 'none', fontWeight: promoCode ? 700 : 400, letterSpacing: promoCode ? '0.08em' : 0 }}/>
               {promoCode === 'APERTURA' && <div style={{ fontSize:11, color:'#1EB87A', fontWeight:700, marginTop:4 }}>✓ ¡Código de apertura aplicado! Primer baño + corte gratis en tu visita.</div>}
             </div>
+            )}
             {planQualifies ? (
               <div style={{ display:'flex', alignItems:'center', gap:10, padding:'10px 14px', borderRadius:10, border:'1.5px solid #1EB87A', background:'rgba(30,184,122,0.08)' }}>
                 <span style={{ flexShrink:0, color:'#1EB87A', display:'inline-flex' }}><Icon name={activePlan ? activePlan.icon : 'trophy'} size={20}/></span>
@@ -493,13 +521,33 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
               </button>
             )}
           </div>
-          <div style={{ display: 'flex', gap: 8 }}>
-            <button onClick={() => setStep(2)} style={{ flex: 1, padding: '13px', borderRadius: 14, border: '1.5px solid var(--line)', background: 'none', fontFamily: 'inherit', fontSize: 14, fontWeight: 600, color: 'var(--ink-2)', cursor: 'pointer' }}>← Atrás</button>
-            <a href={canConfirm ? buildWhatsApp() : '#'} target="_blank" rel="noopener noreferrer" style={{ flex: 2, padding: '13px', borderRadius: 14, background: canConfirm ? '#25D366' : 'var(--line)', color: canConfirm ? '#fff' : 'var(--ink-2)', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, textDecoration: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 8, pointerEvents: canConfirm ? 'all' : 'none', transition: 'all .2s' }}>
-              <Icon name="chat" size={18} color="#fff"/> Confirmar por WhatsApp
-            </a>
-          </div>
-          <p style={{ fontSize: 10.5, color: 'var(--ink-soft)', textAlign: 'center', margin: '10px 0 0' }}>Recibirás confirmación en menos de 2 horas en horario laboral</p>
+          {bookStatus === 'sent' ? (
+            <div style={{ textAlign:'center', padding:'8px 4px' }}>
+              <div style={{ display:'flex', justifyContent:'center', marginBottom:8, color:'#1EB87A' }}><Icon name="check" size={42}/></div>
+              <h3 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:19, fontWeight:800, color:'var(--ink)', margin:'0 0 6px' }}>¡Solicitud recibida!</h3>
+              <p style={{ fontSize:13, color:'var(--ink-2)', lineHeight:1.55, margin:'0 0 14px' }}>Recibimos tu cita para <strong>{petName}</strong>. Te confirmamos disponibilidad en menos de 2 horas en horario laboral{(me && me.email) ? <> al correo <strong>{me.email}</strong></> : ''}.</p>
+              <a href={buildWhatsApp()} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:8, padding:'12px 22px', borderRadius:14, background:'#25D366', color:'#fff', fontFamily:'inherit', fontSize:14, fontWeight:700, textDecoration:'none' }}>
+                <Icon name="chat" size={18} color="#fff"/> Enviar también por WhatsApp
+              </a>
+            </div>
+          ) : (
+            <>
+              <div style={{ display: 'flex', gap: 8 }}>
+                <button onClick={() => setStep(2)} style={{ flex: 1, padding: '13px', borderRadius: 14, border: '1.5px solid var(--line)', background: 'none', fontFamily: 'inherit', fontSize: 14, fontWeight: 600, color: 'var(--ink-2)', cursor: 'pointer' }}>← Atrás</button>
+                <button onClick={submitBooking} disabled={!canConfirm || bookStatus === 'sending'} style={{ flex: 2, padding: '13px', borderRadius: 14, border: 'none', background: canConfirm ? 'var(--orange)' : 'var(--line)', color: canConfirm ? '#fff' : 'var(--ink-2)', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, cursor: canConfirm && bookStatus !== 'sending' ? 'pointer' : 'default', transition: 'all .2s' }}>
+                  {bookStatus === 'sending' ? 'Enviando…' : 'Confirmar cita'}
+                </button>
+              </div>
+              {bookStatus === 'error' && <p style={{ fontSize:12.5, color:'#C0392B', textAlign:'center', margin:'10px 0 0' }}>{bookErr}</p>}
+              {!canConfirm && <p style={{ fontSize:11, color:'var(--orange)', textAlign:'center', margin:'8px 0 0' }}>Completa mascota, nombre y teléfono para confirmar</p>}
+              <div style={{ textAlign:'center', margin:'10px 0 0' }}>
+                <a href={canConfirm ? buildWhatsApp() : '#'} target="_blank" rel="noopener noreferrer" style={{ fontSize:12.5, fontWeight:700, color: canConfirm ? '#1EB87A' : 'var(--ink-soft)', textDecoration:'none', pointerEvents: canConfirm ? 'all' : 'none', display:'inline-flex', alignItems:'center', gap:6 }}>
+                  <Icon name="chat" size={15}/> ¿Prefieres WhatsApp? Envíalo por aquí
+                </a>
+              </div>
+              <p style={{ fontSize: 10.5, color: 'var(--ink-soft)', textAlign: 'center', margin: '10px 0 0' }}>Recibirás confirmación en menos de 2 horas en horario laboral</p>
+            </>
+          )}
         </div>
       )}
     </div>

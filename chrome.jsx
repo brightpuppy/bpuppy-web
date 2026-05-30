@@ -355,7 +355,6 @@ function Header({ overDark }) {
           <span className="wm notranslate">Bright Puppy</span>
         </a>
         <nav className="nav">
-          <a href="/">{t(['Inicio', 'Home'])}</a>
           {pv['Cachorros'] !== false && <NavItem label={t(STRINGS.nav.puppies)} href="/cachorros" items={cachItems}/>}
           {pv['Gatos']     !== false && <NavItem label={t(['Gatos','Cats'])} href="/gatos" items={gatosItems}/>}
           <a href="/financiamiento">{t(['Financiamiento','Financing'])}</a>
@@ -367,7 +366,7 @@ function Header({ overDark }) {
             { label: t(['Impacto Social','Social Impact']),  href:'/nosotros?tab=impacto' },
             { label: t(['Nuestro Equipo','Our Team']),       href:'/nosotros?tab=equipo' },
           ]}/>}
-          {pv['Social']    !== false && <a href="/social">{t(['Social','Social'])}</a>}
+          <a href="/social" className="nav-social"><span style={{ display:'inline-flex', width:7, height:7, borderRadius:'50%', background:'#0EA5E9' }}/>{t(['Social','Social'])}</a>
         </nav>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
           <a href="tel:+18084928294" className="hdr-phone" aria-label="Llamar">
@@ -387,7 +386,7 @@ function Header({ overDark }) {
       </div>
       {menuOpen && (
         <nav className="mobile-nav">
-          <a href="/" onClick={() => setMenuOpen(false)}>{t(['Inicio','Home'])}</a>
+          <a href="/social" className="mnav-social" onClick={() => setMenuOpen(false)}><span style={{ display:'inline-flex', width:8, height:8, borderRadius:'50%', background:'#0EA5E9', marginRight:8 }}/>{t(['Social · Comunidad','Social · Community'])}</a>
           {pv['Cachorros'] !== false && <a href="/cachorros" onClick={() => setMenuOpen(false)}>{t(STRINGS.nav.puppies)}</a>}
           {pv['Gatos'] !== false && <a href="/gatos" onClick={() => setMenuOpen(false)}>{t(['Gatos','Cats'])}</a>}
           <a href="/financiamiento" onClick={() => setMenuOpen(false)}>{t(['Financiamiento','Financing'])}</a>
