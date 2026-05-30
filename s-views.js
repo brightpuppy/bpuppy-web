@@ -3,6 +3,23 @@ const { useState, useRef, useEffect, useContext, createContext } = React;
 const BSCtx = createContext(null);
 const useBS = () => useContext(BSCtx);
 const THEMES = {
+  electric: {
+    bg: "#0A0F1E",
+    surface: "#111A30",
+    surface2: "#1A2540",
+    border: "rgba(120,180,255,0.10)",
+    borderStrong: "rgba(120,180,255,0.24)",
+    brand: "#0EA5E9",
+    rose: "#22D3EE",
+    grad: "linear-gradient(135deg,#0EA5E9 0%,#06B6D4 55%,#22D3EE 100%)",
+    glow: "0 8px 32px rgba(14,165,233,0.42)",
+    ink: "#EAF2FF",
+    ink2: "#8FA6CC",
+    soft: "#46587E",
+    like: "#FB7185",
+    online: "#34D399",
+    name: "Electric"
+  },
   midnight: {
     bg: "#09090F",
     surface: "#111120",
