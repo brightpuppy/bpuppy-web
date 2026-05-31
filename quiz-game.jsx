@@ -216,6 +216,7 @@ function ensureCss(){
       font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:19px; letter-spacing:.02em; color:var(--ink); cursor:pointer; transition:transform .12s; }
     .qg-jugar:hover{ transform:translateY(-2px); }
     .qg-jugar:active{ transform:scale(.98); }
+    .qg-wrap{ max-width:560px; }
   `;
   document.head.appendChild(s);
 }
@@ -304,10 +305,12 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   const [lives, setLives] = useState(3);
   const [treats, setTreats] = useState(0);
   const [flyIntro, setFlyIntro] = useState(false); // letrero que pausa al entrar a modo vuelo
-  const [flyWide, setFlyWide] = useState(false); // PC: la pantalla se ensancha al transformarse y volar
+  const [flyWide, setFlyWide] = useState(false); // PC: glow de la tarjeta al transformarse
+  const [paused, setPaused] = useState(false);   // pausa (click afuera o botón)
+  const wrapRef = useRef(null);                   // contenedor que se ensancha al paso (solo ancho)
 
   const W = 360, H = 200, GY = H - 24; // ground line (el ancho extra en PC se aplica al volar, no al inicio)
-  const MAXLIVES = 4, GRAV = 0.40, JUMPV = 8.7; // 4 vidas; salto flotante (arco perdonador)
+  const MAXLIVES = 4, GRAV = 0.40, JUMPV = 8.2; // 4 vidas; salto un poco más pequeño
 
   const loadBoard = () => {
     const s = gameSupa(); if(!s) return;
@@ -325,6 +328,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
     bldgs: [{x:40,w:46,h:54},{x:150,w:38,h:74},{x:250,w:54,h:46},{x:330,w:40,h:64}],
     nextObst: 300, nextTreat: 120, nextHeart: 1500, nextPlat: 380, over: false,
     mode: 'run', transT: 0, flyTarget: H-110, airObst: [], cats: [], projs: [], nextCat: 220,
+    vW: W, wantWide: false, widening: false, wideT: 0, paused: false, glowT: 0,
   });
 
   // Doble salto: 1er tap salta desde el suelo, 2do tap (en el aire) vuelve a impulsar.
@@ -335,7 +339,8 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   };
 
   const endGame = (finalScore, treatsCollected) => {
-    stopMusic(); setFlyIntro(false); setFlyWide(false);
+    stopMusic(); setFlyIntro(false); setFlyWide(false); setPaused(false);
+    if(wrapRef.current) wrapRef.current.style.maxWidth = '';
     const tier = prizeTier(finalScore);
     setPhase('over'); setScore(finalScore); sndOver();
     setTimeout(()=>{ sndPrize(); if(tier>=3) setTimeout(sndBark, 480); }, 320);
@@ -348,9 +353,20 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
 
   const dismissFlyIntro = () => { const st = stRef.current; if(!st) return; st.mode='fly'; st.flyTarget = st.py; setFlyIntro(false); startMusic(); };
 
+  const togglePause = () => { const st = stRef.current; if(phase!=='playing' || !st) return; const p = !st.paused; st.paused = p; setPaused(p); if(p){ stopMusic(); } else if(st.mode==='fly'){ startMusic(); } };
+  const resumeGame = () => { const st = stRef.current; if(st) st.paused = false; setPaused(false); if(st && st.mode==='fly'){ startMusic(); } };
+  // Pausa al hacer click fuera del juego (PC)
+  useEffect(() => {
+    if(phase!=='playing') return;
+    const onDown = (e) => { const st = stRef.current; if(!st || st.paused) return; if(wrapRef.current && !wrapRef.current.contains(e.target)){ st.paused = true; setPaused(true); stopMusic(); } };
+    document.addEventListener('mousedown', onDown);
+    return () => document.removeEventListener('mousedown', onDown);
+  }, [phase]);
+
   const start = () => {
     try { const c = ac(); if(c && c.state==='suspended') c.resume(); } catch(e){}
-    stopMusic(); setFlyIntro(false); setFlyWide(false);
+    stopMusic(); setFlyIntro(false); setFlyWide(false); setPaused(false);
+    if(wrapRef.current) wrapRef.current.style.maxWidth = '';
     stRef.current = newState();
     setScore(0); setLives(4); setTreats(0); setSaved(false); setPhase('playing');
   };
@@ -371,14 +387,32 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
     // HUD de vidas con corazoncitos
     const drawLives = (st) => { for(let i=0;i<MAXLIVES;i++){ const hx=9+i*17, ty=8, on=i<st.lives, s=12, cx=hx+s/2; ctx.save(); if(on){ ctx.shadowColor='rgba(226,59,59,0.55)'; ctx.shadowBlur=6; } ctx.fillStyle= on?'#E23B3B':'rgba(45,36,33,0.15)'; ctx.beginPath(); ctx.moveTo(cx, ty+s*0.3); ctx.bezierCurveTo(cx, ty, hx, ty, hx, ty+s*0.3); ctx.bezierCurveTo(hx, ty+s*0.55, cx, ty+s*0.8, cx, ty+s); ctx.bezierCurveTo(cx, ty+s*0.8, hx+s, ty+s*0.55, hx+s, ty+s*0.3); ctx.bezierCurveTo(hx+s, ty, cx, ty, cx, ty+s*0.3); ctx.closePath(); ctx.fill(); ctx.restore(); } };
     // modo vuelo (transform → flyintro → fly)
+    const FLYW = 640; // ancho del lienzo al volar (PC): crece a lo ancho, no a lo alto
     const flyLoop = (st) => {
       const dogX = 60, dogW = 22;
-      const grd = ctx.createLinearGradient(0,0,0,H); grd.addColorStop(0,'#8FC9EE'); grd.addColorStop(1,'#DFF1FB'); ctx.fillStyle=grd; ctx.fillRect(0,0,W,H);
-      ctx.save(); ctx.translate(W/2,H/2); ctx.scale(1.12,1.12); ctx.translate(-W/2,-H/2); // zoom leve
-      st.clouds.forEach(c=>{ c.x -= st.speed*0.4; if(c.x<-44){ c.x=W+20; c.y=10+Math.random()*120; } ctx.fillStyle='#fff'; ctx.fillRect(c.x,c.y,22,7); ctx.fillRect(c.x+7,c.y-6,14,7); });
+      // Ensanche gradual SOLO de ancho: el lienzo interno y el contenedor crecen juntos para que la altura no cambie.
+      if(st.widening){
+        st.wideT = Math.min(1, (st.wideT||0) + 0.018);
+        const e = 1 - Math.pow(1 - st.wideT, 3);
+        st.vW = Math.round(W + (FLYW - W) * e);
+        const need = Math.round(st.vW * DPR);
+        if(cvs.width !== need){ cvs.width = need; cvs.height = H * DPR; ctx.setTransform(DPR,0,0,DPR,0,0); ctx.imageSmoothingEnabled = true; }
+        if(wrapRef.current){ const mw = Math.min(Math.round(st.vW * 1.555), Math.round(window.innerWidth * 0.97)); wrapRef.current.style.maxWidth = mw + 'px'; }
+        if(st.wideT >= 1) st.widening = false;
+      }
+      const VW = st.vW || W;
+      const grd = ctx.createLinearGradient(0,0,0,H); grd.addColorStop(0,'#8FC9EE'); grd.addColorStop(1,'#DFF1FB'); ctx.fillStyle=grd; ctx.fillRect(0,0,VW,H);
+      ctx.save(); ctx.translate(VW/2,H/2); ctx.scale(1.12,1.12); ctx.translate(-VW/2,-H/2); // zoom leve
+      st.clouds.forEach(c=>{ c.x -= st.speed*0.4; if(c.x<-44){ c.x=VW+20; c.y=10+Math.random()*120; } ctx.fillStyle='#fff'; ctx.fillRect(c.x,c.y,22,7); ctx.fillRect(c.x+7,c.y-6,14,7); });
       if(st.mode==='transform'){
         st.transT++; st.py += (110 - st.py)*0.06;
         if(st.transT===55) sndWohoo();
+        // 1º se detiene + brilla + sonidos; 2º (a los ~0.5s) empieza a ensancharse al paso
+        if(st.transT===30 && st.wantWide){ st.widening = true; setFlyWide(true); }
+        // brillo creciente alrededor del cachorro
+        const gx=dogX+11, gy=GY-st.py-10, gr=14 + st.transT*0.55 + Math.sin(st.transT*0.4)*3;
+        const gl=ctx.createRadialGradient(gx,gy,2,gx,gy,Math.max(6,gr)); gl.addColorStop(0,'rgba(255,236,150,0.95)'); gl.addColorStop(0.45,'rgba(255,180,60,0.55)'); gl.addColorStop(1,'rgba(255,170,50,0)');
+        ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(gx,gy,Math.max(6,gr),0,7); ctx.fill(); ctx.restore();
         drawCape(dogX, GY-st.py, st.transT); drawDog(ctx, dogX, GY-st.py, tone, breed.key, st.frame, true);
         ctx.fillStyle='#C2521E'; ctx.font='bold 18px sans-serif'; ctx.textAlign='center'; ctx.fillText('¡WOHOOO!', dogX+44, GY-st.py-30); ctx.textAlign='left';
         if(st.transT>=110){ st.mode='flyintro'; setFlyIntro(true); }
@@ -392,13 +426,13 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
       st.py += (Math.max(24, Math.min(H-30, st.flyTarget)) - st.py)*0.42; // sigue al cursor más rápido
       st.frame = Math.floor(st.fcount/6)%2;
       // obstáculos aéreos
-      st.nextObst -= st.speed; if(st.nextObst<=0){ st.airObst.push({ x:W+12, y:26+Math.random()*120, w:16, h:12 }); st.nextObst = (150 - Math.min(st.speed*10,60)) + Math.random()*120; }
+      st.nextObst -= st.speed; if(st.nextObst<=0){ st.airObst.push({ x:VW+12, y:26+Math.random()*120, w:16, h:12 }); st.nextObst = (150 - Math.min(st.speed*10,60)) + Math.random()*120; }
       st.airObst.forEach(o=>o.x-=st.speed); st.airObst = st.airObst.filter(o=>o.x+o.w>-6);
       // treats aéreos
-      st.nextTreat -= st.speed; if(st.nextTreat<=0){ let tx=W+12; for(const o of st.airObst){ if(Math.abs(o.x-tx)<50){ tx=o.x+o.w+45; break; } } st.treatArr.push({ x:tx, y:GY-(40+Math.random()*110), got:false }); st.nextTreat=80+Math.random()*120; }
+      st.nextTreat -= st.speed; if(st.nextTreat<=0){ let tx=VW+12; for(const o of st.airObst){ if(Math.abs(o.x-tx)<50){ tx=o.x+o.w+45; break; } } st.treatArr.push({ x:tx, y:GY-(40+Math.random()*110), got:false }); st.nextTreat=80+Math.random()*120; }
       st.treatArr.forEach(c=>c.x-=st.speed); st.treatArr = st.treatArr.filter(c=>c.x>-12 && !c.got);
       // gatos malos desde abajo, lanzan pedazos
-      st.nextCat -= st.speed; if(st.nextCat<=0){ st.cats.push({ x:W-10, y:GY-2, t:0 }); st.nextCat=240+Math.random()*220; }
+      st.nextCat -= st.speed; if(st.nextCat<=0){ st.cats.push({ x:VW-10, y:GY-2, t:0 }); st.nextCat=240+Math.random()*220; }
       st.cats.forEach(cat=>{ cat.x -= st.speed*0.7; cat.t++; if(cat.t%75===0){ const dy=(GY-st.py-10)-(cat.y-8); st.projs.push({ x:cat.x+4, y:cat.y-8, vx:-(2.2+st.speed*0.3), vy: dy*0.012 - 1 }); } });
       st.cats = st.cats.filter(cat=>cat.x>-26);
       st.projs.forEach(p=>{ p.x+=p.vx; p.y+=p.vy; p.vy+=0.05; }); st.projs = st.projs.filter(p=>p.x>-10 && p.y<H+12);
@@ -419,9 +453,10 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
     const loop = () => {
       if(!running) return;
       const st = stRef.current; if(!st){ return; }
+      if(st.paused){ rafRef.current=requestAnimationFrame(loop); return; } // pausa: congela sin actualizar
       // ── modo vuelo (a partir de los 3 min) ──
       if((st.mode||'run')!=='run'){ flyLoop(st); if(st.over){ running=false; stopMusic(); endGame(st.score, st.treats); return; } rafRef.current=requestAnimationFrame(loop); return; }
-      if(st.fcount >= (window._BP_FLY_AT||3600)){ st.mode='transform'; st.transT=0; st.flyTarget=H-110; if(typeof window!=='undefined' && window.innerWidth>=820) setFlyWide(true); sndPlane(); setTimeout(()=>sndHero(),420); flyLoop(st); rafRef.current=requestAnimationFrame(loop); return; }
+      if(st.fcount >= (window._BP_FLY_AT||3600)){ st.mode='transform'; st.transT=0; st.flyTarget=H-110; st.wantWide = (typeof window!=='undefined' && window.innerWidth>=820); sndPlane(); setTimeout(()=>sndHero(),420); flyLoop(st); rafRef.current=requestAnimationFrame(loop); return; }
       const dogX = 46, dogW = 25, dogH = 25;
       // ── update ──
       st.dist += st.speed;
@@ -544,8 +579,8 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   const firstName = breed.name.split(' (')[0];
 
   return (
-    <div style={{ maxWidth: flyWide ? 'min(1040px, 97vw)' : 560, margin:'0 auto', padding:'18px 16px 80px', transition:'max-width 1s cubic-bezier(0.22,1,0.36,1)' }}>
-      <div className="qg-pop" style={{ ...cardSt, transition:'box-shadow 0.7s ease, transform 0.7s ease', boxShadow: flyWide ? '0 0 0 3px rgba(255,170,50,0.55), 0 26px 80px rgba(245,130,32,0.45)' : cardSt.boxShadow }}>
+    <div ref={wrapRef} className="qg-wrap" style={{ margin:'0 auto', padding:'18px 16px 80px' }}>
+      <div className="qg-pop" style={{ ...cardSt, transition:'box-shadow 0.7s ease', boxShadow: flyWide ? '0 0 0 3px rgba(255,170,50,0.55), 0 26px 80px rgba(245,130,32,0.45)' : cardSt.boxShadow }}>
         {/* Cabecera del juego */}
         <div style={{ background:'linear-gradient(135deg,#F58220,#E85D75)', padding:'14px 18px', color:'#fff', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
           <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontWeight:800, fontSize:17, flex:'1 1 auto', minWidth:0, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{t(['Corre con tu','Run with your'])} {firstName}</div>
@@ -562,6 +597,22 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
         {/* Lienzo */}
         <div style={{ position:'relative', background:'#EAF6FB', lineHeight:0, userSelect:'none', WebkitUserSelect:'none', touchAction:'none', overflow:'hidden' }} onMouseDown={(e)=>{ e.preventDefault(); tap(); }} onTouchStart={(e)=>{ e.preventDefault(); tap(); }} onMouseMove={(e)=>flyAim(e.clientY, e.currentTarget)} onTouchMove={(e)=>{ const st=stRef.current; if(st && st.mode==='fly' && e.touches[0]){ e.preventDefault(); flyAim(e.touches[0].clientY, e.currentTarget); } }}>
           <canvas ref={cvsRef} width={W} height={H} style={{ width:'100%', height:'auto', display:'block', cursor:'pointer', touchAction:'none' }}/>
+          {phase==='playing' && !flyIntro && (
+            <button onClick={(e)=>{ e.stopPropagation(); togglePause(); }} onMouseDown={(e)=>e.stopPropagation()} onTouchStart={(e)=>e.stopPropagation()} aria-label={t(['Pausa','Pause'])}
+              style={{ position:'absolute', top:8, right:8, zIndex:7, width:34, height:34, borderRadius:10, border:'none', background:'rgba(0,0,0,0.42)', color:'#fff', cursor:'pointer', display:'grid', placeItems:'center', WebkitTapHighlightColor:'transparent' }}>
+              {paused
+                ? <svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><path d="M8 5v14l11-7z"/></svg>
+                : <svg width="15" height="15" viewBox="0 0 24 24" fill="#fff"><rect x="6" y="5" width="4" height="14" rx="1"/><rect x="14" y="5" width="4" height="14" rx="1"/></svg>}
+            </button>
+          )}
+          {paused && phase==='playing' && (
+            <div onMouseDown={(e)=>e.stopPropagation()} onTouchStart={(e)=>e.stopPropagation()} style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', background:'rgba(45,36,33,0.55)', zIndex:8 }}>
+              <div style={{ textAlign:'center', color:'#fff' }}>
+                <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:24, fontWeight:800 }}>{t(['Pausa','Paused'])}</div>
+                <button onClick={(e)=>{ e.stopPropagation(); resumeGame(); }} onMouseDown={(e)=>e.stopPropagation()} className="btn btn-primary" style={{ marginTop:12, cursor:'pointer' }}>{t(['Continuar','Resume'])}</button>
+              </div>
+            </div>
+          )}
           {phase==='ready' && (
             <div style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', background:'rgba(255,255,255,0.55)' }}>
               <div style={{ textAlign:'center', display:'flex', flexDirection:'column', alignItems:'center', gap:14, background:'rgba(255,255,255,0.78)', borderRadius:16, padding:'16px 22px' }}>

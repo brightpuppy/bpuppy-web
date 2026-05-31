@@ -432,6 +432,7 @@ function ensureCss() {
       font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:19px; letter-spacing:.02em; color:var(--ink); cursor:pointer; transition:transform .12s; }
     .qg-jugar:hover{ transform:translateY(-2px); }
     .qg-jugar:active{ transform:scale(.98); }
+    .qg-wrap{ max-width:560px; }
   `;
   document.head.appendChild(s);
 }
@@ -544,8 +545,10 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   const [treats, setTreats] = useState(0);
   const [flyIntro, setFlyIntro] = useState(false);
   const [flyWide, setFlyWide] = useState(false);
+  const [paused, setPaused] = useState(false);
+  const wrapRef = useRef(null);
   const W = 360, H = 200, GY = H - 24;
-  const MAXLIVES = 4, GRAV = 0.4, JUMPV = 8.7;
+  const MAXLIVES = 4, GRAV = 0.4, JUMPV = 8.2;
   const loadBoard = () => {
     const s = gameSupa();
     if (!s) return;
@@ -588,7 +591,13 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     airObst: [],
     cats: [],
     projs: [],
-    nextCat: 220
+    nextCat: 220,
+    vW: W,
+    wantWide: false,
+    widening: false,
+    wideT: 0,
+    paused: false,
+    glowT: 0
   });
   const jump = () => {
     const st = stRef.current;
@@ -608,6 +617,8 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     stopMusic();
     setFlyIntro(false);
     setFlyWide(false);
+    setPaused(false);
+    if (wrapRef.current) wrapRef.current.style.maxWidth = "";
     const tier = prizeTier(finalScore);
     setPhase("over");
     setScore(finalScore);
@@ -632,6 +643,40 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     setFlyIntro(false);
     startMusic();
   };
+  const togglePause = () => {
+    const st = stRef.current;
+    if (phase !== "playing" || !st) return;
+    const p = !st.paused;
+    st.paused = p;
+    setPaused(p);
+    if (p) {
+      stopMusic();
+    } else if (st.mode === "fly") {
+      startMusic();
+    }
+  };
+  const resumeGame = () => {
+    const st = stRef.current;
+    if (st) st.paused = false;
+    setPaused(false);
+    if (st && st.mode === "fly") {
+      startMusic();
+    }
+  };
+  useEffect(() => {
+    if (phase !== "playing") return;
+    const onDown = (e) => {
+      const st = stRef.current;
+      if (!st || st.paused) return;
+      if (wrapRef.current && !wrapRef.current.contains(e.target)) {
+        st.paused = true;
+        setPaused(true);
+        stopMusic();
+      }
+    };
+    document.addEventListener("mousedown", onDown);
+    return () => document.removeEventListener("mousedown", onDown);
+  }, [phase]);
   const start = () => {
     try {
       const c = ac();
@@ -641,6 +686,8 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     stopMusic();
     setFlyIntro(false);
     setFlyWide(false);
+    setPaused(false);
+    if (wrapRef.current) wrapRef.current.style.maxWidth = "";
     stRef.current = newState();
     setScore(0);
     setLives(4);
@@ -692,21 +739,40 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
         ctx.restore();
       }
     };
+    const FLYW = 640;
     const flyLoop = (st) => {
       const dogX = 60, dogW = 22;
+      if (st.widening) {
+        st.wideT = Math.min(1, (st.wideT || 0) + 0.018);
+        const e = 1 - Math.pow(1 - st.wideT, 3);
+        st.vW = Math.round(W + (FLYW - W) * e);
+        const need = Math.round(st.vW * DPR);
+        if (cvs.width !== need) {
+          cvs.width = need;
+          cvs.height = H * DPR;
+          ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+          ctx.imageSmoothingEnabled = true;
+        }
+        if (wrapRef.current) {
+          const mw = Math.min(Math.round(st.vW * 1.555), Math.round(window.innerWidth * 0.97));
+          wrapRef.current.style.maxWidth = mw + "px";
+        }
+        if (st.wideT >= 1) st.widening = false;
+      }
+      const VW = st.vW || W;
       const grd = ctx.createLinearGradient(0, 0, 0, H);
       grd.addColorStop(0, "#8FC9EE");
       grd.addColorStop(1, "#DFF1FB");
       ctx.fillStyle = grd;
-      ctx.fillRect(0, 0, W, H);
+      ctx.fillRect(0, 0, VW, H);
       ctx.save();
-      ctx.translate(W / 2, H / 2);
+      ctx.translate(VW / 2, H / 2);
       ctx.scale(1.12, 1.12);
-      ctx.translate(-W / 2, -H / 2);
+      ctx.translate(-VW / 2, -H / 2);
       st.clouds.forEach((c) => {
         c.x -= st.speed * 0.4;
         if (c.x < -44) {
-          c.x = W + 20;
+          c.x = VW + 20;
           c.y = 10 + Math.random() * 120;
         }
         ctx.fillStyle = "#fff";
@@ -717,6 +783,22 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
         st.transT++;
         st.py += (110 - st.py) * 0.06;
         if (st.transT === 55) sndWohoo();
+        if (st.transT === 30 && st.wantWide) {
+          st.widening = true;
+          setFlyWide(true);
+        }
+        const gx = dogX + 11, gy = GY - st.py - 10, gr = 14 + st.transT * 0.55 + Math.sin(st.transT * 0.4) * 3;
+        const gl = ctx.createRadialGradient(gx, gy, 2, gx, gy, Math.max(6, gr));
+        gl.addColorStop(0, "rgba(255,236,150,0.95)");
+        gl.addColorStop(0.45, "rgba(255,180,60,0.55)");
+        gl.addColorStop(1, "rgba(255,170,50,0)");
+        ctx.save();
+        ctx.globalCompositeOperation = "lighter";
+        ctx.fillStyle = gl;
+        ctx.beginPath();
+        ctx.arc(gx, gy, Math.max(6, gr), 0, 7);
+        ctx.fill();
+        ctx.restore();
         drawCape(dogX, GY - st.py, st.transT);
         drawDog(ctx, dogX, GY - st.py, tone, breed.key, st.frame, true);
         ctx.fillStyle = "#C2521E";
@@ -749,14 +831,14 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
       st.frame = Math.floor(st.fcount / 6) % 2;
       st.nextObst -= st.speed;
       if (st.nextObst <= 0) {
-        st.airObst.push({ x: W + 12, y: 26 + Math.random() * 120, w: 16, h: 12 });
+        st.airObst.push({ x: VW + 12, y: 26 + Math.random() * 120, w: 16, h: 12 });
         st.nextObst = 150 - Math.min(st.speed * 10, 60) + Math.random() * 120;
       }
       st.airObst.forEach((o) => o.x -= st.speed);
       st.airObst = st.airObst.filter((o) => o.x + o.w > -6);
       st.nextTreat -= st.speed;
       if (st.nextTreat <= 0) {
-        let tx = W + 12;
+        let tx = VW + 12;
         for (const o of st.airObst) {
           if (Math.abs(o.x - tx) < 50) {
             tx = o.x + o.w + 45;
@@ -770,7 +852,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
       st.treatArr = st.treatArr.filter((c) => c.x > -12 && !c.got);
       st.nextCat -= st.speed;
       if (st.nextCat <= 0) {
-        st.cats.push({ x: W - 10, y: GY - 2, t: 0 });
+        st.cats.push({ x: VW - 10, y: GY - 2, t: 0 });
         st.nextCat = 240 + Math.random() * 220;
       }
       st.cats.forEach((cat) => {
@@ -862,6 +944,10 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
       if (!st) {
         return;
       }
+      if (st.paused) {
+        rafRef.current = requestAnimationFrame(loop);
+        return;
+      }
       if ((st.mode || "run") !== "run") {
         flyLoop(st);
         if (st.over) {
@@ -877,7 +963,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
         st.mode = "transform";
         st.transT = 0;
         st.flyTarget = H - 110;
-        if (typeof window !== "undefined" && window.innerWidth >= 820) setFlyWide(true);
+        st.wantWide = typeof window !== "undefined" && window.innerWidth >= 820;
         sndPlane();
         setTimeout(() => sndHero(), 420);
         flyLoop(st);
@@ -1219,7 +1305,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   }, []);
   const cardSt = { background: "#fff", borderRadius: 24, border: "1px solid var(--line)", overflow: "hidden", boxShadow: "0 10px 40px rgba(45,36,33,0.12)" };
   const firstName = breed.name.split(" (")[0];
-  return /* @__PURE__ */ React.createElement("div", { style: { maxWidth: flyWide ? "min(1040px, 97vw)" : 560, margin: "0 auto", padding: "18px 16px 80px", transition: "max-width 1s cubic-bezier(0.22,1,0.36,1)" } }, /* @__PURE__ */ React.createElement("div", { className: "qg-pop", style: { ...cardSt, transition: "box-shadow 0.7s ease, transform 0.7s ease", boxShadow: flyWide ? "0 0 0 3px rgba(255,170,50,0.55), 0 26px 80px rgba(245,130,32,0.45)" : cardSt.boxShadow } }, /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#F58220,#E85D75)", padding: "14px 18px", color: "#fff", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontWeight: 800, fontSize: 17, flex: "1 1 auto", minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, t(["Corre con tu", "Run with your"]), " ", firstName), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 12, alignItems: "center", fontSize: 13, fontWeight: 800, flexShrink: 0, whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" } }, /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: 4 }, title: "Treats" }, /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 48 48", fill: "#fff" }, /* @__PURE__ */ React.createElement("rect", { x: "14", y: "20", width: "20", height: "8", rx: "4" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "29", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "29", r: "5" })), treats), /* @__PURE__ */ React.createElement("span", null, t(["Puntos", "Score"]), ": ", score), /* @__PURE__ */ React.createElement("span", { style: { opacity: 0.85 } }, t(["Mejor", "Best"]), ": ", best))), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", background: "#EAF6FB", lineHeight: 0, userSelect: "none", WebkitUserSelect: "none", touchAction: "none", overflow: "hidden" }, onMouseDown: (e) => {
+  return /* @__PURE__ */ React.createElement("div", { ref: wrapRef, className: "qg-wrap", style: { margin: "0 auto", padding: "18px 16px 80px" } }, /* @__PURE__ */ React.createElement("div", { className: "qg-pop", style: { ...cardSt, transition: "box-shadow 0.7s ease", boxShadow: flyWide ? "0 0 0 3px rgba(255,170,50,0.55), 0 26px 80px rgba(245,130,32,0.45)" : cardSt.boxShadow } }, /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#F58220,#E85D75)", padding: "14px 18px", color: "#fff", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontWeight: 800, fontSize: 17, flex: "1 1 auto", minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, t(["Corre con tu", "Run with your"]), " ", firstName), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 12, alignItems: "center", fontSize: 13, fontWeight: 800, flexShrink: 0, whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" } }, /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: 4 }, title: "Treats" }, /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 48 48", fill: "#fff" }, /* @__PURE__ */ React.createElement("rect", { x: "14", y: "20", width: "20", height: "8", rx: "4" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "29", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "29", r: "5" })), treats), /* @__PURE__ */ React.createElement("span", null, t(["Puntos", "Score"]), ": ", score), /* @__PURE__ */ React.createElement("span", { style: { opacity: 0.85 } }, t(["Mejor", "Best"]), ": ", best))), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", background: "#EAF6FB", lineHeight: 0, userSelect: "none", WebkitUserSelect: "none", touchAction: "none", overflow: "hidden" }, onMouseDown: (e) => {
     e.preventDefault();
     tap();
   }, onTouchStart: (e) => {
@@ -1231,7 +1317,23 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
       e.preventDefault();
       flyAim(e.touches[0].clientY, e.currentTarget);
     }
-  } }, /* @__PURE__ */ React.createElement("canvas", { ref: cvsRef, width: W, height: H, style: { width: "100%", height: "auto", display: "block", cursor: "pointer", touchAction: "none" } }), phase === "ready" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(255,255,255,0.55)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.78)", borderRadius: 16, padding: "16px 22px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ink)", lineHeight: 1.1 } }, t(["\xA1Toca para empezar!", "Tap to start!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, color: "var(--ink-2)" } }, t(["Salta con clic, toque o barra espaciadora \xB7 doble = doble salto", "Jump with click, tap or spacebar \xB7 double = double jump"])))), phase === "over" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.45)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 28, fontWeight: 800 } }, t(["\xA1Buen intento!", "Nice run!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, marginTop: 2 } }, t(["Puntuaci\xF3n", "Score"]), ": ", /* @__PURE__ */ React.createElement("b", null, score)))), flyIntro && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.62)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff", background: "rgba(0,0,0,0.42)", borderRadius: 16, padding: "18px 22px", maxWidth: 300 } }, /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 24, fontWeight: 800 } }, t(["\xA1Modo vuelo!", "Flight mode!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, margin: "8px 0 14px", lineHeight: 1.45 } }, t(["Controla a tu cachorro con el mouse o las flechas \u2191 \u2193. Esquiva los obst\xE1culos del aire y a los gatos.", "Control your puppy with the mouse or the \u2191 \u2193 arrows. Dodge the air obstacles and the cats."])), /* @__PURE__ */ React.createElement("button", { onClick: dismissFlyIntro, className: "btn btn-primary", style: { cursor: "pointer" } }, t(["\xA1A volar!", "Let us fly!"]))))), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", fontSize: 12, fontWeight: 600, color: "var(--ink-soft)", padding: "8px 12px 0" } }, t(["Salta con clic, toque o barra espaciadora", "Jump with click, tap or spacebar"])), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 20px 22px" } }, phase !== "over" && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, alignItems: "center" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => phase === "playing" ? jump() : start(), className: "btn btn-primary", style: { flex: 1, justifyContent: "center", cursor: "pointer" } }, phase === "playing" ? t(["Saltar", "Jump"]) : t(["Empezar a jugar", "Start playing"]))), phase === "over" && /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 520, margin: "0 auto" } }, /* @__PURE__ */ React.createElement("button", { onClick: start, className: "btn btn-primary", style: { width: "100%", justifyContent: "center", cursor: "pointer", marginBottom: 16, fontSize: 15 } }, "\u21BB ", t(["Jugar otra vez", "Play again"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 14, alignItems: "center", background: "#FFF7EE", border: "1.5px solid rgba(245,130,32,0.25)", borderRadius: 16, padding: "14px 16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 54, height: 54, borderRadius: "50%", overflow: "hidden", border: "2px solid var(--orange)", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("img", { src: breed.img, alt: breed.name, style: { width: "100%", height: "100%", objectFit: "cover" } })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, fontSize: 14, color: "var(--ink)", lineHeight: 1.5 } }, /* @__PURE__ */ React.createElement("b", null, firstName), " ", t(["te da un premio:", "gives you a prize:"]), " ", /* @__PURE__ */ React.createElement("b", { style: { color: "var(--orange2,#C2521E)" } }, prizeFor(score, lang)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: "var(--ink-2)", marginTop: 2 } }, score, " ", t(["puntos", "points"]), " \xB7 ", treats, " treats")), /* @__PURE__ */ React.createElement("div", { style: { flexShrink: 0 } }, /* @__PURE__ */ React.createElement(PrizeSymbol, { tier: prizeTier(score), size: 46 }))), !saved ? /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, marginBottom: 8, color: "var(--ink)" } }, t(["Guarda tu puntuaci\xF3n", "Save your score"])), /* @__PURE__ */ React.createElement(
+  } }, /* @__PURE__ */ React.createElement("canvas", { ref: cvsRef, width: W, height: H, style: { width: "100%", height: "auto", display: "block", cursor: "pointer", touchAction: "none" } }), phase === "playing" && !flyIntro && /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: (e) => {
+        e.stopPropagation();
+        togglePause();
+      },
+      onMouseDown: (e) => e.stopPropagation(),
+      onTouchStart: (e) => e.stopPropagation(),
+      "aria-label": t(["Pausa", "Pause"]),
+      style: { position: "absolute", top: 8, right: 8, zIndex: 7, width: 34, height: 34, borderRadius: 10, border: "none", background: "rgba(0,0,0,0.42)", color: "#fff", cursor: "pointer", display: "grid", placeItems: "center", WebkitTapHighlightColor: "transparent" }
+    },
+    paused ? /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 24 24", fill: "#fff" }, /* @__PURE__ */ React.createElement("path", { d: "M8 5v14l11-7z" })) : /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 24 24", fill: "#fff" }, /* @__PURE__ */ React.createElement("rect", { x: "6", y: "5", width: "4", height: "14", rx: "1" }), /* @__PURE__ */ React.createElement("rect", { x: "14", y: "5", width: "4", height: "14", rx: "1" }))
+  ), paused && phase === "playing" && /* @__PURE__ */ React.createElement("div", { onMouseDown: (e) => e.stopPropagation(), onTouchStart: (e) => e.stopPropagation(), style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.55)", zIndex: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 24, fontWeight: 800 } }, t(["Pausa", "Paused"])), /* @__PURE__ */ React.createElement("button", { onClick: (e) => {
+    e.stopPropagation();
+    resumeGame();
+  }, onMouseDown: (e) => e.stopPropagation(), className: "btn btn-primary", style: { marginTop: 12, cursor: "pointer" } }, t(["Continuar", "Resume"])))), phase === "ready" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(255,255,255,0.55)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.78)", borderRadius: 16, padding: "16px 22px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ink)", lineHeight: 1.1 } }, t(["\xA1Toca para empezar!", "Tap to start!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, color: "var(--ink-2)" } }, t(["Salta con clic, toque o barra espaciadora \xB7 doble = doble salto", "Jump with click, tap or spacebar \xB7 double = double jump"])))), phase === "over" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.45)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 28, fontWeight: 800 } }, t(["\xA1Buen intento!", "Nice run!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, marginTop: 2 } }, t(["Puntuaci\xF3n", "Score"]), ": ", /* @__PURE__ */ React.createElement("b", null, score)))), flyIntro && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.62)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff", background: "rgba(0,0,0,0.42)", borderRadius: 16, padding: "18px 22px", maxWidth: 300 } }, /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 24, fontWeight: 800 } }, t(["\xA1Modo vuelo!", "Flight mode!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, margin: "8px 0 14px", lineHeight: 1.45 } }, t(["Controla a tu cachorro con el mouse o las flechas \u2191 \u2193. Esquiva los obst\xE1culos del aire y a los gatos.", "Control your puppy with the mouse or the \u2191 \u2193 arrows. Dodge the air obstacles and the cats."])), /* @__PURE__ */ React.createElement("button", { onClick: dismissFlyIntro, className: "btn btn-primary", style: { cursor: "pointer" } }, t(["\xA1A volar!", "Let us fly!"]))))), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", fontSize: 12, fontWeight: 600, color: "var(--ink-soft)", padding: "8px 12px 0" } }, t(["Salta con clic, toque o barra espaciadora", "Jump with click, tap or spacebar"])), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 20px 22px" } }, phase !== "over" && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, alignItems: "center" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => phase === "playing" ? jump() : start(), className: "btn btn-primary", style: { flex: 1, justifyContent: "center", cursor: "pointer" } }, phase === "playing" ? t(["Saltar", "Jump"]) : t(["Empezar a jugar", "Start playing"]))), phase === "over" && /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 520, margin: "0 auto" } }, /* @__PURE__ */ React.createElement("button", { onClick: start, className: "btn btn-primary", style: { width: "100%", justifyContent: "center", cursor: "pointer", marginBottom: 16, fontSize: 15 } }, "\u21BB ", t(["Jugar otra vez", "Play again"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 14, alignItems: "center", background: "#FFF7EE", border: "1.5px solid rgba(245,130,32,0.25)", borderRadius: 16, padding: "14px 16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 54, height: 54, borderRadius: "50%", overflow: "hidden", border: "2px solid var(--orange)", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("img", { src: breed.img, alt: breed.name, style: { width: "100%", height: "100%", objectFit: "cover" } })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, fontSize: 14, color: "var(--ink)", lineHeight: 1.5 } }, /* @__PURE__ */ React.createElement("b", null, firstName), " ", t(["te da un premio:", "gives you a prize:"]), " ", /* @__PURE__ */ React.createElement("b", { style: { color: "var(--orange2,#C2521E)" } }, prizeFor(score, lang)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: "var(--ink-2)", marginTop: 2 } }, score, " ", t(["puntos", "points"]), " \xB7 ", treats, " treats")), /* @__PURE__ */ React.createElement("div", { style: { flexShrink: 0 } }, /* @__PURE__ */ React.createElement(PrizeSymbol, { tier: prizeTier(score), size: 46 }))), !saved ? /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, marginBottom: 8, color: "var(--ink)" } }, t(["Guarda tu puntuaci\xF3n", "Save your score"])), /* @__PURE__ */ React.createElement(
     "input",
     {
       value: name,
