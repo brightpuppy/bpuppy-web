@@ -316,6 +316,88 @@ const sndHit = () => {
 const sndLife = () => {
   [784, 1047, 1319, 1568].forEach((f, i) => beep(f, 0.1, "triangle", i * 0.06, 0.05));
 };
+const sndPlane = () => {
+  const c = ac();
+  if (!c || window._quizMuted) return;
+  try {
+    if (c.state === "suspended") c.resume();
+  } catch (e) {
+  }
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = "sawtooth";
+  o.connect(g);
+  g.connect(c.destination);
+  const t0 = c.currentTime;
+  o.frequency.setValueAtTime(110, t0);
+  o.frequency.exponentialRampToValueAtTime(880, t0 + 1.2);
+  g.gain.setValueAtTime(1e-4, t0);
+  g.gain.linearRampToValueAtTime(0.05, t0 + 0.2);
+  g.gain.exponentialRampToValueAtTime(1e-4, t0 + 1.4);
+  o.start(t0);
+  o.stop(t0 + 1.45);
+};
+const sndHero = () => {
+  [392, 523, 659, 784, 1047].forEach((f, i) => beep(f, 0.2, "triangle", i * 0.1, 0.06));
+};
+const sndWohoo = () => {
+  const c = ac();
+  if (!c || window._quizMuted) return;
+  const o = c.createOscillator(), g = c.createGain();
+  o.type = "triangle";
+  o.connect(g);
+  g.connect(c.destination);
+  const t0 = c.currentTime;
+  o.frequency.setValueAtTime(520, t0);
+  o.frequency.exponentialRampToValueAtTime(1046, t0 + 0.45);
+  g.gain.setValueAtTime(1e-4, t0);
+  g.gain.linearRampToValueAtTime(0.06, t0 + 0.05);
+  g.gain.exponentialRampToValueAtTime(1e-4, t0 + 0.55);
+  o.start(t0);
+  o.stop(t0 + 0.6);
+};
+let _bpMusic = { on: false, timer: null, step: 0 };
+function startMusic() {
+  if (_bpMusic.on) return;
+  _bpMusic.on = true;
+  _bpMusic.step = 0;
+  const c = ac();
+  if (!c) return;
+  try {
+    if (c.state === "suspended") c.resume();
+  } catch (e) {
+  }
+  const bass = [110, 0, 146.83, 0, 98, 0, 130.81, 0];
+  const chord = [[220, 261.63, 329.63], 0, 0, 0, [196, 246.94, 293.66], 0, 0, 0];
+  const tone = (freq, dur, type, gain) => {
+    if (!c || window._quizMuted || freq <= 0) return;
+    const o = c.createOscillator(), g = c.createGain();
+    o.type = type;
+    o.frequency.value = freq;
+    o.connect(g);
+    g.connect(c.destination);
+    const t0 = c.currentTime;
+    g.gain.setValueAtTime(1e-4, t0);
+    g.gain.linearRampToValueAtTime(gain, t0 + 0.02);
+    g.gain.exponentialRampToValueAtTime(1e-4, t0 + dur);
+    o.start(t0);
+    o.stop(t0 + dur + 0.02);
+  };
+  _bpMusic.timer = setInterval(() => {
+    if (!_bpMusic.on) return;
+    const i = _bpMusic.step % 8;
+    if (bass[i]) tone(bass[i], 0.26, "triangle", 0.05);
+    if (i % 2 === 1) tone(6e3, 0.025, "square", 0.01);
+    if (Array.isArray(chord[i])) chord[i].forEach((f) => tone(f, 0.46, "sine", 0.02));
+    _bpMusic.step++;
+  }, 340);
+}
+function stopMusic() {
+  _bpMusic.on = false;
+  if (_bpMusic.timer) {
+    clearInterval(_bpMusic.timer);
+    _bpMusic.timer = null;
+  }
+}
 function ensureCss() {
   if (document.getElementById("qg-css")) return;
   const s = document.createElement("style");
@@ -460,6 +542,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   const [saving, setSaving] = useState(false);
   const [lives, setLives] = useState(3);
   const [treats, setTreats] = useState(0);
+  const [flyIntro, setFlyIntro] = useState(false);
   const W = 360, H = 200, GY = H - 24;
   const MAXLIVES = 5, GRAV = 0.4, JUMPV = 8.7;
   const loadBoard = () => {
@@ -497,7 +580,14 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     nextTreat: 120,
     nextHeart: 1500,
     nextPlat: 380,
-    over: false
+    over: false,
+    mode: "run",
+    transT: 0,
+    flyTarget: H - 110,
+    airObst: [],
+    cats: [],
+    projs: [],
+    nextCat: 220
   });
   const jump = () => {
     const st = stRef.current;
@@ -514,6 +604,8 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     }
   };
   const endGame = (finalScore, treatsCollected) => {
+    stopMusic();
+    setFlyIntro(false);
     const tier = prizeTier(finalScore);
     setPhase("over");
     setScore(finalScore);
@@ -530,12 +622,22 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     } catch (e) {
     }
   };
+  const dismissFlyIntro = () => {
+    const st = stRef.current;
+    if (!st) return;
+    st.mode = "fly";
+    st.flyTarget = st.py;
+    setFlyIntro(false);
+    startMusic();
+  };
   const start = () => {
     try {
       const c = ac();
       if (c && c.state === "suspended") c.resume();
     } catch (e) {
     }
+    stopMusic();
+    setFlyIntro(false);
     stRef.current = newState();
     setScore(0);
     setLives(3);
@@ -554,10 +656,234 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
     ctx.imageSmoothingEnabled = true;
     let running = true;
+    const drawCape = (cx, baseY, f) => {
+      const w = Math.sin(f * 0.3) * 3;
+      ctx.fillStyle = "#E23B3B";
+      ctx.beginPath();
+      ctx.moveTo(cx - 1, baseY - 26);
+      ctx.quadraticCurveTo(cx - 16 + w, baseY - 16, cx - 9 + w, baseY - 1);
+      ctx.lineTo(cx + 5, baseY - 9);
+      ctx.closePath();
+      ctx.fill();
+      ctx.fillStyle = "#b51d1d";
+      ctx.fillRect(cx - 2, baseY - 27, 7, 3);
+    };
+    const drawLives = (st) => {
+      for (let i = 0; i < MAXLIVES; i++) {
+        const hx = 8 + i * 16, hy = 7, on = i < st.lives, w = 12, h = 13, r = 3;
+        ctx.save();
+        if (on) {
+          ctx.shadowColor = "#FF7A1A";
+          ctx.shadowBlur = 7;
+        }
+        ctx.fillStyle = on ? "#F58220" : "rgba(45,36,33,0.13)";
+        ctx.beginPath();
+        ctx.moveTo(hx + r, hy);
+        ctx.arcTo(hx + w, hy, hx + w, hy + h, r);
+        ctx.arcTo(hx + w, hy + h, hx, hy + h, r);
+        ctx.arcTo(hx, hy + h, hx, hy, r);
+        ctx.arcTo(hx, hy, hx + w, hy, r);
+        ctx.closePath();
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        ctx.fillStyle = on ? "#fff" : "rgba(255,255,255,0.45)";
+        ctx.font = "bold 10px sans-serif";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        ctx.fillText("B", hx + w / 2, hy + h / 2 + 0.5);
+        ctx.restore();
+      }
+      ctx.textAlign = "left";
+      ctx.textBaseline = "alphabetic";
+    };
+    const flyLoop = (st) => {
+      const dogX = 60, dogW = 22;
+      const grd = ctx.createLinearGradient(0, 0, 0, H);
+      grd.addColorStop(0, "#8FC9EE");
+      grd.addColorStop(1, "#DFF1FB");
+      ctx.fillStyle = grd;
+      ctx.fillRect(0, 0, W, H);
+      ctx.save();
+      ctx.translate(W / 2, H / 2);
+      ctx.scale(1.12, 1.12);
+      ctx.translate(-W / 2, -H / 2);
+      st.clouds.forEach((c) => {
+        c.x -= st.speed * 0.4;
+        if (c.x < -44) {
+          c.x = W + 20;
+          c.y = 10 + Math.random() * 120;
+        }
+        ctx.fillStyle = "#fff";
+        ctx.fillRect(c.x, c.y, 22, 7);
+        ctx.fillRect(c.x + 7, c.y - 6, 14, 7);
+      });
+      if (st.mode === "transform") {
+        st.transT++;
+        st.py += (110 - st.py) * 0.06;
+        if (st.transT === 55) sndWohoo();
+        drawCape(dogX, GY - st.py, st.transT);
+        drawDog(ctx, dogX, GY - st.py, tone, breed.key, st.frame, true);
+        ctx.fillStyle = "#C2521E";
+        ctx.font = "bold 18px sans-serif";
+        ctx.textAlign = "center";
+        ctx.fillText("\xA1WOHOOO!", dogX + 44, GY - st.py - 30);
+        ctx.textAlign = "left";
+        if (st.transT >= 110) {
+          st.mode = "flyintro";
+          setFlyIntro(true);
+        }
+        drawLives(st);
+        ctx.restore();
+        return;
+      }
+      if (st.mode === "flyintro") {
+        drawCape(dogX, GY - st.py, st.fcount);
+        drawDog(ctx, dogX, GY - st.py, tone, breed.key, st.frame, true);
+        drawLives(st);
+        ctx.restore();
+        return;
+      }
+      st.fcount++;
+      st.dist += st.speed;
+      st.score = Math.floor(st.dist / 10) + st.treats * 8;
+      if (st.fcount % 6 === 0) setScore(st.score);
+      if (st.inv > 0) st.inv--;
+      st.py += (Math.max(24, Math.min(H - 30, st.flyTarget)) - st.py) * 0.18;
+      st.frame = Math.floor(st.fcount / 6) % 2;
+      st.nextObst -= st.speed;
+      if (st.nextObst <= 0) {
+        st.airObst.push({ x: W + 12, y: 26 + Math.random() * 120, w: 16, h: 12 });
+        st.nextObst = 150 - Math.min(st.speed * 10, 60) + Math.random() * 120;
+      }
+      st.airObst.forEach((o) => o.x -= st.speed);
+      st.airObst = st.airObst.filter((o) => o.x + o.w > -6);
+      st.nextTreat -= st.speed;
+      if (st.nextTreat <= 0) {
+        let tx = W + 12;
+        for (const o of st.airObst) {
+          if (Math.abs(o.x - tx) < 50) {
+            tx = o.x + o.w + 45;
+            break;
+          }
+        }
+        st.treatArr.push({ x: tx, y: GY - (40 + Math.random() * 110), got: false });
+        st.nextTreat = 80 + Math.random() * 120;
+      }
+      st.treatArr.forEach((c) => c.x -= st.speed);
+      st.treatArr = st.treatArr.filter((c) => c.x > -12 && !c.got);
+      st.nextCat -= st.speed;
+      if (st.nextCat <= 0) {
+        st.cats.push({ x: W - 10, y: GY - 2, t: 0 });
+        st.nextCat = 240 + Math.random() * 220;
+      }
+      st.cats.forEach((cat) => {
+        cat.x -= st.speed * 0.7;
+        cat.t++;
+        if (cat.t % 75 === 0) {
+          const dy = GY - st.py - 10 - (cat.y - 8);
+          st.projs.push({ x: cat.x + 4, y: cat.y - 8, vx: -(2.2 + st.speed * 0.3), vy: dy * 0.012 - 1 });
+        }
+      });
+      st.cats = st.cats.filter((cat) => cat.x > -26);
+      st.projs.forEach((p) => {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.05;
+      });
+      st.projs = st.projs.filter((p) => p.x > -10 && p.y < H + 12);
+      const dogTop = GY - st.py - 22, dogBottom = GY - st.py, dogLeft = dogX, dogRight = dogX + dogW;
+      const hit = () => {
+        st.lives--;
+        st.inv = 72;
+        setLives(st.lives);
+        sndHit();
+        if (st.lives <= 0) st.over = true;
+      };
+      if (st.inv <= 0) {
+        for (const o of st.airObst) {
+          if (dogRight > o.x && dogLeft < o.x + o.w && dogBottom > o.y && dogTop < o.y + o.h) {
+            hit();
+            break;
+          }
+        }
+      }
+      if (st.inv <= 0) {
+        for (const p of st.projs) {
+          if (Math.abs(p.x - (dogX + 11)) < 11 && Math.abs(p.y - (GY - st.py - 10)) < 11) {
+            hit();
+            p.x = -999;
+            break;
+          }
+        }
+      }
+      for (const c of st.treatArr) {
+        if (!c.got && Math.abs(c.x - (dogX + 11)) < 15 && Math.abs(c.y - (GY - st.py - 10)) < 16) {
+          c.got = true;
+          st.treats++;
+          setTreats(st.treats);
+          sndYeah();
+        }
+      }
+      st.treatArr.forEach((c) => {
+        if (c.got) return;
+        ctx.fillStyle = "#F7E08A";
+        ctx.fillRect(c.x, c.y, 8, 4);
+        ctx.fillStyle = "#E8C04A";
+        ctx.fillRect(c.x - 1, c.y - 1, 3, 6);
+        ctx.fillRect(c.x + 6, c.y - 1, 3, 6);
+      });
+      st.airObst.forEach((o) => {
+        ctx.fillStyle = "#7a8aa0";
+        ctx.fillRect(o.x, o.y, o.w, o.h);
+        ctx.fillStyle = "#5d6b82";
+        ctx.fillRect(o.x, o.y + o.h - 3, o.w, 3);
+      });
+      st.cats.forEach((cat) => {
+        ctx.fillStyle = "#555";
+        ctx.fillRect(cat.x, cat.y - 10, 12, 10);
+        ctx.fillStyle = "#555";
+        ctx.fillRect(cat.x, cat.y - 13, 3, 3);
+        ctx.fillRect(cat.x + 9, cat.y - 13, 3, 3);
+        ctx.fillStyle = "#ffd23f";
+        ctx.fillRect(cat.x + 2, cat.y - 8, 2, 2);
+        ctx.fillRect(cat.x + 8, cat.y - 8, 2, 2);
+      });
+      st.projs.forEach((p) => {
+        ctx.fillStyle = "#8a4b2a";
+        ctx.fillRect(p.x, p.y, 6, 6);
+      });
+      if (!(st.inv > 0 && Math.floor(st.fcount / 4) % 2)) {
+        drawCape(dogX, GY - st.py, st.fcount);
+        drawDog(ctx, dogX, GY - st.py, tone, breed.key, st.frame, true);
+      }
+      drawLives(st);
+      ctx.restore();
+    };
     const loop = () => {
       if (!running) return;
       const st = stRef.current;
       if (!st) {
+        return;
+      }
+      if ((st.mode || "run") !== "run") {
+        flyLoop(st);
+        if (st.over) {
+          running = false;
+          stopMusic();
+          endGame(st.score, st.treats);
+          return;
+        }
+        rafRef.current = requestAnimationFrame(loop);
+        return;
+      }
+      if (st.fcount >= (window._BP_FLY_AT || 10800)) {
+        st.mode = "transform";
+        st.transT = 0;
+        st.flyTarget = H - 110;
+        sndPlane();
+        setTimeout(() => sndHero(), 420);
+        flyLoop(st);
+        rafRef.current = requestAnimationFrame(loop);
         return;
       }
       const dogX = 46, dogW = 25, dogH = 25;
@@ -790,18 +1116,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
       if (!(st.inv > 0 && Math.floor(st.fcount / 4) % 2)) {
         drawDog(ctx, dogX, GY - st.py, tone, breed.key, st.frame, !st.grounded);
       }
-      for (let i = 0; i < MAXLIVES; i++) {
-        const hx = 8 + i * 13, hy = 8;
-        ctx.fillStyle = i < st.lives ? "#E23B3B" : "rgba(45,36,33,0.16)";
-        ctx.fillRect(hx + 1, hy + 2, 7, 4);
-        ctx.fillRect(hx, hy, 3, 3);
-        ctx.fillRect(hx + 6, hy, 3, 3);
-        ctx.beginPath();
-        ctx.moveTo(hx, hy + 3);
-        ctx.lineTo(hx + 4.5, hy + 9);
-        ctx.lineTo(hx + 9, hy + 3);
-        ctx.fill();
-      }
+      drawLives(st);
       if (st.over) {
         running = false;
         endGame(st.score, st.treats);
@@ -813,22 +1128,56 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     return () => {
       running = false;
       cancelAnimationFrame(rafRef.current);
+      stopMusic();
     };
   }, [phase]);
   useEffect(() => {
     const onKey = (e) => {
-      if (e.code === "Space" || e.code === "ArrowUp") {
-        e.preventDefault();
-        if (phase === "playing") jump();
-        else if (phase !== "over") start();
+      if (e.code !== "Space" && e.code !== "ArrowUp" && e.code !== "ArrowDown") return;
+      e.preventDefault();
+      const st = stRef.current;
+      if (phase !== "playing") {
+        if (phase !== "over") start();
+        return;
       }
+      if (st && st.mode === "flyintro") {
+        dismissFlyIntro();
+        return;
+      }
+      if (st && st.mode === "fly") {
+        const d = e.code === "ArrowDown" ? -22 : 22;
+        st.flyTarget = Math.max(24, Math.min(H - 30, (st.flyTarget == null ? st.py : st.flyTarget) + d));
+        return;
+      }
+      if (e.code !== "ArrowDown") jump();
     };
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [phase]);
+  const flyAim = (clientY, el) => {
+    const st = stRef.current;
+    if (!st || st.mode !== "fly" || !el) return;
+    const r = el.getBoundingClientRect();
+    if (!r.height) return;
+    const ly = (clientY - r.top) * (H / r.height);
+    st.flyTarget = Math.max(24, Math.min(H - 30, GY - ly));
+  };
   const tap = () => {
-    if (phase === "playing") jump();
-    else if (phase === "ready") start();
+    const st = stRef.current;
+    if (phase === "ready") {
+      start();
+      return;
+    }
+    if (phase !== "playing") return;
+    if (st && st.mode === "flyintro") {
+      dismissFlyIntro();
+      return;
+    }
+    if (st && st.mode === "fly") {
+      st.flyTarget = Math.min(H - 30, (st.flyTarget == null ? st.py : st.flyTarget) + 22);
+      return;
+    }
+    jump();
   };
   const submitScore = () => {
     const s = gameSupa();
@@ -878,7 +1227,13 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   }, onTouchStart: (e) => {
     e.preventDefault();
     tap();
-  } }, /* @__PURE__ */ React.createElement("canvas", { ref: cvsRef, width: W, height: H, style: { width: "100%", height: "auto", display: "block", cursor: "pointer", touchAction: "none" } }), phase === "ready" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(255,255,255,0.55)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.78)", borderRadius: 16, padding: "16px 22px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ink)", lineHeight: 1.1 } }, t(["\xA1Toca para empezar!", "Tap to start!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, color: "var(--ink-2)" } }, t(["Salta con clic, toque o barra espaciadora \xB7 doble = doble salto", "Jump with click, tap or spacebar \xB7 double = double jump"])))), phase === "over" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.45)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 28, fontWeight: 800 } }, t(["\xA1Buen intento!", "Nice run!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, marginTop: 2 } }, t(["Puntuaci\xF3n", "Score"]), ": ", /* @__PURE__ */ React.createElement("b", null, score))))), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", fontSize: 12, fontWeight: 600, color: "var(--ink-soft)", padding: "8px 12px 0" } }, t(["Salta con clic, toque o barra espaciadora", "Jump with click, tap or spacebar"])), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 20px 22px" } }, phase !== "over" && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, alignItems: "center" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => phase === "playing" ? jump() : start(), className: "btn btn-primary", style: { flex: 1, justifyContent: "center", cursor: "pointer" } }, phase === "playing" ? t(["Saltar", "Jump"]) : t(["Empezar a jugar", "Start playing"]))), phase === "over" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 14, alignItems: "center", background: "#FFF7EE", border: "1.5px solid rgba(245,130,32,0.25)", borderRadius: 16, padding: "14px 16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 54, height: 54, borderRadius: "50%", overflow: "hidden", border: "2px solid var(--orange)", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("img", { src: breed.img, alt: breed.name, style: { width: "100%", height: "100%", objectFit: "cover" } })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, fontSize: 14, color: "var(--ink)", lineHeight: 1.5 } }, /* @__PURE__ */ React.createElement("b", null, firstName), " ", t(["te da un premio:", "gives you a prize:"]), " ", /* @__PURE__ */ React.createElement("b", { style: { color: "var(--orange2,#C2521E)" } }, prizeFor(score, lang)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: "var(--ink-2)", marginTop: 2 } }, score, " ", t(["puntos", "points"]), " \xB7 ", treats, " treats")), /* @__PURE__ */ React.createElement("div", { style: { flexShrink: 0 } }, /* @__PURE__ */ React.createElement(PrizeSymbol, { tier: prizeTier(score), size: 46 }))), !saved ? /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, marginBottom: 8, color: "var(--ink)" } }, t(["Guarda tu puntuaci\xF3n", "Save your score"])), /* @__PURE__ */ React.createElement(
+  }, onMouseMove: (e) => flyAim(e.clientY, e.currentTarget), onTouchMove: (e) => {
+    const st = stRef.current;
+    if (st && st.mode === "fly" && e.touches[0]) {
+      e.preventDefault();
+      flyAim(e.touches[0].clientY, e.currentTarget);
+    }
+  } }, /* @__PURE__ */ React.createElement("canvas", { ref: cvsRef, width: W, height: H, style: { width: "100%", height: "auto", display: "block", cursor: "pointer", touchAction: "none" } }), phase === "ready" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(255,255,255,0.55)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.78)", borderRadius: 16, padding: "16px 22px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ink)", lineHeight: 1.1 } }, t(["\xA1Toca para empezar!", "Tap to start!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, color: "var(--ink-2)" } }, t(["Salta con clic, toque o barra espaciadora \xB7 doble = doble salto", "Jump with click, tap or spacebar \xB7 double = double jump"])))), phase === "over" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.45)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 28, fontWeight: 800 } }, t(["\xA1Buen intento!", "Nice run!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, marginTop: 2 } }, t(["Puntuaci\xF3n", "Score"]), ": ", /* @__PURE__ */ React.createElement("b", null, score)))), flyIntro && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.62)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff", background: "rgba(0,0,0,0.42)", borderRadius: 16, padding: "18px 22px", maxWidth: 300 } }, /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 24, fontWeight: 800 } }, t(["\xA1Modo vuelo!", "Flight mode!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, margin: "8px 0 14px", lineHeight: 1.45 } }, t(["Controla a tu cachorro con el mouse o las flechas \u2191 \u2193. Esquiva los obst\xE1culos del aire y a los gatos.", "Control your puppy with the mouse or the \u2191 \u2193 arrows. Dodge the air obstacles and the cats."])), /* @__PURE__ */ React.createElement("button", { onClick: dismissFlyIntro, className: "btn btn-primary", style: { cursor: "pointer" } }, t(["\xA1A volar!", "Let us fly!"]))))), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", fontSize: 12, fontWeight: 600, color: "var(--ink-soft)", padding: "8px 12px 0" } }, t(["Salta con clic, toque o barra espaciadora", "Jump with click, tap or spacebar"])), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 20px 22px" } }, phase !== "over" && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, alignItems: "center" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => phase === "playing" ? jump() : start(), className: "btn btn-primary", style: { flex: 1, justifyContent: "center", cursor: "pointer" } }, phase === "playing" ? t(["Saltar", "Jump"]) : t(["Empezar a jugar", "Start playing"]))), phase === "over" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 14, alignItems: "center", background: "#FFF7EE", border: "1.5px solid rgba(245,130,32,0.25)", borderRadius: 16, padding: "14px 16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 54, height: 54, borderRadius: "50%", overflow: "hidden", border: "2px solid var(--orange)", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("img", { src: breed.img, alt: breed.name, style: { width: "100%", height: "100%", objectFit: "cover" } })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, fontSize: 14, color: "var(--ink)", lineHeight: 1.5 } }, /* @__PURE__ */ React.createElement("b", null, firstName), " ", t(["te da un premio:", "gives you a prize:"]), " ", /* @__PURE__ */ React.createElement("b", { style: { color: "var(--orange2,#C2521E)" } }, prizeFor(score, lang)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: "var(--ink-2)", marginTop: 2 } }, score, " ", t(["puntos", "points"]), " \xB7 ", treats, " treats")), /* @__PURE__ */ React.createElement("div", { style: { flexShrink: 0 } }, /* @__PURE__ */ React.createElement(PrizeSymbol, { tier: prizeTier(score), size: 46 }))), !saved ? /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, marginBottom: 8, color: "var(--ink)" } }, t(["Guarda tu puntuaci\xF3n", "Save your score"])), /* @__PURE__ */ React.createElement(
     "input",
     {
       value: name,
