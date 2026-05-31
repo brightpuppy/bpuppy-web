@@ -4,6 +4,36 @@ const { useState, useRef, useEffect, useContext, createContext } = React;
 const BSCtx = createContext(null);
 const useBS = () => useContext(BSCtx);
 
+// ── Status / insignias de miembro ───────────────────────────────────────────
+const BS_STATUS = {
+  nuevo:     { es:'Nuevo',              en:'New',               color:'#9aa0a6', glow:false },
+  comparte:  { es:'Comparte',           en:'Sharer',            color:'#2F6BFF', glow:false },
+  creador:   { es:'Creador',            en:'Creator',           color:'#2F6BFF', glow:false },
+  plata:     { es:'Plata · Puppy Run',  en:'Silver · Puppy Run',color:'#8A93A6', glow:false },
+  groomer:   { es:'Cliente Spa',        en:'Spa Client',        color:'#1EB87A', glow:false },
+  vip:       { es:'Miembro VIP',        en:'VIP Member',        color:'#7C3AED', glow:true  },
+  comprador: { es:'Familia BrightPuppy',en:'BrightPuppy Family',color:'#F58220', glow:true  },
+  doble:     { es:'Doble Privilegio',   en:'Double Privilege',  color:'#F5C53A', glow:true  },
+};
+const bsStatusLabel = (key, lang) => { const s = BS_STATUS[key] || BS_STATUS.nuevo; return lang==='en' ? s.en : s.es; };
+function StatusChip({ status, lang, size }){
+  const s = BS_STATUS[status] || BS_STATUS.nuevo;
+  const sm = size === 'sm';
+  return (
+    <span style={{ display:'inline-flex', alignItems:'center', gap:5, padding: sm?'2px 8px':'3px 11px', borderRadius:999, fontSize: sm?10.5:12, fontWeight:800,
+      color: s.glow ? '#fff' : s.color, background: s.glow ? s.color : (s.color+'1A'),
+      border:`1px solid ${s.color}${s.glow?'':'55'}`, boxShadow: s.glow ? `0 0 10px ${s.color}88` : 'none', whiteSpace:'nowrap' }}>
+      <span style={{ width:6, height:6, borderRadius:'50%', background: s.glow ? '#fff' : s.color }}/>
+      {bsStatusLabel(status, lang||'es')}
+    </span>
+  );
+}
+function BadgeChips({ badges, lang, max }){
+  const list = (badges||[]).filter(b=>b!=='nuevo').slice(0, max||4);
+  if(!list.length) return null;
+  return <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>{list.map(b=> <StatusChip key={b} status={b} lang={lang} size="sm"/>)}</div>;
+}
+
 const THEMES = {
   clean: {
     bg:'#FBFAF8', surface:'#FFFFFF', surface2:'#F4F1EC',
@@ -517,7 +547,17 @@ function ProfileScreen({ posts, setScreen }) {
           <span style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:18, fontWeight:800, color:BS.ink }}>{me.username}</span>
           {me.verified && <BSVerified size={16}/>}
         </div>
-        <div style={{ fontSize:13, color:BS.ink2, marginBottom:5 }}>{me.name} · {me.city}</div>
+        <div style={{ fontSize:13, color:BS.ink2, marginBottom:8 }}>{me.name} · {me.city}</div>
+        <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap', marginBottom:8 }}>
+          <StatusChip status={(r&&r.status)||'nuevo'} lang="es"/>
+          <BadgeChips badges={(r&&r.badges)||[]} lang="es"/>
+        </div>
+        {r && r.free_grooming > 0 && (
+          <div style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:12, fontWeight:700, color:'#1EB87A', background:'rgba(30,184,122,0.1)', border:'1px solid rgba(30,184,122,0.3)', borderRadius:999, padding:'4px 11px', marginBottom:10 }}>
+            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7M12 7C12 7 11 2 8 2a2.5 2.5 0 000 5M12 7s1-5 4-5a2.5 2.5 0 010 5"/></svg>
+            {r.free_grooming} grooming gratis en FL
+          </div>
+        )}
         <div style={{ fontSize:13.5, color:BS.ink, marginBottom:14 }}>{me.bio}</div>
         <div style={{ display:'flex', gap:24 }}>
           {[{n:me.posts,l:'posts'},{n:me.followers,l:'seguidores'},{n:me.following,l:'siguiendo'}].map(s => (
@@ -970,7 +1010,8 @@ function CommunityScreen() {
               <div style={{ padding:'0 13px 13px', marginTop:-22, textAlign:'center' }}>
                 <div style={{ width:46, height:46, borderRadius:'50%', background:m.color, display:'grid', placeItems:'center', color:'#fff', fontWeight:800, fontSize:16, border:`3px solid ${BS.surface}`, margin:'0 auto 6px', overflow:'hidden' }}>{m.avatar ? <img src={m.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : m.initials}</div>
                 <div style={{ fontSize:13.5, fontWeight:800, color:BS.ink }}>{m.name}</div>
-                <div style={{ fontSize:11, color:BS.soft, marginBottom:4 }}>{m.city}</div>
+                <div style={{ fontSize:11, color:BS.soft, marginBottom:6 }}>{m.city}</div>
+                {m.status && m.status!=='nuevo' && <div style={{ marginBottom:7, display:'flex', justifyContent:'center' }}><StatusChip status={m.status} lang="es" size="sm"/></div>}
                 {(m.pet.name || m.pet.breed) && <div style={{ fontSize:11, color:BS.brand, fontWeight:700, background:'rgba(245,130,32,0.1)', borderRadius:999, padding:'2px 9px', display:'inline-block', marginBottom:9 }}>{[m.pet.name, m.pet.breed].filter(Boolean).join(' · ')}</div>}
                 <button onClick={() => toggle(m)} className="bs-btn" style={{ width:'100%', padding:'7px', borderRadius:999, border:`1.5px solid ${fol?BS.border:BS.brand}`, background:'transparent', color: fol?BS.soft:BS.brand, fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{fol?'Siguiendo':'Seguir'}</button>
               </div>
