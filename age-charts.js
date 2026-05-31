@@ -71,10 +71,8 @@
       { months: 9, label: tl(lang, "9 meses", "9 months") },
       { months: 12, label: tl(lang, "12 meses", "12 months") }
     ];
-    for (let y = 2; y <= life; y += 2) stages.push({ months: y * 12, label: y + (lang === "en" ? " yrs" : " a\xF1os") });
-    if (life % 2 !== 0 || stages[stages.length - 1].months < life * 12) {
-      stages.push({ months: life * 12, label: life + (lang === "en" ? " yrs (avg)" : " a\xF1os (prom)") });
-    }
+    const capY = Math.min(life, 4);
+    for (let y = 2; y <= capY; y += 2) stages.push({ months: y * 12, label: y + (lang === "en" ? " yrs" : " a\xF1os") });
     const lifeStage = (months) => {
       if (months < 12) return tl(lang, "Cachorro", "Puppy");
       if (months < 24) return tl(lang, "Joven", "Young");

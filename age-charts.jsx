@@ -74,17 +74,15 @@
     const life = avgYears(props.lifespan) || (props.species === 'cat' ? 15 : 12);
     const orange = '#F58220';
 
-    // Etapas: 3,6,9,12 meses; luego cada 2 años hasta el promedio de vida
+    // Etapas: 3,6,9,12 meses; luego 2 y 4 años (ya es adulto y se ve bien; no más).
     const stages = [
       { months: 3, label: tl(lang, '3 meses', '3 months') },
       { months: 6, label: tl(lang, '6 meses', '6 months') },
       { months: 9, label: tl(lang, '9 meses', '9 months') },
       { months: 12, label: tl(lang, '12 meses', '12 months') },
     ];
-    for (let y = 2; y <= life; y += 2) stages.push({ months: y * 12, label: y + (lang === 'en' ? ' yrs' : ' años') });
-    if (life % 2 !== 0 || stages[stages.length - 1].months < life * 12) {
-      stages.push({ months: life * 12, label: life + (lang === 'en' ? ' yrs (avg)' : ' años (prom)') });
-    }
+    const capY = Math.min(life, 4);
+    for (let y = 2; y <= capY; y += 2) stages.push({ months: y * 12, label: y + (lang === 'en' ? ' yrs' : ' años') });
 
     const lifeStage = (months) => {
       if (months < 12) return tl(lang, 'Cachorro', 'Puppy');
