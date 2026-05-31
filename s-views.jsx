@@ -5,6 +5,15 @@ const BSCtx = createContext(null);
 const useBS = () => useContext(BSCtx);
 
 const THEMES = {
+  clean: {
+    bg:'#F6F4EF', surface:'#FFFFFF', surface2:'#F1EDE6',
+    border:'rgba(45,36,33,0.10)', borderStrong:'rgba(45,36,33,0.20)',
+    brand:'#F58220', rose:'#E85D75',
+    grad:'linear-gradient(135deg,#F58220 0%,#E85D75 100%)',
+    glow:'0 8px 24px rgba(245,130,32,0.22)',
+    ink:'#2D2421', ink2:'#5f5346', soft:'#A89C8E',
+    like:'#E85D75', online:'#1EB87A', name:'Clean',
+  },
   electric: {
     bg:'#0A0F1E', surface:'#111A30', surface2:'#1A2540',
     border:'rgba(120,180,255,0.10)', borderStrong:'rgba(120,180,255,0.24)',
@@ -173,48 +182,131 @@ function WelcomeScreen({ onSendLink }) {
   );
 }
 
+async function bsUpload(file, folder) {
+  const sb = window._bsSb; if (!sb || !file) return '';
+  const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+  const path = (folder || 'media') + '/' + Date.now() + '_' + Math.random().toString(36).slice(2) + '.' + ext;
+  const up = await sb.storage.from('social-media').upload(path, file, { contentType: file.type, upsert: false });
+  if (up.error) throw up.error;
+  return sb.storage.from('social-media').getPublicUrl(path).data.publicUrl;
+}
+
+function PhotoPick({ label, preview, onPick, BS, round }) {
+  const ref = useRef(null);
+  return (
+    <div style={{ textAlign:'center' }}>
+      <div onClick={() => ref.current && ref.current.click()} style={{ width:72, height:72, borderRadius: round?'50%':14, background:BS.surface2, border:`2px dashed ${BS.borderStrong}`, margin:'0 auto 6px', cursor:'pointer', overflow:'hidden', display:'grid', placeItems:'center', color:BS.soft }}>
+        {preview ? <img src={preview} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3"/><path d="M8 5l1.5-2h5L16 5"/></svg>}
+      </div>
+      <input ref={ref} type="file" accept="image/*" onChange={e=>{ const f=e.target.files&&e.target.files[0]; if(f) onPick(f); }} style={{ display:'none' }}/>
+      <div style={{ fontSize:11, color:BS.ink2, fontWeight:600 }}>{label}</div>
+    </div>
+  );
+}
+
 function CreateProfileScreen({ me, onSave, onLogout }) {
   const BS = useBS();
-  const [username, setUsername] = useState('');
-  const [city, setCity] = useState('');
-  const [petName, setPetName] = useState('');
-  const [petBreed, setPetBreed] = useState('');
-  const [isPublic, setIsPublic] = useState(false);
+  const m = me || {};
+  const [firstName, setFirstName] = useState(m.first_name||'');
+  const [lastName, setLastName]   = useState(m.last_name||'');
+  const [bio, setBio]             = useState(m.bio||'');
+  const [petSpecies, setPetSpecies] = useState(m.pet_species||'');
+  const [petName, setPetName]     = useState(m.pet_name||'');
+  const [petBreed, setPetBreed]   = useState(m.pet_breed||'');
+  const [petColor, setPetColor]   = useState(m.pet_color||'');
+  const [petAge, setPetAge]       = useState(m.pet_age||'');
+  const [address, setAddress]     = useState(m.address||'');
+  const [city, setCity]           = useState(m.city||'');
+  const [stateV, setStateV]       = useState(m.state||'');
+  const [zip, setZip]             = useState(m.zip||'');
+  const [isPublic, setIsPublic]   = useState(!!m.is_public);
+  const [avatarFile, setAvatarFile] = useState(null);
+  const [petFile, setPetFile]       = useState(null);
+  const [avatarPrev, setAvatarPrev] = useState(m.avatar_url||'');
+  const [petPrev, setPetPrev]       = useState(m.pet_photo_url||'');
   const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState('');
+  const [err, setErr]   = useState('');
+
+  const pickAvatar = (f) => { setAvatarFile(f); try{ setAvatarPrev(URL.createObjectURL(f)); }catch(e){} };
+  const pickPet    = (f) => { setPetFile(f);    try{ setPetPrev(URL.createObjectURL(f)); }catch(e){} };
+
   const save = async () => {
-    const u = (username||'').trim().replace(/\s+/g,'').toLowerCase();
-    if (u.length < 3) { setErr('Elige un usuario de al menos 3 caracteres'); return; }
+    if (!firstName.trim()) { setErr('Escribe tu nombre'); return; }
     setBusy(true); setErr('');
     try {
-      const d = await onSave({ username:u, display_name:(username||'').trim(), city:city.trim(), pet_name:petName.trim(), pet_breed:petBreed.trim(), is_public:isPublic });
-      if (!(d && d.ok)) { setErr((d && d.error) || 'No se pudo guardar (¿usuario ya tomado?)'); setBusy(false); }
-    } catch(_e) { setErr('Error de red'); setBusy(false); }
+      let avatar_url = m.avatar_url || null, pet_photo_url = m.pet_photo_url || null;
+      if (avatarFile) avatar_url = await bsUpload(avatarFile, 'avatars');
+      if (petFile)    pet_photo_url = await bsUpload(petFile, 'pets');
+      const d = await onSave({
+        first_name:firstName.trim(), last_name:lastName.trim(), bio:bio.trim(),
+        pet_species:petSpecies, pet_name:petName.trim(), pet_breed:petBreed.trim(), pet_color:petColor.trim(), pet_age:petAge.trim(),
+        address:address.trim(), city:city.trim(), state:stateV.trim(), zip:zip.trim(),
+        avatar_url, pet_photo_url, is_public:isPublic,
+      });
+      if (!(d && d.ok)) { setErr((d && d.error) || 'No se pudo guardar'); setBusy(false); }
+    } catch(e) { setErr((e && e.message) || 'Error al guardar'); setBusy(false); }
   };
-  const fld = { width:'100%', padding:'12px 14px', borderRadius:12, border:`1.5px solid ${BS.borderStrong}`, background:BS.surface2, fontSize:14, color:BS.ink, fontFamily:'inherit', marginBottom:10 };
-  const lbl = { fontSize:11.5, fontWeight:700, color:BS.ink2, marginBottom:5 };
+
+  const fld = { width:'100%', padding:'12px 14px', borderRadius:12, border:`1.5px solid ${BS.borderStrong}`, background:BS.surface2, fontSize:14, color:BS.ink, fontFamily:'inherit' };
+  const lbl = { fontSize:11.5, fontWeight:700, color:BS.ink2, margin:'0 0 5px' };
+  const grp = { marginBottom:12 };
+  const sectionTitle = { fontSize:11, fontWeight:800, letterSpacing:'0.06em', textTransform:'uppercase', color:BS.brand, margin:'18px 0 10px' };
   return (
-    <div className="bs-fade" style={{ padding:'40px 24px 28px', minHeight:'100%', background:BS.bg }}>
+    <div className="bs-fade" style={{ padding:'36px 22px 28px', minHeight:'100%', background:BS.bg }}>
       <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:25, fontWeight:800, color:BS.ink, letterSpacing:'-0.03em', marginBottom:6 }}>Crea tu perfil</div>
-      <p style={{ fontSize:13, color:BS.ink2, lineHeight:1.5, margin:'0 0 20px' }}>Bienvenido{me&&me.email?(' · '+me.email):''}. Así te verá la comunidad.</p>
-      <div style={lbl}>Nombre de usuario *</div>
-      <input value={username} onChange={e=>setUsername(e.target.value)} placeholder="ej: lunaygolden" style={fld}/>
-      <div style={lbl}>Ciudad</div>
-      <input value={city} onChange={e=>setCity(e.target.value)} placeholder="Miami, FL" style={fld}/>
-      <div style={{ display:'flex', gap:10 }}>
-        <div style={{ flex:1 }}><div style={lbl}>Mascota</div><input value={petName} onChange={e=>setPetName(e.target.value)} placeholder="Luna" style={fld}/></div>
-        <div style={{ flex:1 }}><div style={lbl}>Raza</div><input value={petBreed} onChange={e=>setPetBreed(e.target.value)} placeholder="Golden" style={fld}/></div>
+      <p style={{ fontSize:13, color:BS.ink2, lineHeight:1.5, margin:'0 0 14px' }}>Bienvenido{m.email?(' · '+m.email):''}. Completa tus datos para unirte a la comunidad.</p>
+
+      {/* Fotos */}
+      <div style={{ display:'flex', gap:24, justifyContent:'center', marginBottom:6 }}>
+        <PhotoPick label="Tu foto" preview={avatarPrev} onPick={pickAvatar} BS={BS} round/>
+        <PhotoPick label="Foto de tu mascota" preview={petPrev} onPick={pickPet} BS={BS}/>
       </div>
-      <div onClick={()=>setIsPublic(v=>!v)} style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 14px', borderRadius:12, border:`1.5px solid ${isPublic?BS.brand:BS.border}`, background: isPublic?'rgba(14,165,233,0.07)':BS.surface2, cursor:'pointer', marginBottom:4 }}>
+
+      <div style={sectionTitle}>Tus datos</div>
+      <div style={{ display:'flex', gap:10 }}>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>Nombre *</div><input value={firstName} onChange={e=>setFirstName(e.target.value)} placeholder="Luis" style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>Apellido</div><input value={lastName} onChange={e=>setLastName(e.target.value)} placeholder="Guzmán" style={fld}/></div>
+      </div>
+      <div style={grp}><div style={lbl}>Bio (opcional)</div><input value={bio} onChange={e=>setBio(e.target.value)} placeholder="Amante de los Golden 🐾" style={fld}/></div>
+
+      <div style={sectionTitle}>Tu mascota</div>
+      <div style={{ ...grp }}>
+        <div style={lbl}>¿Qué tipo de mascota?</div>
+        <div style={{ display:'flex', gap:8 }}>
+          {[['perro','Perro'],['gato','Gato'],['otra','Otra']].map(([v,l]) => (
+            <button key={v} onClick={()=>setPetSpecies(v)} className="bs-btn" style={{ flex:1, padding:'10px', borderRadius:11, border:`1.5px solid ${petSpecies===v?BS.brand:BS.border}`, background: petSpecies===v?'rgba(245,130,32,0.08)':BS.surface2, color: petSpecies===v?BS.brand:BS.ink2, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{l}</button>
+          ))}
+        </div>
+      </div>
+      <div style={{ display:'flex', gap:10 }}>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>Nombre</div><input value={petName} onChange={e=>setPetName(e.target.value)} placeholder="Luna" style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>Raza / tipo</div><input value={petBreed} onChange={e=>setPetBreed(e.target.value)} placeholder="Golden Retriever" style={fld}/></div>
+      </div>
+      <div style={{ display:'flex', gap:10 }}>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>Color</div><input value={petColor} onChange={e=>setPetColor(e.target.value)} placeholder="Dorado" style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>Edad</div><input value={petAge} onChange={e=>setPetAge(e.target.value)} placeholder="2 años" style={fld}/></div>
+      </div>
+
+      <div style={sectionTitle}>Tu dirección <span style={{ textTransform:'none', letterSpacing:0, color:BS.soft, fontWeight:600 }}>· privada, nunca pública</span></div>
+      <div style={grp}><div style={lbl}>Calle y número</div><input value={address} onChange={e=>setAddress(e.target.value)} placeholder="123 Main St, Apt 4" style={fld}/></div>
+      <div style={{ display:'flex', gap:10 }}>
+        <div style={{ flex:2, ...grp }}><div style={lbl}>Ciudad</div><input value={city} onChange={e=>setCity(e.target.value)} list="bs-cities" placeholder="Empieza a escribir…" style={fld}/>
+          <datalist id="bs-cities"><option value="Miami, FL"/><option value="Orlando, FL"/><option value="Tampa, FL"/><option value="Haines City, FL"/><option value="Kissimmee, FL"/><option value="Lakeland, FL"/><option value="Davenport, FL"/></datalist>
+        </div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>Estado</div><input value={stateV} onChange={e=>setStateV(e.target.value)} placeholder="FL" style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>ZIP</div><input value={zip} onChange={e=>setZip(e.target.value)} placeholder="33844" style={fld}/></div>
+      </div>
+
+      <div onClick={()=>setIsPublic(v=>!v)} style={{ display:'flex', alignItems:'center', gap:12, padding:'13px 14px', borderRadius:13, border:`1.5px solid ${isPublic?BS.brand:BS.border}`, background: isPublic?'rgba(245,130,32,0.07)':BS.surface2, cursor:'pointer', marginTop:8 }}>
         <div style={{ flex:1 }}>
           <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>Perfil público</div>
-          <div style={{ fontSize:11.5, color:BS.soft, lineHeight:1.45 }}>Aparece en Comunidad con tu usuario, ciudad y tu mascota. Nunca tu correo. Puedes cambiarlo cuando quieras.</div>
+          <div style={{ fontSize:11.5, color:BS.soft, lineHeight:1.5 }}>Si lo activas, en Comunidad solo se verá: <b style={{ color:BS.ink2 }}>tu nombre, ciudad y tu mascota</b> (con foto si subiste). <b style={{ color:BS.ink2 }}>Tu correo, teléfono y dirección NUNCA se hacen públicos.</b> Por defecto tu perfil es privado.</div>
         </div>
         <div style={{ width:46, height:26, borderRadius:999, background:isPublic?BS.grad:BS.border, position:'relative', flexShrink:0 }}>
           <span style={{ position:'absolute', top:3, left:isPublic?23:3, width:20, height:20, borderRadius:'50%', background:'#fff', transition:'left .2s' }}/>
         </div>
       </div>
-      {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600, marginTop:8 }}>{err}</div>}
+      {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600, marginTop:10 }}>{err}</div>}
       <button onClick={save} disabled={busy} className="bs-btn" style={{ width:'100%', marginTop:16, padding:'15px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:15, fontWeight:700, cursor:busy?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity:busy?0.7:1 }}>{busy?'Guardando…':'Entrar a la comunidad'}</button>
       <button onClick={onLogout} className="bs-btn" style={{ width:'100%', marginTop:10, padding:'12px', borderRadius:12, border:'none', background:'transparent', color:BS.soft, fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>Usar otra cuenta</button>
     </div>
@@ -292,7 +384,7 @@ function PostCard({ post, onLike, onSave }) {
             <span style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>{post.username}</span>
             {post.verified && <BSVerified size={13}/>}
           </div>
-          <div style={{ fontSize:11, color:BS.soft }}>{post.city} · {post.time}</div>
+          <div style={{ fontSize:11, color:BS.soft }}>{post.location ? post.location : post.city} · {post.time}</div>
         </div>
         <button className="bs-btn" style={{ color:BS.ink2, fontSize:19, padding:'4px 6px' }}>···</button>
       </div>
@@ -364,8 +456,12 @@ function ProfileScreen({ posts, setScreen }) {
   const [isPublic, setIsPublic] = useState(r ? !!r.is_public : false);
   const persistPublic = async (val) => {
     setIsPublic(val);
-    const cur = (window.BSAUTH && window.BSAUTH.me) || {};
-    if (window.BSAUTH && window.BSAUTH.saveProfile) await window.BSAUTH.saveProfile({ username:cur.username, display_name:cur.display_name, city:cur.city, bio:cur.bio, pet_name:cur.pet_name, pet_breed:cur.pet_breed, is_public:val });
+    const c = (window.BSAUTH && window.BSAUTH.me) || {};
+    if (window.BSAUTH && window.BSAUTH.saveProfile) await window.BSAUTH.saveProfile({
+      first_name:c.first_name, last_name:c.last_name, bio:c.bio, city:c.city, state:c.state, zip:c.zip, address:c.address,
+      pet_name:c.pet_name, pet_species:c.pet_species, pet_breed:c.pet_breed, pet_color:c.pet_color, pet_age:c.pet_age,
+      avatar_url:c.avatar_url, pet_photo_url:c.pet_photo_url, is_public:val,
+    });
   };
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
@@ -547,6 +643,7 @@ function UploadScreen({ setScreen }) {
   const [scanState, setScanState] = useState('idle');
   const [caption, setCaption] = useState('');
   const [vis, setVis] = useState('public');
+  const [loc, setLoc] = useState('');
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState('');
   const [isVideo, setIsVideo] = useState(false);
@@ -575,7 +672,7 @@ function UploadScreen({ setScreen }) {
         const { data: pub } = sb.storage.from('social-media').getPublicUrl(path);
         mediaUrl = pub.publicUrl;
       }
-      if (A.createPost) { const d = await A.createPost({ caption, media_url: mediaUrl, visibility: vis }); if (!(d && d.ok)) throw new Error((d && d.error) || 'No se pudo publicar'); }
+      if (A.createPost) { const d = await A.createPost({ caption, media_url: mediaUrl, visibility: vis, location: loc.trim() }); if (!(d && d.ok)) throw new Error((d && d.error) || 'No se pudo publicar'); }
       setScreen('feed');
     } catch(e) { setErr((e && e.message) || 'No se pudo subir el archivo'); setUploading(false); }
   };
@@ -609,6 +706,10 @@ function UploadScreen({ setScreen }) {
               ? <video src={preview} style={{ width:70, height:70, objectFit:'cover', borderRadius:12, background:'#000' }} muted/>
               : <img src={preview || 'assets/photos/g04.webp'} alt="" style={{ width:70, height:70, objectFit:'cover', borderRadius:12 }}/>}
             <textarea value={caption} onChange={e => setCaption(e.target.value)} placeholder="Escribe un pie de foto..." style={{ flex:1, border:'none', background:'none', resize:'none', fontSize:14, color:BS.ink, lineHeight:1.55, minHeight:80, padding:0 }}/>
+          </div>
+          <div style={{ padding:'12px 16px', background:BS.surface, marginTop:8, display:'flex', alignItems:'center', gap:9 }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={BS.brand} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink:0 }}><path d="M12 21s7-6.4 7-11a7 7 0 1 0-14 0c0 4.6 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
+            <input value={loc} onChange={e=>setLoc(e.target.value)} placeholder="Agregar ubicación (para «Cerca de mí»)" style={{ flex:1, border:'none', background:'none', fontSize:13.5, color:BS.ink, fontFamily:'inherit' }}/>
           </div>
           <div style={{ padding:'14px 16px', background:BS.surface, marginTop:8 }}>
             {[['public','Público','Todos pueden ver'],['pack','Solo mi Pack','Solo mis amigos'],['private','Privado','Solo yo']].map(([v,l,sub]) => (
@@ -749,35 +850,53 @@ function ScreenHeader({ title, sub }) {
   );
 }
 
+function SearchBar({ value, onChange, placeholder, BS }) {
+  return (
+    <div style={{ margin:'12px 16px 4px', background:BS.surface2, borderRadius:12, padding:'10px 13px', display:'flex', alignItems:'center', gap:9, border:`1px solid ${BS.border}` }}>
+      <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke={BS.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+      <input value={value} onChange={e=>onChange(e.target.value)} placeholder={placeholder} style={{ flex:1, border:'none', background:'none', fontSize:13.5, color:BS.ink, fontFamily:'inherit' }}/>
+      {value && <button onClick={()=>onChange('')} className="bs-btn" style={{ color:BS.soft, fontSize:15 }}>✕</button>}
+    </div>
+  );
+}
+
 function CommunityScreen() {
   const BS = useBS();
   const [following, setFollowing] = useState(new Set());
-  const toggle = id => setFollowing(s => { const n=new Set(s); n.has(id)?n.delete(id):n.add(id); return n; });
+  const [q, setQ] = useState('');
+  const toggle = (m) => {
+    setFollowing(s => { const n=new Set(s); n.has(m.id)?n.delete(m.id):n.add(m.id); return n; });
+    if (window.BSAUTH && window.BSAUTH.follow && !m.bpuppy) { try { window.BSAUTH.follow(m.username, following.has(m.id)); } catch(e){} }
+  };
+  const ql = q.trim().toLowerCase();
+  const list = ql ? BSDATA.community.filter(m => [m.name,m.username,m.city,m.pet.name,m.pet.breed].filter(Boolean).join(' ').toLowerCase().includes(ql)) : BSDATA.community;
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
       <ScreenHeader title="Comunidad" sub="Dueños que comparten su perfil público"/>
-      <div style={{ margin:'12px 16px', padding:'10px 13px', borderRadius:12, background:'rgba(14,165,233,0.08)', border:`1px solid ${BS.borderStrong}`, fontSize:11.5, color:BS.ink2, lineHeight:1.5 }}>
-        Tu perfil es <b style={{ color:BS.ink }}>privado por defecto</b>. Solo apareces aquí si activas “perfil público” en tu perfil, y solo con los datos que tú elijas.
+      <SearchBar value={q} onChange={setQ} placeholder="Buscar por nombre, ciudad o raza…" BS={BS}/>
+      <div style={{ margin:'8px 16px 4px', padding:'10px 13px', borderRadius:12, background:'rgba(245,130,32,0.08)', border:`1px solid ${BS.borderStrong}`, fontSize:11.5, color:BS.ink2, lineHeight:1.5 }}>
+        Tu perfil es <b style={{ color:BS.ink }}>privado por defecto</b>. Solo apareces aquí si activas “perfil público”, y solo con los datos que tú elijas.
       </div>
-      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))', gap:12, padding:'4px 16px 22px' }}>
-        {BSDATA.community.map(m => {
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))', gap:12, padding:'8px 16px 22px' }}>
+        {list.map(m => {
           const fol = following.has(m.id);
           return (
             <div key={m.id} className="bs-pop" style={{ background:BS.surface, borderRadius:18, overflow:'hidden', border:`1px solid ${BS.border}` }}>
-              <div style={{ height:84, position:'relative' }}>
+              <div style={{ height:84, position:'relative', background:BS.surface2 }}>
                 <img src={m.pet.img} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} loading="lazy"/>
                 {m.bpuppy && <span style={{ position:'absolute', top:8, left:8, background:BS.grad, color:'#fff', fontSize:9, fontWeight:800, padding:'2px 8px', borderRadius:999 }}>BrightPuppy</span>}
               </div>
               <div style={{ padding:'0 13px 13px', marginTop:-22, textAlign:'center' }}>
-                <div style={{ width:46, height:46, borderRadius:'50%', background:m.color, display:'grid', placeItems:'center', color:'#fff', fontWeight:800, fontSize:16, border:`3px solid ${BS.surface}`, margin:'0 auto 6px' }}>{m.initials}</div>
-                <div style={{ fontSize:13.5, fontWeight:800, color:BS.ink }}>{m.username}</div>
+                <div style={{ width:46, height:46, borderRadius:'50%', background:m.color, display:'grid', placeItems:'center', color:'#fff', fontWeight:800, fontSize:16, border:`3px solid ${BS.surface}`, margin:'0 auto 6px', overflow:'hidden' }}>{m.avatar ? <img src={m.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : m.initials}</div>
+                <div style={{ fontSize:13.5, fontWeight:800, color:BS.ink }}>{m.name}</div>
                 <div style={{ fontSize:11, color:BS.soft, marginBottom:4 }}>{m.city}</div>
-                <div style={{ fontSize:11, color:BS.brand, fontWeight:700, background:'rgba(14,165,233,0.1)', borderRadius:999, padding:'2px 9px', display:'inline-block', marginBottom:9 }}>{m.pet.name} · {m.pet.breed}</div>
-                <button onClick={() => toggle(m.id)} className="bs-btn" style={{ width:'100%', padding:'7px', borderRadius:9, border:`1.5px solid ${fol?BS.border:BS.brand}`, background: fol?'transparent':BS.grad, color: fol?BS.soft:'#fff', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{fol?'Siguiendo':'+ Seguir'}</button>
+                {(m.pet.name || m.pet.breed) && <div style={{ fontSize:11, color:BS.brand, fontWeight:700, background:'rgba(245,130,32,0.1)', borderRadius:999, padding:'2px 9px', display:'inline-block', marginBottom:9 }}>{[m.pet.name, m.pet.breed].filter(Boolean).join(' · ')}</div>}
+                <button onClick={() => toggle(m)} className="bs-btn" style={{ width:'100%', padding:'7px', borderRadius:9, border:`1.5px solid ${fol?BS.border:BS.brand}`, background: fol?'transparent':BS.grad, color: fol?BS.soft:'#fff', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{fol?'Siguiendo':'+ Seguir'}</button>
               </div>
             </div>
           );
         })}
+        {list.length === 0 && <div style={{ gridColumn:'1/-1', textAlign:'center', color:BS.soft, fontSize:13, padding:'30px 0' }}>Nadie coincide con tu búsqueda todavía.</div>}
       </div>
     </div>
   );

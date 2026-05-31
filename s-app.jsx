@@ -204,6 +204,7 @@ function BSocialTweaks({ theme, setThemeFn }) {
   }, []);
   if (!visible) return null;
   const themes = [
+    { key:'clean',    label:'Clean',    color:'#F58220' },
     { key:'electric', label:'Electric', color:'#0EA5E9' },
     { key:'midnight', label:'Midnight', color:'#FF5520' },
     { key:'violet',   label:'Violet',   color:'#9B6FFF' },
@@ -235,7 +236,7 @@ const SU = 'https://oqqwmcplljirbreowrll.supabase.co';
 const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
 function App() {
   const [screen,    setScreen]   = useState('welcome');
-  const [themeName, setThemeName] = useState('electric');
+  const [themeName, setThemeName] = useState('clean');
   const [isWide,    setIsWide]   = useState(typeof window !== 'undefined' ? window.innerWidth >= 900 : true);
   const [posts,     setPosts]    = useState(() => BSDATA.posts.map(p=>({...p})));
   const [authed,    setAuthed]   = useState(false);
@@ -258,8 +259,8 @@ function App() {
     if (d.events && d.events.length) BSDATA.bpuppyEvents = d.events.map(e=>({ id:e.id, title:e.title, date: dt(e.event_date,{weekday:'long',day:'numeric',month:'long'})+' · '+dt(e.event_date,{hour:'numeric',minute:'2-digit'}), place:e.place, img:e.cover_url, attendees:e.attendees||0 }));
     if (d.news && d.news.length) BSDATA.news = d.news.map(n=>({ id:n.id, title:n.title, excerpt:n.excerpt, tag:n.tag, date: dt(n.created_at,{day:'numeric',month:'short',year:'numeric'}), img:n.cover_url }));
     if (d.videos && d.videos.length) BSDATA.videos = d.videos.map(v=>({ id:v.id, title:v.title, dur:v.duration, thumb:v.thumb_url }));
-    BSDATA.community = (d.community||[]).map(m=>({ id:m.email, username:m.username, name:m.display_name, initials:m.initials, color:m.avatar_color, city:m.city, bio:m.bio, bpuppy:m.username==='brightpuppy', pet:{ name:m.pet_name||'', breed:m.pet_breed||'', img:m.pet_photo_url||'assets/photos/g01.webp' } }));
-    if (d.feed && d.feed.length) setPosts(d.feed.map(p=>({ id:p.id, username:p.username, initials:p.initials, color:p.color, city:p.city, time:rel(p.created_at), verified:p.username==='brightpuppy', img:p.img, caption:p.caption, tags:[], likes:p.likes||0, comments:0, liked:false, saved:false })));
+    BSDATA.community = (d.community||[]).map(m=>({ id:m.username, username:m.username, name:m.name, initials:m.initials, color:m.avatar_color, avatar:m.avatar_url, city:m.city, bio:m.bio, bpuppy:m.bpuppy, pet:{ name:(m.pet&&m.pet.name)||'', species:(m.pet&&m.pet.species)||'', breed:(m.pet&&m.pet.breed)||'', color:(m.pet&&m.pet.color)||'', age:(m.pet&&m.pet.age)||'', img:(m.pet&&m.pet.photo_url)||'assets/photos/g01.webp' } }));
+    if (d.feed && d.feed.length) setPosts(d.feed.map(p=>({ id:p.id, username:p.username, initials:p.initials, color:p.color, avatar:p.avatar_url, city:p.city, location:p.location||'', time:rel(p.created_at), verified:p.username==='brightpuppy', img:p.img, caption:p.caption, tags:[], likes:p.likes||0, comments:0, liked:false, saved:false })));
   };
   const refresh = async () => { try { const d = await apiCall('get',{}); if(d&&d.ok){ applyData(d); if(d.me && d.me.username){ BSDATA.me = { ...BSDATA.me, username:d.me.username, name:d.me.display_name||d.me.username, city:d.me.city||'', initials:(d.me.username||'?').slice(0,2).toUpperCase(), color:d.me.avatar_color||BSDATA.me.color, bio:d.me.bio||'', verified:d.me.username==='brightpuppy' }; } setMe(d.me||null); setFollowing(d.following||[]); setTick(t=>t+1); } } catch(e){} };
 
