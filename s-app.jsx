@@ -231,38 +231,61 @@ function BSocialTweaks({ theme, setThemeFn }) {
 }
 
 // ── App ────────────────────────────────────────────────────────────────────────
+const SU = 'https://oqqwmcplljirbreowrll.supabase.co';
+const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
 function App() {
   const [screen,    setScreen]   = useState('welcome');
   const [themeName, setThemeName] = useState('electric');
   const [isWide,    setIsWide]   = useState(typeof window !== 'undefined' ? window.innerWidth >= 900 : true);
-  useEffect(() => {
-    const onR = () => setIsWide(window.innerWidth >= 900);
-    window.addEventListener('resize', onR);
-    return () => window.removeEventListener('resize', onR);
-  }, []);
-
-  // Cargar datos reales de B Social (contenido curado + perfiles/posts públicos). Fallback al seed si falla.
-  useEffect(() => {
-    const ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
-    const dt = (iso, o) => { try { return new Date(iso).toLocaleDateString('es-US', o); } catch(e) { return ''; } };
-    const rel = iso => { try { const s=(Date.now()-new Date(iso).getTime())/1000; if(s<3600) return Math.max(1,Math.round(s/60))+'m'; if(s<86400) return Math.round(s/3600)+'h'; return Math.round(s/86400)+'d'; } catch(e){ return ''; } };
-    let cancelled = false;
-    fetch('https://oqqwmcplljirbreowrll.supabase.co/functions/v1/social_api', {
-      method:'POST', headers:{ 'Content-Type':'application/json', 'apikey':ANON, 'Authorization':'Bearer '+ANON }, body: JSON.stringify({ action:'get' }),
-    }).then(r => r.json()).then(d => {
-      if (cancelled || !d || !d.ok) return;
-      if (d.events && d.events.length) BSDATA.bpuppyEvents = d.events.map(e => ({ id:e.id, title:e.title, date: dt(e.event_date,{weekday:'long',day:'numeric',month:'long'})+' · '+dt(e.event_date,{hour:'numeric',minute:'2-digit'}), place:e.place, img:e.cover_url, attendees:e.attendees||0 }));
-      if (d.news && d.news.length) BSDATA.news = d.news.map(n => ({ id:n.id, title:n.title, excerpt:n.excerpt, tag:n.tag, date: dt(n.created_at,{day:'numeric',month:'short',year:'numeric'}), img:n.cover_url }));
-      if (d.videos && d.videos.length) BSDATA.videos = d.videos.map(v => ({ id:v.id, title:v.title, dur:v.duration, thumb:v.thumb_url }));
-      BSDATA.community = (d.community || []).map(m => ({ id:m.email, username:m.username, name:m.display_name, initials:m.initials, color:m.avatar_color, city:m.city, bio:m.bio, bpuppy: m.username==='brightpuppy', pet:{ name:m.pet_name||'', breed:m.pet_breed||'', img:m.pet_photo_url||'assets/photos/g01.webp' } }));
-      if (d.feed && d.feed.length) setPosts(d.feed.map(p => ({ id:p.id, username:p.username, initials:p.initials, color:p.color, city:p.city, time: rel(p.created_at), verified: p.username==='brightpuppy', img:p.img, caption:p.caption, tags:[], likes:p.likes||0, comments:0, liked:false, saved:false })));
-    }).catch(() => {});
-    return () => { cancelled = true; };
-  }, []);
   const [posts,     setPosts]    = useState(() => BSDATA.posts.map(p=>({...p})));
-
+  const [authed,    setAuthed]   = useState(false);
+  const [me,        setMe]       = useState(null);
+  const [following, setFollowing] = useState([]);
+  const [, setTick] = useState(0);
   const bs = THEMES[themeName];
-  const loggedIn = !['welcome','onboard'].includes(screen);
+
+  useEffect(() => { const onR=()=>setIsWide(window.innerWidth>=900); window.addEventListener('resize',onR); return ()=>window.removeEventListener('resize',onR); }, []);
+
+  const dt = (iso,o)=>{try{return new Date(iso).toLocaleDateString('es-US',o);}catch(e){return '';}};
+  const rel = iso=>{try{const s=(Date.now()-new Date(iso).getTime())/1000; if(s<3600)return Math.max(1,Math.round(s/60))+'m'; if(s<86400)return Math.round(s/3600)+'h'; return Math.round(s/86400)+'d';}catch(e){return '';}};
+  const getToken = async () => { const sb=window._bsSb; if(!sb)return null; try{const {data}=await sb.auth.getSession(); return (data&&data.session&&data.session.access_token)||null;}catch(e){return null;} };
+  const apiCall = async (action, extra) => {
+    const tok = await getToken();
+    const r = await fetch(SU+'/functions/v1/social_api', { method:'POST', headers:{ 'Content-Type':'application/json', 'apikey':ANON, 'Authorization':'Bearer '+(tok||ANON) }, body: JSON.stringify({ action, ...(extra||{}) }) });
+    return r.json();
+  };
+  const applyData = (d) => {
+    if (d.events && d.events.length) BSDATA.bpuppyEvents = d.events.map(e=>({ id:e.id, title:e.title, date: dt(e.event_date,{weekday:'long',day:'numeric',month:'long'})+' · '+dt(e.event_date,{hour:'numeric',minute:'2-digit'}), place:e.place, img:e.cover_url, attendees:e.attendees||0 }));
+    if (d.news && d.news.length) BSDATA.news = d.news.map(n=>({ id:n.id, title:n.title, excerpt:n.excerpt, tag:n.tag, date: dt(n.created_at,{day:'numeric',month:'short',year:'numeric'}), img:n.cover_url }));
+    if (d.videos && d.videos.length) BSDATA.videos = d.videos.map(v=>({ id:v.id, title:v.title, dur:v.duration, thumb:v.thumb_url }));
+    BSDATA.community = (d.community||[]).map(m=>({ id:m.email, username:m.username, name:m.display_name, initials:m.initials, color:m.avatar_color, city:m.city, bio:m.bio, bpuppy:m.username==='brightpuppy', pet:{ name:m.pet_name||'', breed:m.pet_breed||'', img:m.pet_photo_url||'assets/photos/g01.webp' } }));
+    if (d.feed && d.feed.length) setPosts(d.feed.map(p=>({ id:p.id, username:p.username, initials:p.initials, color:p.color, city:p.city, time:rel(p.created_at), verified:p.username==='brightpuppy', img:p.img, caption:p.caption, tags:[], likes:p.likes||0, comments:0, liked:false, saved:false })));
+  };
+  const refresh = async () => { try { const d = await apiCall('get',{}); if(d&&d.ok){ applyData(d); if(d.me && d.me.username){ BSDATA.me = { ...BSDATA.me, username:d.me.username, name:d.me.display_name||d.me.username, city:d.me.city||'', initials:(d.me.username||'?').slice(0,2).toUpperCase(), color:d.me.avatar_color||BSDATA.me.color, bio:d.me.bio||'', verified:d.me.username==='brightpuppy' }; } setMe(d.me||null); setFollowing(d.following||[]); setTick(t=>t+1); } } catch(e){} };
+
+  useEffect(() => {
+    if (window.supabase && !window._bsSb) { try { window._bsSb = supabase.createClient(SU, ANON); } catch(e){} }
+    refresh();
+    const sb = window._bsSb; if(!sb) return;
+    sb.auth.getSession().then(({data})=>{ if(data&&data.session&&data.session.access_token){ setAuthed(true); setScreen('feed'); refresh(); } });
+    const sub = sb.auth.onAuthStateChange((_e, sess)=>{ if(sess&&sess.access_token){ setAuthed(true); setScreen('feed'); refresh(); } else { setAuthed(false); setMe(null); } });
+    return () => { try{sub.data.subscription.unsubscribe();}catch(e){} };
+  }, []);
+
+  const sendLink = async (email) => {
+    const r = await fetch(SU+'/functions/v1/portal_magiclink', { method:'POST', headers:{'Content-Type':'application/json','apikey':ANON}, body: JSON.stringify({ email, redirectTo: location.origin+'/social' }) });
+    return r.json();
+  };
+  const logout = async () => { const sb=window._bsSb; if(sb){ try{ await sb.auth.signOut(); }catch(e){} } setAuthed(false); setMe(null); setScreen('welcome'); };
+
+  const needsProfile = authed && me && !me.username;
+  const loggedIn = authed && !needsProfile;
+
+  window.BSAUTH = { me, following, refresh, logout, isWide,
+    saveProfile: async (f) => { const d = await apiCall('profile_save', f); if(d&&d.ok) await refresh(); return d; },
+    createPost:  async (f) => { const d = await apiCall('post_create', f); if(d&&d.ok) await refresh(); return d; },
+    follow:      async (target, unfollow) => { const d = await apiCall('follow', { target_email:target, unfollow }); if(d&&d.ok) await refresh(); return d; },
+  };
 
   const toggleLike = id => setPosts(prev => prev.map(p => p.id===id ? {...p, liked:!p.liked, likes:p.liked?p.likes-1:p.likes+1} : p));
   const toggleSave = id => setPosts(prev => prev.map(p => p.id===id ? {...p, saved:!p.saved} : p));
@@ -270,23 +293,22 @@ function App() {
   const MobileContent = () => (
     <div style={{ height:'100%', display:'flex', flexDirection:'column', overflow:'hidden', background:bs.bg }}>
       <div style={{ flex:1, overflowY:'auto' }} className="bs-scr">
-        {screen==='welcome' && <WelcomeScreen onLogin={() => setScreen('onboard')}/>}
-        {screen==='onboard' && <OnboardingScreen onDone={() => setScreen('feed')}/>}
-        {loggedIn && <ScreenView screen={screen} setScreen={setScreen} posts={posts} toggleLike={toggleLike} toggleSave={toggleSave}/>}
+        <ScreenView screen={screen} setScreen={setScreen} posts={posts} toggleLike={toggleLike} toggleSave={toggleSave}/>
       </div>
-      {loggedIn && screen!=='upload' && <BottomNav screen={screen} setScreen={setScreen} bs={bs}/>}
+      {screen!=='upload' && <BottomNav screen={screen} setScreen={setScreen} bs={bs}/>}
     </div>
   );
 
-  // Pantalla de bienvenida / onboarding — tarjeta centrada a pantalla completa
+  // Login real / crear perfil — tarjeta centrada a pantalla completa
   if (!loggedIn) {
     return (
       <BSCtx.Provider value={bs}>
         <div style={{ minHeight:'100vh', background:bs.bg, display:'flex', alignItems:'center', justifyContent:'center', padding: isWide ? '24px' : 0 }}>
           <div style={{ width:'100%', maxWidth: isWide ? 460 : '100%', height: isWide ? 'min(840px,94vh)' : '100vh', background:bs.surface, borderRadius: isWide ? 28 : 0, overflow:'hidden', boxShadow: isWide ? '0 40px 120px rgba(0,0,0,0.55)' : 'none', display:'flex', flexDirection:'column' }}>
             <div style={{ flex:1, overflowY:'auto' }} className="bs-scr">
-              {screen==='welcome' && <WelcomeScreen onLogin={() => setScreen('onboard')}/>}
-              {screen==='onboard' && <OnboardingScreen onDone={() => setScreen('feed')}/>}
+              {needsProfile
+                ? <CreateProfileScreen me={me} onSave={window.BSAUTH.saveProfile} onLogout={logout}/>
+                : <WelcomeScreen onSendLink={sendLink}/>}
             </div>
           </div>
         </div>
