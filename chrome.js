@@ -162,29 +162,23 @@ function AuthControl({ isOverDark }) {
   const panel = { position: "absolute", top: "calc(100% + 10px)", right: 0, background: "var(--paper,#fff)", border: "1px solid var(--line,#ebe7e3)", borderRadius: 16, boxShadow: "0 16px 40px -10px rgba(0,0,0,0.22)", padding: 14, minWidth: 240, zIndex: 400 };
   if (sess) {
     const display = name || firstNameFrom(sess);
-    const inSocial = /\/social/.test(location.pathname);
-    const goPrimary = () => {
-      location.href = inSocial ? "/social" : "/social?view=profile";
-    };
-    return /* @__PURE__ */ React.createElement("div", { ref, className: "hdr-auth", style: { position: "relative" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "inline-flex", alignItems: "center", borderRadius: 999, background: open ? hoverBg : "none", transition: "background .15s" } }, /* @__PURE__ */ React.createElement(
-      "button",
-      {
-        onClick: goPrimary,
-        title: inSocial ? t(["Ir al feed", "Go to feed"]) : t(["Mi perfil", "My profile"]),
-        style: { display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 6px 5px 6px", borderRadius: 999, background: "none", border: "none", cursor: "pointer", color: iconColor, fontFamily: "inherit", transition: "color .3s" }
-      },
-      /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#F55820 0%,#E83860 100%)", color: "#fff", fontWeight: 800, fontSize: 12, letterSpacing: "0.02em" }, className: "notranslate" }, initialsFrom(display, sess.email)),
-      /* @__PURE__ */ React.createElement("span", { className: "notranslate", style: { fontWeight: 700, fontSize: 13.5, maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, display)
-    ), /* @__PURE__ */ React.createElement(
+    return /* @__PURE__ */ React.createElement("div", { ref, className: "hdr-auth", style: { position: "relative" } }, /* @__PURE__ */ React.createElement(
       "button",
       {
         onClick: () => setOpen((o) => !o),
-        "aria-label": t(["Men\xFA de cuenta", "Account menu"]),
         title: t(["Men\xFA de cuenta", "Account menu"]),
-        style: { display: "inline-flex", alignItems: "center", padding: "5px 10px 5px 2px", borderRadius: 999, background: "none", border: "none", cursor: "pointer", color: iconColor }
+        style: { display: "inline-flex", alignItems: "center", gap: 8, padding: "5px 12px 5px 6px", borderRadius: 999, background: open ? hoverBg : "none", border: "none", cursor: "pointer", color: iconColor, fontFamily: "inherit", transition: "background .15s, color .3s" },
+        onMouseEnter: (e) => {
+          if (!open) e.currentTarget.style.background = hoverBg;
+        },
+        onMouseLeave: (e) => {
+          if (!open) e.currentTarget.style.background = "none";
+        }
       },
+      /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#F55820 0%,#E83860 100%)", color: "#fff", fontWeight: 800, fontSize: 12, letterSpacing: "0.02em" }, className: "notranslate" }, initialsFrom(display, sess.email)),
+      /* @__PURE__ */ React.createElement("span", { className: "notranslate", style: { fontWeight: 700, fontSize: 13.5, maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, display),
       /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round", style: { transform: open ? "rotate(180deg)" : "none", transition: "transform .2s" } }, /* @__PURE__ */ React.createElement("path", { d: "M6 9l6 6 6-6" }))
-    )), open && /* @__PURE__ */ React.createElement("div", { style: panel }, /* @__PURE__ */ React.createElement("div", { style: { padding: "2px 8px 10px" } }, /* @__PURE__ */ React.createElement("div", { className: "notranslate", style: { fontWeight: 800, fontSize: 14, color: "var(--ink)" } }, display), /* @__PURE__ */ React.createElement("div", { className: "notranslate", style: { fontSize: 12, color: "var(--ink-2)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, sess.email)), /* @__PURE__ */ React.createElement("div", { style: { height: 1, background: "var(--line,#ebe7e3)", margin: "0 0 8px" } }), /* @__PURE__ */ React.createElement(
+    ), open && /* @__PURE__ */ React.createElement("div", { style: panel }, /* @__PURE__ */ React.createElement("div", { style: { padding: "2px 8px 10px" } }, /* @__PURE__ */ React.createElement("div", { className: "notranslate", style: { fontWeight: 800, fontSize: 14, color: "var(--ink)" } }, display), /* @__PURE__ */ React.createElement("div", { className: "notranslate", style: { fontSize: 12, color: "var(--ink-2)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, sess.email)), /* @__PURE__ */ React.createElement("div", { style: { height: 1, background: "var(--line,#ebe7e3)", margin: "0 0 8px" } }), /* @__PURE__ */ React.createElement(
       "a",
       {
         href: "/social?view=profile",

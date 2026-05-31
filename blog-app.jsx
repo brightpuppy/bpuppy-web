@@ -4,9 +4,10 @@ const BLOG_TWEAK_DEFAULTS = /*EDITMODE-BEGIN*/{"lang":"es"}/*EDITMODE-END*/;
 
 function BlogRoot() {
   const [tweaks, setTweak] = useTweaks(BLOG_TWEAK_DEFAULTS);
-  const [lang, setLang] = React.useState(tweaks.lang || 'es');
-  React.useEffect(() => { setLang(tweaks.lang); }, [tweaks.lang]);
-  const setLangBoth = (l) => { setLang(l); setTweak('lang', l); };
+  const [lang, setLang] = React.useState(() => (window.bpGetLang && window.bpGetLang()) || tweaks.lang || 'es');
+  React.useEffect(() => { if(!(window.bpGetLang && window.bpGetLang())) setLang(tweaks.lang); }, [tweaks.lang]);
+  React.useEffect(() => (window.bpOnLang ? window.bpOnLang(setLang) : undefined), []);
+  const setLangBoth = (l) => { setLang(l); setTweak('lang', l); try { localStorage.setItem('bpuppy-lang', l); } catch(e){} };
   React.useEffect(() => { document.documentElement.lang = lang; }, [lang]);
 
   // Auto-open article from URL param ?art=ID

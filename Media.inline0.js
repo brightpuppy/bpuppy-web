@@ -11,7 +11,7 @@ function getSectionVis() {
   };
 }
 function MediaRoot() {
-  const [lang, setLang] = React.useState("es");
+  const [lang, setLang] = React.useState(window.bpGetLang&&window.bpGetLang()||"es");
   const [vis, setVis] = React.useState(getSectionVis);
   React.useEffect(() => {
     const h = () => setVis(getSectionVis());

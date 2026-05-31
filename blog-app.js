@@ -5,13 +5,18 @@ const BLOG_TWEAK_DEFAULTS = (
 );
 function BlogRoot() {
   const [tweaks, setTweak] = useTweaks(BLOG_TWEAK_DEFAULTS);
-  const [lang, setLang] = React.useState(tweaks.lang || "es");
+  const [lang, setLang] = React.useState(() => window.bpGetLang && window.bpGetLang() || tweaks.lang || "es");
   React.useEffect(() => {
-    setLang(tweaks.lang);
+    if (!(window.bpGetLang && window.bpGetLang())) setLang(tweaks.lang);
   }, [tweaks.lang]);
+  React.useEffect(() => window.bpOnLang ? window.bpOnLang(setLang) : void 0, []);
   const setLangBoth = (l) => {
     setLang(l);
     setTweak("lang", l);
+    try {
+      localStorage.setItem("bpuppy-lang", l);
+    } catch (e) {
+    }
   };
   React.useEffect(() => {
     document.documentElement.lang = lang;

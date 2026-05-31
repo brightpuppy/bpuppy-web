@@ -113,22 +113,16 @@ function AuthControl({ isOverDark }) {
   // ── Logged in: name pill (navigates) + caret dropdown ─────────────────────
   if (sess) {
     const display = name || firstNameFrom(sess);
-    const inSocial = /\/social/.test(location.pathname);
-    // Click the name: from B Social → feed; from anywhere else → personal profile.
-    const goPrimary = () => { location.href = inSocial ? '/social' : '/social?view=profile'; };
     return (
       <div ref={ref} className="hdr-auth" style={{ position:'relative' }}>
-        <div style={{ display:'inline-flex', alignItems:'center', borderRadius:999, background: open ? hoverBg : 'none', transition:'background .15s' }}>
-          <button onClick={goPrimary} title={inSocial ? t(['Ir al feed','Go to feed']) : t(['Mi perfil','My profile'])}
-            style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'5px 6px 5px 6px', borderRadius:999, background:'none', border:'none', cursor:'pointer', color:iconColor, fontFamily:'inherit', transition:'color .3s' }}>
-            <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:30, height:30, borderRadius:'50%', background:'linear-gradient(135deg,#F55820 0%,#E83860 100%)', color:'#fff', fontWeight:800, fontSize:12, letterSpacing:'0.02em' }} className="notranslate">{initialsFrom(display, sess.email)}</span>
-            <span className="notranslate" style={{ fontWeight:700, fontSize:13.5, maxWidth:120, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{display}</span>
-          </button>
-          <button onClick={() => setOpen(o => !o)} aria-label={t(['Menú de cuenta','Account menu'])} title={t(['Menú de cuenta','Account menu'])}
-            style={{ display:'inline-flex', alignItems:'center', padding:'5px 10px 5px 2px', borderRadius:999, background:'none', border:'none', cursor:'pointer', color:iconColor }}>
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? 'rotate(180deg)' : 'none', transition:'transform .2s' }}><path d="M6 9l6 6 6-6"/></svg>
-          </button>
-        </div>
+        <button onClick={() => setOpen(o => !o)} title={t(['Menú de cuenta','Account menu'])}
+          style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'5px 12px 5px 6px', borderRadius:999, background: open ? hoverBg : 'none', border:'none', cursor:'pointer', color:iconColor, fontFamily:'inherit', transition:'background .15s, color .3s' }}
+          onMouseEnter={e => { if(!open) e.currentTarget.style.background = hoverBg; }}
+          onMouseLeave={e => { if(!open) e.currentTarget.style.background = 'none'; }}>
+          <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:30, height:30, borderRadius:'50%', background:'linear-gradient(135deg,#F55820 0%,#E83860 100%)', color:'#fff', fontWeight:800, fontSize:12, letterSpacing:'0.02em' }} className="notranslate">{initialsFrom(display, sess.email)}</span>
+          <span className="notranslate" style={{ fontWeight:700, fontSize:13.5, maxWidth:120, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{display}</span>
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? 'rotate(180deg)' : 'none', transition:'transform .2s' }}><path d="M6 9l6 6 6-6"/></svg>
+        </button>
         {open && (
           <div style={panel}>
             <div style={{ padding:'2px 8px 10px' }}>

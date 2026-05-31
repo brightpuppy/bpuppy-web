@@ -50,11 +50,12 @@ function DeliveryMapLive() {
 
 function App() {
   const [tweaks, setTweak] = useTweaks(TWEAK_DEFAULTS);
-  const [lang, setLang] = React.useState(tweaks.lang || 'es');
+  const [lang, setLang] = React.useState(() => (window.bpGetLang && window.bpGetLang()) || tweaks.lang || 'es');
 
-  // sync tweak.lang -> state and vice versa
-  React.useEffect(() => { setLang(tweaks.lang); }, [tweaks.lang]);
-  const setLangBoth = (l) => { setLang(l); setTweak('lang', l); };
+  // El idioma elegido en el header persiste entre páginas; tweaks solo si no hay preferencia guardada.
+  React.useEffect(() => { if(!(window.bpGetLang && window.bpGetLang())) setLang(tweaks.lang); }, [tweaks.lang]);
+  React.useEffect(() => (window.bpOnLang ? window.bpOnLang(setLang) : undefined), []);
+  const setLangBoth = (l) => { setLang(l); setTweak('lang', l); try { localStorage.setItem('bpuppy-lang', l); } catch(e){} };
 
   // apply theme + brand color to <html>
   React.useEffect(() => {

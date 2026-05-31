@@ -210,7 +210,7 @@ html.media-dark .hdr-portal { color: rgba(255,255,255,.85); background: rgba(255
   font-weight: 800;
 }
 /* En el menú desplegable, el texto cambia de color pero SIEMPRE legible (sin recorte) */
-@keyframes bpColorCycle { 0%,100% { color: #E23B3B; } 25% { color: #2F6BFF; } 50% { color: #1FB85A; } 75% { color: #F58220; } }
+@keyframes bpColorCycle { 0%,100% { color: #E23B3B; -webkit-text-fill-color: #E23B3B; } 25% { color: #2F6BFF; -webkit-text-fill-color: #2F6BFF; } 50% { color: #1FB85A; -webkit-text-fill-color: #1FB85A; } 75% { color: #F58220; -webkit-text-fill-color: #F58220; } }
 .nav-dropdown a.bp-rainbow, .nav-dropdown a.bp-shine {
   font-weight: 800;
   background: none; -webkit-background-clip: border-box; background-clip: border-box;
@@ -899,7 +899,8 @@ image-slot {
   transition: opacity .15s, transform .15s;
 }
 .nav-dropdown a { display: flex; align-items: center; gap: 10px; padding: 10px 14px; border-radius: 10px; font-size: 14px; font-weight: 500; color: var(--ink-2) !important; transition: color .15s, background .15s; text-decoration: none; }
-.nav-dropdown a:hover { color: var(--orange) !important; background: var(--bg); }
+.nav-dropdown a:hover { color: var(--orange) !important; background: rgba(245,130,32,0.14); font-weight: 700; }
+html.media-dark .hdr .nav-dropdown a:hover { color: #FFB877 !important; background: rgba(255,184,119,0.18); }
 .nav-dropdown a::after { display: none !important; }
 .nd-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--bg-2, var(--bg)); display: grid; place-items: center; flex-shrink: 0; color: var(--orange); }
 .nd-sep { height: 1px; background: var(--line); margin: 4px 0; }

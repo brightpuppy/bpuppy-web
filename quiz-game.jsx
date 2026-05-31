@@ -685,8 +685,9 @@ function QuizDecor(){
 }
 
 function QuizGameRoot(){
-  const [lang, setLang] = useState('es');
+  const [lang, setLang] = useState(()=> (window.bpGetLang && window.bpGetLang()) || 'es');
   useEffect(()=>{ document.documentElement.lang = lang; ensureCss(); }, [lang]);
+  useEffect(()=> (window.bpOnLang ? window.bpOnLang(setLang) : undefined), []);
   return (
     <LangContext.Provider value={{ lang, setLang }}>
       <Header overDark={false}/>

@@ -862,11 +862,12 @@ function QuizDecor() {
   return /* @__PURE__ */ React.createElement("div", { "aria-hidden": "true" }, items.map((it, i) => /* @__PURE__ */ React.createElement("div", { key: i, className: "qg-deco", style: { ...it.side, top: it.top, opacity: it.op, animation: `${it.anim} ${it.dur}s ease-in-out ${it.delay}s infinite`, transform: it.rot ? `rotate(${it.rot}deg)` : void 0 } }, it.t === "paw" && /* @__PURE__ */ React.createElement(PawDeco, { c: it.c, size: it.size }), it.t === "bone" && /* @__PURE__ */ React.createElement(BoneDeco, { c: it.c, size: it.size }), it.t === "blob" && /* @__PURE__ */ React.createElement("div", { style: { width: it.size, height: it.size, borderRadius: "50%", background: `radial-gradient(circle at 50% 50%, ${it.c}, rgba(255,255,255,0))`, filter: "blur(6px)" } }))));
 }
 function QuizGameRoot() {
-  const [lang, setLang] = useState("es");
+  const [lang, setLang] = useState(() => window.bpGetLang && window.bpGetLang() || "es");
   useEffect(() => {
     document.documentElement.lang = lang;
     ensureCss();
   }, [lang]);
+  useEffect(() => window.bpOnLang ? window.bpOnLang(setLang) : void 0, []);
   return /* @__PURE__ */ React.createElement(LangContext.Provider, { value: { lang, setLang } }, /* @__PURE__ */ React.createElement(Header, { overDark: false }), /* @__PURE__ */ React.createElement("main", { style: { paddingTop: 80, background: "var(--bg,#fff)", minHeight: "100vh", position: "relative", overflow: "hidden" } }, /* @__PURE__ */ React.createElement(QuizDecor, null), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", zIndex: 1 } }, /* @__PURE__ */ React.createElement(QuizGame, null))), /* @__PURE__ */ React.createElement(Footer, null));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(QuizGameRoot, null));

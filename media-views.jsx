@@ -417,22 +417,35 @@ function PodcastSection() {
           <div style={{ fontSize:11, fontWeight:600, color:MC.brand, letterSpacing:'0.08em', textTransform:'uppercase', marginBottom:8 }}>{t(['Episodio mas reciente', 'Most recent episode'])}</div>
           <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:'clamp(18px,2.5vw,28px)', fontWeight:700, color:PD.text, letterSpacing:'-0.02em', lineHeight:1.2, marginBottom:4 }}>{t(['Bienvenido al Podcast de Bright Puppy. 1er Episodio.', 'Welcome to Bright Puppy Podcast. 1st Episode.'])}</div>
           <div style={{ fontSize:13, color:PD.soft, marginBottom:22 }}>BrightPuppy{pDur ? ' · ' + fmtTime(pDur) : ''}</div>
-          <div onClick={function(e){ var a=audioRef.current; if(!a||!pDur)return; var r=e.currentTarget.getBoundingClientRect(); a.currentTime=((e.clientX-r.left)/r.width)*pDur; }}
-            style={{ height:6, background:'rgba(255,255,255,0.08)', borderRadius:999, marginBottom:16, cursor:'pointer' }}>
-            <div style={{ height:'100%', width:`${pDur?(pCur/pDur*100):0}%`, background:MC.grad, borderRadius:999, transition:'width .2s linear' }}/>
+          <div onPointerDown={function(e){ var a=audioRef.current; if(!a||!pDur)return; try{e.currentTarget.setPointerCapture(e.pointerId);}catch(_){} var r=e.currentTarget.getBoundingClientRect(); a.currentTime=Math.max(0,Math.min(pDur,((e.clientX-r.left)/r.width)*pDur)); }}
+            onPointerMove={function(e){ if(e.buttons!==1)return; var a=audioRef.current; if(!a||!pDur)return; var r=e.currentTarget.getBoundingClientRect(); a.currentTime=Math.max(0,Math.min(pDur,((e.clientX-r.left)/r.width)*pDur)); }}
+            style={{ padding:'9px 0', marginBottom:8, cursor:'pointer', touchAction:'none' }}>
+            <div style={{ position:'relative', height:8, background:'rgba(255,255,255,0.10)', borderRadius:999 }}>
+              <div style={{ height:'100%', width:`${pDur?(pCur/pDur*100):0}%`, background:MC.grad, borderRadius:999, transition:'width .1s linear' }}/>
+              <div style={{ position:'absolute', top:'50%', left:`${pDur?(pCur/pDur*100):0}%`, transform:'translate(-50%,-50%)', width:15, height:15, borderRadius:'50%', background:'#fff', boxShadow:'0 1px 5px rgba(0,0,0,0.45)', pointerEvents:'none' }}/>
+            </div>
           </div>
-          <div style={{ display:'flex', alignItems:'center', gap:14 }}>
+          <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+            <button onClick={function(){ var a=audioRef.current; if(!a)return; a.currentTime=Math.max(0,a.currentTime-15); }} title="-15s"
+              style={{ width:38, height:38, borderRadius:'50%', background:'rgba(255,255,255,0.06)', border:`1px solid ${PD.border}`, display:'grid', placeItems:'center', cursor:'pointer', color:PD.soft, fontSize:10, fontWeight:800, position:'relative' }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M11 8L7 12l4 4"/><path d="M17 8l-4 4 4 4"/></svg>
+            </button>
             <button onClick={function(){ var a=audioRef.current; if(!a)return; if(a.paused){ a.play(); } else { a.pause(); } }}
               style={{ width:48, height:48, borderRadius:'50%', background:pPlaying?MC.grad:'rgba(255,255,255,0.08)', border:`1.5px solid ${pPlaying?'transparent':PD.border}`, display:'grid', placeItems:'center', cursor:'pointer', transition:'all .2s', boxShadow:pPlaying?MC.glow:'none' }}>
               {pPlaying
                 ? <svg width="18" height="18" viewBox="0 0 24 24" fill="white"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
                 : <svg width="18" height="18" viewBox="0 0 24 24" fill={MC.brand}><polygon points="5 3 19 12 5 21 5 3"/></svg>}
             </button>
-            <div style={{ display:'flex', gap:3, alignItems:'flex-end', height:32, flex:1 }}>
+            <button onClick={function(){ var a=audioRef.current; if(!a||!pDur)return; a.currentTime=Math.min(pDur,a.currentTime+15); }} title="+15s"
+              style={{ width:38, height:38, borderRadius:'50%', background:'rgba(255,255,255,0.06)', border:`1px solid ${PD.border}`, display:'grid', placeItems:'center', cursor:'pointer', color:PD.soft }}>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M13 8l4 4-4 4"/><path d="M7 8l4 4-4 4"/></svg>
+            </button>
+            <div onClick={function(e){ var a=audioRef.current; if(!a||!pDur)return; var r=e.currentTarget.getBoundingClientRect(); a.currentTime=Math.max(0,Math.min(pDur,((e.clientX-r.left)/r.width)*pDur)); }}
+              style={{ display:'flex', gap:3, alignItems:'flex-end', height:32, flex:1, cursor:'pointer' }} title={t(['Toca para adelantar','Click to seek'])}>
               {[...Array(40)].map(function(_,i){
                 const h = 4 + Math.abs(Math.sin(i*0.8)*12 + Math.sin(i*1.7)*8);
                 const active = pDur && (i/40)*100 < (pCur/pDur*100);
-                return <div key={i} style={{ width:3, height:h, borderRadius:999, background:active?MC.brand:'rgba(255,255,255,0.1)', transition:'background .2s' }}/>;
+                return <div key={i} style={{ width:3, height:h, borderRadius:999, background:active?MC.brand:'rgba(255,255,255,0.1)', transition:'background .2s', pointerEvents:'none' }}/>;
               })}
             </div>
             <span style={{ fontSize:12, color:PD.soft, marginLeft:4, whiteSpace:'nowrap' }}>

@@ -255,13 +255,16 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
   const [isPublic, setIsPublic]   = useState(!!m.is_public);
   const [avatarFile, setAvatarFile] = useState(null);
   const [petFile, setPetFile]       = useState(null);
+  const [coverFile, setCoverFile]   = useState(null);
   const [avatarPrev, setAvatarPrev] = useState(m.avatar_url||'');
   const [petPrev, setPetPrev]       = useState(m.pet_photo_url || (pend && pend.photo_url) || '');
+  const [coverPrev, setCoverPrev]   = useState(m.cover_url||'');
   const [busy, setBusy] = useState(false);
   const [err, setErr]   = useState('');
 
   const pickAvatar = (f) => { setAvatarFile(f); try{ setAvatarPrev(URL.createObjectURL(f)); }catch(e){} };
   const pickPet    = (f) => { setPetFile(f);    try{ setPetPrev(URL.createObjectURL(f)); }catch(e){} };
+  const pickCover  = (f) => { setCoverFile(f);  try{ setCoverPrev(URL.createObjectURL(f)); }catch(e){} };
 
   const save = async () => {
     if (!firstName.trim()) { setErr('Escribe tu nombre'); return; }
@@ -269,13 +272,15 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
     try {
       let avatar_url = m.avatar_url || (/^https?:/.test(avatarPrev) ? avatarPrev : null);
       let pet_photo_url = m.pet_photo_url || (/^https?:/.test(petPrev) ? petPrev : null);
+      let cover_url = m.cover_url || (/^https?:/.test(coverPrev) ? coverPrev : null);
       if (avatarFile) avatar_url = await bsUpload(avatarFile, 'avatars');
       if (petFile)    pet_photo_url = await bsUpload(petFile, 'pets');
+      if (coverFile)  cover_url = await bsUpload(coverFile, 'covers');
       const d = await onSave({
         first_name:firstName.trim(), last_name:lastName.trim(), bio:bio.trim(),
         pet_species:petSpecies, pet_name:petName.trim(), pet_breed:petBreed.trim(), pet_color:petColor.trim(), pet_age:petAge.trim(),
         address:address.trim(), city:city.trim(), state:stateV.trim(), zip:zip.trim(),
-        avatar_url, pet_photo_url, is_public:isPublic,
+        avatar_url, pet_photo_url, cover_url, is_public:isPublic,
       });
       if (!(d && d.ok)) { setErr((d && d.error) || 'No se pudo guardar'); setBusy(false); }
       else if (onDone) onDone();
@@ -290,6 +295,16 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
     <div className="bs-fade" style={{ padding:'36px 22px 28px', minHeight:'100%', background:BS.bg }}>
       <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:25, fontWeight:800, color:BS.ink, letterSpacing:'-0.03em', marginBottom:6 }}>{editing?'Editar perfil':'Crea tu perfil'}</div>
       <p style={{ fontSize:13, color:BS.ink2, lineHeight:1.5, margin:'0 0 14px' }}>{editing?'Actualiza tus datos y fotos cuando quieras.':('Bienvenido'+(m.email?(' · '+m.email):'')+'. Completa tus datos para unirte a la comunidad.')}</p>
+
+      {/* Portada */}
+      <div style={{ marginBottom:12 }}>
+        <div style={lbl}>Foto de portada</div>
+        <label style={{ display:'block', height:92, borderRadius:14, border:`1.5px dashed ${BS.borderStrong}`, background: coverPrev ? `url(${coverPrev}) center/cover` : BS.surface2, cursor:'pointer', position:'relative', overflow:'hidden' }}>
+          <input type="file" accept="image/*" onChange={e=>{ const f=e.target.files&&e.target.files[0]; if(f) pickCover(f); }} style={{ display:'none' }}/>
+          {!coverPrev && <div style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', color:BS.soft, fontSize:12.5, fontWeight:700 }}>+ Sube o elige una portada</div>}
+          {coverPrev && <div style={{ position:'absolute', bottom:6, right:8, background:'rgba(0,0,0,0.45)', color:'#fff', fontSize:11, fontWeight:700, padding:'3px 9px', borderRadius:999 }}>Cambiar</div>}
+        </label>
+      </div>
 
       {/* Fotos */}
       <div style={{ display:'flex', gap:24, justifyContent:'center', marginBottom:6 }}>
@@ -530,9 +545,17 @@ function ProfileScreen({ posts, setScreen }) {
   };
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
-      <div style={{ height:110, background:BS.grad, position:'relative' }}>
+      <div style={{ height:110, background: (r&&r.cover_url) ? `url(${r.cover_url}) center/cover` : BS.grad, position:'relative' }}>
         <button onClick={() => setScreen('feed')} style={{ position:'absolute', top:44, left:14, background:'rgba(0,0,0,0.32)', border:'none', borderRadius:'50%', width:32, height:32, cursor:'pointer', display:'grid', placeItems:'center', color:'#fff' }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <a href="/" style={{ position:'absolute', top:44, right:14, background:'rgba(0,0,0,0.32)', borderRadius:999, padding:'6px 12px', cursor:'pointer', display:'inline-flex', alignItems:'center', gap:6, color:'#fff', fontSize:12, fontWeight:700, textDecoration:'none' }}>
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
+          BPuppy
+        </a>
+        <button onClick={() => setScreen('editprofile')} title="Cambiar portada" style={{ position:'absolute', bottom:8, right:14, background:'rgba(0,0,0,0.32)', border:'none', borderRadius:999, padding:'5px 10px', cursor:'pointer', display:'inline-flex', alignItems:'center', gap:5, color:'#fff', fontSize:11, fontWeight:700 }}>
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
+          Portada
         </button>
       </div>
       <div style={{ padding:'0 16px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>

@@ -102,7 +102,7 @@ function ExtendedQuiz() {
   })()));
 }
 function QuizRoot() {
-  const [lang, setLang] = React.useState("es");
+  const [lang, setLang] = React.useState(window.bpGetLang&&window.bpGetLang()||"es");
   React.useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);

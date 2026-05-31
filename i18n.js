@@ -380,12 +380,37 @@ const STRINGS = {
   }
 };
 const pick = (t, lang) => Array.isArray(t) ? lang === "en" ? t[1] ?? t[0] : t[0] : t;
-const LangContext = React.createContext({ lang: "es", setLang: () => {
+const bpSavedLang = () => {
+  try {
+    return localStorage.getItem("bpuppy-lang") || null;
+  } catch (e) {
+    return null;
+  }
+};
+const LangContext = React.createContext({ lang: bpSavedLang() || "es", setLang: () => {
 } });
 const useLang = () => React.useContext(LangContext);
 const useT = () => {
   const { lang } = useLang();
   return (t) => pick(t, lang);
+};
+window.bpGetLang = bpSavedLang;
+window.bpOnLang = function(cb) {
+  const h = (e) => {
+    try {
+      cb(e && e.detail || bpSavedLang() || "es");
+    } catch (_) {
+    }
+  };
+  window.addEventListener("bpuppy:lang", h);
+  const sh = (e) => {
+    if (e.key === "bpuppy-lang") h({ detail: e.newValue });
+  };
+  window.addEventListener("storage", sh);
+  return () => {
+    window.removeEventListener("bpuppy:lang", h);
+    window.removeEventListener("storage", sh);
+  };
 };
 Object.assign(window, { STRINGS, pick, LangContext, useLang, useT });
 
