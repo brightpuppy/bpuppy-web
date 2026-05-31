@@ -66,7 +66,7 @@
     Home: true, Cachorros: true, 'Cachorros-Entregados': true, 'Gatos-Entregados': true,
     Nosotros: true, 'Razas-Perros': true, Media: true,
     Adopciones: true, Tienda: false, Blog: true, Grooming: true,
-    Gatos: true, 'Razas-Gatos': true, Historia: true, Social: false,
+    Gatos: true, 'Razas-Gatos': true, Historia: true, Social: true,
   };
 
   // ── Internal helpers ────────────────────────────────────────────────────────

@@ -150,7 +150,7 @@ a { color: inherit; text-decoration: none; }
 [data-theme="pop"] .hdr.scrolled { background: rgba(255, 250, 240, 0.82); }
 [data-theme="boutique"] .hdr.scrolled { background: rgba(250, 250, 247, 0.82); }
 .hdr-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: nowrap; }
-.hdr-logo { display: flex; align-items: center; gap: 10px; }
+.hdr-logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .hdr-logo img { width: 46px; height: auto; }
 .hdr-logo .wm { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); transition: color .3s ease; white-space: nowrap; margin-top: 4px; }
 .hdr.over-dark .wm { color: #fff; }
@@ -177,7 +177,7 @@ html.media-dark .hdr-portal { color: rgba(255,255,255,.85); background: rgba(255
 .hdr.over-dark .hdr-phone { background: rgba(255,255,255,.14); color: rgba(255,255,255,.85); }
 .hdr.over-dark .hdr-phone:hover { background: var(--orange); color: #fff; }
 
-.nav { display: flex; gap: 16px; flex-wrap: nowrap; }
+.nav { display: flex; gap: 15px; flex-wrap: nowrap; align-items: center; min-width: 0; }
 .nav a { font-size: 13.5px; font-weight: 500; color: var(--ink-2); transition: color .2s; position: relative; white-space: nowrap; }
 .nav a:hover { color: var(--ink); }
 .nav a::after { content:''; position:absolute; left:0; right:0; bottom:-4px; height:2px; background: var(--orange); border-radius:2px; transform: scaleX(0); transform-origin:left; transition: transform .25s ease; }

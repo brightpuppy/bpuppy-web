@@ -329,7 +329,8 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
       fetch(SUPA+'/functions/v1/portal_data',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:'{}'})
         .then(function(r){return r.json();}).then(function(d){
           if(d.error){ root.innerHTML='<div class="card"><div class="msg err">'+esc(d.error)+'</div></div>'; return; }
-          var name = (d.client && d.client.first_name) ? (d.client.first_name+(d.client.last_name?(' '+d.client.last_name):'')) : d.email;
+          var emailName = (d.email||'').split('@')[0].replace(/[._]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
+          var name = (d.client && d.client.first_name) ? (d.client.first_name+(d.client.last_name?(' '+d.client.last_name):'')) : (emailName||d.email);
           var loc = d.client ? [d.client.city,d.client.state].filter(Boolean).join(', ') : '';
           var nPets=(d.pets||[]).length, nMs=(d.memberships||[]).length, baths=(d.memberships||[]).reduce(function(a,m){return a+(m.credits_balance||0);},0);
           var vip=(d.memberships||[]).some(function(m){return /vip|total/i.test(m.plan||'');});
@@ -391,6 +392,6 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   sb.auth.onAuthStateChange(function(_evt, session){ if(session && session.user){ showDashboard(session.user.email); } });
 })();
 </script>
-  <script src="bp-cookies.js?v=1780190156680"></script>
+  <script src="bp-cookies.js?v=1780191027918"></script>
 </body>
 </html>
