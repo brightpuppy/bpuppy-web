@@ -220,7 +220,7 @@ const CITY_HINTS = ['Miami','Orlando','Houston','Los Ángeles','Nueva York','Chi
 
 // Dibuja un perrito pixel-art (más detallado) según la raza
 function drawDog(ctx, x, baseY, tone, key, frame, airborne){
-  const P = 3; // tamaño de "pixel"
+  const P = 2.4; // tamaño de "pixel" (perrito más pequeño)
   const px = (cx,cy,w,h,col)=>{ ctx.fillStyle=col; ctx.fillRect(Math.round(x+cx*P), Math.round(baseY+cy*P), Math.max(1,w*P), Math.max(1,h*P)); };
   const dark='#2D2421', white='#FBF7F0', belly='#F4E9D6', collar='#E23B3B', tag='#F5C53A', nose='#2D2421';
   // patas (carrera de 2 fases)
@@ -340,12 +340,13 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
     const loop = () => {
       if(!running) return;
       const st = stRef.current; if(!st){ return; }
-      const dogX = 46, dogW = 30, dogH = 30;
+      const dogX = 46, dogW = 25, dogH = 25;
       // ── update ──
       st.dist += st.speed;
       // dificultad: mucho tiempo fácil, luego sube lento con tope
       const ramp = Math.max(0, st.dist - 1500);
-      st.speed = 1.6 + Math.min(ramp/3600, 1.6); // 1.6 → 3.2
+      const mins = Math.floor((st.fcount||0)/3600); // ~1 min a 60fps
+      st.speed = Math.min(5.6, 1.6 + Math.min(ramp/3600, 1.4) + mins*0.5); // sube continuo + un escalón cada minuto
       if(st.inv > 0) st.inv--;
       // física + suelo (piso o plataforma)
       st.vy -= GRAV; st.py += st.vy;
@@ -369,7 +370,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
       st.obst.forEach(o=>{ o.x -= st.speed; }); st.obst = st.obst.filter(o=> o.x+o.w > -4);
       // treats (suben oportunidades)
       st.nextTreat -= st.speed;
-      if(st.nextTreat <= 0){ const ground = Math.random()<0.6; st.treatArr.push({ x:W+10, y: ground ? GY-16 : GY-(34+Math.random()*22), got:false }); st.nextTreat = 90+Math.random()*150; }
+      if(st.nextTreat <= 0){ let tx = W+10; for(const o of st.obst){ if(Math.abs(o.x - tx) < 60){ tx = o.x + o.w + 50; break; } } const ground = Math.random()<0.6; st.treatArr.push({ x:tx, y: ground ? GY-16 : GY-(34+Math.random()*22), got:false }); st.nextTreat = 90+Math.random()*150; }
       st.treatArr.forEach(c=>{ c.x -= st.speed; }); st.treatArr = st.treatArr.filter(c=> c.x > -12 && !c.got);
       // corazón (vida) ocasional y alcanzable
       st.nextHeart -= st.speed;
@@ -468,13 +469,13 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
         </div>
 
         {/* Lienzo */}
-        <div style={{ position:'relative', background:'#EAF6FB', lineHeight:0 }} onMouseDown={tap} onTouchStart={(e)=>{ e.preventDefault(); tap(); }}>
+        <div style={{ position:'relative', background:'#EAF6FB', lineHeight:0, userSelect:'none', WebkitUserSelect:'none', touchAction:'none', overflow:'hidden' }} onMouseDown={(e)=>{ e.preventDefault(); tap(); }} onTouchStart={(e)=>{ e.preventDefault(); tap(); }}>
           <canvas ref={cvsRef} width={W} height={H} style={{ width:'100%', height:'auto', display:'block', cursor:'pointer', touchAction:'none' }}/>
           {phase==='ready' && (
             <div style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', background:'rgba(255,255,255,0.55)' }}>
               <div style={{ textAlign:'center', display:'flex', flexDirection:'column', alignItems:'center', gap:14, background:'rgba(255,255,255,0.78)', borderRadius:16, padding:'16px 22px' }}>
                 <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:22, fontWeight:800, color:'var(--ink)', lineHeight:1.1 }}>{t(['¡Toca para empezar!','Tap to start!'])}</div>
-                <div style={{ fontSize:13, fontWeight:600, color:'var(--ink-2)' }}>{t(['Toca para saltar · doble toque = doble salto','Tap to jump · double tap = double jump'])}</div>
+                <div style={{ fontSize:13, fontWeight:600, color:'var(--ink-2)' }}>{t(['Salta con clic, toque o barra espaciadora · doble = doble salto','Jump with click, tap or spacebar · double = double jump'])}</div>
               </div>
             </div>
           )}
@@ -487,9 +488,10 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
             </div>
           )}
         </div>
+        <div style={{ textAlign:'center', fontSize:12, fontWeight:600, color:'var(--ink-soft)', padding:'8px 12px 0' }}>{t(['Salta con clic, toque o barra espaciadora','Jump with click, tap or spacebar'])}</div>
 
         {/* Panel inferior */}
-        <div style={{ padding:'18px 20px 22px' }}>
+        <div style={{ padding:'14px 20px 22px' }}>
           {phase!=='over' && (
             <div style={{ display:'flex', gap:10, alignItems:'center' }}>
               <button onClick={()=> phase==='playing'? jump() : start()} className="btn btn-primary" style={{ flex:1, justifyContent:'center', cursor:'pointer' }}>
