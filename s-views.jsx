@@ -291,6 +291,7 @@ function ProfileScreen({ posts, setScreen }) {
   const BS = useBS();
   const me = BSDATA.me;
   const [tab, setTab] = useState('posts');
+  const [isPublic, setIsPublic] = useState(false);
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
       <div style={{ height:110, background:BS.grad, position:'relative' }}>
@@ -315,9 +316,20 @@ function ProfileScreen({ posts, setScreen }) {
           ))}
         </div>
       </div>
+      <div style={{ padding:'14px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
+        <div style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 14px', borderRadius:14, border:`1.5px solid ${isPublic?BS.brand:BS.border}`, background: isPublic?'rgba(14,165,233,0.07)':BS.surface2 }}>
+          <div style={{ flex:1 }}>
+            <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>Perfil público</div>
+            <div style={{ fontSize:11.5, color:BS.soft, lineHeight:1.45 }}>{isPublic ? 'Visible en Comunidad: tu usuario, ciudad y tu mascota (nombre y raza). Nunca tu contacto.' : 'Tu perfil es privado. Actívalo para aparecer en Comunidad.'}</div>
+          </div>
+          <button onClick={() => setIsPublic(v=>!v)} className="bs-btn" style={{ width:46, height:26, borderRadius:999, background: isPublic?BS.grad:BS.border, position:'relative', flexShrink:0, cursor:'pointer', border:'none' }}>
+            <span style={{ position:'absolute', top:3, left: isPublic?23:3, width:20, height:20, borderRadius:'50%', background:'#fff', transition:'left .2s', boxShadow:'0 1px 4px rgba(0,0,0,0.3)' }}/>
+          </button>
+        </div>
+      </div>
       <div style={{ display:'flex', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
-        {[['posts','📷'],['pets','🐾'],['saved','🔖']].map(([t,ic]) => (
-          <button key={t} onClick={() => setTab(t)} style={{ flex:1, padding:'12px', border:'none', background:'none', cursor:'pointer', borderBottom:`2.5px solid ${tab===t ? BS.brand : 'transparent'}`, fontSize:18, color: tab===t ? BS.brand : BS.soft }}>{ic}</button>
+        {[['posts','Posts'],['pets','Mascotas'],['saved','Guardados']].map(([t,lbl]) => (
+          <button key={t} onClick={() => setTab(t)} style={{ flex:1, padding:'13px', border:'none', background:'none', cursor:'pointer', borderBottom:`2.5px solid ${tab===t ? BS.brand : 'transparent'}`, fontSize:13, fontWeight:700, color: tab===t ? BS.brand : BS.soft, fontFamily:'inherit' }}>{lbl}</button>
         ))}
       </div>
       {tab==='posts' && <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:2 }}>
@@ -611,10 +623,132 @@ function MessagesScreen({ setScreen }) {
   );
 }
 
+function ScreenHeader({ title, sub }) {
+  const BS = useBS();
+  return (
+    <div style={{ padding:'16px 18px', background:BS.surface, borderBottom:`1px solid ${BS.border}`, position:'sticky', top:0, zIndex:10 }}>
+      <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:21, fontWeight:800, color:BS.ink, letterSpacing:'-0.02em' }}>{title}</div>
+      {sub && <div style={{ fontSize:12.5, color:BS.ink2, marginTop:2 }}>{sub}</div>}
+    </div>
+  );
+}
+
+function CommunityScreen() {
+  const BS = useBS();
+  const [following, setFollowing] = useState(new Set());
+  const toggle = id => setFollowing(s => { const n=new Set(s); n.has(id)?n.delete(id):n.add(id); return n; });
+  return (
+    <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
+      <ScreenHeader title="Comunidad" sub="Dueños que comparten su perfil público"/>
+      <div style={{ margin:'12px 16px', padding:'10px 13px', borderRadius:12, background:'rgba(14,165,233,0.08)', border:`1px solid ${BS.borderStrong}`, fontSize:11.5, color:BS.ink2, lineHeight:1.5 }}>
+        Tu perfil es <b style={{ color:BS.ink }}>privado por defecto</b>. Solo apareces aquí si activas “perfil público” en tu perfil, y solo con los datos que tú elijas.
+      </div>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))', gap:12, padding:'4px 16px 22px' }}>
+        {BSDATA.community.map(m => {
+          const fol = following.has(m.id);
+          return (
+            <div key={m.id} className="bs-pop" style={{ background:BS.surface, borderRadius:18, overflow:'hidden', border:`1px solid ${BS.border}` }}>
+              <div style={{ height:84, position:'relative' }}>
+                <img src={m.pet.img} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} loading="lazy"/>
+                {m.bpuppy && <span style={{ position:'absolute', top:8, left:8, background:BS.grad, color:'#fff', fontSize:9, fontWeight:800, padding:'2px 8px', borderRadius:999 }}>BrightPuppy</span>}
+              </div>
+              <div style={{ padding:'0 13px 13px', marginTop:-22, textAlign:'center' }}>
+                <div style={{ width:46, height:46, borderRadius:'50%', background:m.color, display:'grid', placeItems:'center', color:'#fff', fontWeight:800, fontSize:16, border:`3px solid ${BS.surface}`, margin:'0 auto 6px' }}>{m.initials}</div>
+                <div style={{ fontSize:13.5, fontWeight:800, color:BS.ink }}>{m.username}</div>
+                <div style={{ fontSize:11, color:BS.soft, marginBottom:4 }}>{m.city}</div>
+                <div style={{ fontSize:11, color:BS.brand, fontWeight:700, background:'rgba(14,165,233,0.1)', borderRadius:999, padding:'2px 9px', display:'inline-block', marginBottom:9 }}>{m.pet.name} · {m.pet.breed}</div>
+                <button onClick={() => toggle(m.id)} className="bs-btn" style={{ width:'100%', padding:'7px', borderRadius:9, border:`1.5px solid ${fol?BS.border:BS.brand}`, background: fol?'transparent':BS.grad, color: fol?BS.soft:'#fff', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{fol?'Siguiendo':'+ Seguir'}</button>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function EventsScreen() {
+  const BS = useBS();
+  const [going, setGoing] = useState(new Set());
+  const toggle = id => setGoing(s => { const n=new Set(s); n.has(id)?n.delete(id):n.add(id); return n; });
+  return (
+    <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
+      <ScreenHeader title="Eventos BPuppy" sub="Reuniones y actividades de la comunidad"/>
+      <div style={{ padding:'14px 16px 22px', display:'flex', flexDirection:'column', gap:14 }}>
+        {BSDATA.bpuppyEvents.map(ev => {
+          const on = going.has(ev.id);
+          return (
+            <div key={ev.id} className="bs-pop" style={{ background:BS.surface, borderRadius:18, overflow:'hidden', border:`1px solid ${BS.border}` }}>
+              <img src={ev.img} alt="" style={{ width:'100%', height:150, objectFit:'cover', display:'block' }} loading="lazy"/>
+              <div style={{ padding:'14px 16px' }}>
+                <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:16.5, fontWeight:800, color:BS.ink, lineHeight:1.25, marginBottom:5 }}>{ev.title}</div>
+                <div style={{ fontSize:12.5, color:BS.brand, fontWeight:700, marginBottom:2 }}>{ev.date}</div>
+                <div style={{ fontSize:12, color:BS.soft, marginBottom:12 }}>{ev.place}</div>
+                <div style={{ display:'flex', alignItems:'center', gap:12 }}>
+                  <button onClick={() => toggle(ev.id)} className="bs-btn" style={{ padding:'9px 20px', borderRadius:11, border:'none', background: on?BS.surface2:BS.grad, color: on?BS.ink:'#fff', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', boxShadow: on?'none':BS.glow }}>{on?'Asistirás ✓':'Asistir'}</button>
+                  <span style={{ fontSize:12, color:BS.soft }}>{ev.attendees + (on?1:0)} asistentes</span>
+                </div>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function NewsScreen() {
+  const BS = useBS();
+  return (
+    <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
+      <ScreenHeader title="Noticias" sub="Novedades de BrightPuppy"/>
+      <div style={{ padding:'14px 16px 22px', display:'flex', flexDirection:'column', gap:14 }}>
+        {BSDATA.news.map(n => (
+          <div key={n.id} className="bs-pop" style={{ background:BS.surface, borderRadius:18, overflow:'hidden', border:`1px solid ${BS.border}`, display:'flex', cursor:'pointer' }}>
+            <img src={n.img} alt="" style={{ width:108, height:108, objectFit:'cover', flexShrink:0, display:'block' }} loading="lazy"/>
+            <div style={{ padding:'12px 14px', minWidth:0 }}>
+              <div style={{ display:'inline-block', fontSize:9.5, fontWeight:800, color:BS.brand, background:'rgba(14,165,233,0.1)', borderRadius:999, padding:'2px 8px', marginBottom:6, textTransform:'uppercase', letterSpacing:'0.05em' }}>{n.tag}</div>
+              <div style={{ fontSize:14, fontWeight:800, color:BS.ink, lineHeight:1.3, marginBottom:4 }}>{n.title}</div>
+              <div style={{ fontSize:11.5, color:BS.soft, marginBottom:5 }}>{n.date}</div>
+              <div style={{ fontSize:12, color:BS.ink2, lineHeight:1.45, overflow:'hidden', display:'-webkit-box', WebkitLineClamp:2, WebkitBoxOrient:'vertical' }}>{n.excerpt}</div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function VideosScreen() {
+  const BS = useBS();
+  return (
+    <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
+      <ScreenHeader title="Videos" sub="Mira a la comunidad en acción"/>
+      <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))', gap:12, padding:'14px 16px 22px' }}>
+        {BSDATA.videos.map(v => (
+          <div key={v.id} className="bs-pop" style={{ background:BS.surface, borderRadius:16, overflow:'hidden', border:`1px solid ${BS.border}`, cursor:'pointer' }}>
+            <div style={{ position:'relative', aspectRatio:'16/10' }}>
+              <img src={v.thumb} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} loading="lazy"/>
+              <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.18)', display:'grid', placeItems:'center' }}>
+                <div style={{ width:42, height:42, borderRadius:'50%', background:'rgba(255,255,255,0.92)', display:'grid', placeItems:'center' }}>
+                  <svg width="18" height="18" viewBox="0 0 24 24" fill={BS.brand}><path d="M8 5v14l11-7z"/></svg>
+                </div>
+              </div>
+              <span style={{ position:'absolute', bottom:7, right:7, background:'rgba(0,0,0,0.7)', color:'#fff', fontSize:10.5, fontWeight:700, padding:'2px 7px', borderRadius:6 }}>{v.dur}</span>
+            </div>
+            <div style={{ padding:'10px 12px', fontSize:12.5, fontWeight:700, color:BS.ink, lineHeight:1.3 }}>{v.title}</div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 Object.assign(window, {
   BSCtx, useBS, THEMES,
   BSAvatar, BSVerified, BSocialLogo,
   WelcomeScreen, OnboardingScreen, StoriesBar,
   FeedScreen, ProfileScreen, PackScreen,
   DiscoverScreen, UploadScreen, PetsScreen, MessagesScreen,
+  CommunityScreen, EventsScreen, NewsScreen, VideosScreen,
 });

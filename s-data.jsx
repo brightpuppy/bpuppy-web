@@ -58,7 +58,32 @@ const BSDATA = {
     { user:'carlosrv', initials:'CR', color:'#2196F3', preview:'¡Qué lindo tu perro! ¿Qué raza...', time:'2m',  online:true,  unread:true  },
     { user:'sof_kd',   initials:'SK', color:'#9C27B0', preview:'Vi que tienes un Pomeranian',       time:'15m', online:true,  unread:false },
     { user:'rach_dog', initials:'RM', color:'#4CAF50', preview:'¿Vas al meetup este sábado?',        time:'1h',  online:false, unread:false },
-    { user:'ana_cats', initials:'AL', color:'#E91E63', preview:'Gracias por la recomendación 🐾',   time:'3h',  online:false, unread:false },
+    { user:'ana_cats', initials:'AL', color:'#E91E63', preview:'Gracias por la recomendación',      time:'3h',  online:false, unread:false },
+  ],
+  // Comunidad — perfiles que el dueño decidió hacer públicos (solo campos no sensibles).
+  community: [
+    { id:'c1', name:'Carlos R.', username:'carlosrv',  initials:'CR', color:'#2196F3', city:'Dallas, TX',      bio:'Papá orgulloso de un Golden', pet:{ name:'Milo',  breed:'Golden Retriever', img:'assets/photos/g01.webp' }, followers:847,  bpuppy:true },
+    { id:'c2', name:'Sofía K.',  username:'sof_kd',     initials:'SK', color:'#9C27B0', city:'New York, NY',    bio:'Lab lover · NYC walks', pet:{ name:'Bella', breed:'Labrador', img:'assets/photos/g02.webp' }, followers:1520, bpuppy:false },
+    { id:'c3', name:'Diego F.',  username:'diego_pom',  initials:'DF', color:'#FF5722', city:'Los Angeles, CA', bio:'Pomeranian dad', pet:{ name:'Luna', breed:'Pomeranian', img:'assets/photos/g04.webp' }, followers:2310, bpuppy:true },
+    { id:'c4', name:'Ana L.',    username:'ana_cats',   initials:'AL', color:'#E91E63', city:'Miami, FL',       bio:'Cat mom de un Ragdoll', pet:{ name:'Simba', breed:'Ragdoll', img:'assets/photos/g05.webp' }, followers:560,  bpuppy:false },
+    { id:'c5', name:'Marco B.',  username:'marco_bp',   initials:'MB', color:'#607D8B', city:'Houston, TX',     bio:'Aventuras con Coco', pet:{ name:'Coco', breed:'Labrador', img:'assets/photos/g06.webp' }, followers:980,  bpuppy:true },
+    { id:'c6', name:'Rachel M.', username:'rach_dog',   initials:'RM', color:'#4CAF50', city:'Chicago, IL',     bio:'Frenchie life', pet:{ name:'Rocky', breed:'French Bulldog', img:'assets/photos/g03.webp' }, followers:1340, bpuppy:true },
+  ],
+  bpuppyEvents: [
+    { id:'e1', title:'Meetup BPuppy en Bayfront Park', date:'Sábado 7 Junio · 10:00 AM', place:'Bayfront Park, Miami', img:'assets/photos/g03.webp', attendees:34, going:false },
+    { id:'e2', title:'Clase de socialización para cachorros', date:'Domingo 15 Junio · 9:00 AM', place:'Local BPuppy, Haines City', img:'assets/photos/g01.webp', attendees:18, going:false },
+    { id:'e3', title:'Feria de adopción + grooming gratis', date:'Sábado 28 Junio · 11:00 AM', place:'Central Bark Dog Park', img:'assets/photos/g06.webp', attendees:89, going:false },
+  ],
+  news: [
+    { id:'n1', title:'Abrimos nuestro nuevo local de grooming en Haines City', date:'30 May 2026', tag:'BPuppy', img:'assets/photos/g02.webp', excerpt:'Más espacio, productos premium y pickup & delivery para consentir a tu mascota.' },
+    { id:'n2', title:'Nuevo: planes de membresía con pickup incluido', date:'22 May 2026', tag:'Novedad', img:'assets/photos/g04.webp', excerpt:'Ahorra en cada baño y recibe beneficios VIP todos los meses.' },
+    { id:'n3', title:'Guía: cómo preparar a tu cachorro para su primer grooming', date:'14 May 2026', tag:'Tips', img:'assets/photos/g05.webp', excerpt:'Pasos simples para que la primera visita sea tranquila y positiva.' },
+  ],
+  videos: [
+    { id:'v1', title:'Un día en BPuppy Grooming', dur:'2:14', thumb:'assets/photos/g01.webp' },
+    { id:'v2', title:'Transformación: antes y después', dur:'0:58', thumb:'assets/photos/g03.webp' },
+    { id:'v3', title:'Tips de cepillado en casa', dur:'3:40', thumb:'assets/photos/g05.webp' },
+    { id:'v4', title:'Meetup de la comunidad BPuppy', dur:'1:32', thumb:'assets/photos/g06.webp' },
   ],
 };
 window.BSDATA = BSDATA;

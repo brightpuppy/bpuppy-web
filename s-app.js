@@ -59,23 +59,44 @@ function BottomNav({ screen, setScreen, bs }) {
     );
   })));
 }
+const SI_PATHS = {
+  home: '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>',
+  community: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>',
+  discover: '<circle cx="12" cy="12" r="9"/><polygon points="16.2 7.8 14.1 14.1 7.8 16.2 9.9 9.9"/>',
+  events: '<rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>',
+  news: '<rect x="3.5" y="4.5" width="17" height="15" rx="2"/><path d="M7 9h10M7 12.5h10M7 16h6"/>',
+  video: '<rect x="2.5" y="6" width="14" height="12" rx="2"/><path d="M16.5 10l5-3v10l-5-3z"/>',
+  pack: '<circle cx="7" cy="9" r="1.7"/><circle cx="12" cy="7.4" r="1.7"/><circle cx="17" cy="9" r="1.7"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/>',
+  pets: '<path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 00-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 000-7.8z"/>',
+  profile: '<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0113 0"/>',
+  messages: '<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>'
+};
+function SIcon({ name, color, size = 19 }) {
+  const p = SI_PATHS[name];
+  if (!p) return null;
+  return /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: "1.9", strokeLinecap: "round", strokeLinejoin: "round", dangerouslySetInnerHTML: { __html: p } });
+}
 function DesktopSidebar({ screen, setScreen, bs }) {
   const navItems = [
-    { id: "feed", label: "Inicio", icon: "\u{1F3E0}" },
-    { id: "discover", label: "Descubrir", icon: "\u{1F50D}" },
-    { id: "pack", label: "Mi Pack", icon: "\u{1F43E}" },
-    { id: "pets", label: "Mis Mascotas", icon: "\u{1F48A}" },
-    { id: "profile", label: "Perfil", icon: "\u{1F464}" },
-    { id: "messages", label: "Mensajes", icon: "\u{1F4AC}", badge: 2 }
+    { id: "feed", label: "Novedades", icon: "home" },
+    { id: "community", label: "Comunidad", icon: "community" },
+    { id: "discover", label: "Descubrir", icon: "discover" },
+    { id: "events", label: "Eventos", icon: "events" },
+    { id: "news", label: "Noticias", icon: "news" },
+    { id: "videos", label: "Videos", icon: "video" },
+    { id: "pack", label: "Mi Pack", icon: "pack" },
+    { id: "pets", label: "Mis Mascotas", icon: "pets" },
+    { id: "messages", label: "Mensajes", icon: "messages", badge: 2 },
+    { id: "profile", label: "Perfil", icon: "profile" }
   ];
   return /* @__PURE__ */ React.createElement("div", { style: { width: 230, background: bs.surface, borderRight: `1px solid ${bs.border}`, display: "flex", flexDirection: "column", height: "100%", padding: "18px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, marginBottom: 28, paddingLeft: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 36, height: 36, borderRadius: 12, background: bs.grad, display: "grid", placeItems: "center", flexShrink: 0, boxShadow: bs.glow } }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 40 40", width: "20", height: "20", fill: "white" }, /* @__PURE__ */ React.createElement("ellipse", { cx: "20", cy: "26", rx: "10", ry: "8" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "9", cy: "16", rx: "4", ry: "5.5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "31", cy: "16", rx: "4", ry: "5.5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "14", cy: "8", rx: "3.5", ry: "5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "26", cy: "8", rx: "3.5", ry: "5" }))), /* @__PURE__ */ React.createElement("span", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, letterSpacing: "-0.04em", background: bs.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" } }, "B Social")), /* @__PURE__ */ React.createElement("nav", { style: { flex: 1, display: "flex", flexDirection: "column", gap: 2 } }, navItems.map((item) => /* @__PURE__ */ React.createElement(
     "button",
     {
       key: item.id,
       onClick: () => setScreen(item.id),
-      style: { display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", borderRadius: 12, border: "none", cursor: "pointer", fontFamily: "inherit", textAlign: "left", background: screen === item.id ? `rgba(255,85,32,0.12)` : "transparent", color: screen === item.id ? bs.brand : bs.ink2, fontWeight: screen === item.id ? 700 : 500, fontSize: 14, transition: "all .13s" }
+      style: { display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", borderRadius: 12, border: "none", cursor: "pointer", fontFamily: "inherit", textAlign: "left", background: screen === item.id ? bs.surface2 : "transparent", color: screen === item.id ? bs.brand : bs.ink2, fontWeight: screen === item.id ? 700 : 500, fontSize: 14, transition: "all .13s" }
     },
-    /* @__PURE__ */ React.createElement("span", { style: { fontSize: 17 } }, item.icon),
+    /* @__PURE__ */ React.createElement(SIcon, { name: item.icon, color: screen === item.id ? bs.brand : bs.ink2 }),
     item.label,
     item.badge && /* @__PURE__ */ React.createElement("span", { style: { marginLeft: "auto", background: bs.brand, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "1px 7px" } }, item.badge)
   ))), /* @__PURE__ */ React.createElement(
@@ -108,6 +129,10 @@ function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave }) {
   if (screen === "upload") return /* @__PURE__ */ React.createElement(UploadScreen, { setScreen });
   if (screen === "pets") return /* @__PURE__ */ React.createElement(PetsScreen, null);
   if (screen === "messages") return /* @__PURE__ */ React.createElement(MessagesScreen, { setScreen });
+  if (screen === "community") return /* @__PURE__ */ React.createElement(CommunityScreen, null);
+  if (screen === "events") return /* @__PURE__ */ React.createElement(EventsScreen, null);
+  if (screen === "news") return /* @__PURE__ */ React.createElement(NewsScreen, null);
+  if (screen === "videos") return /* @__PURE__ */ React.createElement(VideosScreen, null);
   return /* @__PURE__ */ React.createElement(FeedScreen, { ...p });
 }
 function BSocialTweaks({ theme, setThemeFn }) {
