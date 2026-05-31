@@ -117,6 +117,10 @@ const sndCoin = () => { beep(988,0.07,'square',0,0.05); beep(1319,0.12,'square',
 const sndStep = () => { beep(180,0.04,'square',0,0.025); };
 const sndOver = () => { [392,330,262,196].forEach((f,i)=>beep(f,0.18,'square',i*0.12,0.06)); };
 const sndPrize= () => { [659,784,988,1319,1568].forEach((f,i)=>beep(f,0.18,'square',i*0.09,0.06)); };
+const sndYeah = () => { beep(660,0.07,'triangle',0,0.05); beep(990,0.08,'triangle',0.06,0.05); beep(1320,0.12,'triangle',0.13,0.06); };
+const sndBark = () => { beep(300,0.09,'sawtooth',0,0.06); beep(190,0.13,'sawtooth',0.09,0.06); beep(320,0.09,'sawtooth',0.30,0.06); beep(200,0.13,'sawtooth',0.39,0.06); };
+const sndHit  = () => { beep(200,0.14,'square',0,0.06); beep(140,0.16,'square',0.08,0.05); };
+const sndLife = () => { [784,1047,1319,1568].forEach((f,i)=>beep(f,0.10,'triangle',i*0.06,0.05)); };
 
 function ensureCss(){
   if (document.getElementById('qg-css')) return;
@@ -158,36 +162,50 @@ const gameSupa = () => { try { if(!_gameSupa && window.supabase) _gameSupa = win
 const COUNTRIES = ['Estados Unidos','México','Colombia','Argentina','España','Perú','Chile','Venezuela','Ecuador','Guatemala','Cuba','Bolivia','República Dominicana','Honduras','Paraguay','El Salvador','Nicaragua','Costa Rica','Panamá','Uruguay','Puerto Rico','Brasil','Canadá','Otro'];
 const CITY_HINTS = ['Miami','Orlando','Houston','Los Ángeles','Nueva York','Chicago','Ciudad de México','Guadalajara','Bogotá','Medellín','Buenos Aires','Madrid','Barcelona','Lima','Santiago','Caracas','Quito','San Juan'];
 
-// Dibuja un perrito pixel-art según la raza
+// Dibuja un perrito pixel-art (más detallado) según la raza
 function drawDog(ctx, x, baseY, tone, key, frame, airborne){
   const P = 3; // tamaño de "pixel"
-  const px = (cx,cy,w,h,col)=>{ ctx.fillStyle=col; ctx.fillRect(Math.round(x+cx*P), Math.round(baseY+cy*P), w*P, h*P); };
-  const dark = '#2D2421', white = '#FBF7F0', nose = '#2D2421';
-  // patas (animadas)
-  const legUp = airborne ? 1 : (frame%2===0?0:1);
-  px(2, 0, 2, 2, dark);                 // pata trasera
-  px(8, 0+(legUp?0:0), 2, 2-legUp, dark); // pata delantera
-  px(2, -1, 2, 1, dark);
-  // cuerpo
-  px(1, -6, 11, 6, tone);
-  px(1, -7, 11, 1, tone);
-  // cola
-  if(key==='poodle'){ px(0, -8, 2, 2, white); }
-  else { px(-1, -7, 2, 2, tone); }
+  const px = (cx,cy,w,h,col)=>{ ctx.fillStyle=col; ctx.fillRect(Math.round(x+cx*P), Math.round(baseY+cy*P), Math.max(1,w*P), Math.max(1,h*P)); };
+  const dark='#2D2421', white='#FBF7F0', belly='#F4E9D6', collar='#E23B3B', tag='#F5C53A', nose='#2D2421';
+  // patas (carrera de 2 fases)
+  if (airborne) { px(3,-1,2,2,dark); px(9,-1,2,2,dark); }
+  else if (frame % 2 === 0) { px(2,0,2,2,dark); px(9,0,2,2,dark); }
+  else { px(4,0,2,2,dark); px(7,0,2,2,dark); }
+  // cola (mueve)
+  const tw = airborne ? -1 : (frame % 2 ? -1 : 0);
+  if (key === 'poodle') { px(-1,-8+tw,3,3,white); }
+  else { px(-2,-7+tw,3,2,tone); px(-1,-9+tw,2,2,tone); }
+  // cuerpo + barriga
+  px(1,-7,12,6,tone); px(1,-8,12,1,tone);
+  px(2,-3,9,2,belly);
+  // collar + placa
+  px(9,-7,2,3,collar); px(9,-5,1,1,tag);
   // cabeza
-  px(9, -11, 6, 5, tone);
-  px(10, -12, 4, 1, tone);
-  // hocico
-  px(14, -9, 3, 2, key==='beagle'? white : tone);
-  px(16, -9, 1, 1, nose);
-  // ojo
-  px(12, -10, 1, 1, dark);
+  px(9,-13,7,6,tone); px(10,-14,5,1,tone);
+  // hocico + nariz
+  px(15,-10,3,3, key==='beagle' ? white : tone);
+  px(17,-10,1,1,nose); px(16,-8,2,1,nose);
+  // ojo + brillo
+  px(13,-12,1,1,dark); px(13,-12,1,1,dark);
   // orejas según raza
-  if(key==='frenchie'){ px(9,-13,2,2,tone); px(13,-13,2,2,tone); }       // orejas de murciélago
-  else if(key==='cavalier'||key==='beagle'){ px(8,-11,2,4,key==='beagle'?'#8a5a32':'#7a3d22'); px(14,-11,2,4,key==='beagle'?'#8a5a32':'#7a3d22'); } // orejas largas
-  else if(key==='poodle'){ px(9,-13,3,3,white); px(13,-13,2,2,white); }   // pompón
-  else { px(8,-12,2,3,tone); px(14,-12,2,3,tone); }                       // orejas medianas (golden/lab)
-  if(key==='golden'){ px(0,-6,1,6,'#cf8f2e'); }                            // flequillo dorado
+  if (key==='frenchie') { px(9,-15,2,2,tone); px(14,-15,2,2,tone); }
+  else if (key==='cavalier'||key==='beagle') { const ec = key==='beagle' ? '#8a5a32' : '#7a3d22'; px(8,-13,2,5,ec); px(15,-13,2,4,ec); }
+  else if (key==='poodle') { px(9,-15,3,3,white); px(14,-15,2,2,white); }
+  else { px(8,-14,2,3,tone); px(15,-14,2,3,tone); }
+  if (key==='golden') { px(0,-7,1,6,'#cf8f2e'); }
+}
+// Símbolos del premio (SVG, sin emojis)
+function PrizeSymbol({ tier, size }){
+  const s = size || 40;
+  const col = ['#9aa0a6','#CD7F32','#C0C0C0','#F5C53A','#FF7A1A'][tier] || '#F5C53A';
+  if (tier >= 3) { // trofeo
+    return <svg width={s} height={s} viewBox="0 0 48 48" fill="none"><path d="M14 8h20v6a10 10 0 01-20 0V8z" fill={col} stroke="#2D2421" strokeWidth="2"/><path d="M14 11H8a6 6 0 006 7M34 11h6a6 6 0 01-6 7" stroke="#2D2421" strokeWidth="2"/><rect x="20" y="26" width="8" height="7" fill={col} stroke="#2D2421" strokeWidth="2"/><rect x="14" y="33" width="20" height="5" rx="1.5" fill={col} stroke="#2D2421" strokeWidth="2"/></svg>;
+  }
+  if (tier === 2) { // medalla
+    return <svg width={s} height={s} viewBox="0 0 48 48" fill="none"><path d="M18 6l6 12 6-12" stroke="#2D2421" strokeWidth="2"/><circle cx="24" cy="30" r="11" fill={col} stroke="#2D2421" strokeWidth="2"/><circle cx="24" cy="30" r="5" fill="#fff" opacity=".5"/></svg>;
+  }
+  // hueso / galleta
+  return <svg width={s} height={s} viewBox="0 0 48 48" fill="none"><rect x="14" y="20" width="20" height="8" rx="4" fill={col} stroke="#2D2421" strokeWidth="2"/><circle cx="14" cy="19" r="5" fill={col} stroke="#2D2421" strokeWidth="2"/><circle cx="14" cy="29" r="5" fill={col} stroke="#2D2421" strokeWidth="2"/><circle cx="34" cy="19" r="5" fill={col} stroke="#2D2421" strokeWidth="2"/><circle cx="34" cy="29" r="5" fill={col} stroke="#2D2421" strokeWidth="2"/></svg>;
 }
 
 function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
@@ -205,8 +223,11 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   const [city, setCity] = useState('');
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [lives, setLives] = useState(3);
+  const [treats, setTreats] = useState(0);
 
-  const W = 360, H = 200, GY = H - 26; // ground line
+  const W = 360, H = 200, GY = H - 24; // ground line
+  const MAXLIVES = 5, GRAV = 0.5, JUMPV = 8.4;
 
   const loadBoard = () => {
     const s = gameSupa(); if(!s) return;
@@ -216,28 +237,34 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   useEffect(()=>{ loadBoard(); }, []);
 
   const newState = () => ({
-    py: 0, vy: 0, airborne: false, frame: 0, fcount: 0,
-    speed: 2.0, dist: 0, score: 0, coins: 0,
-    obst: [], coinArr: [], clouds: [{x:60,y:30},{x:200,y:48},{x:320,y:24}],
-    nextObst: 90, nextCoin: 140, over: false, t0: 0,
+    py: 0, vy: 0, grounded: true, frame: 0, fcount: 0,
+    speed: 1.6, dist: 0, score: 0, treats: 0, lives: 3, inv: 0,
+    obst: [], treatArr: [], heartArr: [], plats: [],
+    clouds: [{x:60,y:28},{x:200,y:46},{x:320,y:22}],
+    bldgs: [{x:40,w:46,h:54},{x:150,w:38,h:74},{x:250,w:54,h:46},{x:330,w:40,h:64}],
+    nextObst: 260, nextTreat: 120, nextHeart: 1500, nextPlat: 520, over: false,
   });
 
   const jump = () => {
     const st = stRef.current; if(!st || st.over) return;
-    if(!st.airborne){ st.vy = 7.4; st.airborne = true; sndJump(); }
+    if(st.grounded){ st.vy = JUMPV; st.grounded = false; sndJump(); }
   };
 
-  const endGame = (finalScore) => {
+  const endGame = (finalScore, treatsCollected) => {
+    const tier = prizeTier(finalScore);
     setPhase('over'); setScore(finalScore); sndOver();
-    setTimeout(()=>sndPrize(), 350);
-    try { const b = Math.max(finalScore, parseInt(localStorage.getItem('bp_game_best')||'0',10)||0); localStorage.setItem('bp_game_best', String(b)); setBest(b); } catch(e){}
-    if (prefillEmail && !name) { /* leave name editable */ }
+    setTimeout(()=>{ sndPrize(); if(tier>=3) setTimeout(sndBark, 480); }, 320);
+    try {
+      const b = Math.max(finalScore, parseInt(localStorage.getItem('bp_game_best')||'0',10)||0);
+      localStorage.setItem('bp_game_best', String(b)); setBest(b);
+      if (finalScore >= 300) localStorage.setItem('bp_game_silver', '1'); // logro Plata (status B Social)
+    } catch(e){}
   };
 
   const start = () => {
     try { const c = ac(); if(c && c.state==='suspended') c.resume(); } catch(e){}
     stRef.current = newState();
-    setScore(0); setSaved(false); setPhase('playing');
+    setScore(0); setLives(3); setTreats(0); setSaved(false); setPhase('playing');
   };
 
   // game loop
@@ -254,68 +281,78 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
     const loop = () => {
       if(!running) return;
       const st = stRef.current; if(!st){ return; }
+      const dogX = 46, dogW = 30, dogH = 30;
       // ── update ──
       st.dist += st.speed;
-      // dificultad: arranca suave, sube gradualmente con tope justo
-      st.speed = 2.0 + Math.min(st.dist/1600, 3.0);
-      // física salto
-      st.vy -= 0.42; st.py += st.vy;
-      if(st.py <= 0){ st.py = 0; st.vy = 0; st.airborne = false; }
-      // pasos / animación
-      st.fcount++; if(st.fcount % Math.max(4, 9-Math.floor(st.speed)) === 0){ st.frame++; if(!st.airborne && st.fcount%18===0) sndStep(); }
-      // nubes parallax
-      st.clouds.forEach(c=>{ c.x -= st.speed*0.25; if(c.x < -40){ c.x = W+20; c.y = 18+Math.random()*40; } });
-      // obstáculos
+      // dificultad: mucho tiempo fácil, luego sube lento con tope
+      const ramp = Math.max(0, st.dist - 1500);
+      st.speed = 1.6 + Math.min(ramp/3600, 1.6); // 1.6 → 3.2
+      if(st.inv > 0) st.inv--;
+      // física + suelo (piso o plataforma)
+      st.vy -= GRAV; st.py += st.vy;
+      const dogCx = dogX + 15;
+      let floor = 0;
+      for(const p of st.plats){ if(dogCx > p.x-3 && dogCx < p.x+p.w+3 && st.vy <= 0 && st.py >= p.top-7 && st.py <= p.top+14) floor = Math.max(floor, p.top); }
+      if(st.py <= floor){ st.py = floor; st.vy = 0; st.grounded = true; } else { st.grounded = false; }
+      // animación de carrera
+      st.fcount++; if(st.grounded && st.fcount % Math.max(4, 8-Math.floor(st.speed)) === 0){ st.frame++; if(st.fcount%20===0) sndStep(); }
+      // parallax: nubes + edificios
+      st.clouds.forEach(c=>{ c.x -= st.speed*0.25; if(c.x < -40){ c.x = W+20; c.y = 16+Math.random()*40; } });
+      st.bldgs.forEach(b=>{ b.x -= st.speed*0.5; if(b.x+b.w < -6){ b.x = W+Math.random()*40; b.w = 34+Math.random()*26; b.h = 40+Math.random()*40; } });
+      // plataformas (subir arriba y bajar) — a veces con un treat encima
+      st.nextPlat -= st.speed;
+      if(st.nextPlat <= 0){ const top = 38+Math.floor(Math.random()*20); const w = 42+Math.floor(Math.random()*34); st.plats.push({ x:W+10, w, top }); if(Math.random()<0.7) st.treatArr.push({ x:W+10+w/2-4, y:GY-top-16, got:false }); st.nextPlat = 360+Math.random()*340; }
+      st.plats.forEach(p=>{ p.x -= st.speed; }); st.plats = st.plats.filter(p=> p.x+p.w > -6);
+      // obstáculos (sólo tras un rato; cadencia generosa)
       st.nextObst -= st.speed;
-      if(st.nextObst <= 0){
-        const h = 14 + Math.floor(Math.random()*16);
-        st.obst.push({ x: W+10, w: 10+Math.floor(Math.random()*8), h });
-        const gapMin = 150 - Math.min(st.speed*10, 50);
-        st.nextObst = gapMin + Math.random()*120;
-      }
-      st.obst.forEach(o=>{ o.x -= st.speed; });
-      st.obst = st.obst.filter(o=> o.x + o.w > -4);
-      // monedas (huesos)
-      st.nextCoin -= st.speed;
-      if(st.nextCoin <= 0){ st.coinArr.push({ x: W+10, y: GY - (24+Math.random()*40), got:false }); st.nextCoin = 110 + Math.random()*160; }
-      st.coinArr.forEach(c=>{ c.x -= st.speed; });
-      st.coinArr = st.coinArr.filter(c=> c.x > -10 && !c.got);
-      // dog hitbox
-      const dogX = 46, dogW = 34, dogH = 30;
-      const dogBottom = GY - st.py; const dogTop = dogBottom - dogH; const dogLeft = dogX, dogRight = dogX + dogW - 8;
-      // colisión obstáculos
-      for(const o of st.obst){
-        const oTop = GY - o.h;
-        if(dogRight > o.x+2 && dogLeft < o.x+o.w-2 && dogBottom > oTop+3){ st.over = true; break; }
-      }
-      // recoger monedas
-      for(const c of st.coinArr){ if(!c.got && Math.abs((c.x) - (dogX+14)) < 14 && Math.abs(c.y - (dogBottom-14)) < 18){ c.got = true; st.coins += 5; sndCoin(); } }
-      // score
-      st.score = Math.floor(st.dist/10) + st.coins;
+      if(st.nextObst <= 0 && st.dist > 360){ const hh = 14+Math.floor(Math.random()*14); st.obst.push({ x:W+10, w:10+Math.floor(Math.random()*8), h:hh }); st.nextObst = (180 - Math.min(st.speed*10, 48)) + Math.random()*140; }
+      st.obst.forEach(o=>{ o.x -= st.speed; }); st.obst = st.obst.filter(o=> o.x+o.w > -4);
+      // treats (suben oportunidades)
+      st.nextTreat -= st.speed;
+      if(st.nextTreat <= 0){ const ground = Math.random()<0.6; st.treatArr.push({ x:W+10, y: ground ? GY-16 : GY-(34+Math.random()*22), got:false }); st.nextTreat = 90+Math.random()*150; }
+      st.treatArr.forEach(c=>{ c.x -= st.speed; }); st.treatArr = st.treatArr.filter(c=> c.x > -12 && !c.got);
+      // corazón (vida) ocasional y alcanzable
+      st.nextHeart -= st.speed;
+      if(st.nextHeart <= 0){ if(st.lives < MAXLIVES) st.heartArr.push({ x:W+10, y: GY-(38+Math.random()*10), got:false }); st.nextHeart = 1700+Math.random()*1200; }
+      st.heartArr.forEach(c=>{ c.x -= st.speed; }); st.heartArr = st.heartArr.filter(c=> c.x > -12 && !c.got);
+      // hitbox perro
+      const dogBottom = GY - st.py, dogLeft = dogX, dogRight = dogX + dogW;
+      // colisión obstáculos (con invencibilidad temporal)
+      if(st.inv <= 0){ for(const o of st.obst){ const oTop = GY-o.h; if(dogRight > o.x+2 && dogLeft < o.x+o.w-2 && dogBottom > oTop+3){ st.lives--; st.inv = 72; setLives(st.lives); sndHit(); if(st.lives <= 0) st.over = true; break; } } }
+      // recoger treats
+      for(const c of st.treatArr){ if(!c.got && Math.abs(c.x-(dogX+15)) < 15 && Math.abs(c.y-(dogBottom-13)) < 18){ c.got=true; st.treats++; setTreats(st.treats); sndYeah(); } }
+      // recoger corazón
+      for(const c of st.heartArr){ if(!c.got && Math.abs(c.x-(dogX+15)) < 16 && Math.abs(c.y-(dogBottom-13)) < 20){ c.got=true; if(st.lives < MAXLIVES){ st.lives++; setLives(st.lives); } sndLife(); } }
+      // score (distancia + treats pesan más)
+      st.score = Math.floor(st.dist/10) + st.treats*8;
       if(st.fcount % 6 === 0) setScore(st.score);
 
       // ── render ──
-      // cielo
-      const grd = ctx.createLinearGradient(0,0,0,H); grd.addColorStop(0,'#BFE3F2'); grd.addColorStop(1,'#EAF6FB');
-      ctx.fillStyle = grd; ctx.fillRect(0,0,W,H);
-      // sol
-      ctx.fillStyle='#FFD98A'; ctx.fillRect(W-46,18,18,18);
-      // nubes pixel
+      const grd = ctx.createLinearGradient(0,0,0,H); grd.addColorStop(0,'#BFE3F2'); grd.addColorStop(1,'#EAF6FB'); ctx.fillStyle = grd; ctx.fillRect(0,0,W,H);
+      ctx.fillStyle='#FFD98A'; ctx.beginPath(); ctx.arc(W-36,30,12,0,7); ctx.fill();
+      // edificios (parallax estilo arcade)
+      st.bldgs.forEach(b=>{ ctx.fillStyle='#cfe0d6'; ctx.fillRect(b.x, GY-b.h, b.w, b.h); ctx.fillStyle='#b4c9bd'; for(let wy=GY-b.h+6; wy<GY-6; wy+=10){ for(let wx=b.x+5; wx<b.x+b.w-5; wx+=10){ ctx.fillRect(wx,wy,5,5); } } });
+      // nubes
       ctx.fillStyle='#FFFFFF'; st.clouds.forEach(c=>{ ctx.fillRect(c.x,c.y,18,6); ctx.fillRect(c.x+6,c.y-5,12,6); });
       // suelo
-      ctx.fillStyle='#9BD46B'; ctx.fillRect(0,GY+6,W,H-GY-6);
-      ctx.fillStyle='#7CC04E'; ctx.fillRect(0,GY+6,W,4);
-      ctx.fillStyle='#6B4A2B'; ctx.fillRect(0,GY+10,W,H-GY-10);
-      // textura de suelo en movimiento
-      ctx.fillStyle='#5c3f24'; const off = Math.floor(st.dist) % 16; for(let gx=-off; gx<W; gx+=16){ ctx.fillRect(gx,GY+14,8,3); }
-      // obstáculos (arbustos pixel)
-      st.obst.forEach(o=>{ const oy = GY - o.h; ctx.fillStyle='#3C7A3C'; ctx.fillRect(o.x,oy,o.w,o.h); ctx.fillStyle='#4E994E'; ctx.fillRect(o.x,oy,o.w,4); ctx.fillStyle='#2F5F2F'; ctx.fillRect(o.x+2,oy+o.h-4,o.w-4,4); });
-      // monedas (huesos)
-      st.coinArr.forEach(c=>{ if(c.got) return; ctx.fillStyle='#F7E08A'; ctx.fillRect(c.x,c.y,8,4); ctx.fillStyle='#E8C04A'; ctx.fillRect(c.x-1,c.y-1,3,6); ctx.fillRect(c.x+6,c.y-1,3,6); });
-      // perrito
-      drawDog(ctx, dogX, GY - st.py, tone, breed.key, st.frame, st.airborne);
+      ctx.fillStyle='#9BD46B'; ctx.fillRect(0,GY+4,W,H-GY-4);
+      ctx.fillStyle='#7CC04E'; ctx.fillRect(0,GY+4,W,4);
+      ctx.fillStyle='#6B4A2B'; ctx.fillRect(0,GY+8,W,H-GY-8);
+      ctx.fillStyle='#5c3f24'; const off = Math.floor(st.dist)%16; for(let gx=-off; gx<W; gx+=16){ ctx.fillRect(gx,GY+12,8,3); }
+      // plataformas de ladrillo (estilo DK)
+      st.plats.forEach(p=>{ const py = GY-p.top; ctx.fillStyle='#C2521E'; ctx.fillRect(p.x,py,p.w,8); ctx.fillStyle='#E0742F'; ctx.fillRect(p.x,py,p.w,3); ctx.fillStyle='#9c3f12'; for(let bx=p.x+2; bx<p.x+p.w-2; bx+=10){ ctx.fillRect(bx,py+3,2,5); } });
+      // obstáculos (arbustos)
+      st.obst.forEach(o=>{ const oy = GY-o.h; ctx.fillStyle='#3C7A3C'; ctx.fillRect(o.x,oy,o.w,o.h); ctx.fillStyle='#4E994E'; ctx.fillRect(o.x,oy,o.w,4); ctx.fillStyle='#2F5F2F'; ctx.fillRect(o.x+2,oy+o.h-4,o.w-4,4); });
+      // treats (huesos dorados)
+      st.treatArr.forEach(c=>{ if(c.got) return; ctx.fillStyle='#F7E08A'; ctx.fillRect(c.x,c.y,8,4); ctx.fillStyle='#E8C04A'; ctx.fillRect(c.x-1,c.y-1,3,6); ctx.fillRect(c.x+6,c.y-1,3,6); });
+      // corazones (vida)
+      st.heartArr.forEach(c=>{ if(c.got) return; ctx.fillStyle='#E23B3B'; ctx.fillRect(c.x+1,c.y+2,7,4); ctx.fillRect(c.x,c.y,3,3); ctx.fillRect(c.x+6,c.y,3,3); ctx.beginPath(); ctx.moveTo(c.x,c.y+3); ctx.lineTo(c.x+4.5,c.y+9); ctx.lineTo(c.x+9,c.y+3); ctx.fill(); });
+      // perrito (parpadea si invencible)
+      if(!(st.inv > 0 && Math.floor(st.fcount/4)%2)){ drawDog(ctx, dogX, GY - st.py, tone, breed.key, st.frame, !st.grounded); }
+      // HUD: vidas
+      for(let i=0;i<MAXLIVES;i++){ const hx=8+i*13, hy=8; ctx.fillStyle = i < st.lives ? '#E23B3B' : 'rgba(45,36,33,0.16)'; ctx.fillRect(hx+1,hy+2,7,4); ctx.fillRect(hx,hy,3,3); ctx.fillRect(hx+6,hy,3,3); ctx.beginPath(); ctx.moveTo(hx,hy+3); ctx.lineTo(hx+4.5,hy+9); ctx.lineTo(hx+9,hy+3); ctx.fill(); }
 
-      if(st.over){ running = false; endGame(st.score); return; }
+      if(st.over){ running = false; endGame(st.score, st.treats); return; }
       rafRef.current = requestAnimationFrame(loop);
     };
     rafRef.current = requestAnimationFrame(loop);
@@ -354,7 +391,11 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
         {/* Cabecera del juego */}
         <div style={{ background:'linear-gradient(135deg,#F58220,#E85D75)', padding:'14px 18px', color:'#fff', display:'flex', alignItems:'center', justifyContent:'space-between' }}>
           <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontWeight:800, fontSize:17 }}>{t(['Corre con tu','Run with your'])} {firstName}</div>
-          <div style={{ display:'flex', gap:14, alignItems:'center', fontSize:13, fontWeight:800 }}>
+          <div style={{ display:'flex', gap:12, alignItems:'center', fontSize:13, fontWeight:800 }}>
+            <span style={{ display:'inline-flex', alignItems:'center', gap:4 }} title="Treats">
+              <svg width="15" height="15" viewBox="0 0 48 48" fill="#fff"><rect x="14" y="20" width="20" height="8" rx="4"/><circle cx="14" cy="19" r="5"/><circle cx="14" cy="29" r="5"/><circle cx="34" cy="19" r="5"/><circle cx="34" cy="29" r="5"/></svg>
+              {treats}
+            </span>
             <span>{t(['Puntos','Score'])}: {score}</span>
             <span style={{ opacity:.85 }}>{t(['Mejor','Best'])}: {best}</span>
           </div>
@@ -398,9 +439,11 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
                 <div style={{ width:54, height:54, borderRadius:'50%', overflow:'hidden', border:'2px solid var(--orange)', flexShrink:0 }}>
                   <img src={breed.img} alt={breed.name} style={{ width:'100%', height:'100%', objectFit:'cover' }}/>
                 </div>
-                <div style={{ fontSize:14, color:'var(--ink)', lineHeight:1.5 }}>
-                  <b>{firstName}</b> {t(['te da un premio:','gives you a prize:'])} <b style={{ color:'var(--orange2,#C2521E)' }}>{prizeFor(score, lang)}</b> · {score} {t(['puntos','points'])}
+                <div style={{ flex:1, fontSize:14, color:'var(--ink)', lineHeight:1.5 }}>
+                  <b>{firstName}</b> {t(['te da un premio:','gives you a prize:'])} <b style={{ color:'var(--orange2,#C2521E)' }}>{prizeFor(score, lang)}</b>
+                  <div style={{ fontSize:12.5, color:'var(--ink-2)', marginTop:2 }}>{score} {t(['puntos','points'])} · {treats} treats</div>
                 </div>
+                <div style={{ flexShrink:0 }}><PrizeSymbol tier={prizeTier(score)} size={46}/></div>
               </div>
 
               {/* Guardar puntuación */}
@@ -458,17 +501,16 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   );
 }
 
+function prizeTier(score){ return score>=800?4 : score>=500?3 : score>=300?2 : score>=150?1 : 0; }
 function prizeFor(score, lang){
-  const tiers = [
-    [800, ['Trofeo Dorado','Golden Trophy']],
-    [500, ['Medalla de Oro','Gold Medal']],
-    [300, ['Hueso de Plata','Silver Bone']],
-    [150, ['Galleta de Bronce','Bronze Treat']],
-    [0,   ['Estrella de Cachorro','Puppy Star']],
+  const labels = [
+    ['Estrella de Cachorro','Puppy Star'],
+    ['Galleta de Bronce','Bronze Treat'],
+    ['Hueso de Plata','Silver Bone'],
+    ['Medalla de Oro','Gold Medal'],
+    ['Trofeo Dorado','Golden Trophy'],
   ];
-  const idx = lang==='en'?1:0;
-  for(const [min, labels] of tiers){ if(score >= min) return labels[idx]; }
-  return tiers[tiers.length-1][1][idx];
+  return labels[prizeTier(score)][lang==='en'?1:0];
 }
 
 function QuizGame(){
