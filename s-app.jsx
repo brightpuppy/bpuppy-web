@@ -287,7 +287,18 @@ function App() {
   const loggedIn = authed && !needsProfile;
 
   window.BSAUTH = { me, following, refresh, logout, isWide,
-    saveProfile: async (f) => { const d = await apiCall('profile_save', f); if(d&&d.ok) await refresh(); return d; },
+    saveProfile: async (f) => {
+      const d = await apiCall('profile_save', f);
+      if(d&&d.ok){
+        // Historia pendiente desde Adopciones -> publicarla como primer post
+        try { const pend = JSON.parse(localStorage.getItem('bp_pending_social')||'null');
+          if(pend && (pend.story || pend.photo_url)){ await apiCall('post_create', { caption: pend.story || ('¡Adopté a ' + (pend.pet_name||'mi mascota') + '! 🐾'), media_url: pend.photo_url || '', visibility:'public' }); }
+          localStorage.removeItem('bp_pending_social');
+        } catch(e){}
+        await refresh();
+      }
+      return d;
+    },
     createPost:  async (f) => { const d = await apiCall('post_create', f); if(d&&d.ok) await refresh(); return d; },
     createStory: async (media_url) => { const d = await apiCall('story_create', { media_url }); if(d&&d.ok) await refresh(); return d; },
     follow:      async (target, unfollow) => { const d = await apiCall('follow', { target_email:target, unfollow }); if(d&&d.ok) await refresh(); return d; },

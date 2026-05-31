@@ -309,7 +309,17 @@ function App() {
     isWide,
     saveProfile: async (f) => {
       const d = await apiCall("profile_save", f);
-      if (d && d.ok) await refresh();
+      if (d && d.ok) {
+        try {
+          const pend = JSON.parse(localStorage.getItem("bp_pending_social") || "null");
+          if (pend && (pend.story || pend.photo_url)) {
+            await apiCall("post_create", { caption: pend.story || "\xA1Adopt\xE9 a " + (pend.pet_name || "mi mascota") + "! \u{1F43E}", media_url: pend.photo_url || "", visibility: "public" });
+          }
+          localStorage.removeItem("bp_pending_social");
+        } catch (e) {
+        }
+        await refresh();
+      }
       return d;
     },
     createPost: async (f) => {

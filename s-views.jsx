@@ -208,11 +208,13 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
   const BS = useBS();
   const m = me || {};
   const editing = !!(onDone && m && m.username);
+  let pend = null; try { pend = JSON.parse(localStorage.getItem('bp_pending_social')||'null'); } catch(e){}
+  if (m.username) pend = null; // si ya tiene perfil, ignorar el pendiente
   const [firstName, setFirstName] = useState(m.first_name||'');
   const [lastName, setLastName]   = useState(m.last_name||'');
-  const [bio, setBio]             = useState(m.bio||'');
+  const [bio, setBio]             = useState(m.bio || (pend && pend.story) || '');
   const [petSpecies, setPetSpecies] = useState(m.pet_species||'');
-  const [petName, setPetName]     = useState(m.pet_name||'');
+  const [petName, setPetName]     = useState(m.pet_name || (pend && pend.pet_name) || '');
   const [petBreed, setPetBreed]   = useState(m.pet_breed||'');
   const [petColor, setPetColor]   = useState(m.pet_color||'');
   const [petAge, setPetAge]       = useState(m.pet_age||'');
@@ -224,7 +226,7 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
   const [avatarFile, setAvatarFile] = useState(null);
   const [petFile, setPetFile]       = useState(null);
   const [avatarPrev, setAvatarPrev] = useState(m.avatar_url||'');
-  const [petPrev, setPetPrev]       = useState(m.pet_photo_url||'');
+  const [petPrev, setPetPrev]       = useState(m.pet_photo_url || (pend && pend.photo_url) || '');
   const [busy, setBusy] = useState(false);
   const [err, setErr]   = useState('');
 
@@ -235,7 +237,8 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
     if (!firstName.trim()) { setErr('Escribe tu nombre'); return; }
     setBusy(true); setErr('');
     try {
-      let avatar_url = m.avatar_url || null, pet_photo_url = m.pet_photo_url || null;
+      let avatar_url = m.avatar_url || (/^https?:/.test(avatarPrev) ? avatarPrev : null);
+      let pet_photo_url = m.pet_photo_url || (/^https?:/.test(petPrev) ? petPrev : null);
       if (avatarFile) avatar_url = await bsUpload(avatarFile, 'avatars');
       if (petFile)    pet_photo_url = await bsUpload(petFile, 'pets');
       const d = await onSave({
