@@ -160,6 +160,80 @@ const BREEDS = [
     ]
   }
 ];
+const BREED_INFO = {
+  golden: {
+    lifespan: ["10\u201312 a\xF1os", "10\u201312 yrs"],
+    food: ["3\u20134 tazas", "3\u20134 cups"],
+    weight: ["25\u201334 kg", "55\u201375 lb"],
+    exercise: ["1\u20132 h/d\xEDa", "1\u20132 h/day"],
+    energyPct: 85,
+    exercisePct: 80,
+    healthPct: 78,
+    trainPct: 95,
+    health: ["Robusto. Cuidar caderas y el peso.", "Sturdy. Watch hips and weight."],
+    goodFor: [["Familias con ni\xF1os", "Families with kids"], ["Terapia y servicio", "Therapy & service"], ["Nadar y traer", "Swim & fetch"], ["Primer perro", "First-time owners"]]
+  },
+  frenchie: {
+    lifespan: ["10\u201312 a\xF1os", "10\u201312 yrs"],
+    food: ["1\u20131\xBD tazas", "1\u20131\xBD cups"],
+    weight: ["8\u201314 kg", "18\u201328 lb"],
+    exercise: ["20\u201340 min/d\xEDa", "20\u201340 min/day"],
+    energyPct: 38,
+    exercisePct: 30,
+    healthPct: 55,
+    trainPct: 62,
+    health: ["Cuidar la respiraci\xF3n y el calor.", "Mind breathing and heat."],
+    goodFor: [["Apartamentos", "Apartments"], ["Compa\xF1\xEDa en casa", "Home companion"], ["Poco ejercicio", "Low exercise"], ["Vida en ciudad", "City life"]]
+  },
+  cavalier: {
+    lifespan: ["9\u201314 a\xF1os", "9\u201314 yrs"],
+    food: ["\xBD\u20131 taza", "\xBD\u20131 cup"],
+    weight: ["5\u20138 kg", "13\u201318 lb"],
+    exercise: ["30\u201360 min/d\xEDa", "30\u201360 min/day"],
+    energyPct: 50,
+    exercisePct: 45,
+    healthPct: 52,
+    trainPct: 72,
+    health: ["Vigilar el coraz\xF3n con el veterinario.", "Watch heart health with the vet."],
+    goodFor: [["Apoyo emocional", "Emotional support"], ["Abrazos y calma", "Cuddles & calm"], ["Adultos mayores", "Seniors"], ["Apartamentos", "Apartments"]]
+  },
+  labrador: {
+    lifespan: ["10\u201312 a\xF1os", "10\u201312 yrs"],
+    food: ["3\u20134 tazas", "3\u20134 cups"],
+    weight: ["25\u201336 kg", "55\u201380 lb"],
+    exercise: ["1\u20132 h/d\xEDa", "1\u20132 h/day"],
+    energyPct: 92,
+    exercisePct: 90,
+    healthPct: 78,
+    trainPct: 90,
+    health: ["Robusto. Controlar peso y caderas.", "Sturdy. Manage weight and hips."],
+    goodFor: [["Familias activas", "Active families"], ["Deportes y agua", "Sports & water"], ["Servicio y rescate", "Service & rescue"], ["Jugar en el parque", "Park play"]]
+  },
+  poodle: {
+    lifespan: ["12\u201315 a\xF1os", "12\u201315 yrs"],
+    food: ["1\xBD\u20133 tazas", "1\xBD\u20133 cups"],
+    weight: ["Variable", "Varies"],
+    exercise: ["45\u201360 min/d\xEDa", "45\u201360 min/day"],
+    energyPct: 60,
+    exercisePct: 60,
+    healthPct: 80,
+    trainPct: 98,
+    health: ["Longevo. Cepillar el pelaje seguido.", "Long-lived. Brush coat often."],
+    goodFor: [["Alergias (poco pelo)", "Allergies (low shed)"], ["Aprender trucos", "Learning tricks"], ["Familias", "Families"], ["Tres tama\xF1os", "Three sizes"]]
+  },
+  beagle: {
+    lifespan: ["12\u201315 a\xF1os", "12\u201315 yrs"],
+    food: ["1\u20131\xBD tazas", "1\u20131\xBD cups"],
+    weight: ["9\u201311 kg", "20\u201325 lb"],
+    exercise: ["1 h+/d\xEDa", "1 h+/day"],
+    energyPct: 80,
+    exercisePct: 75,
+    healthPct: 82,
+    trainPct: 55,
+    health: ["Sano. Controlar el peso (\xA1comil\xF3n!).", "Healthy. Watch weight (big eater!)."],
+    goodFor: [["Ni\xF1os y juego", "Kids & play"], ["Explorar y oler", "Explore & sniff"], ["Familias activas", "Active families"], ["Aventuras al aire libre", "Outdoor adventures"]]
+  }
+};
 let _ac = null;
 const ac = () => {
   try {
@@ -251,6 +325,23 @@ function ensureCss() {
     @keyframes qgPulseBlob { 0%,100%{transform:scale(1); opacity:.5} 50%{transform:scale(1.18); opacity:.8} }
     .qg-deco{ position:absolute; pointer-events:none; z-index:0; will-change:transform; }
     @media (max-width:820px){ .qg-deco{ display:none } }
+    /* Resultado en 2 columnas (PC) -> 1 columna (m\xF3vil/tablet) */
+    .qg-rgrid{ display:grid; grid-template-columns:minmax(0,0.92fr) minmax(0,1.08fr); gap:16px; align-items:stretch; }
+    @media (max-width:880px){ .qg-rgrid{ grid-template-columns:1fr; } }
+    .qg-stat{ background:var(--paper); border-radius:12px; padding:9px 11px; }
+    .qg-stat .k{ font-size:10.5px; color:var(--ink-soft); font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+    .qg-stat .v{ font-size:14px; color:var(--ink); font-weight:800; }
+    .qg-bar{ height:8px; border-radius:999px; background:var(--paper); overflow:hidden; }
+    .qg-bar>i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#F58220,#E85D75); }
+    .qg-chip{ font-size:12px; font-weight:700; color:var(--orange2,#C2521E); background:#FFF1E2; border:1px solid rgba(245,130,32,0.25); border-radius:999px; padding:4px 11px; }
+    /* Bot\xF3n JUGAR con borde arco\xEDris animado (texto centrado, color estable) */
+    @keyframes qgRainbow{ to{ background-position:0 0,-300% 0; } }
+    .qg-jugar{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:15px; border:3px solid transparent; border-radius:16px;
+      background:linear-gradient(#fff,#fff) padding-box, linear-gradient(90deg,#ff4d4d,#ff9f1c,#ffd93d,#4ade80,#38bdf8,#a855f7,#ff4d4d) border-box;
+      background-size:100% 100%,300% 100%; animation:qgRainbow 3s linear infinite;
+      font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:19px; letter-spacing:.02em; color:var(--ink); cursor:pointer; transition:transform .12s; }
+    .qg-jugar:hover{ transform:translateY(-2px); }
+    .qg-jugar:active{ transform:scale(.98); }
   `;
   document.head.appendChild(s);
 }
@@ -863,7 +954,10 @@ function QuizGame() {
   }
   if (result) {
     const b = breedFor();
-    return /* @__PURE__ */ React.createElement("div", { style: wrap }, confetti && /* @__PURE__ */ React.createElement(Confetti, null), /* @__PURE__ */ React.createElement("div", { className: "qg-pop", style: { background: "#fff", borderRadius: 28, border: "1px solid var(--line)", overflow: "hidden", boxShadow: "0 10px 40px rgba(45,36,33,0.1)" } }, /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#F58220,#E85D75)", padding: "30px 24px 26px", textAlign: "center", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", opacity: 0.9 } }, t(["\xA1Tu match perfecto!", "Your perfect match!"])), /* @__PURE__ */ React.createElement("div", { style: { width: 96, height: 96, margin: "12px auto", borderRadius: "50%", overflow: "hidden", border: "3px solid rgba(255,255,255,0.7)", background: "rgba(255,255,255,0.2)", animation: "qgBounce 1.8s ease-in-out infinite" } }, /* @__PURE__ */ React.createElement("img", { src: b.img, alt: b.name, style: { width: "100%", height: "100%", objectFit: "cover", display: "block" } })), /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 32, fontWeight: 800, letterSpacing: "-0.02em", textShadow: "0 1px 8px rgba(0,0,0,0.22)" } }, b.name), /* @__PURE__ */ React.createElement("div", { style: { display: "inline-block", marginTop: 8, background: "rgba(255,255,255,0.22)", borderRadius: 999, padding: "4px 14px", fontSize: 14, fontWeight: 800 } }, b.match, "% ", t(["compatible", "match"]))), /* @__PURE__ */ React.createElement("div", { style: { padding: "22px 24px 26px" } }, /* @__PURE__ */ React.createElement("div", { style: { borderRadius: 18, overflow: "hidden", background: "var(--paper)", marginBottom: 16, display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("img", { src: b.img, alt: b.name, style: { width: "100%", maxHeight: 360, objectFit: "contain", display: "block" } })), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 15.5, color: "var(--ink-2)", lineHeight: 1.6, margin: "0 0 16px" } }, t(b.desc)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 18 } }, /* @__PURE__ */ React.createElement("span", { style: { flex: 1, textAlign: "center", background: "var(--paper)", borderRadius: 12, padding: "10px", fontSize: 13, color: "var(--ink)" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "var(--ink-soft)" } }, t(["Tama\xF1o", "Size"])), /* @__PURE__ */ React.createElement("b", null, t(b.size))), /* @__PURE__ */ React.createElement("span", { style: { flex: 1, textAlign: "center", background: "var(--paper)", borderRadius: 12, padding: "10px", fontSize: 13, color: "var(--ink)" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "var(--ink-soft)" } }, t(["Energ\xEDa", "Energy"])), /* @__PURE__ */ React.createElement("b", null, t(b.energy)))), /* @__PURE__ */ React.createElement("div", { style: { background: "#FFF7EE", border: "1.5px solid rgba(245,130,32,0.25)", borderRadius: 16, padding: "16px 18px", marginBottom: 20 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: "var(--orange2,#C2521E)", marginBottom: 10 } }, t(["Datos divertidos para conocer mejor a tu raza", "Fun facts to get to know your breed"])), b.facts.map((f, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", gap: 10, marginBottom: 8, alignItems: "flex-start" } }, /* @__PURE__ */ React.createElement("span", { style: { flexShrink: 0, color: "#F58220", fontWeight: 900 } }, i + 1), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, color: "var(--ink)", lineHeight: 1.5 } }, t(f))))), /* @__PURE__ */ React.createElement("button", { onClick: () => {
+    const info = BREED_INFO[b.key] || {};
+    const nm = b.name.split(" (")[0];
+    const Bar = ({ label, pct: pct2 }) => /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 6 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 11, fontWeight: 700, color: "var(--ink-soft)", marginBottom: 3 } }, /* @__PURE__ */ React.createElement("span", null, label), /* @__PURE__ */ React.createElement("span", null, Math.round(pct2 || 0), "%")), /* @__PURE__ */ React.createElement("div", { className: "qg-bar" }, /* @__PURE__ */ React.createElement("i", { style: { width: (pct2 || 0) + "%" } })));
+    return /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 1060, margin: "0 auto", padding: "18px 16px 28px" } }, confetti && /* @__PURE__ */ React.createElement(Confetti, null), /* @__PURE__ */ React.createElement("div", { className: "qg-rgrid" }, /* @__PURE__ */ React.createElement("div", { className: "qg-pop", style: { background: "#fff", borderRadius: 24, border: "1px solid var(--line)", overflow: "hidden", boxShadow: "0 10px 40px rgba(45,36,33,0.1)", display: "flex", flexDirection: "column" } }, /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#F58220,#E85D75)", padding: "15px 20px 13px", textAlign: "center", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, fontWeight: 800, letterSpacing: ".12em", textTransform: "uppercase", opacity: 0.9 } }, t(["\xA1Tu match perfecto!", "Your perfect match!"])), /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", textShadow: "0 1px 8px rgba(0,0,0,0.22)", marginTop: 2 } }, b.name), /* @__PURE__ */ React.createElement("div", { style: { display: "inline-block", marginTop: 6, background: "rgba(255,255,255,0.22)", borderRadius: 999, padding: "3px 13px", fontSize: 13, fontWeight: 800 } }, b.match, "% ", t(["compatible", "match"]))), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 16px", display: "flex", flexDirection: "column", flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { borderRadius: 16, overflow: "hidden", background: "var(--paper)", marginBottom: 12 } }, /* @__PURE__ */ React.createElement("img", { src: b.img, alt: b.name, style: { width: "100%", maxHeight: 150, objectFit: "cover", display: "block" } })), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 14, color: "var(--ink-2)", lineHeight: 1.55, margin: "0 0 12px" } }, t(b.desc)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("span", { className: "qg-stat", style: { flex: 1, textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { className: "k" }, t(["Tama\xF1o", "Size"])), /* @__PURE__ */ React.createElement("div", { className: "v" }, t(b.size))), /* @__PURE__ */ React.createElement("span", { className: "qg-stat", style: { flex: 1, textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { className: "k" }, t(["Energ\xEDa", "Energy"])), /* @__PURE__ */ React.createElement("div", { className: "v" }, t(b.energy)))), /* @__PURE__ */ React.createElement("div", { style: { background: "#FFF7EE", border: "1.5px solid rgba(245,130,32,0.25)", borderRadius: 14, padding: "12px 14px", marginTop: "auto" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 800, color: "var(--orange2,#C2521E)", marginBottom: 7 } }, t(["Datos divertidos", "Fun facts"])), b.facts.map((f, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", gap: 8, marginBottom: 5, alignItems: "flex-start" } }, /* @__PURE__ */ React.createElement("span", { style: { flexShrink: 0, color: "#F58220", fontWeight: 900, fontSize: 13 } }, i + 1), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, color: "var(--ink)", lineHeight: 1.4 } }, t(f))))))), /* @__PURE__ */ React.createElement("div", { className: "qg-pop", style: { background: "#fff", borderRadius: 24, border: "1px solid var(--line)", boxShadow: "0 10px 40px rgba(45,36,33,0.1)", padding: "18px 20px", display: "flex", flexDirection: "column" } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, color: "var(--ink)" } }, t(["Conoce al ", "Meet the "]), /* @__PURE__ */ React.createElement("span", { style: { color: "var(--orange)" } }, nm)), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 12.5, color: "var(--ink-soft)", margin: "2px 0 12px", lineHeight: 1.4 } }, t(["\xBFNo conoc\xEDas la raza? Aqu\xED tienes lo importante de un vistazo.", "New to the breed? Here is what matters, at a glance."])), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 13 } }, /* @__PURE__ */ React.createElement("div", { className: "qg-stat" }, /* @__PURE__ */ React.createElement("div", { className: "k" }, t(["Esperanza de vida", "Lifespan"])), /* @__PURE__ */ React.createElement("div", { className: "v" }, t(info.lifespan || ["\u2014", "\u2014"]))), /* @__PURE__ */ React.createElement("div", { className: "qg-stat" }, /* @__PURE__ */ React.createElement("div", { className: "k" }, t(["Alimento diario", "Daily food"])), /* @__PURE__ */ React.createElement("div", { className: "v" }, t(info.food || ["\u2014", "\u2014"]))), /* @__PURE__ */ React.createElement("div", { className: "qg-stat" }, /* @__PURE__ */ React.createElement("div", { className: "k" }, t(["Peso adulto", "Adult weight"])), /* @__PURE__ */ React.createElement("div", { className: "v" }, t(info.weight || ["\u2014", "\u2014"]))), /* @__PURE__ */ React.createElement("div", { className: "qg-stat" }, /* @__PURE__ */ React.createElement("div", { className: "k" }, t(["Ejercicio", "Exercise"])), /* @__PURE__ */ React.createElement("div", { className: "v" }, t(info.exercise || ["\u2014", "\u2014"])))), /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 10 } }, /* @__PURE__ */ React.createElement(Bar, { label: t(["Energ\xEDa", "Energy"]), pct: info.energyPct }), /* @__PURE__ */ React.createElement(Bar, { label: t(["Necesidad de ejercicio", "Exercise needs"]), pct: info.exercisePct }), /* @__PURE__ */ React.createElement(Bar, { label: t(["Salud", "Health"]), pct: info.healthPct }), /* @__PURE__ */ React.createElement(Bar, { label: t(["Inteligencia", "Intelligence"]), pct: info.trainPct })), info.health && /* @__PURE__ */ React.createElement("p", { style: { fontSize: 12, color: "var(--ink-2)", margin: "0 0 12px", lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("b", { style: { color: "var(--ink)" } }, t(["Salud: ", "Health: "])), t(info.health)), /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 14 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, fontWeight: 800, color: "var(--ink-soft)", textTransform: "uppercase", letterSpacing: ".04em", marginBottom: 7 } }, t(["Bueno para", "Great for"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 6 } }, (info.goodFor || []).map((g, i) => /* @__PURE__ */ React.createElement("span", { key: i, className: "qg-chip" }, t(g))))), /* @__PURE__ */ React.createElement("a", { href: `/blog?art=${b.art}`, style: { display: "inline-flex", alignItems: "center", gap: 6, fontSize: 13.5, fontWeight: 700, color: "var(--orange)", marginBottom: 12 } }, t(["Aprende m\xE1s sobre esta raza", "Learn more about this breed"]), " \u2192"), /* @__PURE__ */ React.createElement("div", { style: { marginTop: "auto" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => {
       try {
         const c = ac();
         if (c && c.state === "suspended") c.resume();
@@ -871,7 +965,7 @@ function QuizGame() {
       }
       sndPick();
       setPlaying(true);
-    }, className: "btn btn-primary", style: { width: "100%", justifyContent: "center", cursor: "pointer", marginBottom: 14, background: "linear-gradient(135deg,#F58220,#E85D75)" } }, t(["Juega y corre con tu " + b.name.split(" (")[0], "Play & run with your " + b.name.split(" (")[0]])), /* @__PURE__ */ React.createElement("a", { href: `/blog?art=${b.art}`, style: { display: "inline-flex", alignItems: "center", gap: 6, fontSize: 14, fontWeight: 700, color: "var(--orange)", marginBottom: 18 } }, t(["Aprende m\xE1s sobre esta raza", "Learn more about this breed"]), " \u2192"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("a", { href: "/solicitud", className: "btn btn-primary", style: { flex: 1, justifyContent: "center", minWidth: 180 } }, t(["Quiero un " + b.name.split(" (")[0], "I want a " + b.name.split(" (")[0]])), /* @__PURE__ */ React.createElement("button", { onClick: reset, className: "btn btn-outline", style: { cursor: "pointer" } }, t(["Jugar otra vez", "Play again"]))))));
+    }, className: "qg-jugar", style: { marginBottom: 10 } }, /* @__PURE__ */ React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M8 5v14l11-7z" })), t(["JUGAR", "PLAY"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("a", { href: "/solicitud", className: "btn btn-primary", style: { flex: 1, justifyContent: "center", minWidth: 150 } }, t(["Quiero un " + nm, "I want a " + nm])), /* @__PURE__ */ React.createElement("button", { onClick: reset, className: "btn btn-outline", style: { cursor: "pointer" } }, t(["Repetir el quiz", "Retake the quiz"])))))));
   }
   const cur = Q[step];
   return /* @__PURE__ */ React.createElement("div", { style: wrap }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", marginBottom: 22 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(28px,5vw,40px)", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--ink)" } }, t(["Encuentra tu", "Find your"]), " ", /* @__PURE__ */ React.createElement("span", { style: { color: "var(--orange)" } }, t(["cachorro ideal", "perfect puppy"]))), /* @__PURE__ */ React.createElement("p", { style: { color: "var(--ink-soft)", fontSize: 15, margin: "6px 0 0" } }, t(["Un juego r\xE1pido y divertido para toda la familia", "A quick, fun game for the whole family"]))), /* @__PURE__ */ React.createElement("div", { className: "qg-pop", key: step, style: { background: "#fff", borderRadius: 28, border: "1px solid var(--line)", padding: "26px 22px 24px", boxShadow: "0 6px 30px rgba(45,36,33,0.08)" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, height: 10, borderRadius: 999, background: "var(--paper)", overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { height: "100%", width: pct + "%", borderRadius: 999, background: "linear-gradient(90deg,#F58220,#E85D75)", transition: "width .35s cubic-bezier(.34,1.56,.64,1)" } })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, fontWeight: 800, color: "var(--orange)" } }, step + 1, "/", Q.length), /* @__PURE__ */ React.createElement("button", { onClick: () => setMuted((m) => !m), title: muted ? "Activar sonido" : "Silenciar", style: { background: "none", border: "none", cursor: "pointer", color: "var(--ink-soft)", display: "inline-flex", padding: 4 } }, muted ? /* @__PURE__ */ React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M11 5 6 9H2v6h4l5 4z" }), /* @__PURE__ */ React.createElement("line", { x1: "23", y1: "9", x2: "17", y2: "15" }), /* @__PURE__ */ React.createElement("line", { x1: "17", y1: "9", x2: "23", y2: "15" })) : /* @__PURE__ */ React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M11 5 6 9H2v6h4l5 4z" }), /* @__PURE__ */ React.createElement("path", { d: "M15.5 8.5a5 5 0 0 1 0 7M19 5a9 9 0 0 1 0 14" })))), /* @__PURE__ */ React.createElement("h3", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(20px,3.2vw,26px)", fontWeight: 700, lineHeight: 1.25, margin: "0 0 18px", color: "var(--ink)" } }, t(cur.q)), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gap: 11 } }, cur.opts.map((opt, i) => {

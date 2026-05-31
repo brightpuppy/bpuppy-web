@@ -93,6 +93,35 @@ const BREEDS = [
            ['Les encanta explorar y oler TODO.','They love to explore and sniff EVERYTHING.']] },
 ];
 
+// Datos extra por raza para el panel de la derecha (texto + gráficos).
+// pct = 0..100 para las barras. Bilingüe [es,en] en textos.
+const BREED_INFO = {
+  golden:   { lifespan:['10–12 años','10–12 yrs'], food:['3–4 tazas','3–4 cups'], weight:['25–34 kg','55–75 lb'], exercise:['1–2 h/día','1–2 h/day'],
+    energyPct:85, exercisePct:80, healthPct:78, trainPct:95,
+    health:['Robusto. Cuidar caderas y el peso.','Sturdy. Watch hips and weight.'],
+    goodFor:[['Familias con niños','Families with kids'],['Terapia y servicio','Therapy & service'],['Nadar y traer','Swim & fetch'],['Primer perro','First-time owners']] },
+  frenchie: { lifespan:['10–12 años','10–12 yrs'], food:['1–1½ tazas','1–1½ cups'], weight:['8–14 kg','18–28 lb'], exercise:['20–40 min/día','20–40 min/day'],
+    energyPct:38, exercisePct:30, healthPct:55, trainPct:62,
+    health:['Cuidar la respiración y el calor.','Mind breathing and heat.'],
+    goodFor:[['Apartamentos','Apartments'],['Compañía en casa','Home companion'],['Poco ejercicio','Low exercise'],['Vida en ciudad','City life']] },
+  cavalier: { lifespan:['9–14 años','9–14 yrs'], food:['½–1 taza','½–1 cup'], weight:['5–8 kg','13–18 lb'], exercise:['30–60 min/día','30–60 min/day'],
+    energyPct:50, exercisePct:45, healthPct:52, trainPct:72,
+    health:['Vigilar el corazón con el veterinario.','Watch heart health with the vet.'],
+    goodFor:[['Apoyo emocional','Emotional support'],['Abrazos y calma','Cuddles & calm'],['Adultos mayores','Seniors'],['Apartamentos','Apartments']] },
+  labrador: { lifespan:['10–12 años','10–12 yrs'], food:['3–4 tazas','3–4 cups'], weight:['25–36 kg','55–80 lb'], exercise:['1–2 h/día','1–2 h/day'],
+    energyPct:92, exercisePct:90, healthPct:78, trainPct:90,
+    health:['Robusto. Controlar peso y caderas.','Sturdy. Manage weight and hips.'],
+    goodFor:[['Familias activas','Active families'],['Deportes y agua','Sports & water'],['Servicio y rescate','Service & rescue'],['Jugar en el parque','Park play']] },
+  poodle:   { lifespan:['12–15 años','12–15 yrs'], food:['1½–3 tazas','1½–3 cups'], weight:['Variable','Varies'], exercise:['45–60 min/día','45–60 min/day'],
+    energyPct:60, exercisePct:60, healthPct:80, trainPct:98,
+    health:['Longevo. Cepillar el pelaje seguido.','Long-lived. Brush coat often.'],
+    goodFor:[['Alergias (poco pelo)','Allergies (low shed)'],['Aprender trucos','Learning tricks'],['Familias','Families'],['Tres tamaños','Three sizes']] },
+  beagle:   { lifespan:['12–15 años','12–15 yrs'], food:['1–1½ tazas','1–1½ cups'], weight:['9–11 kg','20–25 lb'], exercise:['1 h+/día','1 h+/day'],
+    energyPct:80, exercisePct:75, healthPct:82, trainPct:55,
+    health:['Sano. Controlar el peso (¡comilón!).','Healthy. Watch weight (big eater!).'],
+    goodFor:[['Niños y juego','Kids & play'],['Explorar y oler','Explore & sniff'],['Familias activas','Active families'],['Aventuras al aire libre','Outdoor adventures']] },
+};
+
 // ── Sonidos (WebAudio sintetizado, sin archivos) ────────────────────────────
 let _ac = null;
 const ac = () => { try { if(!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)(); return _ac; } catch(e){ return null; } };
@@ -138,6 +167,23 @@ function ensureCss(){
     @keyframes qgPulseBlob { 0%,100%{transform:scale(1); opacity:.5} 50%{transform:scale(1.18); opacity:.8} }
     .qg-deco{ position:absolute; pointer-events:none; z-index:0; will-change:transform; }
     @media (max-width:820px){ .qg-deco{ display:none } }
+    /* Resultado en 2 columnas (PC) -> 1 columna (móvil/tablet) */
+    .qg-rgrid{ display:grid; grid-template-columns:minmax(0,0.92fr) minmax(0,1.08fr); gap:16px; align-items:stretch; }
+    @media (max-width:880px){ .qg-rgrid{ grid-template-columns:1fr; } }
+    .qg-stat{ background:var(--paper); border-radius:12px; padding:9px 11px; }
+    .qg-stat .k{ font-size:10.5px; color:var(--ink-soft); font-weight:700; text-transform:uppercase; letter-spacing:.04em; }
+    .qg-stat .v{ font-size:14px; color:var(--ink); font-weight:800; }
+    .qg-bar{ height:8px; border-radius:999px; background:var(--paper); overflow:hidden; }
+    .qg-bar>i{ display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#F58220,#E85D75); }
+    .qg-chip{ font-size:12px; font-weight:700; color:var(--orange2,#C2521E); background:#FFF1E2; border:1px solid rgba(245,130,32,0.25); border-radius:999px; padding:4px 11px; }
+    /* Botón JUGAR con borde arcoíris animado (texto centrado, color estable) */
+    @keyframes qgRainbow{ to{ background-position:0 0,-300% 0; } }
+    .qg-jugar{ display:flex; align-items:center; justify-content:center; gap:8px; width:100%; padding:15px; border:3px solid transparent; border-radius:16px;
+      background:linear-gradient(#fff,#fff) padding-box, linear-gradient(90deg,#ff4d4d,#ff9f1c,#ffd93d,#4ade80,#38bdf8,#a855f7,#ff4d4d) border-box;
+      background-size:100% 100%,300% 100%; animation:qgRainbow 3s linear infinite;
+      font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:19px; letter-spacing:.02em; color:var(--ink); cursor:pointer; transition:transform .12s; }
+    .qg-jugar:hover{ transform:translateY(-2px); }
+    .qg-jugar:active{ transform:scale(.98); }
   `;
   document.head.appendChild(s);
 }
@@ -572,43 +618,84 @@ function QuizGame(){
   }
   if (result) {
     const b = breedFor();
+    const info = BREED_INFO[b.key] || {};
+    const nm = b.name.split(' (')[0];
+    const Bar = ({ label, pct }) => (
+      <div style={{ marginBottom:6 }}>
+        <div style={{ display:'flex', justifyContent:'space-between', fontSize:11, fontWeight:700, color:'var(--ink-soft)', marginBottom:3 }}><span>{label}</span><span>{Math.round(pct||0)}%</span></div>
+        <div className="qg-bar"><i style={{ width:(pct||0)+'%' }}/></div>
+      </div>
+    );
     return (
-      <div style={wrap}>
+      <div style={{ maxWidth:1060, margin:'0 auto', padding:'18px 16px 28px' }}>
         {confetti && <Confetti/>}
-        <div className="qg-pop" style={{ background:'#fff', borderRadius:28, border:'1px solid var(--line)', overflow:'hidden', boxShadow:'0 10px 40px rgba(45,36,33,0.1)' }}>
-          <div style={{ background:'linear-gradient(135deg,#F58220,#E85D75)', padding:'30px 24px 26px', textAlign:'center', color:'#fff' }}>
-            <div style={{ fontSize:13, fontWeight:800, letterSpacing:'.12em', textTransform:'uppercase', opacity:.9 }}>{t(['¡Tu match perfecto!','Your perfect match!'])}</div>
-            <div style={{ width:96, height:96, margin:'12px auto', borderRadius:'50%', overflow:'hidden', border:'3px solid rgba(255,255,255,0.7)', background:'rgba(255,255,255,0.2)', animation:'qgBounce 1.8s ease-in-out infinite' }}>
-              <img src={b.img} alt={b.name} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/>
+        <div className="qg-rgrid">
+          {/* IZQUIERDA — panel del resultado */}
+          <div className="qg-pop" style={{ background:'#fff', borderRadius:24, border:'1px solid var(--line)', overflow:'hidden', boxShadow:'0 10px 40px rgba(45,36,33,0.1)', display:'flex', flexDirection:'column' }}>
+            <div style={{ background:'linear-gradient(135deg,#F58220,#E85D75)', padding:'15px 20px 13px', textAlign:'center', color:'#fff' }}>
+              <div style={{ fontSize:11.5, fontWeight:800, letterSpacing:'.12em', textTransform:'uppercase', opacity:.9 }}>{t(['¡Tu match perfecto!','Your perfect match!'])}</div>
+              <div className="bp-rainbow" style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:26, fontWeight:800, letterSpacing:'-0.02em', textShadow:'0 1px 8px rgba(0,0,0,0.22)', marginTop:2 }}>{b.name}</div>
+              <div style={{ display:'inline-block', marginTop:6, background:'rgba(255,255,255,0.22)', borderRadius:999, padding:'3px 13px', fontSize:13, fontWeight:800 }}>{b.match}% {t(['compatible','match'])}</div>
             </div>
-            <div className="bp-rainbow" style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:32, fontWeight:800, letterSpacing:'-0.02em', textShadow:'0 1px 8px rgba(0,0,0,0.22)' }}>{b.name}</div>
-            <div style={{ display:'inline-block', marginTop:8, background:'rgba(255,255,255,0.22)', borderRadius:999, padding:'4px 14px', fontSize:14, fontWeight:800 }}>{b.match}% {t(['compatible','match'])}</div>
+            <div style={{ padding:'14px 16px 16px', display:'flex', flexDirection:'column', flex:1 }}>
+              <div style={{ borderRadius:16, overflow:'hidden', background:'var(--paper)', marginBottom:12 }}>
+                <img src={b.img} alt={b.name} style={{ width:'100%', maxHeight:150, objectFit:'cover', display:'block' }}/>
+              </div>
+              <p style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.55, margin:'0 0 12px' }}>{t(b.desc)}</p>
+              <div style={{ display:'flex', gap:8, marginBottom:12 }}>
+                <span className="qg-stat" style={{ flex:1, textAlign:'center' }}><div className="k">{t(['Tamaño','Size'])}</div><div className="v">{t(b.size)}</div></span>
+                <span className="qg-stat" style={{ flex:1, textAlign:'center' }}><div className="k">{t(['Energía','Energy'])}</div><div className="v">{t(b.energy)}</div></span>
+              </div>
+              <div style={{ background:'#FFF7EE', border:'1.5px solid rgba(245,130,32,0.25)', borderRadius:14, padding:'12px 14px', marginTop:'auto' }}>
+                <div style={{ fontSize:12, fontWeight:800, color:'var(--orange2,#C2521E)', marginBottom:7 }}>{t(['Datos divertidos','Fun facts'])}</div>
+                {b.facts.map((f,i)=>(
+                  <div key={i} style={{ display:'flex', gap:8, marginBottom:5, alignItems:'flex-start' }}>
+                    <span style={{ flexShrink:0, color:'#F58220', fontWeight:900, fontSize:13 }}>{i+1}</span>
+                    <span style={{ fontSize:12.5, color:'var(--ink)', lineHeight:1.4 }}>{t(f)}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
-          <div style={{ padding:'22px 24px 26px' }}>
-            <div style={{ borderRadius:18, overflow:'hidden', background:'var(--paper)', marginBottom:16, display:'flex', justifyContent:'center' }}>
-              <img src={b.img} alt={b.name} style={{ width:'100%', maxHeight:360, objectFit:'contain', display:'block' }}/>
+
+          {/* DERECHA — datos, gráficos y acciones */}
+          <div className="qg-pop" style={{ background:'#fff', borderRadius:24, border:'1px solid var(--line)', boxShadow:'0 10px 40px rgba(45,36,33,0.1)', padding:'18px 20px', display:'flex', flexDirection:'column' }}>
+            <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:'var(--ink)' }}>{t(['Conoce al ','Meet the '])}<span style={{ color:'var(--orange)' }}>{nm}</span></div>
+            <p style={{ fontSize:12.5, color:'var(--ink-soft)', margin:'2px 0 12px', lineHeight:1.4 }}>{t(['¿No conocías la raza? Aquí tienes lo importante de un vistazo.','New to the breed? Here is what matters, at a glance.'])}</p>
+
+            <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:13 }}>
+              <div className="qg-stat"><div className="k">{t(['Esperanza de vida','Lifespan'])}</div><div className="v">{t(info.lifespan||['—','—'])}</div></div>
+              <div className="qg-stat"><div className="k">{t(['Alimento diario','Daily food'])}</div><div className="v">{t(info.food||['—','—'])}</div></div>
+              <div className="qg-stat"><div className="k">{t(['Peso adulto','Adult weight'])}</div><div className="v">{t(info.weight||['—','—'])}</div></div>
+              <div className="qg-stat"><div className="k">{t(['Ejercicio','Exercise'])}</div><div className="v">{t(info.exercise||['—','—'])}</div></div>
             </div>
-            <p style={{ fontSize:15.5, color:'var(--ink-2)', lineHeight:1.6, margin:'0 0 16px' }}>{t(b.desc)}</p>
-            <div style={{ display:'flex', gap:8, marginBottom:18 }}>
-              <span style={{ flex:1, textAlign:'center', background:'var(--paper)', borderRadius:12, padding:'10px', fontSize:13, color:'var(--ink)' }}><div style={{ fontSize:11, color:'var(--ink-soft)' }}>{t(['Tamaño','Size'])}</div><b>{t(b.size)}</b></span>
-              <span style={{ flex:1, textAlign:'center', background:'var(--paper)', borderRadius:12, padding:'10px', fontSize:13, color:'var(--ink)' }}><div style={{ fontSize:11, color:'var(--ink-soft)' }}>{t(['Energía','Energy'])}</div><b>{t(b.energy)}</b></span>
+
+            <div style={{ marginBottom:10 }}>
+              <Bar label={t(['Energía','Energy'])} pct={info.energyPct}/>
+              <Bar label={t(['Necesidad de ejercicio','Exercise needs'])} pct={info.exercisePct}/>
+              <Bar label={t(['Salud','Health'])} pct={info.healthPct}/>
+              <Bar label={t(['Inteligencia','Intelligence'])} pct={info.trainPct}/>
             </div>
-            <div style={{ background:'#FFF7EE', border:'1.5px solid rgba(245,130,32,0.25)', borderRadius:16, padding:'16px 18px', marginBottom:20 }}>
-              <div style={{ fontSize:13, fontWeight:800, color:'var(--orange2,#C2521E)', marginBottom:10 }}>{t(['Datos divertidos para conocer mejor a tu raza','Fun facts to get to know your breed'])}</div>
-              {b.facts.map((f,i)=>(
-                <div key={i} style={{ display:'flex', gap:10, marginBottom:8, alignItems:'flex-start' }}>
-                  <span style={{ flexShrink:0, color:'#F58220', fontWeight:900 }}>{i+1}</span>
-                  <span style={{ fontSize:14, color:'var(--ink)', lineHeight:1.5 }}>{t(f)}</span>
-                </div>
-              ))}
+
+            {info.health && <p style={{ fontSize:12, color:'var(--ink-2)', margin:'0 0 12px', lineHeight:1.45 }}><b style={{ color:'var(--ink)' }}>{t(['Salud: ','Health: '])}</b>{t(info.health)}</p>}
+
+            <div style={{ marginBottom:14 }}>
+              <div style={{ fontSize:11.5, fontWeight:800, color:'var(--ink-soft)', textTransform:'uppercase', letterSpacing:'.04em', marginBottom:7 }}>{t(['Bueno para','Great for'])}</div>
+              <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>
+                {(info.goodFor||[]).map((g,i)=>(<span key={i} className="qg-chip">{t(g)}</span>))}
+              </div>
             </div>
-            <button onClick={()=>{ try{ const c=ac(); if(c&&c.state==='suspended') c.resume(); }catch(e){} sndPick(); setPlaying(true); }} className="btn btn-primary" style={{ width:'100%', justifyContent:'center', cursor:'pointer', marginBottom:14, background:'linear-gradient(135deg,#F58220,#E85D75)' }}>
-              {t(['Juega y corre con tu '+b.name.split(' (')[0],'Play & run with your '+b.name.split(' (')[0]])}
-            </button>
-            <a href={`/blog?art=${b.art}`} style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:14, fontWeight:700, color:'var(--orange)', marginBottom:18 }}>{t(['Aprende más sobre esta raza','Learn more about this breed'])} →</a>
-            <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
-              <a href="/solicitud" className="btn btn-primary" style={{ flex:1, justifyContent:'center', minWidth:180 }}>{t(['Quiero un '+b.name.split(' (')[0],'I want a '+b.name.split(' (')[0]])}</a>
-              <button onClick={reset} className="btn btn-outline" style={{ cursor:'pointer' }}>{t(['Jugar otra vez','Play again'])}</button>
+
+            <a href={`/blog?art=${b.art}`} style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:13.5, fontWeight:700, color:'var(--orange)', marginBottom:12 }}>{t(['Aprende más sobre esta raza','Learn more about this breed'])} →</a>
+
+            <div style={{ marginTop:'auto' }}>
+              <button onClick={()=>{ try{ const c=ac(); if(c&&c.state==='suspended') c.resume(); }catch(e){} sndPick(); setPlaying(true); }} className="qg-jugar" style={{ marginBottom:10 }}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>{t(['JUGAR','PLAY'])}
+              </button>
+              <div style={{ display:'flex', gap:10, flexWrap:'wrap' }}>
+                <a href="/solicitud" className="btn btn-primary" style={{ flex:1, justifyContent:'center', minWidth:150 }}>{t(['Quiero un '+nm,'I want a '+nm])}</a>
+                <button onClick={reset} className="btn btn-outline" style={{ cursor:'pointer' }}>{t(['Repetir el quiz','Retake the quiz'])}</button>
+              </div>
             </div>
           </div>
         </div>
