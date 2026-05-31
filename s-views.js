@@ -370,10 +370,13 @@ function StoriesBar() {
     setView(null);
   }, style: { marginLeft: "auto", background: "rgba(255,255,255,0.15)", border: "none", color: "#fff", width: 32, height: 32, borderRadius: "50%", cursor: "pointer", fontSize: 15 } }, "\u2715")), /* @__PURE__ */ React.createElement("img", { src: view.img, alt: "", style: { maxWidth: "100%", maxHeight: "86vh", borderRadius: 16, objectFit: "contain" } })));
 }
-function PostCard({ post, onLike, onSave }) {
+function PostCard({ post, onLike, onSave, onOpen }) {
   const BS = useBS();
   const [animLike, setAnimLike] = useState(false);
   const [heart, setHeart] = useState(null);
+  const open = () => {
+    if (onOpen) onOpen(post);
+  };
   const handleLike = () => {
     onLike(post.id);
     setAnimLike(true);
@@ -385,15 +388,103 @@ function PostCard({ post, onLike, onSave }) {
     setHeart({ x: e.clientX - r.left, y: e.clientY - r.top, k: Date.now() });
     setTimeout(() => setHeart(null), 900);
   };
-  return /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 2 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "12px 14px 9px" } }, /* @__PURE__ */ React.createElement(BSAvatar, { user: post, size: 36, ring: true }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 5 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13.5, fontWeight: 700, color: BS.ink } }, post.username), post.verified && /* @__PURE__ */ React.createElement(BSVerified, { size: 13 })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: BS.soft } }, post.location ? post.location : post.city, " \xB7 ", post.time)), /* @__PURE__ */ React.createElement("button", { className: "bs-btn", style: { color: BS.ink2, fontSize: 19, padding: "4px 6px" } }, "\xB7\xB7\xB7")), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", aspectRatio: "1", overflow: "hidden", cursor: "pointer", background: BS.surface2 }, onDoubleClick: handleDblTap }, /* @__PURE__ */ React.createElement("img", { src: post.img, alt: "", style: { width: "100%", height: "100%", objectFit: "cover", display: "block" }, loading: "lazy" }), heart && /* @__PURE__ */ React.createElement("div", { key: heart.k, style: { position: "absolute", left: heart.x - 24, top: heart.y - 24, fontSize: 48, pointerEvents: "none", animation: "bsFloat 0.85s ease-out forwards" } }, "\u2764\uFE0F")), /* @__PURE__ */ React.createElement("div", { style: { padding: "10px 14px 6px", display: "flex", alignItems: "center", gap: 15 } }, /* @__PURE__ */ React.createElement("button", { onClick: handleLike, className: "bs-btn" }, /* @__PURE__ */ React.createElement("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: post.liked ? BS.like : "none", stroke: post.liked ? BS.like : BS.ink2, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", style: { animation: animLike ? "bsLike 0.4s ease" : "none" } }, /* @__PURE__ */ React.createElement("path", { d: "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" }))), /* @__PURE__ */ React.createElement("button", { className: "bs-btn", style: { color: BS.ink2 } }, /* @__PURE__ */ React.createElement("svg", { width: "23", height: "23", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" }))), /* @__PURE__ */ React.createElement("button", { className: "bs-btn", style: { color: BS.ink2 } }, /* @__PURE__ */ React.createElement("svg", { width: "23", height: "23", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" }), /* @__PURE__ */ React.createElement("polyline", { points: "16 6 12 2 8 6" }), /* @__PURE__ */ React.createElement("line", { x1: "12", y1: "2", x2: "12", y2: "15" }))), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }), /* @__PURE__ */ React.createElement("button", { onClick: () => onSave(post.id), className: "bs-btn" }, /* @__PURE__ */ React.createElement("svg", { width: "23", height: "23", viewBox: "0 0 24 24", fill: post.saved ? BS.brand : "none", stroke: post.saved ? BS.brand : BS.ink2, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" })))), /* @__PURE__ */ React.createElement("div", { style: { padding: "2px 14px 18px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, fontWeight: 700, color: BS.ink, marginBottom: 5 } }, fmt(post.likes), " me gusta"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: BS.ink, lineHeight: 1.55 } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700 } }, post.username), " ", post.caption, " ", (post.tags || []).map((t, i) => /* @__PURE__ */ React.createElement("span", { key: t, style: { color: BS.brand, fontWeight: 600, cursor: "pointer" } }, i > 0 ? " " : "", " #", t))), post.comments > 0 && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: BS.soft, marginTop: 5, cursor: "pointer" } }, "Ver ", post.comments, " comentarios")));
+  return /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 2 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "12px 14px 9px" } }, /* @__PURE__ */ React.createElement(BSAvatar, { user: post, size: 36, ring: true }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 5 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13.5, fontWeight: 700, color: BS.ink } }, post.username), post.verified && /* @__PURE__ */ React.createElement(BSVerified, { size: 13 })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: BS.soft } }, post.location ? post.location : post.city, " \xB7 ", post.time)), /* @__PURE__ */ React.createElement("button", { className: "bs-btn", style: { color: BS.ink2, fontSize: 19, padding: "4px 6px" } }, "\xB7\xB7\xB7")), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", aspectRatio: "1", overflow: "hidden", cursor: "pointer", background: BS.surface2 }, onDoubleClick: handleDblTap, onClick: open }, /* @__PURE__ */ React.createElement("img", { src: post.img, alt: "", style: { width: "100%", height: "100%", objectFit: "cover", display: "block" }, loading: "lazy" }), heart && /* @__PURE__ */ React.createElement("div", { key: heart.k, style: { position: "absolute", left: heart.x - 24, top: heart.y - 24, fontSize: 48, pointerEvents: "none", animation: "bsFloat 0.85s ease-out forwards" } }, "\u2764\uFE0F")), /* @__PURE__ */ React.createElement("div", { style: { padding: "10px 14px 6px", display: "flex", alignItems: "center", gap: 15 } }, /* @__PURE__ */ React.createElement("button", { onClick: handleLike, className: "bs-btn" }, /* @__PURE__ */ React.createElement("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: post.liked ? BS.like : "none", stroke: post.liked ? BS.like : BS.ink2, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round", style: { animation: animLike ? "bsLike 0.4s ease" : "none" } }, /* @__PURE__ */ React.createElement("path", { d: "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" }))), /* @__PURE__ */ React.createElement("button", { className: "bs-btn", onClick: open, style: { color: BS.ink2 }, title: "Comentarios" }, /* @__PURE__ */ React.createElement("svg", { width: "23", height: "23", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" }))), /* @__PURE__ */ React.createElement("button", { className: "bs-btn", style: { color: BS.ink2 } }, /* @__PURE__ */ React.createElement("svg", { width: "23", height: "23", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M4 12v8a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-8" }), /* @__PURE__ */ React.createElement("polyline", { points: "16 6 12 2 8 6" }), /* @__PURE__ */ React.createElement("line", { x1: "12", y1: "2", x2: "12", y2: "15" }))), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }), /* @__PURE__ */ React.createElement("button", { onClick: () => onSave(post.id), className: "bs-btn" }, /* @__PURE__ */ React.createElement("svg", { width: "23", height: "23", viewBox: "0 0 24 24", fill: post.saved ? BS.brand : "none", stroke: post.saved ? BS.brand : BS.ink2, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 21l-7-5-7 5V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2z" })))), /* @__PURE__ */ React.createElement("div", { style: { padding: "2px 14px 18px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, fontWeight: 700, color: BS.ink, marginBottom: 5 } }, fmt(post.likes), " me gusta"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: BS.ink, lineHeight: 1.55 } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700 } }, post.username), " ", post.caption, " ", (post.tags || []).map((t, i) => /* @__PURE__ */ React.createElement("span", { key: t, style: { color: BS.brand, fontWeight: 600, cursor: "pointer" } }, i > 0 ? " " : "", " #", t))), /* @__PURE__ */ React.createElement("div", { onClick: open, style: { fontSize: 12.5, color: BS.soft, marginTop: 6, cursor: "pointer", fontWeight: 600 } }, "Ver comentarios y detalles")));
 }
-function FeedScreen({ posts, toggleLike, toggleSave, setScreen }) {
+function PostDetail({ post, onClose }) {
+  const BS = useBS();
+  const A = typeof window !== "undefined" && window.BSAUTH || {};
+  const [data, setData] = useState(null);
+  const [liked, setLiked] = useState(!!post.liked);
+  const [likeCount, setLikeCount] = useState(post.likes || 0);
+  const [comments, setComments] = useState([]);
+  const [text, setText] = useState("");
+  const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    let go = true;
+    (async () => {
+      try {
+        const d = A.postDetail ? await A.postDetail(post.id) : null;
+        if (go && d && d.ok) {
+          setData(d.post);
+          setComments(d.comments || []);
+          setLiked(!!d.liked);
+          setLikeCount(d.like_count || 0);
+        }
+      } catch (e) {
+      } finally {
+        if (go) setLoading(false);
+      }
+    })();
+    return () => {
+      go = false;
+    };
+  }, [post.id]);
+  const doLike = async () => {
+    const nl = !liked;
+    setLiked(nl);
+    setLikeCount((c) => Math.max(0, c + (nl ? 1 : -1)));
+    try {
+      const d = A.likeToggle ? await A.likeToggle(post.id) : null;
+      if (d && d.ok) {
+        setLiked(d.liked);
+        setLikeCount(d.like_count);
+      }
+    } catch (e) {
+    }
+  };
+  const send = async () => {
+    const tx = text.trim();
+    if (!tx || sending) return;
+    setSending(true);
+    try {
+      const d = A.addComment ? await A.addComment(post.id, tx) : null;
+      if (d && d.ok && d.comment) {
+        setComments((c) => [...c, d.comment]);
+        setText("");
+      } else if (d && d.error) {
+        alert(d.error);
+      }
+    } catch (e) {
+    } finally {
+      setSending(false);
+    }
+  };
+  const author = data && data.author || { username: post.username, initials: post.initials, avatar_color: post.color, avatar_url: post.avatar, status: "nuevo" };
+  const rel = (iso) => {
+    try {
+      const s = (Date.now() - new Date(iso).getTime()) / 1e3;
+      if (s < 60) return "ahora";
+      if (s < 3600) return Math.round(s / 60) + "m";
+      if (s < 86400) return Math.round(s / 3600) + "h";
+      return Math.round(s / 86400) + "d";
+    } catch (e) {
+      return "";
+    }
+  };
+  return /* @__PURE__ */ React.createElement("div", { onClick: (e) => {
+    if (e.target === e.currentTarget) onClose();
+  }, style: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.6)", zIndex: 3e3, display: "flex", alignItems: "center", justifyContent: "center", padding: 16 } }, /* @__PURE__ */ React.createElement("div", { style: { background: BS.surface, borderRadius: 20, overflow: "hidden", width: "100%", maxWidth: A.isWide ? 880 : 460, maxHeight: "92vh", display: "flex", flexDirection: A.isWide ? "row" : "column", boxShadow: "0 30px 90px rgba(0,0,0,0.5)" } }, /* @__PURE__ */ React.createElement("div", { style: { background: "#000", flex: A.isWide ? "1 1 55%" : "none", display: "flex", alignItems: "center", justifyContent: "center", maxHeight: A.isWide ? "92vh" : "46vh" } }, /* @__PURE__ */ React.createElement("img", { src: post.img, alt: "", style: { width: "100%", height: "100%", maxHeight: A.isWide ? "92vh" : "46vh", objectFit: "contain", display: "block" } })), /* @__PURE__ */ React.createElement("div", { style: { flex: A.isWide ? "1 1 45%" : "1", minWidth: 0, display: "flex", flexDirection: "column", maxHeight: A.isWide ? "92vh" : "46vh" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "14px 16px", borderBottom: `1px solid ${BS.border}` } }, /* @__PURE__ */ React.createElement("div", { style: { width: 40, height: 40, borderRadius: "50%", background: author.avatar_color || BS.brand, display: "grid", placeItems: "center", color: "#fff", fontWeight: 800, fontSize: 14, overflow: "hidden", flexShrink: 0 } }, author.avatar_url ? /* @__PURE__ */ React.createElement("img", { src: author.avatar_url, alt: "", style: { width: "100%", height: "100%", objectFit: "cover" } }) : author.initials), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 6 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, fontWeight: 800, color: BS.ink } }, author.username), author.status && author.status !== "nuevo" && /* @__PURE__ */ React.createElement(StatusChip, { status: author.status, lang: "es", size: "sm" })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: BS.soft } }, data && data.location || post.location || post.city || "", " ", data ? "\xB7 " + rel(data.created_at) : "")), /* @__PURE__ */ React.createElement("button", { onClick: onClose, style: { background: BS.surface2, border: "none", width: 30, height: 30, borderRadius: "50%", cursor: "pointer", color: BS.ink2, fontSize: 15 } }, "\u2715")), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto", padding: "14px 16px" }, className: "bs-scr" }, data && data.caption || post.caption ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, color: BS.ink, lineHeight: 1.55, marginBottom: 14 } }, /* @__PURE__ */ React.createElement("b", null, author.username), " ", data && data.caption || post.caption) : null, loading && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: BS.soft } }, "Cargando comentarios\u2026"), !loading && comments.length === 0 && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: BS.soft } }, "S\xE9 el primero en comentar."), comments.map((c) => /* @__PURE__ */ React.createElement("div", { key: c.id, style: { display: "flex", gap: 10, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 30, height: 30, borderRadius: "50%", background: c.color || BS.brand, display: "grid", placeItems: "center", color: "#fff", fontWeight: 800, fontSize: 11, overflow: "hidden", flexShrink: 0 } }, c.avatar_url ? /* @__PURE__ */ React.createElement("img", { src: c.avatar_url, alt: "", style: { width: "100%", height: "100%", objectFit: "cover" } }) : c.initials), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: BS.ink, lineHeight: 1.45 } }, /* @__PURE__ */ React.createElement("b", null, c.username), " ", c.text), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: BS.soft, marginTop: 2 } }, rel(c.created_at)))))), /* @__PURE__ */ React.createElement("div", { style: { borderTop: `1px solid ${BS.border}`, padding: "10px 16px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 16, marginBottom: 8 } }, /* @__PURE__ */ React.createElement("button", { onClick: doLike, className: "bs-btn", style: { display: "flex", alignItems: "center", gap: 6, color: liked ? BS.like : BS.ink2, fontWeight: 700, fontSize: 13 } }, /* @__PURE__ */ React.createElement("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: liked ? BS.like : "none", stroke: liked ? BS.like : BS.ink2, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" })), likeCount), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: BS.soft } }, comments.length, " comentarios")), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, alignItems: "center" } }, /* @__PURE__ */ React.createElement(
+    "input",
+    {
+      value: text,
+      onChange: (e) => setText(e.target.value),
+      onKeyDown: (e) => {
+        if (e.key === "Enter") send();
+      },
+      placeholder: A.me ? "Escribe un comentario\u2026" : "Inicia sesi\xF3n para comentar",
+      disabled: !A.me,
+      style: { flex: 1, border: `1px solid ${BS.border}`, borderRadius: 999, background: BS.bg, padding: "10px 14px", fontSize: 13.5, color: BS.ink, fontFamily: "inherit", outline: "none" }
+    }
+  ), /* @__PURE__ */ React.createElement("button", { onClick: send, disabled: !text.trim() || sending || !A.me, style: { width: 38, height: 38, borderRadius: "50%", border: "none", background: BS.brand, color: "#fff", cursor: text.trim() && A.me ? "pointer" : "default", opacity: text.trim() && A.me ? 1 : 0.5, display: "grid", placeItems: "center", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("svg", { width: "17", height: "17", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M22 2L11 13" }), /* @__PURE__ */ React.createElement("path", { d: "M22 2l-7 20-4-9-9-4 20-7z" }))))))));
+}
+function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
   const BS = useBS();
   const [filt, setFilt] = useState("Para ti");
   return /* @__PURE__ */ React.createElement("div", { style: { background: BS.bg } }, /* @__PURE__ */ React.createElement("div", { style: { background: BS.surface, padding: "12px 16px", display: "flex", alignItems: "center", justifyContent: "space-between", position: "sticky", top: 0, zIndex: 10, borderBottom: `1px solid ${BS.border}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 23, fontWeight: 800, letterSpacing: "-0.04em", background: BS.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" } }, "B Social"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 16, alignItems: "center" } }, /* @__PURE__ */ React.createElement("button", { className: "bs-btn", style: { color: BS.ink2 } }, /* @__PURE__ */ React.createElement("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("circle", { cx: "11", cy: "11", r: "8" }), /* @__PURE__ */ React.createElement("path", { d: "m21 21-4.35-4.35" }))), /* @__PURE__ */ React.createElement("button", { className: "bs-btn", onClick: () => setScreen("messages"), style: { color: BS.ink2, position: "relative" } }, /* @__PURE__ */ React.createElement("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" })), /* @__PURE__ */ React.createElement("span", { style: { position: "absolute", top: -2, right: -2, width: 8, height: 8, borderRadius: "50%", background: BS.rose, border: `2px solid ${BS.surface}` } })))), /* @__PURE__ */ React.createElement("div", { className: "bs-hscr", style: { background: BS.surface, padding: "8px 14px 10px", display: "flex", gap: 7, borderBottom: `1px solid ${BS.border}` } }, ["Para ti", "Mi Pack", "Razas", "Cerca de mi"].map((f) => {
     const on = filt === f;
     return /* @__PURE__ */ React.createElement("button", { key: f, onClick: () => setFilt(f), className: "bs-btn", style: { padding: "7px 16px", borderRadius: 999, border: `1.5px solid ${on ? BS.brand : BS.border}`, background: "transparent", color: on ? BS.brand : BS.ink2, fontSize: 12.5, fontWeight: on ? 700 : 600, cursor: "pointer", whiteSpace: "nowrap", fontFamily: "inherit" } }, f);
-  })), /* @__PURE__ */ React.createElement(StoriesBar, null), posts.map((p) => /* @__PURE__ */ React.createElement(PostCard, { key: p.id, post: p, onLike: toggleLike, onSave: toggleSave })), /* @__PURE__ */ React.createElement("div", { style: { height: 20 } }));
+  })), /* @__PURE__ */ React.createElement(StoriesBar, null), posts.map((p) => /* @__PURE__ */ React.createElement(PostCard, { key: p.id, post: p, onLike: toggleLike, onSave: toggleSave, onOpen: onOpenPost })), /* @__PURE__ */ React.createElement("div", { style: { height: 20 } }));
 }
 function ProfileScreen({ posts, setScreen }) {
   const BS = useBS();
@@ -603,7 +694,10 @@ Object.assign(window, {
   EventsScreen,
   NewsScreen,
   VideosScreen,
-  CreateProfileScreen
+  CreateProfileScreen,
+  PostDetail,
+  StatusChip,
+  BadgeChips
 });
 
 })();

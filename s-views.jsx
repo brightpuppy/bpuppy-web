@@ -443,10 +443,11 @@ function StoriesBar() {
   );
 }
 
-function PostCard({ post, onLike, onSave }) {
+function PostCard({ post, onLike, onSave, onOpen }) {
   const BS = useBS();
   const [animLike, setAnimLike] = useState(false);
   const [heart, setHeart] = useState(null);
+  const open = () => { if (onOpen) onOpen(post); };
   const handleLike = () => { onLike(post.id); setAnimLike(true); setTimeout(() => setAnimLike(false), 450); };
   const handleDblTap = (e) => {
     if (!post.liked) handleLike();
@@ -467,7 +468,7 @@ function PostCard({ post, onLike, onSave }) {
         </div>
         <button className="bs-btn" style={{ color:BS.ink2, fontSize:19, padding:'4px 6px' }}>···</button>
       </div>
-      <div style={{ position:'relative', aspectRatio:'1', overflow:'hidden', cursor:'pointer', background:BS.surface2 }} onDoubleClick={handleDblTap}>
+      <div style={{ position:'relative', aspectRatio:'1', overflow:'hidden', cursor:'pointer', background:BS.surface2 }} onDoubleClick={handleDblTap} onClick={open}>
         <img src={post.img} alt="" style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }} loading="lazy"/>
         {heart && <div key={heart.k} style={{ position:'absolute', left:heart.x-24, top:heart.y-24, fontSize:48, pointerEvents:'none', animation:'bsFloat 0.85s ease-out forwards' }}>{'❤️'}</div>}
       </div>
@@ -477,7 +478,7 @@ function PostCard({ post, onLike, onSave }) {
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
         </button>
-        <button className="bs-btn" style={{ color:BS.ink2 }}>
+        <button className="bs-btn" onClick={open} style={{ color:BS.ink2 }} title="Comentarios">
           <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </button>
         <button className="bs-btn" style={{ color:BS.ink2 }}>
@@ -494,13 +495,107 @@ function PostCard({ post, onLike, onSave }) {
           <span style={{ fontWeight:700 }}>{post.username}</span>{' '}{post.caption}{' '}
           {(post.tags||[]).map((t,i) => <span key={t} style={{ color:BS.brand, fontWeight:600, cursor:'pointer' }}>{i>0?' ':''} #{t}</span>)}
         </div>
-        {post.comments > 0 && <div style={{ fontSize:12, color:BS.soft, marginTop:5, cursor:'pointer' }}>Ver {post.comments} comentarios</div>}
+        <div onClick={open} style={{ fontSize:12.5, color:BS.soft, marginTop:6, cursor:'pointer', fontWeight:600 }}>Ver comentarios y detalles</div>
       </div>
     </div>
   );
 }
 
-function FeedScreen({ posts, toggleLike, toggleSave, setScreen }) {
+// Detalle de post estilo Facebook: foto grande + likes + comentarios
+function PostDetail({ post, onClose }) {
+  const BS = useBS();
+  const A = (typeof window !== 'undefined' && window.BSAUTH) || {};
+  const [data, setData] = useState(null);
+  const [liked, setLiked] = useState(!!post.liked);
+  const [likeCount, setLikeCount] = useState(post.likes || 0);
+  const [comments, setComments] = useState([]);
+  const [text, setText] = useState('');
+  const [sending, setSending] = useState(false);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let go = true;
+    (async () => {
+      try { const d = A.postDetail ? await A.postDetail(post.id) : null;
+        if (go && d && d.ok) { setData(d.post); setComments(d.comments || []); setLiked(!!d.liked); setLikeCount(d.like_count || 0); }
+      } catch (e) {} finally { if (go) setLoading(false); }
+    })();
+    return () => { go = false; };
+  }, [post.id]);
+
+  const doLike = async () => {
+    const nl = !liked; setLiked(nl); setLikeCount(c => Math.max(0, c + (nl ? 1 : -1)));
+    try { const d = A.likeToggle ? await A.likeToggle(post.id) : null; if (d && d.ok) { setLiked(d.liked); setLikeCount(d.like_count); } } catch (e) {}
+  };
+  const send = async () => {
+    const tx = text.trim(); if (!tx || sending) return;
+    setSending(true);
+    try { const d = A.addComment ? await A.addComment(post.id, tx) : null;
+      if (d && d.ok && d.comment) { setComments(c => [...c, d.comment]); setText(''); }
+      else if (d && d.error) { alert(d.error); }
+    } catch (e) {} finally { setSending(false); }
+  };
+  const author = (data && data.author) || { username: post.username, initials: post.initials, avatar_color: post.color, avatar_url: post.avatar, status: 'nuevo' };
+  const rel = (iso) => { try { const s = (Date.now() - new Date(iso).getTime()) / 1000; if (s < 60) return 'ahora'; if (s < 3600) return Math.round(s/60)+'m'; if (s < 86400) return Math.round(s/3600)+'h'; return Math.round(s/86400)+'d'; } catch (e) { return ''; } };
+
+  return (
+    <div onClick={(e) => { if (e.target === e.currentTarget) onClose(); }} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:3000, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
+      <div style={{ background:BS.surface, borderRadius:20, overflow:'hidden', width:'100%', maxWidth: A.isWide ? 880 : 460, maxHeight:'92vh', display:'flex', flexDirection: A.isWide ? 'row' : 'column', boxShadow:'0 30px 90px rgba(0,0,0,0.5)' }}>
+        <div style={{ background:'#000', flex: A.isWide ? '1 1 55%' : 'none', display:'flex', alignItems:'center', justifyContent:'center', maxHeight: A.isWide ? '92vh' : '46vh' }}>
+          <img src={post.img} alt="" style={{ width:'100%', height:'100%', maxHeight: A.isWide ? '92vh' : '46vh', objectFit:'contain', display:'block' }}/>
+        </div>
+        <div style={{ flex: A.isWide ? '1 1 45%' : '1', minWidth:0, display:'flex', flexDirection:'column', maxHeight: A.isWide ? '92vh' : '46vh' }}>
+          {/* header */}
+          <div style={{ display:'flex', alignItems:'center', gap:10, padding:'14px 16px', borderBottom:`1px solid ${BS.border}` }}>
+            <div style={{ width:40, height:40, borderRadius:'50%', background:author.avatar_color||BS.brand, display:'grid', placeItems:'center', color:'#fff', fontWeight:800, fontSize:14, overflow:'hidden', flexShrink:0 }}>{author.avatar_url ? <img src={author.avatar_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : author.initials}</div>
+            <div style={{ flex:1, minWidth:0 }}>
+              <div style={{ display:'flex', alignItems:'center', gap:6 }}>
+                <span style={{ fontSize:14, fontWeight:800, color:BS.ink }}>{author.username}</span>
+                {author.status && author.status!=='nuevo' && <StatusChip status={author.status} lang="es" size="sm"/>}
+              </div>
+              <div style={{ fontSize:11.5, color:BS.soft }}>{(data&&data.location)||post.location||post.city||''} {data?('· '+rel(data.created_at)):''}</div>
+            </div>
+            <button onClick={onClose} style={{ background:BS.surface2, border:'none', width:30, height:30, borderRadius:'50%', cursor:'pointer', color:BS.ink2, fontSize:15 }}>✕</button>
+          </div>
+          {/* caption + comments scroll */}
+          <div style={{ flex:1, overflowY:'auto', padding:'14px 16px' }} className="bs-scr">
+            {(data&&data.caption)||post.caption ? <div style={{ fontSize:14, color:BS.ink, lineHeight:1.55, marginBottom:14 }}><b>{author.username}</b> {(data&&data.caption)||post.caption}</div> : null}
+            {loading && <div style={{ fontSize:13, color:BS.soft }}>Cargando comentarios…</div>}
+            {!loading && comments.length===0 && <div style={{ fontSize:13, color:BS.soft }}>Sé el primero en comentar.</div>}
+            {comments.map(c => (
+              <div key={c.id} style={{ display:'flex', gap:10, marginBottom:12 }}>
+                <div style={{ width:30, height:30, borderRadius:'50%', background:c.color||BS.brand, display:'grid', placeItems:'center', color:'#fff', fontWeight:800, fontSize:11, overflow:'hidden', flexShrink:0 }}>{c.avatar_url ? <img src={c.avatar_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : c.initials}</div>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:13.5, color:BS.ink, lineHeight:1.45 }}><b>{c.username}</b> {c.text}</div>
+                  <div style={{ fontSize:10.5, color:BS.soft, marginTop:2 }}>{rel(c.created_at)}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+          {/* actions + composer */}
+          <div style={{ borderTop:`1px solid ${BS.border}`, padding:'10px 16px' }}>
+            <div style={{ display:'flex', alignItems:'center', gap:16, marginBottom:8 }}>
+              <button onClick={doLike} className="bs-btn" style={{ display:'flex', alignItems:'center', gap:6, color: liked ? BS.like : BS.ink2, fontWeight:700, fontSize:13 }}>
+                <svg width="22" height="22" viewBox="0 0 24 24" fill={liked ? BS.like : 'none'} stroke={liked ? BS.like : BS.ink2} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+                {likeCount}
+              </button>
+              <span style={{ fontSize:13, color:BS.soft }}>{comments.length} comentarios</span>
+            </div>
+            <div style={{ display:'flex', gap:8, alignItems:'center' }}>
+              <input value={text} onChange={e=>setText(e.target.value)} onKeyDown={e=>{ if(e.key==='Enter') send(); }} placeholder={A.me ? 'Escribe un comentario…' : 'Inicia sesión para comentar'} disabled={!A.me}
+                style={{ flex:1, border:`1px solid ${BS.border}`, borderRadius:999, background:BS.bg, padding:'10px 14px', fontSize:13.5, color:BS.ink, fontFamily:'inherit', outline:'none' }}/>
+              <button onClick={send} disabled={!text.trim()||sending||!A.me} style={{ width:38, height:38, borderRadius:'50%', border:'none', background:BS.brand, color:'#fff', cursor: (text.trim()&&A.me)?'pointer':'default', opacity:(text.trim()&&A.me)?1:0.5, display:'grid', placeItems:'center', flexShrink:0 }}>
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
   const BS = useBS();
   const [filt, setFilt] = useState('Para ti');
   return (
@@ -521,7 +616,7 @@ function FeedScreen({ posts, toggleLike, toggleSave, setScreen }) {
         ); })}
       </div>
       <StoriesBar/>
-      {posts.map(p => <PostCard key={p.id} post={p} onLike={toggleLike} onSave={toggleSave}/>)}
+      {posts.map(p => <PostCard key={p.id} post={p} onLike={toggleLike} onSave={toggleSave} onOpen={onOpenPost}/>)}
       <div style={{ height:20 }}/>
     </div>
   );
@@ -1131,4 +1226,5 @@ Object.assign(window, {
   FeedScreen, ProfileScreen, PackScreen,
   DiscoverScreen, UploadScreen, PetsScreen, MessagesScreen,
   CommunityScreen, EventsScreen, NewsScreen, VideosScreen, CreateProfileScreen,
+  PostDetail, StatusChip, BadgeChips,
 });

@@ -183,8 +183,8 @@ function RightRail({ bs }) {
 }
 
 // ── Screen router ──────────────────────────────────────────────────────────────
-function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave }) {
-  const p = { screen, setScreen, posts, toggleLike, toggleSave };
+function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave, onOpenPost }) {
+  const p = { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost };
   if (screen==='feed')     return <FeedScreen     {...p}/>;
   if (screen==='profile')  return <ProfileScreen  posts={posts} setScreen={setScreen}/>;
   if (screen==='pack')     return <PackScreen     setScreen={setScreen}/>;
@@ -312,9 +312,13 @@ function App() {
     createPost:  async (f) => { const d = await apiCall('post_create', f); if(d&&d.ok) await refresh(); return d; },
     createStory: async (media_url) => { const d = await apiCall('story_create', { media_url }); if(d&&d.ok) await refresh(); return d; },
     follow:      async (target, unfollow) => { const d = await apiCall('follow', { target_email:target, unfollow }); if(d&&d.ok) await refresh(); return d; },
+    postDetail:  async (id) => apiCall('post_detail', { post_id:id }),
+    addComment:  async (id, text) => apiCall('comment_create', { post_id:id, text }),
+    likeToggle:  async (id) => apiCall('like_toggle', { post_id:id }),
   };
 
-  const toggleLike = id => setPosts(prev => prev.map(p => p.id===id ? {...p, liked:!p.liked, likes:p.liked?p.likes-1:p.likes+1} : p));
+  const [openPost, setOpenPost] = useState(null);
+  const toggleLike = id => { setPosts(prev => prev.map(p => p.id===id ? {...p, liked:!p.liked, likes:p.liked?p.likes-1:p.likes+1} : p)); try { window.BSAUTH.likeToggle(id); } catch(e){} };
   const toggleSave = id => setPosts(prev => prev.map(p => p.id===id ? {...p, saved:!p.saved} : p));
 
   const MobileContent = () => (
@@ -324,7 +328,7 @@ function App() {
         Volver a BPuppy
       </a>
       <div style={{ flex:1, overflowY:'auto' }} className="bs-scr">
-        <ScreenView screen={screen} setScreen={setScreen} posts={posts} toggleLike={toggleLike} toggleSave={toggleSave}/>
+        <ScreenView screen={screen} setScreen={setScreen} posts={posts} toggleLike={toggleLike} toggleSave={toggleSave} onOpenPost={setOpenPost}/>
       </div>
       {screen!=='upload' && <BottomNav screen={screen} setScreen={setScreen} bs={bs}/>}
     </div>
@@ -356,7 +360,7 @@ function App() {
           <DesktopSidebar screen={screen} setScreen={setScreen} bs={bs}/>
           <div style={{ flex:1, overflowY:'auto', background:bs.bg }} className="bs-scr">
             <div style={{ maxWidth:660, margin:'0 auto', borderLeft:`1px solid ${bs.border}`, borderRight:`1px solid ${bs.border}`, minHeight:'100%' }}>
-              <ScreenView screen={screen} setScreen={setScreen} posts={posts} toggleLike={toggleLike} toggleSave={toggleSave}/>
+              <ScreenView screen={screen} setScreen={setScreen} posts={posts} toggleLike={toggleLike} toggleSave={toggleSave} onOpenPost={setOpenPost}/>
             </div>
           </div>
           {(screen==='feed' || screen==='discover') && <RightRail bs={bs}/>}
@@ -366,6 +370,7 @@ function App() {
           <MobileContent/>
         </div>
       )}
+      {openPost && <PostDetail post={openPost} onClose={()=>setOpenPost(null)}/>}
       <BSocialTweaks theme={themeName} setThemeFn={setThemeName}/>
     </BSCtx.Provider>
   );
