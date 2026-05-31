@@ -122,6 +122,16 @@ const BREED_INFO = {
     goodFor:[['Niños y juego','Kids & play'],['Explorar y oler','Explore & sniff'],['Familias activas','Active families'],['Aventuras al aire libre','Outdoor adventures']] },
 };
 
+// Historia/origen breve por raza (bilingüe) para la tarjeta de resultado.
+const BREED_HISTORY = {
+  golden:   ['Criado en Escocia a finales del 1800 por Lord Tweedmouth como perro cobrador para aves de caza en agua y tierra. Su carácter dulce lo convirtió en uno de los perros familiares más queridos del mundo.','Bred in Scotland in the late 1800s by Lord Tweedmouth as a gundog to retrieve waterfowl. Its gentle nature made it one of the world’s most beloved family dogs.'],
+  frenchie: ['Desciende de pequeños bulldogs ingleses que llegaron a Francia con artesanos en el siglo XIX. Se volvió la mascota favorita de los cafés de París y hoy es un símbolo de compañía en la ciudad.','Descends from small English bulldogs taken to France by lace workers in the 1800s. It became the darling of Parisian cafés and is now a symbol of city companionship.'],
+  cavalier: ['Lleva el nombre del rey Carlos II de Inglaterra, que adoraba a estos spaniels de juguete y casi nunca se separaba de ellos. Criado durante siglos como perro de compañía y de regazo de la realeza.','Named after King Charles II of England, who adored these toy spaniels and was rarely without them. Bred for centuries as a royal companion and lap dog.'],
+  labrador: ['Originario de Terranova (Canadá), ayudaba a los pescadores a halar redes y recoger peces. Refinado en Inglaterra como cobrador, hoy es perro guía, de rescate y gran amigo familiar.','From Newfoundland, Canada, where it helped fishermen haul nets and retrieve fish. Refined in England as a retriever, today it serves as a guide, rescue and family dog.'],
+  poodle:   ['Nació en Alemania como perro cobrador de agua (su nombre viene de "pudeln", chapotear); el corte elegante protegía sus articulaciones al nadar. Francia lo adoptó como ícono nacional.','Originated in Germany as a water retriever (its name comes from "pudeln", to splash); the fancy clip protected its joints while swimming. France later adopted it as a national icon.'],
+  beagle:   ['Antiguo sabueso inglés de rastro, criado en jaurías para cazar conejos y liebres gracias a su olfato extraordinario. Su tamaño y nobleza lo hicieron un excelente perro de familia.','An ancient English scent hound, bred in packs to hunt rabbits and hares thanks to its extraordinary nose. Its size and good nature made it an excellent family dog.'],
+};
+
 // ── Sonidos (WebAudio sintetizado, sin archivos) ────────────────────────────
 let _ac = null;
 const ac = () => { try { if(!_ac) _ac = new (window.AudioContext || window.webkitAudioContext)(); return _ac; } catch(e){ return null; } };
@@ -639,13 +649,19 @@ function QuizGame(){
             </div>
             <div style={{ padding:'14px 16px 16px', display:'flex', flexDirection:'column', flex:1 }}>
               <div style={{ borderRadius:16, overflow:'hidden', background:'var(--paper)', marginBottom:12 }}>
-                <img src={b.img} alt={b.name} style={{ width:'100%', maxHeight:150, objectFit:'cover', display:'block' }}/>
+                <img src={b.img} alt={b.name} style={{ width:'100%', maxHeight:230, objectFit:'contain', display:'block' }}/>
               </div>
               <p style={{ fontSize:14, color:'var(--ink-2)', lineHeight:1.55, margin:'0 0 12px' }}>{t(b.desc)}</p>
               <div style={{ display:'flex', gap:8, marginBottom:12 }}>
                 <span className="qg-stat" style={{ flex:1, textAlign:'center' }}><div className="k">{t(['Tamaño','Size'])}</div><div className="v">{t(b.size)}</div></span>
                 <span className="qg-stat" style={{ flex:1, textAlign:'center' }}><div className="k">{t(['Energía','Energy'])}</div><div className="v">{t(b.energy)}</div></span>
               </div>
+              {BREED_HISTORY[b.key] && (
+                <div style={{ marginBottom:12 }}>
+                  <div style={{ fontSize:12, fontWeight:800, color:'var(--orange2,#C2521E)', marginBottom:5 }}>{t(['Historia de la raza','Breed history'])}</div>
+                  <p style={{ fontSize:12.5, color:'var(--ink-2)', lineHeight:1.5, margin:0 }}>{t(BREED_HISTORY[b.key])}</p>
+                </div>
+              )}
               <div style={{ background:'#FFF7EE', border:'1.5px solid rgba(245,130,32,0.25)', borderRadius:14, padding:'12px 14px', marginTop:'auto' }}>
                 <div style={{ fontSize:12, fontWeight:800, color:'var(--orange2,#C2521E)', marginBottom:7 }}>{t(['Datos divertidos','Fun facts'])}</div>
                 {b.facts.map((f,i)=>(
