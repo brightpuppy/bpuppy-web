@@ -89,7 +89,7 @@ function DesktopSidebar({ screen, setScreen, bs }) {
     { id: "messages", label: "Mensajes", icon: "messages", badge: 2 },
     { id: "profile", label: "Perfil", icon: "profile" }
   ];
-  return /* @__PURE__ */ React.createElement("div", { style: { width: 230, background: bs.surface, borderRight: `1px solid ${bs.border}`, display: "flex", flexDirection: "column", height: "100%", padding: "18px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, marginBottom: 28, paddingLeft: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 36, height: 36, borderRadius: 12, background: bs.grad, display: "grid", placeItems: "center", flexShrink: 0, boxShadow: bs.glow } }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 40 40", width: "20", height: "20", fill: "white" }, /* @__PURE__ */ React.createElement("ellipse", { cx: "20", cy: "26", rx: "10", ry: "8" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "9", cy: "16", rx: "4", ry: "5.5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "31", cy: "16", rx: "4", ry: "5.5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "14", cy: "8", rx: "3.5", ry: "5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "26", cy: "8", rx: "3.5", ry: "5" }))), /* @__PURE__ */ React.createElement("span", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, letterSpacing: "-0.04em", background: bs.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" } }, "B Social")), /* @__PURE__ */ React.createElement("nav", { style: { flex: 1, display: "flex", flexDirection: "column", gap: 2 } }, navItems.map((item) => /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { style: { width: 230, background: bs.surface, borderRight: `1px solid ${bs.border}`, display: "flex", flexDirection: "column", height: "100%", padding: "18px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, marginBottom: 28, paddingLeft: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 36, height: 36, borderRadius: 12, background: bs.grad, display: "grid", placeItems: "center", flexShrink: 0, boxShadow: bs.glow } }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 40 40", width: "20", height: "20", fill: "white" }, /* @__PURE__ */ React.createElement("ellipse", { cx: "20", cy: "26", rx: "10", ry: "8" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "9", cy: "16", rx: "4", ry: "5.5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "31", cy: "16", rx: "4", ry: "5.5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "14", cy: "8", rx: "3.5", ry: "5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "26", cy: "8", rx: "3.5", ry: "5" }))), /* @__PURE__ */ React.createElement("span", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, letterSpacing: "-0.04em", background: bs.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" } }, "B Social")), /* @__PURE__ */ React.createElement("a", { href: "/", style: { display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", marginBottom: 14, borderRadius: 10, border: `1px solid ${bs.border}`, textDecoration: "none", color: bs.ink2, fontSize: 12.5, fontWeight: 600 } }, /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 12H5" }), /* @__PURE__ */ React.createElement("path", { d: "M12 19l-7-7 7-7" })), "Volver a BPuppy"), /* @__PURE__ */ React.createElement("nav", { style: { flex: 1, display: "flex", flexDirection: "column", gap: 2 } }, navItems.map((item) => /* @__PURE__ */ React.createElement(
     "button",
     {
       key: item.id,
@@ -99,7 +99,7 @@ function DesktopSidebar({ screen, setScreen, bs }) {
     /* @__PURE__ */ React.createElement(SIcon, { name: item.icon, color: screen === item.id ? bs.brand : bs.ink2 }),
     item.label,
     item.badge && /* @__PURE__ */ React.createElement("span", { style: { marginLeft: "auto", background: bs.brand, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "1px 7px" } }, item.badge)
-  ))), /* @__PURE__ */ React.createElement(
+  ))), /* @__PURE__ */ React.createElement("a", { href: "/portal", style: { display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", marginBottom: 10, borderRadius: 12, textDecoration: "none", border: `1px solid ${bs.border}`, color: bs.ink2, fontWeight: 600, fontSize: 13.5 } }, /* @__PURE__ */ React.createElement("svg", { width: "17", height: "17", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }), /* @__PURE__ */ React.createElement("path", { d: "M3 10h18M8 4v4" })), "Mi Cuenta \xB7 Reservas"), /* @__PURE__ */ React.createElement(
     "button",
     {
       onClick: () => setScreen("upload"),
@@ -259,17 +259,23 @@ function App() {
     refresh();
     const sb = window._bsSb;
     if (!sb) return;
+    let wantProfile = false;
+    try {
+      wantProfile = new URLSearchParams(location.search).get("view") === "profile";
+    } catch (e) {
+    }
+    const landing = wantProfile ? "profile" : "feed";
     sb.auth.getSession().then(({ data }) => {
       if (data && data.session && data.session.access_token) {
         setAuthed(true);
-        setScreen("feed");
+        setScreen(landing);
         refresh();
       }
     });
     const sub = sb.auth.onAuthStateChange((_e, sess) => {
       if (sess && sess.access_token) {
         setAuthed(true);
-        setScreen("feed");
+        setScreen(landing);
         refresh();
       } else {
         setAuthed(false);
@@ -313,7 +319,7 @@ function App() {
         try {
           const pend = JSON.parse(localStorage.getItem("bp_pending_social") || "null");
           if (pend && (pend.story || pend.photo_url)) {
-            await apiCall("post_create", { caption: pend.story || "\xA1Adopt\xE9 a " + (pend.pet_name || "mi mascota") + "! \u{1F43E}", media_url: pend.photo_url || "", visibility: "public" });
+            await apiCall("post_create", { caption: pend.story || "Adopt\xE9 a " + (pend.pet_name || "mi mascota"), media_url: pend.photo_url || "", visibility: "public" });
           }
           localStorage.removeItem("bp_pending_social");
         } catch (e) {
@@ -340,7 +346,7 @@ function App() {
   };
   const toggleLike = (id) => setPosts((prev) => prev.map((p) => p.id === id ? { ...p, liked: !p.liked, likes: p.liked ? p.likes - 1 : p.likes + 1 } : p));
   const toggleSave = (id) => setPosts((prev) => prev.map((p) => p.id === id ? { ...p, saved: !p.saved } : p));
-  const MobileContent = () => /* @__PURE__ */ React.createElement("div", { style: { height: "100%", display: "flex", flexDirection: "column", overflow: "hidden", background: bs.bg } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto" }, className: "bs-scr" }, /* @__PURE__ */ React.createElement(ScreenView, { screen, setScreen, posts, toggleLike, toggleSave })), screen !== "upload" && /* @__PURE__ */ React.createElement(BottomNav, { screen, setScreen, bs }));
+  const MobileContent = () => /* @__PURE__ */ React.createElement("div", { style: { height: "100%", display: "flex", flexDirection: "column", overflow: "hidden", background: bs.bg } }, /* @__PURE__ */ React.createElement("a", { href: "/", style: { display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", background: bs.surface, borderBottom: `1px solid ${bs.border}`, textDecoration: "none", color: bs.ink2, fontSize: 12.5, fontWeight: 600, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 12H5" }), /* @__PURE__ */ React.createElement("path", { d: "M12 19l-7-7 7-7" })), "Volver a BPuppy"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto" }, className: "bs-scr" }, /* @__PURE__ */ React.createElement(ScreenView, { screen, setScreen, posts, toggleLike, toggleSave })), screen !== "upload" && /* @__PURE__ */ React.createElement(BottomNav, { screen, setScreen, bs }));
   if (!loggedIn) {
     return /* @__PURE__ */ React.createElement(BSCtx.Provider, { value: bs }, /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: bs.bg, display: "flex", alignItems: "center", justifyContent: "center", padding: isWide ? "24px" : 0 } }, /* @__PURE__ */ React.createElement("div", { style: { width: "100%", maxWidth: isWide ? 460 : "100%", height: isWide ? "min(840px,94vh)" : "100vh", background: bs.surface, borderRadius: isWide ? 28 : 0, overflow: "hidden", boxShadow: isWide ? "0 40px 120px rgba(0,0,0,0.55)" : "none", display: "flex", flexDirection: "column" } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto" }, className: "bs-scr" }, needsProfile ? /* @__PURE__ */ React.createElement(CreateProfileScreen, { me, onSave: window.BSAUTH.saveProfile, onLogout: logout }) : /* @__PURE__ */ React.createElement(WelcomeScreen, { onSendLink: sendLink })))), /* @__PURE__ */ React.createElement(BSocialTweaks, { theme: themeName, setThemeFn: setThemeName }));
   }

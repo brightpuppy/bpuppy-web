@@ -112,6 +112,10 @@ function DesktopSidebar({ screen, setScreen, bs }) {
         </div>
         <span style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, letterSpacing:'-0.04em', background:bs.grad, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>B Social</span>
       </div>
+      <a href="/" style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 12px', marginBottom:14, borderRadius:10, border:`1px solid ${bs.border}`, textDecoration:'none', color:bs.ink2, fontSize:12.5, fontWeight:600 }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Volver a BPuppy
+      </a>
       <nav style={{ flex:1, display:'flex', flexDirection:'column', gap:2 }}>
         {navItems.map(item => (
           <button key={item.id} onClick={() => setScreen(item.id)}
@@ -122,6 +126,10 @@ function DesktopSidebar({ screen, setScreen, bs }) {
           </button>
         ))}
       </nav>
+      <a href="/portal" style={{ display:'flex', alignItems:'center', gap:11, padding:'10px 12px', marginBottom:10, borderRadius:12, textDecoration:'none', border:`1px solid ${bs.border}`, color:bs.ink2, fontWeight:600, fontSize:13.5 }}>
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v4"/></svg>
+        Mi Cuenta · Reservas
+      </a>
       <button onClick={() => setScreen('upload')} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'12px', borderRadius:14, border:'none', background:bs.grad, color:'#fff', fontSize:13.5, fontWeight:700, cursor:'pointer', fontFamily:'inherit', marginBottom:14, boxShadow:bs.glow, transition:'opacity .15s' }}
         onMouseEnter={e=>e.currentTarget.style.opacity='.85'} onMouseLeave={e=>e.currentTarget.style.opacity='1'}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -272,8 +280,10 @@ function App() {
     if (window.supabase && !window._bsSb) { try { window._bsSb = supabase.createClient(SU, ANON); } catch(e){} }
     refresh();
     const sb = window._bsSb; if(!sb) return;
-    sb.auth.getSession().then(({data})=>{ if(data&&data.session&&data.session.access_token){ setAuthed(true); setScreen('feed'); refresh(); } });
-    const sub = sb.auth.onAuthStateChange((_e, sess)=>{ if(sess&&sess.access_token){ setAuthed(true); setScreen('feed'); refresh(); } else { setAuthed(false); setMe(null); } });
+    let wantProfile = false; try { wantProfile = new URLSearchParams(location.search).get('view') === 'profile'; } catch(e){}
+    const landing = wantProfile ? 'profile' : 'feed';
+    sb.auth.getSession().then(({data})=>{ if(data&&data.session&&data.session.access_token){ setAuthed(true); setScreen(landing); refresh(); } });
+    const sub = sb.auth.onAuthStateChange((_e, sess)=>{ if(sess&&sess.access_token){ setAuthed(true); setScreen(landing); refresh(); } else { setAuthed(false); setMe(null); } });
     return () => { try{sub.data.subscription.unsubscribe();}catch(e){} };
   }, []);
 
@@ -292,7 +302,7 @@ function App() {
       if(d&&d.ok){
         // Historia pendiente desde Adopciones -> publicarla como primer post
         try { const pend = JSON.parse(localStorage.getItem('bp_pending_social')||'null');
-          if(pend && (pend.story || pend.photo_url)){ await apiCall('post_create', { caption: pend.story || ('¡Adopté a ' + (pend.pet_name||'mi mascota') + '! 🐾'), media_url: pend.photo_url || '', visibility:'public' }); }
+          if(pend && (pend.story || pend.photo_url)){ await apiCall('post_create', { caption: pend.story || ('Adopté a ' + (pend.pet_name||'mi mascota')), media_url: pend.photo_url || '', visibility:'public' }); }
           localStorage.removeItem('bp_pending_social');
         } catch(e){}
         await refresh();
@@ -309,6 +319,10 @@ function App() {
 
   const MobileContent = () => (
     <div style={{ height:'100%', display:'flex', flexDirection:'column', overflow:'hidden', background:bs.bg }}>
+      <a href="/" style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background:bs.surface, borderBottom:`1px solid ${bs.border}`, textDecoration:'none', color:bs.ink2, fontSize:12.5, fontWeight:600, flexShrink:0 }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Volver a BPuppy
+      </a>
       <div style={{ flex:1, overflowY:'auto' }} className="bs-scr">
         <ScreenView screen={screen} setScreen={setScreen} posts={posts} toggleLike={toggleLike} toggleSave={toggleSave}/>
       </div>

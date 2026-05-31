@@ -110,18 +110,25 @@ function AuthControl({ isOverDark }) {
   const hoverBg   = isOverDark ? 'rgba(255,255,255,0.15)' : 'rgba(45,36,33,0.07)';
   const panel = { position:'absolute', top:'calc(100% + 10px)', right:0, background:'var(--paper,#fff)', border:'1px solid var(--line,#ebe7e3)', borderRadius:16, boxShadow:'0 16px 40px -10px rgba(0,0,0,0.22)', padding:14, minWidth:240, zIndex:400 };
 
-  // ── Logged in: name pill + dropdown ──────────────────────────────────────
+  // ── Logged in: name pill (navigates) + caret dropdown ─────────────────────
   if (sess) {
     const display = name || firstNameFrom(sess);
+    const inSocial = /\/social/.test(location.pathname);
+    // Click the name: from B Social → feed; from anywhere else → personal profile.
+    const goPrimary = () => { location.href = inSocial ? '/social' : '/social?view=profile'; };
     return (
       <div ref={ref} className="hdr-auth" style={{ position:'relative' }}>
-        <button onClick={() => setOpen(o => !o)} title={t(['Mi cuenta','My account'])}
-          style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'5px 12px 5px 6px', borderRadius:999, background: open ? hoverBg : 'none', border:'none', cursor:'pointer', color:iconColor, fontFamily:'inherit', transition:'background .15s, color .3s' }}
-          onMouseEnter={e => { if (!open) e.currentTarget.style.background = hoverBg; }}
-          onMouseLeave={e => { if (!open) e.currentTarget.style.background = 'none'; }}>
-          <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:30, height:30, borderRadius:'50%', background:'linear-gradient(135deg,#F55820 0%,#E83860 100%)', color:'#fff', fontWeight:800, fontSize:12, letterSpacing:'0.02em' }} className="notranslate">{initialsFrom(display, sess.email)}</span>
-          <span className="notranslate" style={{ fontWeight:700, fontSize:13.5, maxWidth:120, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{display}</span>
-        </button>
+        <div style={{ display:'inline-flex', alignItems:'center', borderRadius:999, background: open ? hoverBg : 'none', transition:'background .15s' }}>
+          <button onClick={goPrimary} title={inSocial ? t(['Ir al feed','Go to feed']) : t(['Mi perfil','My profile'])}
+            style={{ display:'inline-flex', alignItems:'center', gap:8, padding:'5px 6px 5px 6px', borderRadius:999, background:'none', border:'none', cursor:'pointer', color:iconColor, fontFamily:'inherit', transition:'color .3s' }}>
+            <span style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', width:30, height:30, borderRadius:'50%', background:'linear-gradient(135deg,#F55820 0%,#E83860 100%)', color:'#fff', fontWeight:800, fontSize:12, letterSpacing:'0.02em' }} className="notranslate">{initialsFrom(display, sess.email)}</span>
+            <span className="notranslate" style={{ fontWeight:700, fontSize:13.5, maxWidth:120, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{display}</span>
+          </button>
+          <button onClick={() => setOpen(o => !o)} aria-label={t(['Menú de cuenta','Account menu'])} title={t(['Menú de cuenta','Account menu'])}
+            style={{ display:'inline-flex', alignItems:'center', padding:'5px 10px 5px 2px', borderRadius:999, background:'none', border:'none', cursor:'pointer', color:iconColor }}>
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round" style={{ transform: open ? 'rotate(180deg)' : 'none', transition:'transform .2s' }}><path d="M6 9l6 6 6-6"/></svg>
+          </button>
+        </div>
         {open && (
           <div style={panel}>
             <div style={{ padding:'2px 8px 10px' }}>
@@ -129,10 +136,15 @@ function AuthControl({ isOverDark }) {
               <div className="notranslate" style={{ fontSize:12, color:'var(--ink-2)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{sess.email}</div>
             </div>
             <div style={{ height:1, background:'var(--line,#ebe7e3)', margin:'0 0 8px' }}/>
-            <a href="/portal" style={{ display:'flex', alignItems:'center', gap:9, padding:'9px 10px', borderRadius:9, textDecoration:'none', color:'var(--ink)', fontWeight:700, fontSize:13.5 }}
+            <a href="/social?view=profile" style={{ display:'flex', alignItems:'center', gap:9, padding:'9px 10px', borderRadius:9, textDecoration:'none', color:'var(--ink)', fontWeight:700, fontSize:13.5 }}
               onMouseEnter={e => e.currentTarget.style.background='var(--bg,#f8f5f2)'} onMouseLeave={e => e.currentTarget.style.background='none'}>
               <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4 4-6 8-6s8 2 8 6"/></svg>
-              {t(['Mi cuenta','My account'])}
+              {t(['Mi perfil (B Social)','My profile (B Social)'])}
+            </a>
+            <a href="/portal" style={{ display:'flex', alignItems:'center', gap:9, padding:'9px 10px', borderRadius:9, textDecoration:'none', color:'var(--ink)', fontWeight:700, fontSize:13.5 }}
+              onMouseEnter={e => e.currentTarget.style.background='var(--bg,#f8f5f2)'} onMouseLeave={e => e.currentTarget.style.background='none'}>
+              <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v4"/></svg>
+              {t(['Mi cuenta · Reservas','My account · Bookings'])}
             </a>
             <button onClick={logout} style={{ display:'flex', width:'100%', alignItems:'center', gap:9, padding:'9px 10px', borderRadius:9, border:'none', background:'none', cursor:'pointer', color:'var(--ink)', fontFamily:'inherit', fontWeight:700, fontSize:13.5, textAlign:'left' }}
               onMouseEnter={e => e.currentTarget.style.background='var(--bg,#f8f5f2)'} onMouseLeave={e => e.currentTarget.style.background='none'}>
@@ -374,6 +386,7 @@ function Header({ overDark }) {
               <svg className="nav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
             </a>
             <div className="nav-dropdown">
+              <a href="/social" className="notranslate" style={{ fontWeight: 700 }}>B Social</a>
               <a href="/nosotros?tab=impacto">{t(['Impacto Social','Social Impact'])}</a>
               <a href="/nosotros?tab=historia">{t(['Nuestra Historia','Our Story'])}</a>
               <a href="/nosotros?tab=equipo">{t(['Nuestro Equipo','Our Team'])}</a>

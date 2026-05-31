@@ -850,8 +850,51 @@ function PetsScreen() {
   );
 }
 
+function MessagesThread({ m, BS, onBack }) {
+  const [msgs, setMsgs] = useState(() => ([
+    { from:'them', text:m.preview, time:m.time },
+  ]));
+  const [draft, setDraft] = useState('');
+  const send = () => {
+    const t = draft.trim(); if(!t) return;
+    setMsgs(prev => [...prev, { from:'me', text:t, time:'ahora' }]);
+    setDraft('');
+  };
+  return (
+    <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%', display:'flex', flexDirection:'column' }}>
+      <div style={{ padding:'12px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}`, display:'flex', alignItems:'center', gap:12, position:'sticky', top:0, zIndex:10 }}>
+        <button onClick={onBack} className="bs-btn" style={{ color:BS.ink2, fontSize:16 }}>{'<'}</button>
+        <BSAvatar user={m} size={36}/>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ fontSize:14.5, fontWeight:700, color:BS.ink }}>{m.user}</div>
+          <div style={{ fontSize:11, color: m.online ? BS.online : BS.soft }}>{m.online ? 'En línea' : 'Desconectado'}</div>
+        </div>
+      </div>
+      <div style={{ flex:1, overflowY:'auto', padding:'16px', display:'flex', flexDirection:'column', gap:8 }}>
+        {msgs.map((x,i) => (
+          <div key={i} style={{ alignSelf: x.from==='me' ? 'flex-end' : 'flex-start', maxWidth:'76%' }}>
+            <div style={{ padding:'9px 13px', borderRadius:16, fontSize:13.5, lineHeight:1.4, background: x.from==='me' ? BS.brand : BS.surface, color: x.from==='me' ? '#fff' : BS.ink, border: x.from==='me' ? 'none' : `1px solid ${BS.border}`, borderBottomRightRadius: x.from==='me'?4:16, borderBottomLeftRadius: x.from==='me'?16:4 }}>{x.text}</div>
+            <div style={{ fontSize:10, color:BS.soft, marginTop:3, textAlign: x.from==='me' ? 'right' : 'left' }}>{x.time}</div>
+          </div>
+        ))}
+        <div style={{ alignSelf:'center', margin:'8px 0', padding:'8px 12px', borderRadius:10, background:BS.surface2, border:`1px solid ${BS.border}`, fontSize:11, color:BS.soft, textAlign:'center', maxWidth:'90%' }}>
+          La mensajería en tiempo real entre miembros está activándose. Por ahora puedes ver tus conversaciones y redactar; el envío entre cuentas llegará muy pronto.
+        </div>
+      </div>
+      <div style={{ padding:'12px 16px', background:BS.surface, borderTop:`1px solid ${BS.border}`, display:'flex', alignItems:'center', gap:10 }}>
+        <input value={draft} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{ if(e.key==='Enter') send(); }} placeholder="Escribe un mensaje…" style={{ flex:1, border:`1px solid ${BS.border}`, borderRadius:999, background:BS.bg, padding:'10px 15px', fontSize:13.5, color:BS.ink, fontFamily:'inherit', outline:'none' }}/>
+        <button onClick={send} style={{ width:40, height:40, borderRadius:'50%', border:'none', background:BS.brand, color:'#fff', cursor:'pointer', display:'grid', placeItems:'center', flexShrink:0 }}>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+        </button>
+      </div>
+    </div>
+  );
+}
+
 function MessagesScreen({ setScreen }) {
   const BS = useBS();
+  const [active, setActive] = useState(null);
+  if (active) return <MessagesThread m={active} BS={BS} onBack={() => setActive(null)}/>;
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
       <div style={{ padding:'14px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}`, display:'flex', alignItems:'center', gap:12, position:'sticky', top:0, zIndex:10 }}>
@@ -859,7 +902,7 @@ function MessagesScreen({ setScreen }) {
         <div style={{ flex:1, fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink }}>Mensajes</div>
       </div>
       {BSDATA.messages.map((m,i) => (
-        <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'13px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}`, cursor:'pointer' }}>
+        <div key={i} onClick={() => setActive(m)} style={{ display:'flex', alignItems:'center', gap:12, padding:'13px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}`, cursor:'pointer' }}>
           <div style={{ position:'relative' }}>
             <BSAvatar user={m} size={46}/>
             <div style={{ position:'absolute', bottom:1, right:1, width:11, height:11, borderRadius:'50%', background: m.online ? BS.online : BS.border, border:`2px solid ${BS.bg}` }}/>
