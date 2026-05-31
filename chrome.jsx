@@ -444,6 +444,7 @@ function Footer() {
         </div>
         <p>{t(STRINGS.foot.rights)}</p>
         <div className="foot-links">
+          <a href="/tarjeta-regalo">{t(['Tarjetas de regalo', 'Gift cards'])}</a>
           <a href="/garantia">{t(['Garantía', 'Guarantee'])}</a>
           <a href="#">{t(STRINGS.foot.health)}</a>
           <a href="#">{t(STRINGS.foot.privacy)}</a>
