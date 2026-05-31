@@ -368,13 +368,17 @@ function Header({ overDark }) {
           {pv['Tienda']    !== false && <a href="/tienda">{t(['Tienda','Shop'])}</a>}
           {pv['Grooming']  !== false && <a href="/grooming"><span className="notranslate">Grooming</span></a>}
           <NavItem label={<span className="notranslate">Media</span>} href="/media" items={mediaItems.length > 1 ? mediaItems : undefined}/>
-          <a href="/social" className="nav-social"><span style={{ display:'inline-flex', width:7, height:7, borderRadius:'50%', background:'#0EA5E9' }}/>{t(['Social','Social'])}</a>
-          {pv['Nosotros']  !== false && <NavItem label={t(['Nosotros','About'])} href="/nosotros" items={[
-            { label: t(['Nosotros','About']),                href:'/nosotros' },
-            { label: t(['Impacto Social','Social Impact']),  href:'/nosotros?tab=impacto' },
-            { label: t(['Nuestra Historia','Our Story']),    href:'/nosotros?tab=historia' },
-            { label: t(['Nuestro Equipo','Our Team']),       href:'/nosotros?tab=equipo' },
-          ]}/>}
+          <div className="nav-item">
+            <a href="/social" className="nav-social">
+              <span style={{ display:'inline-flex', width:7, height:7, borderRadius:'50%', background:'#0EA5E9' }}/>{t(['Social','Social'])}
+              <svg className="nav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6"/></svg>
+            </a>
+            <div className="nav-dropdown">
+              <a href="/nosotros?tab=impacto">{t(['Impacto Social','Social Impact'])}</a>
+              <a href="/nosotros?tab=historia">{t(['Nuestra Historia','Our Story'])}</a>
+              <a href="/nosotros?tab=equipo">{t(['Nuestro Equipo','Our Team'])}</a>
+            </div>
+          </div>
         </nav>
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexShrink: 0 }}>
           <a href="tel:+18084928294" className="hdr-phone" aria-label="Llamar">
@@ -400,7 +404,9 @@ function Header({ overDark }) {
           <a href="/financiamiento" onClick={() => setMenuOpen(false)}>{t(['Financiamiento','Financing'])}</a>
           {pv['Grooming'] !== false && <a href="/grooming" onClick={() => setMenuOpen(false)}><span className="notranslate">Grooming</span></a>}
           <a href="/media" onClick={() => setMenuOpen(false)}><span className="notranslate">Media</span></a>
-          {pv['Nosotros'] !== false && <a href="/nosotros" onClick={() => setMenuOpen(false)}>{t(['Nosotros','About'])}</a>}
+          <a href="/nosotros?tab=impacto" onClick={() => setMenuOpen(false)}>{t(['Impacto Social','Social Impact'])}</a>
+          <a href="/nosotros?tab=historia" onClick={() => setMenuOpen(false)}>{t(['Nuestra Historia','Our Story'])}</a>
+          <a href="/nosotros?tab=equipo" onClick={() => setMenuOpen(false)}>{t(['Nuestro Equipo','Our Team'])}</a>
           <div className="mobile-nav-footer">
             <GlobeDropdown isOverDark={false} onLangSelect={handleGtSelect} />
             <a href="tel:+18084928294" className="hdr-phone" aria-label="Llamar">
