@@ -543,8 +543,9 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   const [lives, setLives] = useState(3);
   const [treats, setTreats] = useState(0);
   const [flyIntro, setFlyIntro] = useState(false);
-  const W = typeof window !== "undefined" && window.innerWidth >= 820 ? 640 : 380, H = 200, GY = H - 24;
-  const MAXLIVES = 3, GRAV = 0.4, JUMPV = 8.7;
+  const [flyWide, setFlyWide] = useState(false);
+  const W = 360, H = 200, GY = H - 24;
+  const MAXLIVES = 4, GRAV = 0.4, JUMPV = 8.7;
   const loadBoard = () => {
     const s = gameSupa();
     if (!s) return;
@@ -567,7 +568,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     dist: 0,
     score: 0,
     treats: 0,
-    lives: 3,
+    lives: 4,
     inv: 0,
     obst: [],
     treatArr: [],
@@ -606,6 +607,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   const endGame = (finalScore, treatsCollected) => {
     stopMusic();
     setFlyIntro(false);
+    setFlyWide(false);
     const tier = prizeTier(finalScore);
     setPhase("over");
     setScore(finalScore);
@@ -638,9 +640,10 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     }
     stopMusic();
     setFlyIntro(false);
+    setFlyWide(false);
     stRef.current = newState();
     setScore(0);
-    setLives(3);
+    setLives(4);
     setTreats(0);
     setSaved(false);
     setPhase("playing");
@@ -870,10 +873,11 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
         rafRef.current = requestAnimationFrame(loop);
         return;
       }
-      if (st.fcount >= (window._BP_FLY_AT || 5400)) {
+      if (st.fcount >= (window._BP_FLY_AT || 3600)) {
         st.mode = "transform";
         st.transT = 0;
         st.flyTarget = H - 110;
+        if (typeof window !== "undefined" && window.innerWidth >= 820) setFlyWide(true);
         sndPlane();
         setTimeout(() => sndHero(), 420);
         flyLoop(st);
@@ -1215,7 +1219,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   }, []);
   const cardSt = { background: "#fff", borderRadius: 24, border: "1px solid var(--line)", overflow: "hidden", boxShadow: "0 10px 40px rgba(45,36,33,0.12)" };
   const firstName = breed.name.split(" (")[0];
-  return /* @__PURE__ */ React.createElement("div", { style: { maxWidth: "min(1000px, 96vw)", margin: "0 auto", padding: "18px 16px 80px" } }, /* @__PURE__ */ React.createElement("div", { className: "qg-pop", style: cardSt }, /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#F58220,#E85D75)", padding: "14px 18px", color: "#fff", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontWeight: 800, fontSize: 17, flex: "1 1 auto", minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, t(["Corre con tu", "Run with your"]), " ", firstName), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 12, alignItems: "center", fontSize: 13, fontWeight: 800, flexShrink: 0, whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" } }, /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: 4 }, title: "Treats" }, /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 48 48", fill: "#fff" }, /* @__PURE__ */ React.createElement("rect", { x: "14", y: "20", width: "20", height: "8", rx: "4" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "29", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "29", r: "5" })), treats), /* @__PURE__ */ React.createElement("span", null, t(["Puntos", "Score"]), ": ", score), /* @__PURE__ */ React.createElement("span", { style: { opacity: 0.85 } }, t(["Mejor", "Best"]), ": ", best))), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", background: "#EAF6FB", lineHeight: 0, userSelect: "none", WebkitUserSelect: "none", touchAction: "none", overflow: "hidden" }, onMouseDown: (e) => {
+  return /* @__PURE__ */ React.createElement("div", { style: { maxWidth: flyWide ? "min(1040px, 97vw)" : 560, margin: "0 auto", padding: "18px 16px 80px", transition: "max-width 1s cubic-bezier(0.22,1,0.36,1)" } }, /* @__PURE__ */ React.createElement("div", { className: "qg-pop", style: { ...cardSt, transition: "box-shadow 0.7s ease, transform 0.7s ease", boxShadow: flyWide ? "0 0 0 3px rgba(255,170,50,0.55), 0 26px 80px rgba(245,130,32,0.45)" : cardSt.boxShadow } }, /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#F58220,#E85D75)", padding: "14px 18px", color: "#fff", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontWeight: 800, fontSize: 17, flex: "1 1 auto", minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, t(["Corre con tu", "Run with your"]), " ", firstName), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 12, alignItems: "center", fontSize: 13, fontWeight: 800, flexShrink: 0, whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" } }, /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: 4 }, title: "Treats" }, /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 48 48", fill: "#fff" }, /* @__PURE__ */ React.createElement("rect", { x: "14", y: "20", width: "20", height: "8", rx: "4" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "29", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "29", r: "5" })), treats), /* @__PURE__ */ React.createElement("span", null, t(["Puntos", "Score"]), ": ", score), /* @__PURE__ */ React.createElement("span", { style: { opacity: 0.85 } }, t(["Mejor", "Best"]), ": ", best))), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", background: "#EAF6FB", lineHeight: 0, userSelect: "none", WebkitUserSelect: "none", touchAction: "none", overflow: "hidden" }, onMouseDown: (e) => {
     e.preventDefault();
     tap();
   }, onTouchStart: (e) => {

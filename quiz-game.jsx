@@ -304,9 +304,10 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   const [lives, setLives] = useState(3);
   const [treats, setTreats] = useState(0);
   const [flyIntro, setFlyIntro] = useState(false); // letrero que pausa al entrar a modo vuelo
+  const [flyWide, setFlyWide] = useState(false); // PC: la pantalla se ensancha al transformarse y volar
 
-  const W = (typeof window!=='undefined' && window.innerWidth>=820) ? 640 : 380, H = 200, GY = H - 24; // ground line — más ancho en PC
-  const MAXLIVES = 3, GRAV = 0.40, JUMPV = 8.7; // 3 vidas; salto flotante (arco perdonador)
+  const W = 360, H = 200, GY = H - 24; // ground line (el ancho extra en PC se aplica al volar, no al inicio)
+  const MAXLIVES = 4, GRAV = 0.40, JUMPV = 8.7; // 4 vidas; salto flotante (arco perdonador)
 
   const loadBoard = () => {
     const s = gameSupa(); if(!s) return;
@@ -317,7 +318,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
 
   const newState = () => ({
     py: 0, vy: 0, grounded: true, jumps: 0, frame: 0, fcount: 0,
-    speed: 2.8, dist: 0, score: 0, treats: 0, lives: 3, inv: 0,
+    speed: 2.8, dist: 0, score: 0, treats: 0, lives: 4, inv: 0,
     obst: [], treatArr: [], heartArr: [], plats: [],
     clouds: [{x:60,y:28},{x:200,y:46},{x:320,y:22}],
     hills: [{x:0,w:200,h:46},{x:230,w:240,h:64},{x:430,w:200,h:40}],
@@ -334,7 +335,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   };
 
   const endGame = (finalScore, treatsCollected) => {
-    stopMusic(); setFlyIntro(false);
+    stopMusic(); setFlyIntro(false); setFlyWide(false);
     const tier = prizeTier(finalScore);
     setPhase('over'); setScore(finalScore); sndOver();
     setTimeout(()=>{ sndPrize(); if(tier>=3) setTimeout(sndBark, 480); }, 320);
@@ -349,9 +350,9 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
 
   const start = () => {
     try { const c = ac(); if(c && c.state==='suspended') c.resume(); } catch(e){}
-    stopMusic(); setFlyIntro(false);
+    stopMusic(); setFlyIntro(false); setFlyWide(false);
     stRef.current = newState();
-    setScore(0); setLives(3); setTreats(0); setSaved(false); setPhase('playing');
+    setScore(0); setLives(4); setTreats(0); setSaved(false); setPhase('playing');
   };
 
   // game loop
@@ -420,7 +421,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
       const st = stRef.current; if(!st){ return; }
       // ── modo vuelo (a partir de los 3 min) ──
       if((st.mode||'run')!=='run'){ flyLoop(st); if(st.over){ running=false; stopMusic(); endGame(st.score, st.treats); return; } rafRef.current=requestAnimationFrame(loop); return; }
-      if(st.fcount >= (window._BP_FLY_AT||5400)){ st.mode='transform'; st.transT=0; st.flyTarget=H-110; sndPlane(); setTimeout(()=>sndHero(),420); flyLoop(st); rafRef.current=requestAnimationFrame(loop); return; }
+      if(st.fcount >= (window._BP_FLY_AT||3600)){ st.mode='transform'; st.transT=0; st.flyTarget=H-110; if(typeof window!=='undefined' && window.innerWidth>=820) setFlyWide(true); sndPlane(); setTimeout(()=>sndHero(),420); flyLoop(st); rafRef.current=requestAnimationFrame(loop); return; }
       const dogX = 46, dogW = 25, dogH = 25;
       // ── update ──
       st.dist += st.speed;
@@ -543,8 +544,8 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   const firstName = breed.name.split(' (')[0];
 
   return (
-    <div style={{ maxWidth:'min(1000px, 96vw)', margin:'0 auto', padding:'18px 16px 80px' }}>
-      <div className="qg-pop" style={cardSt}>
+    <div style={{ maxWidth: flyWide ? 'min(1040px, 97vw)' : 560, margin:'0 auto', padding:'18px 16px 80px', transition:'max-width 1s cubic-bezier(0.22,1,0.36,1)' }}>
+      <div className="qg-pop" style={{ ...cardSt, transition:'box-shadow 0.7s ease, transform 0.7s ease', boxShadow: flyWide ? '0 0 0 3px rgba(255,170,50,0.55), 0 26px 80px rgba(245,130,32,0.45)' : cardSt.boxShadow }}>
         {/* Cabecera del juego */}
         <div style={{ background:'linear-gradient(135deg,#F58220,#E85D75)', padding:'14px 18px', color:'#fff', display:'flex', alignItems:'center', justifyContent:'space-between', gap:12 }}>
           <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontWeight:800, fontSize:17, flex:'1 1 auto', minWidth:0, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{t(['Corre con tu','Run with your'])} {firstName}</div>
