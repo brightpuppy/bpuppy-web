@@ -270,6 +270,12 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
     } catch(e) { setBookErr('Error de red, intenta de nuevo'); setBookStatus('error'); }
   };
 
+  const resetBooking = () => {
+    setBookStatus('idle'); setStep(1);
+    setSelectedServices(new Set()); setDay(null); setTime(null);
+    setNotes(''); setPromoCode('');
+  };
+
   const StepDots = () => (
     <div style={{ display: 'flex', marginBottom: 24, gap: 0 }}>
       {[['1','Servicios'],['2','Fecha'],['3','Confirmar']].map(([n, label], i) => {
@@ -451,8 +457,8 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
         </div>
       )}
 
-      {/* Step 3: Confirm */}
-      {step === 3 && (
+      {/* Step 3: Confirm (formulario) */}
+      {step === 3 && bookStatus !== 'sent' && (
         <div>
           <h3 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 18, fontWeight: 700, color: 'var(--ink)', margin: '0 0 4px' }}>Confirmar cita</h3>
           <div style={{ background: 'var(--bg)', borderRadius: 12, padding: '12px 16px', marginBottom: 18, fontSize: 13, color: 'var(--ink-2)', lineHeight: 1.7 }}>
@@ -480,16 +486,27 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
                   onFocus={e => e.target.style.borderColor = 'var(--orange)'} onBlur={e => e.target.style.borderColor = 'var(--line)'} />
               )}
             </div>
-            {[['Tu nombre', ownerName, setOwnerName, 'Nombre completo'],
-              ['Teléfono', phone, setPhone, '+1 (305) 000-0000'],
-            ].map(([label, val, setter, ph]) => (
-              <div key={label}>
-                <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>{label} <span style={{ color:'var(--orange)' }}>*</span></div>
-                <input value={val} onChange={e => setter(e.target.value)} placeholder={ph} style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: '1.5px solid var(--line)', background: 'var(--bg)', fontFamily: 'inherit', fontSize: 14, color: 'var(--ink)', outline: 'none' }}
-                  onFocus={e => e.target.style.borderColor = 'var(--orange)'}
-                  onBlur={e => e.target.style.borderColor = 'var(--line)'} />
+            {(me && me.client && ownerName && phone) ? (
+              <div style={{ display:'flex', alignItems:'center', gap:10, padding:'11px 14px', borderRadius:10, border:'1px solid var(--line)', background:'var(--paper)' }}>
+                <span style={{ flexShrink:0, color:'var(--orange)', display:'inline-flex' }}><Icon name="user" size={18}/></span>
+                <div style={{ flex:1, minWidth:0 }}>
+                  <div style={{ fontSize:13, fontWeight:700, color:'var(--ink)' }}>{ownerName}</div>
+                  <div style={{ fontSize:12, color:'var(--ink-2)' }}>{phone}</div>
+                </div>
+                <span style={{ fontSize:10.5, fontWeight:700, color:'#1EB87A' }}>✓ Tus datos</span>
               </div>
-            ))}
+            ) : (
+              [['Tu nombre', ownerName, setOwnerName, 'Nombre completo'],
+               ['Teléfono', phone, setPhone, '+1 (305) 000-0000'],
+              ].map(([label, val, setter, ph]) => (
+                <div key={label}>
+                  <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>{label} <span style={{ color:'var(--orange)' }}>*</span></div>
+                  <input value={val} onChange={e => setter(e.target.value)} placeholder={ph} style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: '1.5px solid var(--line)', background: 'var(--bg)', fontFamily: 'inherit', fontSize: 14, color: 'var(--ink)', outline: 'none' }}
+                    onFocus={e => e.target.style.borderColor = 'var(--orange)'}
+                    onBlur={e => e.target.style.borderColor = 'var(--line)'} />
+                </div>
+              ))
+            )}
             <div>
               <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>Notas adicionales (opcional)</div>
               <textarea value={notes} onChange={e => setNotes(e.target.value)} placeholder="Raza, temperamento, algo que debamos saber..." rows={2} style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: '1.5px solid var(--line)', background: 'var(--bg)', fontFamily: 'inherit', fontSize: 14, color: 'var(--ink)', outline: 'none', resize: 'vertical' }}
@@ -521,33 +538,40 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
               </button>
             )}
           </div>
-          {bookStatus === 'sent' ? (
-            <div style={{ textAlign:'center', padding:'8px 4px' }}>
-              <div style={{ display:'flex', justifyContent:'center', marginBottom:8, color:'#1EB87A' }}><Icon name="check" size={42}/></div>
-              <h3 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:19, fontWeight:800, color:'var(--ink)', margin:'0 0 6px' }}>¡Solicitud recibida!</h3>
-              <p style={{ fontSize:13, color:'var(--ink-2)', lineHeight:1.55, margin:'0 0 14px' }}>Recibimos tu cita para <strong>{petName}</strong>. Te confirmamos disponibilidad en menos de 2 horas en horario laboral{(me && me.email) ? <> al correo <strong>{me.email}</strong></> : ''}.</p>
-              <a href={buildWhatsApp()} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:8, padding:'12px 22px', borderRadius:14, background:'#25D366', color:'#fff', fontFamily:'inherit', fontSize:14, fontWeight:700, textDecoration:'none' }}>
-                <Icon name="chat" size={18} color="#fff"/> Enviar también por WhatsApp
-              </a>
-            </div>
-          ) : (
-            <>
-              <div style={{ display: 'flex', gap: 8 }}>
-                <button onClick={() => setStep(2)} style={{ flex: 1, padding: '13px', borderRadius: 14, border: '1.5px solid var(--line)', background: 'none', fontFamily: 'inherit', fontSize: 14, fontWeight: 600, color: 'var(--ink-2)', cursor: 'pointer' }}>← Atrás</button>
-                <button onClick={submitBooking} disabled={!canConfirm || bookStatus === 'sending'} style={{ flex: 2, padding: '13px', borderRadius: 14, border: 'none', background: canConfirm ? 'var(--orange)' : 'var(--line)', color: canConfirm ? '#fff' : 'var(--ink-2)', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, cursor: canConfirm && bookStatus !== 'sending' ? 'pointer' : 'default', transition: 'all .2s' }}>
-                  {bookStatus === 'sending' ? 'Enviando…' : 'Confirmar cita'}
-                </button>
-              </div>
-              {bookStatus === 'error' && <p style={{ fontSize:12.5, color:'#C0392B', textAlign:'center', margin:'10px 0 0' }}>{bookErr}</p>}
-              {!canConfirm && <p style={{ fontSize:11, color:'var(--orange)', textAlign:'center', margin:'8px 0 0' }}>Completa mascota, nombre y teléfono para confirmar</p>}
-              <div style={{ textAlign:'center', margin:'10px 0 0' }}>
-                <a href={canConfirm ? buildWhatsApp() : '#'} target="_blank" rel="noopener noreferrer" style={{ fontSize:12.5, fontWeight:700, color: canConfirm ? '#1EB87A' : 'var(--ink-soft)', textDecoration:'none', pointerEvents: canConfirm ? 'all' : 'none', display:'inline-flex', alignItems:'center', gap:6 }}>
-                  <Icon name="chat" size={15}/> ¿Prefieres WhatsApp? Envíalo por aquí
-                </a>
-              </div>
-              <p style={{ fontSize: 10.5, color: 'var(--ink-soft)', textAlign: 'center', margin: '10px 0 0' }}>Recibirás confirmación en menos de 2 horas en horario laboral</p>
-            </>
-          )}
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button onClick={() => setStep(2)} style={{ flex: 1, padding: '13px', borderRadius: 14, border: '1.5px solid var(--line)', background: 'none', fontFamily: 'inherit', fontSize: 14, fontWeight: 600, color: 'var(--ink-2)', cursor: 'pointer' }}>← Atrás</button>
+            <button onClick={submitBooking} disabled={!canConfirm || bookStatus === 'sending'} style={{ flex: 2, padding: '13px', borderRadius: 14, border: 'none', background: canConfirm ? 'var(--orange)' : 'var(--line)', color: canConfirm ? '#fff' : 'var(--ink-2)', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, cursor: canConfirm && bookStatus !== 'sending' ? 'pointer' : 'default', transition: 'all .2s' }}>
+              {bookStatus === 'sending' ? 'Enviando…' : 'Confirmar cita'}
+            </button>
+          </div>
+          {bookStatus === 'error' && <p style={{ fontSize:12.5, color:'#C0392B', textAlign:'center', margin:'10px 0 0' }}>{bookErr}</p>}
+          {!canConfirm && <p style={{ fontSize:11, color:'var(--orange)', textAlign:'center', margin:'8px 0 0' }}>Completa mascota, nombre y teléfono para confirmar</p>}
+          <p style={{ fontSize: 10.5, color: 'var(--ink-soft)', textAlign: 'center', margin: '12px 0 0' }}>Recibirás confirmación en menos de 2 horas en horario laboral</p>
+        </div>
+      )}
+
+      {/* Step 3: Cita confirmada (reemplaza el formulario) */}
+      {step === 3 && bookStatus === 'sent' && (
+        <div className="bs-fade" style={{ textAlign:'center', padding:'14px 6px 8px' }}>
+          <div style={{ display:'flex', justifyContent:'center', marginBottom:12 }}>
+            <div style={{ width:64, height:64, borderRadius:'50%', background:'rgba(30,184,122,0.12)', display:'grid', placeItems:'center', color:'#1EB87A' }}><Icon name="check" size={34}/></div>
+          </div>
+          <h3 style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:22, fontWeight:800, color:'var(--ink)', margin:'0 0 6px' }}>¡Cita confirmada!</h3>
+          <p style={{ fontSize:13.5, color:'var(--ink-2)', lineHeight:1.55, margin:'0 0 16px' }}>Recibimos tu solicitud para <strong>{petName}</strong>. Te confirmamos disponibilidad en menos de 2 horas en horario laboral.</p>
+          <div style={{ textAlign:'left', background:'var(--paper)', borderRadius:14, padding:'14px 16px', marginBottom:16, fontSize:13, color:'var(--ink-2)', lineHeight:1.8 }}>
+            <div><strong style={{ color:'var(--ink)' }}>{[...selectedServices].join(' + ')}</strong> · {size}</div>
+            <div><span style={{ display:'inline-flex', verticalAlign:'-3px', marginRight:5, color:'var(--orange)' }}><Icon name="calendar" size={15}/></span>{day} de {['Ene','Feb','Mar','Abr','May','Jun','Jul','Ago','Sep','Oct','Nov','Dic'][month]}, {year} · {time}</div>
+            <div>Mascota: <strong style={{ color:'var(--ink)' }}>{petName}</strong></div>
+            <div>A nombre de: {ownerName} · {phone}</div>
+            {total > 0 && <div>Total estimado: <strong style={{ color:'var(--orange)' }}>${total}</strong></div>}
+          </div>
+          {(me && me.email)
+            ? <p style={{ fontSize:12.5, color:'#1EB87A', fontWeight:600, margin:'0 0 16px', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}><Icon name="mail" size={15}/> Enviamos la confirmación a {me.email}</p>
+            : <p style={{ fontSize:12, color:'var(--ink-soft)', margin:'0 0 16px' }}>Te contactaremos al {phone} para confirmar.</p>}
+          <a href={buildWhatsApp()} target="_blank" rel="noopener noreferrer" style={{ display:'inline-flex', alignItems:'center', justifyContent:'center', gap:8, padding:'13px 24px', borderRadius:14, background:'#25D366', color:'#fff', fontFamily:'inherit', fontSize:14, fontWeight:700, textDecoration:'none', marginBottom:10 }}>
+            <Icon name="chat" size={18} color="#fff"/> Enviar también por WhatsApp
+          </a>
+          <div><button onClick={resetBooking} className="bs-btn" style={{ background:'none', border:'none', color:'var(--ink-2)', fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit', textDecoration:'underline' }}>Agendar otra cita</button></div>
         </div>
       )}
     </div>
