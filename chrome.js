@@ -303,7 +303,7 @@ function GlobeDropdown({ isOverDark, onLangSelect }) {
 }
 function NavItem({ label, href, items, navClass }) {
   return /* @__PURE__ */ React.createElement("div", { className: `nav-item ${navClass || ""}` }, /* @__PURE__ */ React.createElement("a", { href }, label, items && /* @__PURE__ */ React.createElement("svg", { className: "nav-caret", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M6 9l6 6 6-6" }))), items && /* @__PURE__ */ React.createElement("div", { className: "nav-dropdown" }, items.map(
-    (item, i) => /* @__PURE__ */ React.createElement("a", { key: i, href: item.href, className: item.className || "" }, item.label)
+    (item, i) => /* @__PURE__ */ React.createElement("a", { key: i, href: item.href, className: item.className || "", style: item.style }, item.label)
   )));
 }
 function Header({ overDark }) {
@@ -424,6 +424,7 @@ function Header({ overDark }) {
   const rightActive = lang === "en" && !gtLang;
   const klass = `hdr ${scrolled ? "scrolled" : ""} ${overDark && !scrolled ? "over-dark" : ""}`;
   const cachItems = [
+    { label: t(["Cachorros", "Puppies"]), href: "/cachorros", style: { fontWeight: 700 } },
     { label: t(["Conoce las razas", "Meet the breeds"]), href: "/razas" },
     { label: t(["Encuentra tu Match", "Find Your Match"]), href: "/quiz", className: "bp-shine" },
     { label: t(["Solicita tu cachorro ideal", "Request your ideal puppy"]), href: "/solicitud" },

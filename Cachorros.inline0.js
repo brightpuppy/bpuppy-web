@@ -17,7 +17,7 @@
     return React.createElement(
       LangContext.Provider,
       { value: { lang, setLang } },
-      ReactDOM.createPortal(React.createElement(Header, { overDark: false }), hdrMount),
+      ReactDOM.createPortal(React.createElement(Header, { overDark: true }), hdrMount),
       ftrMount ? ReactDOM.createPortal(React.createElement(Footer, null), ftrMount) : null
     );
   }

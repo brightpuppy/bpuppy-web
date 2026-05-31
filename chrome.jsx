@@ -248,7 +248,7 @@ function NavItem({ label, href, items, navClass }) {
       {items &&
       <div className="nav-dropdown">
           {items.map((item, i) =>
-        <a key={i} href={item.href} className={item.className || ''}>{item.label}</a>
+        <a key={i} href={item.href} className={item.className || ''} style={item.style}>{item.label}</a>
         )}
         </div>
       }
@@ -344,6 +344,7 @@ function Header({ overDark }) {
   const klass = `hdr ${scrolled ? 'scrolled' : ''} ${overDark && !scrolled ? 'over-dark' : ''}`;
 
   const cachItems = [
+    { label: t(['Cachorros', 'Puppies']), href: '/cachorros', style: { fontWeight: 700 } },
     { label: t(['Conoce las razas', 'Meet the breeds']), href: '/razas' },
     { label: t(['Encuentra tu Match', 'Find Your Match']), href: '/quiz', className: 'bp-shine' },
     { label: t(['Solicita tu cachorro ideal', 'Request your ideal puppy']), href: '/solicitud' },
