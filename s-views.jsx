@@ -1250,8 +1250,8 @@ function VideosScreen() {
 }
 
 // ── Mi Cuenta (portal) DENTRO de B Social — datos privados, leídos de Supabase (mismas tablas que el CRM) ──
-function AddPetForm({ BS, onDone, onCancel }) {
-  const [f, setF] = useState({ name:'', breed:'', size:'', sex:'', weight_lbs:'' });
+function PetForm({ BS, initial, petId, onDone, onCancel }) {
+  const [f, setF] = useState({ name:(initial&&initial.name)||'', breed:(initial&&initial.breed)||'', size:(initial&&initial.size)||'', sex:(initial&&initial.sex)||'', weight_lbs:(initial&&initial.weight_lbs)||'' });
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
   const inp = { width:'100%', padding:'10px 12px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontFamily:'inherit', fontSize:13, outline:'none', boxSizing:'border-box' };
@@ -1260,14 +1260,15 @@ function AddPetForm({ BS, onDone, onCancel }) {
     setBusy(true); setMsg('');
     try {
       const A = (typeof window!=='undefined' && window.BSAUTH) || {};
-      const d = A.addPet ? await A.addPet(f) : { error:'No disponible' };
+      const d = petId ? (A.updatePet ? await A.updatePet({ id:petId, ...f }) : { error:'No disponible' })
+                      : (A.addPet ? await A.addPet(f) : { error:'No disponible' });
       if(d && d.error){ setMsg(d.error); setBusy(false); return; }
       onDone();
     } catch(e){ setMsg('No se pudo guardar.'); setBusy(false); }
   };
   return (
-    <div style={{ background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:16, padding:16, marginTop:4 }}>
-      <div style={{ fontSize:14, fontWeight:800, color:BS.ink, marginBottom:10 }}>Agregar mascota</div>
+    <div style={{ background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:16, padding:16, marginTop:4, marginBottom:12 }}>
+      <div style={{ fontSize:14, fontWeight:800, color:BS.ink, marginBottom:10 }}>{petId ? 'Editar mascota' : 'Agregar mascota'}</div>
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
         <input style={{ ...inp, gridColumn:'1/-1' }} placeholder="Nombre *" value={f.name} onChange={e=>setF({...f,name:e.target.value})}/>
         <input style={inp} placeholder="Raza" value={f.breed} onChange={e=>setF({...f,breed:e.target.value})}/>
@@ -1278,7 +1279,7 @@ function AddPetForm({ BS, onDone, onCancel }) {
       {msg && <div style={{ fontSize:12, color:BS.rose, marginTop:8 }}>{msg}</div>}
       <div style={{ display:'flex', gap:8, marginTop:12 }}>
         <button onClick={onCancel} className="bs-btn" style={{ flex:1, padding:'11px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:'transparent', color:BS.ink2, fontWeight:700, fontSize:13, cursor:'pointer', fontFamily:'inherit' }}>Cancelar</button>
-        <button onClick={save} disabled={busy} className="bs-btn" style={{ flex:2, padding:'11px', borderRadius:10, border:'none', background:BS.grad, color:'#fff', fontWeight:700, fontSize:13, cursor:busy?'default':'pointer', fontFamily:'inherit', opacity:busy?0.7:1 }}>{busy?'Guardando…':'Guardar mascota'}</button>
+        <button onClick={save} disabled={busy} className="bs-btn" style={{ flex:2, padding:'11px', borderRadius:10, border:'none', background:BS.grad, color:'#fff', fontWeight:700, fontSize:13, cursor:busy?'default':'pointer', fontFamily:'inherit', opacity:busy?0.7:1 }}>{busy?'Guardando…':(petId?'Guardar cambios':'Guardar mascota')}</button>
       </div>
     </div>
   );
@@ -1291,6 +1292,10 @@ function AccountScreen({ setScreen }) {
   const [err, setErr] = useState('');
   const [tab, setTab] = useState('mascotas');
   const [addOpen, setAddOpen] = useState(false);
+  const [editId, setEditId] = useState(null);
+  const [bkBusy, setBkBusy] = useState(null);
+  const [bkMsg, setBkMsg] = useState('');
+  const [payBusy, setPayBusy] = useState(null);
 
   const load = async () => {
     setLoading(true); setErr('');
@@ -1313,7 +1318,25 @@ function AccountScreen({ setScreen }) {
   const memberships = d.memberships || [];
   const plans = d.plans || [];
   const payments = d.payments || [];
+  const bookings = (d.bookings || []).filter(b => b.status !== 'cancelled');
   const baths = memberships.reduce((a,m)=>a+(m.credits_balance||0),0);
+
+  const cancelBooking = async (b) => {
+    if(!(window.confirm('¿Cancelar esta cita? Cancelar con menos de 24h puede tener cargo del 50%.'))) return;
+    setBkBusy(b.id); setBkMsg('');
+    try { const r = await (window.BSAUTH && window.BSAUTH.manageBooking ? window.BSAUTH.manageBooking('cancel', b.id) : {error:'No disponible'});
+      if(r && r.error){ setBkMsg(r.error); } else { setBkMsg(r && r.message ? r.message : 'Cita cancelada.'); await load(); }
+    } catch(e){ setBkMsg('No se pudo cancelar.'); }
+    setBkBusy(null);
+  };
+  const payPlan = async (p) => {
+    setPayBusy(p.id);
+    try { const r = await (window.BSAUTH && window.BSAUTH.payPlan ? window.BSAUTH.payPlan(p.id) : {error:'No disponible'});
+      if(r && r.url){ window.location.href = r.url; return; }
+      setBkMsg((r && r.error) || 'No se pudo iniciar el pago.');
+    } catch(e){ setBkMsg('No se pudo iniciar el pago.'); }
+    setPayBusy(null);
+  };
 
   const TABS = [
     { id:'mascotas',   label:'Mascotas',   n: pets.length },
@@ -1366,7 +1389,9 @@ function AccountScreen({ setScreen }) {
           {tab==='mascotas' && (
             <div>
               {pets.length===0 && !addOpen && <div style={{ ...card, textAlign:'center', color:BS.soft, fontSize:13 }}>Aún no tienes mascotas registradas.</div>}
-              {pets.map((p,i)=>(
+              {pets.map((p,i)=> editId===p.id ? (
+                <PetForm key={i} BS={BS} petId={p.id} initial={p} onDone={()=>{ setEditId(null); load(); }} onCancel={()=>setEditId(null)}/>
+              ) : (
                 <div key={i} style={{ ...card, display:'flex', gap:12, alignItems:'center' }}>
                   <div style={{ width:52, height:52, borderRadius:14, flexShrink:0, background:BS.surface2, display:'grid', placeItems:'center', overflow:'hidden' }}>
                     {p.photo_url ? <img src={p.photo_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : <svg width="26" height="26" viewBox="0 0 24 24" fill={BS.brand}><circle cx="7" cy="9" r="1.7"/><circle cx="12" cy="7.4" r="1.7"/><circle cx="17" cy="9" r="1.7"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/></svg>}
@@ -1376,19 +1401,46 @@ function AccountScreen({ setScreen }) {
                     <div style={{ fontSize:12, color:BS.ink2 }}>{[p.breed, p.size, p.sex, p.weight_lbs?(p.weight_lbs+' lb'):''].filter(Boolean).join(' · ')||'—'}</div>
                     {p.status==='pending' && <span style={{ display:'inline-block', marginTop:5, fontSize:10.5, fontWeight:700, color:'#E0A106', background:'rgba(224,161,6,0.12)', padding:'2px 8px', borderRadius:999 }}>Pendiente de confirmar</span>}
                   </div>
-                  {p.status!=='pending' && <a href="/grooming.html" className="bs-btn" style={{ textDecoration:'none', fontSize:11.5, fontWeight:700, color:BS.brand, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'7px 11px', whiteSpace:'nowrap' }}>Agendar</a>}
+                  <div style={{ display:'flex', flexDirection:'column', gap:6, flexShrink:0 }}>
+                    <button onClick={()=>{ setEditId(p.id); setAddOpen(false); }} className="bs-btn" style={{ fontSize:11.5, fontWeight:700, color:BS.ink2, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'7px 11px', background:'transparent', cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap' }}>Editar</button>
+                    {p.status!=='pending' && <a href="/grooming.html" className="bs-btn" style={{ textDecoration:'none', textAlign:'center', fontSize:11.5, fontWeight:700, color:BS.brand, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'7px 11px', whiteSpace:'nowrap' }}>Agendar</a>}
+                  </div>
                 </div>
               ))}
-              {addOpen ? <AddPetForm BS={BS} onDone={()=>{ setAddOpen(false); load(); }} onCancel={()=>setAddOpen(false)}/> :
-                <button onClick={()=>setAddOpen(true)} className="bs-btn" style={{ width:'100%', padding:'13px', borderRadius:14, border:`1.5px dashed ${BS.border}`, background:'transparent', color:BS.brand, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>+ Agregar mascota</button>}
+              {addOpen ? <PetForm BS={BS} onDone={()=>{ setAddOpen(false); load(); }} onCancel={()=>setAddOpen(false)}/> :
+                <button onClick={()=>{ setAddOpen(true); setEditId(null); }} className="bs-btn" style={{ width:'100%', padding:'13px', borderRadius:14, border:`1.5px dashed ${BS.border}`, background:'transparent', color:BS.brand, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>+ Agregar mascota</button>}
             </div>
           )}
 
           {tab==='grooming' && (
             <div>
+              {bkMsg && <div style={{ ...card, fontSize:12.5, color:BS.ink2, lineHeight:1.5 }}>{bkMsg}</div>}
+              {bookings.length>0 && <div style={{ fontSize:11, fontWeight:700, color:BS.soft, textTransform:'uppercase', letterSpacing:'0.06em', margin:'0 2px 8px' }}>Tus citas</div>}
+              {bookings.map((b,i)=>{
+                const svc = Array.isArray(b.services) ? b.services.join(' + ') : (b.services||'Grooming');
+                const st = b.status || 'requested';
+                const stColor = st==='confirmed' ? '#1EB87A' : (st==='completed' ? BS.soft : BS.brand);
+                return (
+                  <div key={b.id||i} style={card}>
+                    <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6 }}>
+                      <span style={{ fontSize:14, fontWeight:800, color:BS.ink }}>{b.pet_name||'Mascota'}</span>
+                      <span style={{ fontSize:10.5, fontWeight:700, color:stColor, background:BS.surface2, padding:'3px 9px', borderRadius:999 }}>{st}</span>
+                    </div>
+                    {row('Servicio', svc)}
+                    {row('Fecha', fmtD(b.appointment_date)+(b.appointment_time?(' · '+b.appointment_time):''))}
+                    {b.size ? row('Tamaño', b.size) : null}
+                    {st!=='completed' && (
+                      <div style={{ display:'flex', gap:8, marginTop:10 }}>
+                        <a href={'/reserva.html?id='+encodeURIComponent(b.id)} className="bs-btn" style={{ flex:1, textAlign:'center', textDecoration:'none', fontSize:12, fontWeight:700, color:BS.ink2, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'9px' }}>Reprogramar</a>
+                        <button onClick={()=>cancelBooking(b)} disabled={bkBusy===b.id} className="bs-btn" style={{ flex:1, fontSize:12, fontWeight:700, color:BS.rose, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'9px', background:'transparent', cursor:bkBusy===b.id?'default':'pointer', fontFamily:'inherit' }}>{bkBusy===b.id?'…':'Cancelar'}</button>
+                      </div>
+                    )}
+                  </div>
+                );
+              })}
               <div style={{ ...card, textAlign:'center' }}>
                 <div style={{ color:BS.brand, display:'flex', justifyContent:'center', marginBottom:8 }}><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/></svg></div>
-                <div style={{ fontSize:16, fontWeight:800, color:BS.ink, marginBottom:4 }}>Agenda tu próxima cita</div>
+                <div style={{ fontSize:16, fontWeight:800, color:BS.ink, marginBottom:4 }}>{bookings.length?'Agenda otra cita':'Agenda tu próxima cita'}</div>
                 <div style={{ fontSize:12.5, color:BS.soft, lineHeight:1.5, marginBottom:14 }}>{memberships.length?'Tus baños de membresía se aplican automáticamente.':'Baño, corte o spa para tu mascota en segundos.'}</div>
                 <a href="/grooming.html" style={{ display:'inline-block', textDecoration:'none', background:BS.grad, color:'#fff', fontSize:13.5, fontWeight:700, padding:'11px 22px', borderRadius:12 }}>Agendar grooming →</a>
               </div>
@@ -1432,6 +1484,12 @@ function AccountScreen({ setScreen }) {
                     {row('Tu gran día', fmtD(p.target_date))}
                     <div style={{ height:7, borderRadius:999, background:BS.surface2, overflow:'hidden', margin:'8px 0 4px' }}><div style={{ width:pct+'%', height:'100%', background:BS.grad }}/></div>
                     <div style={{ fontSize:11, color:BS.soft, textAlign:'right' }}>{pct}% completado</div>
+                    {bal>0 && p.status!=='cancelled' && (
+                      <div>
+                        <button onClick={()=>payPlan(p)} disabled={payBusy===p.id} className="bs-btn" style={{ width:'100%', marginTop:12, padding:'11px', borderRadius:10, border:'none', background:BS.grad, color:'#fff', fontWeight:700, fontSize:13, cursor:payBusy===p.id?'default':'pointer', fontFamily:'inherit', opacity:payBusy===p.id?0.7:1 }}>{payBusy===p.id?'Redirigiendo…':('Hacer abono ('+money(p.monthly_amount)+')')}</button>
+                        <div style={{ fontSize:10.5, color:BS.soft, textAlign:'center', marginTop:6 }}>Pago seguro con Stripe · tarjeta, Klarna, Affirm</div>
+                      </div>
+                    )}
                   </div>
                 );
               })}

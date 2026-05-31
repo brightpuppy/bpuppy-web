@@ -362,6 +362,19 @@ function App() {
       const tok = await getToken();
       const r = await fetch(SU + "/functions/v1/portal_add_pet", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON, "Authorization": "Bearer " + (tok || ANON) }, body: JSON.stringify(f) });
       return r.json();
+    },
+    updatePet: async (f) => {
+      const tok = await getToken();
+      const r = await fetch(SU + "/functions/v1/portal_update_pet", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON, "Authorization": "Bearer " + (tok || ANON) }, body: JSON.stringify(f) });
+      return r.json();
+    },
+    manageBooking: async (action, id, extra) => {
+      const r = await fetch(SU + "/functions/v1/grooming_manage", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON }, body: JSON.stringify({ action, id, ...extra || {} }) });
+      return r.json();
+    },
+    payPlan: async (plan_id) => {
+      const r = await fetch(SU + "/functions/v1/stripe_checkout", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON }, body: JSON.stringify({ type: "plan_abono", plan_id, success_url: location.origin + "/social", cancel_url: location.origin + "/social" }) });
+      return r.json();
     }
   };
   const [openPost, setOpenPost] = useState(null);
