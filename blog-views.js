@@ -82,14 +82,78 @@ function ArticleReader({ art, onBack }) {
     window.scrollTo(0, 0);
   }, [art.id]);
   const cat = CAT_META[art.cat] || {};
-  return /* @__PURE__ */ React.createElement("div", { style: { background: "var(--bg)", minHeight: "100vh" } }, /* @__PURE__ */ React.createElement(ReadingBar, null), /* @__PURE__ */ React.createElement("div", { style: { position: "relative" } }, /* @__PURE__ */ React.createElement(ArticleHero, { art, compact: false }), /* @__PURE__ */ React.createElement("button", { onClick: onBack, style: { position: "absolute", top: 80, left: 24, display: "flex", alignItems: "center", gap: 7, background: "rgba(255,255,255,0.92)", border: "none", borderRadius: 999, padding: "8px 16px 8px 12px", cursor: "pointer", fontFamily: "inherit", fontSize: 13, fontWeight: 700, color: "var(--ink)", backdropFilter: "blur(12px)", boxShadow: "0 2px 12px rgba(0,0,0,0.12)", zIndex: 10 } }, /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 12H5M12 19l-7-7 7-7" })), "Blog"), art.img && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", bottom: 28, left: 28 } }, /* @__PURE__ */ React.createElement(CatPill, { cat: art.cat }))), /* @__PURE__ */ React.createElement("div", { className: "container", style: { maxWidth: 760, padding: "48px 24px 80px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 20, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement(CatPill, { cat: art.cat }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "var(--ink-soft)" } }, art.date), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "var(--ink-soft)" } }, "\xB7"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "var(--ink-soft)" } }, "\u23F1 ", art.read, " min de lectura")), /* @__PURE__ */ React.createElement("h1", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(28px,5vw,46px)", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--ink)", margin: "0 0 12px", lineHeight: 1.1, textWrap: "pretty" } }, art.title), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 16, color: "var(--ink-2)", margin: "0 0 36px", fontWeight: 500 } }, art.sub), art.tags?.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 36 } }, art.tags.map((t) => /* @__PURE__ */ React.createElement("span", { key: t, style: { padding: "4px 12px", borderRadius: 999, background: "var(--paper)", border: "1px solid var(--line)", fontSize: 12, color: "var(--ink-2)", fontWeight: 500 } }, "#", t))), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 19, lineHeight: 1.7, color: "var(--ink)", margin: "0 0 40px", fontWeight: 500, borderLeft: `3px solid ${art.color || "var(--orange)"}`, paddingLeft: 20 } }, art.lead), (art.body || []).map((s, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { marginBottom: 32 } }, /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", color: "var(--ink)", margin: "0 0 10px" } }, s.h), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 16, lineHeight: 1.8, color: "var(--ink-2)", margin: 0 } }, s.p))), art.stat && /* @__PURE__ */ React.createElement("div", { style: { margin: "40px 0", padding: "24px 28px", borderRadius: 18, background: `${art.color || "var(--orange)"}12`, borderLeft: `4px solid ${art.color || "var(--orange)"}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: art.color || "var(--orange)", marginBottom: 8 } }, "Dato importante"), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 15.5, lineHeight: 1.65, color: "var(--ink)", margin: 0, fontWeight: 500 } }, art.stat)), art.tips?.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { margin: "36px 0", padding: "24px 28px", borderRadius: 18, background: "var(--paper)", boxShadow: "0 2px 16px rgba(45,36,33,0.07)" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 800, color: "var(--ink)", marginBottom: 14 } }, "\u{1F4A1} Consejos pr\xE1cticos"), /* @__PURE__ */ React.createElement("ul", { style: { margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 } }, art.tips.map((tip, i) => /* @__PURE__ */ React.createElement("li", { key: i, style: { display: "flex", gap: 10, fontSize: 14.5, lineHeight: 1.6, color: "var(--ink-2)" } }, /* @__PURE__ */ React.createElement("span", { style: { color: art.color || "var(--orange)", fontWeight: 700, flexShrink: 0 } }, "\u2192"), tip)))), art.close && /* @__PURE__ */ React.createElement("p", { style: { fontSize: 16.5, lineHeight: 1.75, color: "var(--ink)", margin: "32px 0 0", fontStyle: "italic", fontFamily: "Instrument Serif, Georgia, serif" } }, art.close), /* @__PURE__ */ React.createElement("div", { style: { margin: "48px 0 0", padding: "24px", borderRadius: 16, background: "var(--paper)", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap", boxShadow: "0 1px 8px rgba(45,36,33,0.06)" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, fontWeight: 700, color: "var(--ink)", marginRight: "auto" } }, "\xBFTe fue \xFAtil? Comp\xE1rtelo"), [
-    { label: "WhatsApp", color: "#25D366", icon: "\u{1F4AC}" },
-    { label: "Facebook", color: "#1877F2", icon: "\u{1F4D8}" },
-    { label: "Copiar link", color: "var(--ink)", icon: "\u{1F517}" }
-  ].map((s) => /* @__PURE__ */ React.createElement("button", { key: s.label, style: { padding: "8px 16px", borderRadius: 10, border: "none", background: "var(--bg)", color: "var(--ink-2)", fontFamily: "inherit", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 6 } }, s.icon, " ", s.label)))), related.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { background: "var(--paper)", borderTop: "1px solid var(--line)", padding: "48px 0 64px" } }, /* @__PURE__ */ React.createElement("div", { className: "container" }, /* @__PURE__ */ React.createElement("h3", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--ink)", margin: "0 0 24px" } }, "Art\xEDculos relacionados"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))", gap: 20 } }, related.map((a) => /* @__PURE__ */ React.createElement(ArticleCard, { key: a.id, art: a, onClick: onBack.constructor === Function ? () => {
+  const [shareMsg, setShareMsg] = useState("");
+  const shareUrl = "https://bpuppy.us/blog?art=" + art.id;
+  const shareText = art.title;
+  const flash = (m) => {
+    setShareMsg(m);
+    setTimeout(() => setShareMsg(""), 4e3);
+  };
+  const doShare = async (net) => {
+    if (net === "whatsapp") {
+      window.open("https://wa.me/?text=" + encodeURIComponent(shareText + " " + shareUrl), "_blank");
+      return;
+    }
+    if (net === "facebook") {
+      window.open("https://www.facebook.com/sharer/sharer.php?u=" + encodeURIComponent(shareUrl), "_blank");
+      return;
+    }
+    if (net === "copy") {
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        flash("Link copiado.");
+      } catch (e) {
+        flash(shareUrl);
+      }
+      return;
+    }
+    if (net === "instagram" || net === "tiktok") {
+      if (navigator.share) {
+        try {
+          await navigator.share({ title: shareText, text: shareText, url: shareUrl });
+          return;
+        } catch (e) {
+          if (e && e.name === "AbortError") return;
+        }
+      }
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+      } catch (e) {
+      }
+      const app = net === "instagram" ? "Instagram" : "TikTok";
+      flash("Link copiado. \xC1bre " + app + " y p\xE9galo en tu historia \u2014 saldr\xE1 con la foto del art\xEDculo.");
+      window.open(net === "instagram" ? "https://www.instagram.com/" : "https://www.tiktok.com/", "_blank");
+      return;
+    }
+  };
+  const SHARE_ICONS = {
+    whatsapp: /* @__PURE__ */ React.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 004.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2zm5.8 14.16c-.25.69-1.45 1.32-1.99 1.36-.53.04-1.03.23-3.47-.72-2.92-1.15-4.79-4.12-4.94-4.31-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.01-2.41.26-.29.57-.36.76-.36l.55.01c.18 0 .42-.07.65.5.25.6.84 2.07.91 2.22.07.15.12.32.02.51-.1.19-.15.32-.29.49-.15.17-.31.39-.44.52-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.12.63-.07.17-.19.73-.85.92-1.14.19-.29.39-.24.65-.15.26.1 1.67.79 1.96.93.29.15.48.22.55.34.07.12.07.69-.18 1.38z" })),
+    facebook: /* @__PURE__ */ React.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07c0 6.03 4.39 11.03 10.13 11.93v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.69.24 2.69.24v2.97h-1.52c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z" })),
+    instagram: /* @__PURE__ */ React.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2" }, /* @__PURE__ */ React.createElement("rect", { x: "2", y: "2", width: "20", height: "20", rx: "5.5" }), /* @__PURE__ */ React.createElement("circle", { cx: "12", cy: "12", r: "4.2" }), /* @__PURE__ */ React.createElement("circle", { cx: "17.5", cy: "6.5", r: "1.2", fill: "currentColor", stroke: "none" })),
+    tiktok: /* @__PURE__ */ React.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("path", { d: "M16.5 3c.3 2.1 1.6 3.8 3.7 4.1v2.6c-1.2 0-2.4-.3-3.6-.9v6.2c0 3.1-2.5 5.6-5.6 5.6S5.4 18.1 5.4 15s2.5-5.6 5.6-5.6c.3 0 .6 0 .9.1v2.8c-.3-.1-.6-.2-.9-.2-1.6 0-2.9 1.3-2.9 2.9s1.3 2.9 2.9 2.9 2.9-1.3 2.9-2.9V3h2.6z" })),
+    copy: /* @__PURE__ */ React.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M10 13a5 5 0 007.07 0l3-3a5 5 0 00-7.07-7.07l-1.72 1.71" }), /* @__PURE__ */ React.createElement("path", { d: "M14 11a5 5 0 00-7.07 0l-3 3a5 5 0 007.07 7.07l1.71-1.71" }))
+  };
+  return /* @__PURE__ */ React.createElement("div", { style: { background: "var(--bg)", minHeight: "100vh" } }, /* @__PURE__ */ React.createElement(ReadingBar, null), /* @__PURE__ */ React.createElement("div", { style: { position: "relative" } }, /* @__PURE__ */ React.createElement(ArticleHero, { art, compact: false }), /* @__PURE__ */ React.createElement("button", { onClick: onBack, style: { position: "absolute", top: 80, left: 24, display: "flex", alignItems: "center", gap: 7, background: "rgba(255,255,255,0.92)", border: "none", borderRadius: 999, padding: "8px 16px 8px 12px", cursor: "pointer", fontFamily: "inherit", fontSize: 13, fontWeight: 700, color: "var(--ink)", backdropFilter: "blur(12px)", boxShadow: "0 2px 12px rgba(0,0,0,0.12)", zIndex: 10 } }, /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 12H5M12 19l-7-7 7-7" })), "Blog"), art.img && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", bottom: 28, left: 28 } }, /* @__PURE__ */ React.createElement(CatPill, { cat: art.cat }))), /* @__PURE__ */ React.createElement("div", { className: "container", style: { maxWidth: 760, padding: "48px 24px 80px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, marginBottom: 20, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement(CatPill, { cat: art.cat }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "var(--ink-soft)" } }, art.date), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "var(--ink-soft)" } }, "\xB7"), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "var(--ink-soft)" } }, "\u23F1 ", art.read, " min de lectura")), /* @__PURE__ */ React.createElement("h1", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(28px,5vw,46px)", fontWeight: 800, letterSpacing: "-0.03em", color: "var(--ink)", margin: "0 0 12px", lineHeight: 1.1, textWrap: "pretty" } }, art.title), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 16, color: "var(--ink-2)", margin: "0 0 36px", fontWeight: 500 } }, art.sub), art.tags?.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 6, marginBottom: 36 } }, art.tags.map((t) => /* @__PURE__ */ React.createElement("span", { key: t, style: { padding: "4px 12px", borderRadius: 999, background: "var(--paper)", border: "1px solid var(--line)", fontSize: 12, color: "var(--ink-2)", fontWeight: 500 } }, "#", t))), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 19, lineHeight: 1.7, color: "var(--ink)", margin: "0 0 40px", fontWeight: 500, borderLeft: `3px solid ${art.color || "var(--orange)"}`, paddingLeft: 20 } }, art.lead), (art.body || []).map((s, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { marginBottom: 32 } }, /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 700, letterSpacing: "-0.02em", color: "var(--ink)", margin: "0 0 10px" } }, s.h), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 16, lineHeight: 1.8, color: "var(--ink-2)", margin: 0 } }, s.p))), art.stat && /* @__PURE__ */ React.createElement("div", { style: { margin: "40px 0", padding: "24px 28px", borderRadius: 18, background: `${art.color || "var(--orange)"}12`, borderLeft: `4px solid ${art.color || "var(--orange)"}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 800, textTransform: "uppercase", letterSpacing: "0.08em", color: art.color || "var(--orange)", marginBottom: 8 } }, "Dato importante"), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 15.5, lineHeight: 1.65, color: "var(--ink)", margin: 0, fontWeight: 500 } }, art.stat)), art.tips?.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { margin: "36px 0", padding: "24px 28px", borderRadius: 18, background: "var(--paper)", boxShadow: "0 2px 16px rgba(45,36,33,0.07)" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 800, color: "var(--ink)", marginBottom: 14 } }, "\u{1F4A1} Consejos pr\xE1cticos"), /* @__PURE__ */ React.createElement("ul", { style: { margin: 0, padding: 0, listStyle: "none", display: "flex", flexDirection: "column", gap: 10 } }, art.tips.map((tip, i) => /* @__PURE__ */ React.createElement("li", { key: i, style: { display: "flex", gap: 10, fontSize: 14.5, lineHeight: 1.6, color: "var(--ink-2)" } }, /* @__PURE__ */ React.createElement("span", { style: { color: art.color || "var(--orange)", fontWeight: 700, flexShrink: 0 } }, "\u2192"), tip)))), art.close && /* @__PURE__ */ React.createElement("p", { style: { fontSize: 16.5, lineHeight: 1.75, color: "var(--ink)", margin: "32px 0 0", fontStyle: "italic", fontFamily: "Instrument Serif, Georgia, serif" } }, art.close), /* @__PURE__ */ React.createElement("div", { style: { margin: "48px 0 0", padding: "24px", borderRadius: 16, background: "var(--paper)", boxShadow: "0 1px 8px rgba(45,36,33,0.06)" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, fontWeight: 700, color: "var(--ink)", marginRight: "auto" } }, "\xBFTe fue \xFAtil? Comp\xE1rtelo"), [
+    { id: "whatsapp", label: "WhatsApp", color: "#25D366" },
+    { id: "facebook", label: "Facebook", color: "#1877F2" },
+    { id: "instagram", label: "Instagram", color: "#E1306C" },
+    { id: "tiktok", label: "TikTok", color: "var(--ink)" },
+    { id: "copy", label: "Copiar link", color: "var(--ink-2)" }
+  ].map((s) => /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      key: s.id,
+      onClick: () => doShare(s.id),
+      "aria-label": s.label,
+      style: { padding: "8px 14px", borderRadius: 10, border: "none", background: "var(--bg)", color: s.color, fontFamily: "inherit", fontSize: 13, fontWeight: 600, cursor: "pointer", display: "flex", alignItems: "center", gap: 7 }
+    },
+    SHARE_ICONS[s.id],
+    " ",
+    s.label
+  ))), shareMsg && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 12, fontSize: 12.5, color: "var(--ink-2)", background: "var(--bg)", borderRadius: 10, padding: "9px 13px" } }, shareMsg))), related.length > 0 && /* @__PURE__ */ React.createElement("div", { style: { background: "var(--paper)", borderTop: "1px solid var(--line)", padding: "48px 0 64px" } }, /* @__PURE__ */ React.createElement("div", { className: "container" }, /* @__PURE__ */ React.createElement("h3", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, letterSpacing: "-0.02em", color: "var(--ink)", margin: "0 0 24px" } }, "Art\xEDculos relacionados"), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(260px,1fr))", gap: 20 } }, related.map((a) => /* @__PURE__ */ React.createElement(ArticleCard, { key: a.id, art: a, onClick: onBack.constructor === Function ? () => {
   } : onBack, featured: false }))))));
 }
-function BlogApp({ initialArtId }) {
+function BlogApp({ initialArtId, onHero }) {
   const [selected, setSelected] = useState(
     () => initialArtId ? BLOG.find((a) => a.id === initialArtId) || null : null
   );
@@ -98,6 +162,7 @@ function BlogApp({ initialArtId }) {
       const m = document.querySelector(sel);
       if (m) m.setAttribute(attr, val);
     };
+    if (onHero) onHero(!!(selected && selected.img));
     if (selected) {
       const desc = (selected.sub || selected.lead || "").slice(0, 158);
       document.title = selected.title + " | BPuppy";
@@ -106,6 +171,12 @@ function BlogApp({ initialArtId }) {
       set('meta[property="og:description"]', "content", desc);
       set('link[rel="canonical"]', "href", "https://bpuppy.us/blog?art=" + selected.id);
       set('meta[property="og:url"]', "content", "https://bpuppy.us/blog?art=" + selected.id);
+      if (selected.img) {
+        const imgUrl = /^https?:/.test(selected.img) ? selected.img : "https://bpuppy.us/" + String(selected.img).replace(/^\//, "");
+        set('meta[property="og:image"]', "content", imgUrl);
+        set('meta[name="twitter:image"]', "content", imgUrl);
+        set('meta[name="twitter:card"]', "content", "summary_large_image");
+      }
     } else {
       document.title = "Blog de Mascotas: Cuidado, Razas y Salud | BPuppy";
       set('link[rel="canonical"]', "href", "https://bpuppy.us/blog");

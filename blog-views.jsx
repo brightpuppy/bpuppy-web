@@ -229,6 +229,37 @@ function ArticleReader({ art, onBack }) {
 
   const cat = CAT_META[art.cat] || {};
 
+  // ── Compartir ──────────────────────────────────────────────────────────────
+  const [shareMsg, setShareMsg] = useState('');
+  const shareUrl = 'https://bpuppy.us/blog?art=' + art.id;
+  const shareText = art.title;
+  const flash = (m) => { setShareMsg(m); setTimeout(() => setShareMsg(''), 4000); };
+  const doShare = async (net) => {
+    if (net === 'whatsapp') { window.open('https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + shareUrl), '_blank'); return; }
+    if (net === 'facebook') { window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank'); return; }
+    if (net === 'copy') { try { await navigator.clipboard.writeText(shareUrl); flash('Link copiado.'); } catch (e) { flash(shareUrl); } return; }
+    // Instagram / TikTok: no tienen enlace web directo. Abrimos la hoja nativa (móvil)
+    // donde sí se puede publicar en la historia con el preview; en escritorio copiamos el link.
+    if (net === 'instagram' || net === 'tiktok') {
+      if (navigator.share) {
+        try { await navigator.share({ title: shareText, text: shareText, url: shareUrl }); return; }
+        catch (e) { if (e && e.name === 'AbortError') return; }
+      }
+      try { await navigator.clipboard.writeText(shareUrl); } catch (e) {}
+      const app = net === 'instagram' ? 'Instagram' : 'TikTok';
+      flash('Link copiado. Ábre ' + app + ' y pégalo en tu historia — saldrá con la foto del artículo.');
+      window.open(net === 'instagram' ? 'https://www.instagram.com/' : 'https://www.tiktok.com/', '_blank');
+      return;
+    }
+  };
+  const SHARE_ICONS = {
+    whatsapp: <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M12.04 2C6.58 2 2.13 6.45 2.13 11.91c0 1.75.46 3.45 1.32 4.95L2 22l5.25-1.38a9.9 9.9 0 004.79 1.22h.01c5.46 0 9.91-4.45 9.91-9.91 0-2.65-1.03-5.14-2.9-7.01A9.82 9.82 0 0012.04 2zm5.8 14.16c-.25.69-1.45 1.32-1.99 1.36-.53.04-1.03.23-3.47-.72-2.92-1.15-4.79-4.12-4.94-4.31-.14-.19-1.18-1.57-1.18-3 0-1.42.75-2.12 1.01-2.41.26-.29.57-.36.76-.36l.55.01c.18 0 .42-.07.65.5.25.6.84 2.07.91 2.22.07.15.12.32.02.51-.1.19-.15.32-.29.49-.15.17-.31.39-.44.52-.15.15-.3.31-.13.6.17.29.76 1.25 1.63 2.02 1.12 1 2.06 1.31 2.35 1.46.29.15.46.12.63-.07.17-.19.73-.85.92-1.14.19-.29.39-.24.65-.15.26.1 1.67.79 1.96.93.29.15.48.22.55.34.07.12.07.69-.18 1.38z"/></svg>,
+    facebook: <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M24 12.07C24 5.4 18.63 0 12 0S0 5.4 0 12.07c0 6.03 4.39 11.03 10.13 11.93v-8.44H7.08v-3.49h3.05V9.41c0-3.02 1.79-4.69 4.53-4.69 1.31 0 2.69.24 2.69.24v2.97h-1.52c-1.49 0-1.96.93-1.96 1.89v2.25h3.33l-.53 3.49h-2.8V24C19.61 23.1 24 18.1 24 12.07z"/></svg>,
+    instagram: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="2" y="2" width="20" height="20" rx="5.5"/><circle cx="12" cy="12" r="4.2"/><circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"/></svg>,
+    tiktok: <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M16.5 3c.3 2.1 1.6 3.8 3.7 4.1v2.6c-1.2 0-2.4-.3-3.6-.9v6.2c0 3.1-2.5 5.6-5.6 5.6S5.4 18.1 5.4 15s2.5-5.6 5.6-5.6c.3 0 .6 0 .9.1v2.8c-.3-.1-.6-.2-.9-.2-1.6 0-2.9 1.3-2.9 2.9s1.3 2.9 2.9 2.9 2.9-1.3 2.9-2.9V3h2.6z"/></svg>,
+    copy: <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M10 13a5 5 0 007.07 0l3-3a5 5 0 00-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 00-7.07 0l-3 3a5 5 0 007.07 7.07l1.71-1.71"/></svg>,
+  };
+
   return (
     <div style={{ background: 'var(--bg)', minHeight: '100vh' }}>
       <ReadingBar />
@@ -320,17 +351,25 @@ function ArticleReader({ art, onBack }) {
         )}
 
         {/* Share */}
-        <div style={{ margin: '48px 0 0', padding: '24px', borderRadius: 16, background: 'var(--paper)', display: 'flex', alignItems: 'center', gap: 16, flexWrap: 'wrap', boxShadow: '0 1px 8px rgba(45,36,33,0.06)' }}>
-          <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginRight: 'auto' }}>¿Te fue útil? Compártelo</span>
-          {[
-            { label: 'WhatsApp', color: '#25D366', icon: '💬' },
-            { label: 'Facebook', color: '#1877F2', icon: '📘' },
-            { label: 'Copiar link', color: 'var(--ink)', icon: '🔗' },
-          ].map(s => (
-            <button key={s.label} style={{ padding: '8px 16px', borderRadius: 10, border: 'none', background: 'var(--bg)', color: 'var(--ink-2)', fontFamily: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 6 }}>
-              {s.icon} {s.label}
-            </button>
-          ))}
+        <div style={{ margin: '48px 0 0', padding: '24px', borderRadius: 16, background: 'var(--paper)', boxShadow: '0 1px 8px rgba(45,36,33,0.06)' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginRight: 'auto' }}>¿Te fue útil? Compártelo</span>
+            {[
+              { id: 'whatsapp', label: 'WhatsApp', color: '#25D366' },
+              { id: 'facebook', label: 'Facebook', color: '#1877F2' },
+              { id: 'instagram', label: 'Instagram', color: '#E1306C' },
+              { id: 'tiktok', label: 'TikTok', color: 'var(--ink)' },
+              { id: 'copy', label: 'Copiar link', color: 'var(--ink-2)' },
+            ].map(s => (
+              <button key={s.id} onClick={() => doShare(s.id)} aria-label={s.label}
+                style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: 'var(--bg)', color: s.color, fontFamily: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7 }}>
+                {SHARE_ICONS[s.id]} {s.label}
+              </button>
+            ))}
+          </div>
+          {shareMsg && (
+            <div style={{ marginTop: 12, fontSize: 12.5, color: 'var(--ink-2)', background: 'var(--bg)', borderRadius: 10, padding: '9px 13px' }}>{shareMsg}</div>
+          )}
         </div>
       </div>
 
@@ -350,7 +389,7 @@ function ArticleReader({ art, onBack }) {
 }
 
 // ── Main blog app component ────────────────────────────────────────────────────
-function BlogApp({ initialArtId }) {
+function BlogApp({ initialArtId, onHero }) {
   const [selected, setSelected] = useState(() =>
     initialArtId ? (BLOG.find(a => a.id === initialArtId) || null) : null
   );
@@ -358,6 +397,8 @@ function BlogApp({ initialArtId }) {
   // SEO: title/description/canonical dinamicos segun el articulo abierto
   useEffect(() => {
     const set = (sel, attr, val) => { const m = document.querySelector(sel); if (m) m.setAttribute(attr, val); };
+    // Header en blanco cuando el artículo tiene foto de portada (hero oscuro)
+    if (onHero) onHero(!!(selected && selected.img));
     if (selected) {
       const desc = (selected.sub || selected.lead || '').slice(0, 158);
       document.title = selected.title + ' | BPuppy';
@@ -366,6 +407,12 @@ function BlogApp({ initialArtId }) {
       set('meta[property="og:description"]', 'content', desc);
       set('link[rel="canonical"]', 'href', 'https://bpuppy.us/blog?art=' + selected.id);
       set('meta[property="og:url"]', 'content', 'https://bpuppy.us/blog?art=' + selected.id);
+      if (selected.img) {
+        const imgUrl = /^https?:/.test(selected.img) ? selected.img : ('https://bpuppy.us/' + String(selected.img).replace(/^\//, ''));
+        set('meta[property="og:image"]', 'content', imgUrl);
+        set('meta[name="twitter:image"]', 'content', imgUrl);
+        set('meta[name="twitter:card"]', 'content', 'summary_large_image');
+      }
     } else {
       document.title = 'Blog de Mascotas: Cuidado, Razas y Salud | BPuppy';
       set('link[rel="canonical"]', 'href', 'https://bpuppy.us/blog');

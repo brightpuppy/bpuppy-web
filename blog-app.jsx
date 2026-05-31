@@ -16,13 +16,16 @@ function BlogRoot() {
     return id ? parseInt(id) : null;
   }, []);
 
+  // Header en blanco solo cuando hay un artículo con foto de portada oscura detrás
+  const [heroDark, setHeroDark] = React.useState(false);
+
   const isLive = useSitePublish('Blog');
   if (!isLive) return <ComingSoon pageName="Blog"/>;
   return (
     <LangContext.Provider value={{ lang, setLang: setLangBoth }}>
-      <Header overDark={false} />
+      <Header overDark={heroDark} />
       <main>
-        <BlogApp initialArtId={initArtId} />
+        <BlogApp initialArtId={initArtId} onHero={setHeroDark} />
       </main>
       <Footer />
     </LangContext.Provider>
