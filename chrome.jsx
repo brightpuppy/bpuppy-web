@@ -244,9 +244,9 @@ function GlobeDropdown({ isOverDark, onLangSelect }) {
   );
 }
 
-function NavItem({ label, href, items }) {
+function NavItem({ label, href, items, navClass }) {
   return (
-    <div className="nav-item">
+    <div className={`nav-item ${navClass || ''}`}>
       <a href={href}>
         {label}
         {items && <svg className="nav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>}
@@ -254,7 +254,7 @@ function NavItem({ label, href, items }) {
       {items &&
       <div className="nav-dropdown">
           {items.map((item, i) =>
-        <a key={i} href={item.href}>{item.label}</a>
+        <a key={i} href={item.href} className={item.className || ''}>{item.label}</a>
         )}
         </div>
       }
@@ -351,7 +351,7 @@ function Header({ overDark }) {
 
   const cachItems = [
     { label: t(['Conoce las razas', 'Meet the breeds']), href: '/razas' },
-    { label: t(['Encuentra tu Match', 'Find Your Match']), href: '/quiz' },
+    { label: t(['Encuentra tu Match', 'Find Your Match']), href: '/quiz', className: 'bp-shine' },
     { label: t(['Solicita tu cachorro ideal', 'Request your ideal puppy']), href: '/solicitud' },
     ...(pv['Cachorros-Entregados'] !== false ? [{ label: t(['Cachorros Entregados', 'Delivered Puppies']), href: '/entregados' }] : []),
     ...(pv['Adopciones'] ? [{ label: t(['Adopciones', 'Adoptions']), href: '/adopciones' }] : []),
@@ -374,7 +374,7 @@ function Header({ overDark }) {
           <span className="wm notranslate">Bright Puppy</span>
         </a>
         <nav className="nav">
-          {pv['Cachorros'] !== false && <NavItem label={t(STRINGS.nav.puppies)} href="/cachorros" items={cachItems}/>}
+          {pv['Cachorros'] !== false && <NavItem label={t(STRINGS.nav.puppies)} href="/cachorros" items={cachItems} navClass="bp-nav-glow"/>}
           {pv['Gatos']     !== false && <NavItem label={t(['Gatos','Cats'])} href="/gatos" items={gatosItems}/>}
           <a href="/financiamiento">{t(['Financiamiento','Financing'])}</a>
           {pv['Tienda']    !== false && <a href="/tienda">{t(['Tienda','Shop'])}</a>}

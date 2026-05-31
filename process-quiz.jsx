@@ -159,8 +159,8 @@ function Quiz() {
                 <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{step + 1}/4</span>
               </div>
               <div style={{ borderTop: '1px solid var(--line)', marginTop: 18, paddingTop: 14, textAlign: 'center' }}>
-                <a href="/quiz" style={{ fontSize: 13, fontWeight: 600, color: 'var(--orange)', display: 'inline-flex', alignItems: 'center', gap: 6 }}>
-                  {t(['Haz un quiz más completo aquí →', 'Take a more complete quiz here →'])}
+                <a href="/quiz" className="bp-quiz-cta" style={{ fontSize: 13.5, fontWeight: 700 }}>
+                  <span className="bp-shine">{t(['Haz un quiz más completo aquí →', 'Take a more complete quiz here →'])}</span>
                 </a>
               </div>
             </> :
