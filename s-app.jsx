@@ -126,10 +126,10 @@ function DesktopSidebar({ screen, setScreen, bs }) {
           </button>
         ))}
       </nav>
-      <a href="/portal" style={{ display:'flex', alignItems:'center', gap:11, padding:'10px 12px', marginBottom:10, borderRadius:12, textDecoration:'none', border:`1px solid ${bs.border}`, color:bs.ink2, fontWeight:600, fontSize:13.5 }}>
+      <button onClick={() => setScreen('account')} style={{ display:'flex', alignItems:'center', gap:11, padding:'10px 12px', marginBottom:10, borderRadius:12, cursor:'pointer', width:'100%', textAlign:'left', fontFamily:'inherit', background: screen==='account'?bs.surface2:'transparent', border:`1px solid ${screen==='account'?bs.brand:bs.border}`, color: screen==='account'?bs.brand:bs.ink2, fontWeight:600, fontSize:13.5 }}>
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v4"/></svg>
         Mi Cuenta · Reservas
-      </a>
+      </button>
       <button onClick={() => setScreen('upload')} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'12px', borderRadius:14, border:'none', background:bs.grad, color:'#fff', fontSize:13.5, fontWeight:700, cursor:'pointer', fontFamily:'inherit', marginBottom:14, boxShadow:bs.glow, transition:'opacity .15s' }}
         onMouseEnter={e=>e.currentTarget.style.opacity='.85'} onMouseLeave={e=>e.currentTarget.style.opacity='1'}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
@@ -186,6 +186,7 @@ function RightRail({ bs }) {
 function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave, onOpenPost }) {
   const p = { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost };
   if (screen==='feed')     return <FeedScreen     {...p}/>;
+  if (screen==='account')  return <AccountScreen  setScreen={setScreen}/>;
   if (screen==='profile')  return <ProfileScreen  posts={posts} setScreen={setScreen}/>;
   if (screen==='pack')     return <PackScreen     setScreen={setScreen}/>;
   if (screen==='discover') return <DiscoverScreen/>;
@@ -315,6 +316,9 @@ function App() {
     postDetail:  async (id) => apiCall('post_detail', { post_id:id }),
     addComment:  async (id, text) => apiCall('comment_create', { post_id:id, text }),
     likeToggle:  async (id) => apiCall('like_toggle', { post_id:id }),
+    // Mi Cuenta (portal) dentro de B Social — mismas tablas que el CRM (vía portal_data / portal_add_pet)
+    accountData: async () => { const tok = await getToken(); const r = await fetch(SU+'/functions/v1/portal_data',{ method:'POST', headers:{ 'Content-Type':'application/json', 'apikey':ANON, 'Authorization':'Bearer '+(tok||ANON) }, body:'{}' }); return r.json(); },
+    addPet:      async (f) => { const tok = await getToken(); const r = await fetch(SU+'/functions/v1/portal_add_pet',{ method:'POST', headers:{ 'Content-Type':'application/json', 'apikey':ANON, 'Authorization':'Bearer '+(tok||ANON) }, body:JSON.stringify(f) }); return r.json(); },
   };
 
   const [openPost, setOpenPost] = useState(null);

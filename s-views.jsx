@@ -714,6 +714,14 @@ function ProfileScreen({ posts, setScreen }) {
             <span style={{ position:'absolute', top:3, left: isPublic?23:3, width:20, height:20, borderRadius:'50%', background:'#fff', transition:'left .2s', boxShadow:'0 1px 4px rgba(0,0,0,0.3)' }}/>
           </button>
         </div>
+        <button onClick={() => setScreen('account')} className="bs-btn" style={{ display:'flex', alignItems:'center', gap:12, width:'100%', marginTop:10, padding:'13px 14px', borderRadius:14, border:`1.5px solid ${BS.border}`, background:BS.surface2, cursor:'pointer', fontFamily:'inherit', textAlign:'left' }}>
+          <span style={{ flexShrink:0, color:BS.brand, display:'inline-flex' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v4"/></svg></span>
+          <div style={{ flex:1, minWidth:0 }}>
+            <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>Mi Cuenta</div>
+            <div style={{ fontSize:11.5, color:BS.soft }}>Mascotas, grooming, pagos y membresías · privado</div>
+          </div>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={BS.soft} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
+        </button>
       </div>
       <div style={{ display:'flex', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
         {[['posts','Posts'],['pets','Mascotas'],['saved','Guardados']].map(([t,lbl]) => (
@@ -1240,7 +1248,204 @@ function VideosScreen() {
   );
 }
 
+// ── Mi Cuenta (portal) DENTRO de B Social — datos privados, leídos de Supabase (mismas tablas que el CRM) ──
+function AddPetForm({ BS, onDone, onCancel }) {
+  const [f, setF] = useState({ name:'', breed:'', size:'', sex:'', weight_lbs:'' });
+  const [busy, setBusy] = useState(false);
+  const [msg, setMsg] = useState('');
+  const inp = { width:'100%', padding:'10px 12px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontFamily:'inherit', fontSize:13, outline:'none', boxSizing:'border-box' };
+  const save = async () => {
+    if(!f.name.trim()){ setMsg('El nombre es obligatorio.'); return; }
+    setBusy(true); setMsg('');
+    try {
+      const A = (typeof window!=='undefined' && window.BSAUTH) || {};
+      const d = A.addPet ? await A.addPet(f) : { error:'No disponible' };
+      if(d && d.error){ setMsg(d.error); setBusy(false); return; }
+      onDone();
+    } catch(e){ setMsg('No se pudo guardar.'); setBusy(false); }
+  };
+  return (
+    <div style={{ background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:16, padding:16, marginTop:4 }}>
+      <div style={{ fontSize:14, fontWeight:800, color:BS.ink, marginBottom:10 }}>Agregar mascota</div>
+      <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
+        <input style={{ ...inp, gridColumn:'1/-1' }} placeholder="Nombre *" value={f.name} onChange={e=>setF({...f,name:e.target.value})}/>
+        <input style={inp} placeholder="Raza" value={f.breed} onChange={e=>setF({...f,breed:e.target.value})}/>
+        <select style={inp} value={f.size} onChange={e=>setF({...f,size:e.target.value})}><option value="">Tamaño</option><option>Pequeño</option><option>Mediano</option><option>Grande</option><option>XL</option></select>
+        <select style={inp} value={f.sex} onChange={e=>setF({...f,sex:e.target.value})}><option value="">Sexo</option><option>Macho</option><option>Hembra</option></select>
+        <input style={inp} type="number" placeholder="Peso (lb)" value={f.weight_lbs} onChange={e=>setF({...f,weight_lbs:e.target.value})}/>
+      </div>
+      {msg && <div style={{ fontSize:12, color:BS.rose, marginTop:8 }}>{msg}</div>}
+      <div style={{ display:'flex', gap:8, marginTop:12 }}>
+        <button onClick={onCancel} className="bs-btn" style={{ flex:1, padding:'11px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:'transparent', color:BS.ink2, fontWeight:700, fontSize:13, cursor:'pointer', fontFamily:'inherit' }}>Cancelar</button>
+        <button onClick={save} disabled={busy} className="bs-btn" style={{ flex:2, padding:'11px', borderRadius:10, border:'none', background:BS.grad, color:'#fff', fontWeight:700, fontSize:13, cursor:busy?'default':'pointer', fontFamily:'inherit', opacity:busy?0.7:1 }}>{busy?'Guardando…':'Guardar mascota'}</button>
+      </div>
+    </div>
+  );
+}
+
+function AccountScreen({ setScreen }) {
+  const BS = useBS();
+  const [data, setData] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState('');
+  const [tab, setTab] = useState('mascotas');
+  const [addOpen, setAddOpen] = useState(false);
+
+  const load = async () => {
+    setLoading(true); setErr('');
+    try {
+      const A = (typeof window!=='undefined' && window.BSAUTH) || {};
+      if (!A.accountData) { setErr('No disponible.'); setLoading(false); return; }
+      const d = await A.accountData();
+      if (d && d.error) setErr(d.error);
+      else setData(d || {});
+    } catch(e){ setErr('No pudimos cargar tu cuenta.'); }
+    setLoading(false);
+  };
+  useEffect(() => { load(); }, []);
+
+  const money = n => '$' + Number(n||0).toLocaleString('en-US');
+  const fmtD = iso => { if(!iso) return '—'; try { return new Date(String(iso).length<=10?iso+'T00:00:00':iso).toLocaleDateString('es-US',{day:'numeric',month:'short',year:'numeric'}); } catch(e){ return '—'; } };
+
+  const d = data || {};
+  const pets = d.pets || [];
+  const memberships = d.memberships || [];
+  const plans = d.plans || [];
+  const payments = d.payments || [];
+  const baths = memberships.reduce((a,m)=>a+(m.credits_balance||0),0);
+
+  const TABS = [
+    { id:'mascotas',   label:'Mascotas',   n: pets.length },
+    { id:'grooming',   label:'Grooming',   n: 0 },
+    { id:'membresias', label:'Membresías', n: memberships.length },
+    { id:'pagos',      label:'Pagos',      n: plans.length },
+  ];
+  const card = { background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:16, padding:'14px 16px', marginBottom:12 };
+  const row = (k,v,vc) => (<div style={{ display:'flex', justifyContent:'space-between', gap:12, padding:'4px 0', fontSize:13 }}><span style={{ color:BS.soft }}>{k}</span><span style={{ color:vc||BS.ink, fontWeight:600, textAlign:'right' }}>{v}</span></div>);
+
+  return (
+    <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
+      <div style={{ background:BS.surface, padding:'12px 16px', position:'sticky', top:0, zIndex:11, borderBottom:`1px solid ${BS.border}`, display:'flex', alignItems:'center', gap:12 }}>
+        <button onClick={() => setScreen('profile')} className="bs-btn" style={{ background:'transparent', border:'none', color:BS.ink2, cursor:'pointer', display:'grid', placeItems:'center', padding:0 }}>
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        </button>
+        <div style={{ flex:1, minWidth:0 }}>
+          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:18, fontWeight:800, color:BS.ink }}>Mi Cuenta</div>
+          <div style={{ fontSize:11.5, color:BS.soft }}>Privado · solo tú ves esto</div>
+        </div>
+        <a href="/grooming.html" className="bs-btn" style={{ textDecoration:'none', background:BS.grad, color:'#fff', fontSize:12, fontWeight:700, padding:'8px 13px', borderRadius:10 }}>Agendar</a>
+      </div>
+
+      <div style={{ display:'flex', alignItems:'center', gap:10, margin:'12px 14px 0', padding:'10px 14px', borderRadius:12, background:BS.surface2, border:`1px solid ${BS.border}` }}>
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={BS.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink:0 }}><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
+        <span style={{ fontSize:11.5, color:BS.soft, lineHeight:1.4 }}>Tus mascotas, citas, pagos y membresías son privados — no aparecen en tu perfil público.</span>
+      </div>
+
+      {loading && <div style={{ padding:40, textAlign:'center', color:BS.soft, fontSize:13 }}>Cargando tu cuenta…</div>}
+      {!loading && err && <div style={{ margin:'16px 14px', background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:16, padding:'14px 16px', color:BS.rose, fontSize:13 }}>{err} <button onClick={load} style={{ marginLeft:8, color:BS.brand, background:'none', border:'none', cursor:'pointer', fontWeight:700 }}>Reintentar</button></div>}
+
+      {!loading && !err && (
+      <React.Fragment>
+        <div style={{ display:'flex', gap:8, padding:'12px 14px' }}>
+          {[{n:pets.length,l:'mascotas'},{n:baths,l:'baños disp.'},{n:memberships.length,l:'membresías'}].map(s=>(
+            <div key={s.l} style={{ flex:1, background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:14, padding:'10px', textAlign:'center' }}>
+              <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink }}>{s.n}</div>
+              <div style={{ fontSize:10.5, color:BS.soft }}>{s.l}</div>
+            </div>
+          ))}
+        </div>
+
+        <div className="bs-hscr" style={{ display:'flex', gap:6, padding:'0 14px 12px', borderBottom:`1px solid ${BS.border}` }}>
+          {TABS.map(tb => { const on = tab===tb.id; return (
+            <button key={tb.id} onClick={()=>setTab(tb.id)} className="bs-btn" style={{ padding:'8px 14px', borderRadius:999, border:`1.5px solid ${on?BS.brand:BS.border}`, background: on?'rgba(255,85,32,0.08)':'transparent', color:on?BS.brand:BS.ink2, fontSize:12.5, fontWeight:on?700:600, cursor:'pointer', whiteSpace:'nowrap', fontFamily:'inherit' }}>{tb.label}{tb.n?` · ${tb.n}`:''}</button>
+          ); })}
+        </div>
+
+        <div style={{ padding:'14px' }}>
+          {tab==='mascotas' && (
+            <div>
+              {pets.length===0 && !addOpen && <div style={{ ...card, textAlign:'center', color:BS.soft, fontSize:13 }}>Aún no tienes mascotas registradas.</div>}
+              {pets.map((p,i)=>(
+                <div key={i} style={{ ...card, display:'flex', gap:12, alignItems:'center' }}>
+                  <div style={{ width:52, height:52, borderRadius:14, flexShrink:0, background:BS.surface2, display:'grid', placeItems:'center', overflow:'hidden' }}>
+                    {p.photo_url ? <img src={p.photo_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : <svg width="26" height="26" viewBox="0 0 24 24" fill={BS.brand}><circle cx="7" cy="9" r="1.7"/><circle cx="12" cy="7.4" r="1.7"/><circle cx="17" cy="9" r="1.7"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/></svg>}
+                  </div>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:15, fontWeight:800, color:BS.ink }}>{p.name||'Mi mascota'}</div>
+                    <div style={{ fontSize:12, color:BS.ink2 }}>{[p.breed, p.size, p.sex, p.weight_lbs?(p.weight_lbs+' lb'):''].filter(Boolean).join(' · ')||'—'}</div>
+                    {p.status==='pending' && <span style={{ display:'inline-block', marginTop:5, fontSize:10.5, fontWeight:700, color:'#E0A106', background:'rgba(224,161,6,0.12)', padding:'2px 8px', borderRadius:999 }}>Pendiente de confirmar</span>}
+                  </div>
+                  {p.status!=='pending' && <a href="/grooming.html" className="bs-btn" style={{ textDecoration:'none', fontSize:11.5, fontWeight:700, color:BS.brand, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'7px 11px', whiteSpace:'nowrap' }}>Agendar</a>}
+                </div>
+              ))}
+              {addOpen ? <AddPetForm BS={BS} onDone={()=>{ setAddOpen(false); load(); }} onCancel={()=>setAddOpen(false)}/> :
+                <button onClick={()=>setAddOpen(true)} className="bs-btn" style={{ width:'100%', padding:'13px', borderRadius:14, border:`1.5px dashed ${BS.border}`, background:'transparent', color:BS.brand, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>+ Agregar mascota</button>}
+            </div>
+          )}
+
+          {tab==='grooming' && (
+            <div>
+              <div style={{ ...card, textAlign:'center' }}>
+                <div style={{ color:BS.brand, display:'flex', justifyContent:'center', marginBottom:8 }}><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/></svg></div>
+                <div style={{ fontSize:16, fontWeight:800, color:BS.ink, marginBottom:4 }}>Agenda tu próxima cita</div>
+                <div style={{ fontSize:12.5, color:BS.soft, lineHeight:1.5, marginBottom:14 }}>{memberships.length?'Tus baños de membresía se aplican automáticamente.':'Baño, corte o spa para tu mascota en segundos.'}</div>
+                <a href="/grooming.html" style={{ display:'inline-block', textDecoration:'none', background:BS.grad, color:'#fff', fontSize:13.5, fontWeight:700, padding:'11px 22px', borderRadius:12 }}>Agendar grooming →</a>
+              </div>
+              {baths>0 && <div style={card}>{row('Baños de membresía disponibles', baths, BS.brand)}</div>}
+            </div>
+          )}
+
+          {tab==='membresias' && (
+            <div>
+              {memberships.length===0 && <div style={{ ...card, textAlign:'center', color:BS.soft, fontSize:13 }}>Aún no tienes membresía de grooming. <a href="/grooming.html" style={{ color:BS.brand, fontWeight:700 }}>Ver planes →</a></div>}
+              {memberships.map((m,i)=>(
+                <div key={i} style={card}>
+                  <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6 }}>
+                    <span style={{ fontSize:15, fontWeight:800, color:BS.ink }}>{m.plan||'Membresía'}</span>
+                    <span style={{ fontSize:10.5, fontWeight:700, color: m.status==='active'?'#1EB87A':BS.soft, background: m.status==='active'?'rgba(30,184,122,0.12)':BS.surface2, padding:'3px 9px', borderRadius:999 }}>{m.status||'—'}</span>
+                  </div>
+                  {row('Facturación', m.billing||'—')}
+                  {row('Mascota', (m.pet_name||'—')+(m.pet_size?(' · '+m.pet_size):''))}
+                  {row('Baños disponibles', m.credits_balance||0, BS.brand)}
+                  {row('Próxima renovación', fmtD(m.renew_date))}
+                </div>
+              ))}
+            </div>
+          )}
+
+          {tab==='pagos' && (
+            <div>
+              {plans.length===0 && <div style={{ ...card, textAlign:'center', color:BS.soft, fontSize:13 }}>No tienes planes de pago activos. <a href="/plan" style={{ color:BS.brand, fontWeight:700 }}>Armar mi plan →</a></div>}
+              {plans.map((p,i)=>{
+                const est = p.total_amount || ((p.monthly_amount||0)*(p.months||0)) || 0;
+                const paid = payments.filter(x=>x.plan_id===p.id).reduce((a,x)=>a+(+x.amount||0),0);
+                const bal = Math.max(0, est-paid);
+                const pct = est? Math.min(100, Math.round(paid/est*100)) : 0;
+                return (
+                  <div key={i} style={card}>
+                    <div style={{ fontSize:14, fontWeight:800, color:BS.ink, marginBottom:8 }}>{p.pet_name||'Plan de pagos'}</div>
+                    {row('Plan', (p.months||'—')+' meses · '+money(p.monthly_amount)+'/mes')}
+                    {row('Total estimado', money(est))}
+                    {row('Abonado', money(paid), '#1EB87A')}
+                    {row('Restante', money(bal))}
+                    {row('Tu gran día', fmtD(p.target_date))}
+                    <div style={{ height:7, borderRadius:999, background:BS.surface2, overflow:'hidden', margin:'8px 0 4px' }}><div style={{ width:pct+'%', height:'100%', background:BS.grad }}/></div>
+                    <div style={{ fontSize:11, color:BS.soft, textAlign:'right' }}>{pct}% completado</div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        <div style={{ height:24 }}/>
+      </React.Fragment>
+      )}
+    </div>
+  );
+}
+
 Object.assign(window, {
+  AccountScreen,
   BSCtx, useBS, THEMES,
   BSAvatar, BSVerified, BSocialLogo,
   WelcomeScreen, OnboardingScreen, StoriesBar,

@@ -99,7 +99,7 @@ function DesktopSidebar({ screen, setScreen, bs }) {
     /* @__PURE__ */ React.createElement(SIcon, { name: item.icon, color: screen === item.id ? bs.brand : bs.ink2 }),
     item.label,
     item.badge && /* @__PURE__ */ React.createElement("span", { style: { marginLeft: "auto", background: bs.brand, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "1px 7px" } }, item.badge)
-  ))), /* @__PURE__ */ React.createElement("a", { href: "/portal", style: { display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", marginBottom: 10, borderRadius: 12, textDecoration: "none", border: `1px solid ${bs.border}`, color: bs.ink2, fontWeight: 600, fontSize: 13.5 } }, /* @__PURE__ */ React.createElement("svg", { width: "17", height: "17", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }), /* @__PURE__ */ React.createElement("path", { d: "M3 10h18M8 4v4" })), "Mi Cuenta \xB7 Reservas"), /* @__PURE__ */ React.createElement(
+  ))), /* @__PURE__ */ React.createElement("button", { onClick: () => setScreen("account"), style: { display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", marginBottom: 10, borderRadius: 12, cursor: "pointer", width: "100%", textAlign: "left", fontFamily: "inherit", background: screen === "account" ? bs.surface2 : "transparent", border: `1px solid ${screen === "account" ? bs.brand : bs.border}`, color: screen === "account" ? bs.brand : bs.ink2, fontWeight: 600, fontSize: 13.5 } }, /* @__PURE__ */ React.createElement("svg", { width: "17", height: "17", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }), /* @__PURE__ */ React.createElement("path", { d: "M3 10h18M8 4v4" })), "Mi Cuenta \xB7 Reservas"), /* @__PURE__ */ React.createElement(
     "button",
     {
       onClick: () => setScreen("upload"),
@@ -129,6 +129,7 @@ function RightRail({ bs }) {
 function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave, onOpenPost }) {
   const p = { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost };
   if (screen === "feed") return /* @__PURE__ */ React.createElement(FeedScreen, { ...p });
+  if (screen === "account") return /* @__PURE__ */ React.createElement(AccountScreen, { setScreen });
   if (screen === "profile") return /* @__PURE__ */ React.createElement(ProfileScreen, { posts, setScreen });
   if (screen === "pack") return /* @__PURE__ */ React.createElement(PackScreen, { setScreen });
   if (screen === "discover") return /* @__PURE__ */ React.createElement(DiscoverScreen, null);
@@ -345,7 +346,18 @@ function App() {
     },
     postDetail: async (id) => apiCall("post_detail", { post_id: id }),
     addComment: async (id, text) => apiCall("comment_create", { post_id: id, text }),
-    likeToggle: async (id) => apiCall("like_toggle", { post_id: id })
+    likeToggle: async (id) => apiCall("like_toggle", { post_id: id }),
+    // Mi Cuenta (portal) dentro de B Social — mismas tablas que el CRM (vía portal_data / portal_add_pet)
+    accountData: async () => {
+      const tok = await getToken();
+      const r = await fetch(SU + "/functions/v1/portal_data", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON, "Authorization": "Bearer " + (tok || ANON) }, body: "{}" });
+      return r.json();
+    },
+    addPet: async (f) => {
+      const tok = await getToken();
+      const r = await fetch(SU + "/functions/v1/portal_add_pet", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON, "Authorization": "Bearer " + (tok || ANON) }, body: JSON.stringify(f) });
+      return r.json();
+    }
   };
   const [openPost, setOpenPost] = useState(null);
   const toggleLike = (id) => {
