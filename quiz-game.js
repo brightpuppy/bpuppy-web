@@ -660,13 +660,14 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
       const w = Math.sin(f * 0.3) * 3;
       ctx.fillStyle = "#E23B3B";
       ctx.beginPath();
-      ctx.moveTo(cx - 1, baseY - 26);
-      ctx.quadraticCurveTo(cx - 16 + w, baseY - 16, cx - 9 + w, baseY - 1);
-      ctx.lineTo(cx + 5, baseY - 9);
+      ctx.moveTo(cx + 19, baseY - 22);
+      ctx.quadraticCurveTo(cx + 4 + w, baseY - 25, cx - 8 + w, baseY - 6);
+      ctx.quadraticCurveTo(cx + 1 + w, baseY - 2, cx + 12, baseY - 9);
+      ctx.lineTo(cx + 19, baseY - 15);
       ctx.closePath();
       ctx.fill();
       ctx.fillStyle = "#b51d1d";
-      ctx.fillRect(cx - 2, baseY - 27, 7, 3);
+      ctx.fillRect(cx + 15, baseY - 23, 7, 3);
     };
     const drawLives = (st) => {
       for (let i = 0; i < MAXLIVES; i++) {
@@ -732,18 +733,19 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
           st.mode = "flyintro";
           setFlyIntro(true);
         }
-        drawLives(st);
         ctx.restore();
+        drawLives(st);
         return;
       }
       if (st.mode === "flyintro") {
         drawCape(dogX, GY - st.py, st.fcount);
         drawDog(ctx, dogX, GY - st.py, tone, breed.key, st.frame, true);
-        drawLives(st);
         ctx.restore();
+        drawLives(st);
         return;
       }
       st.fcount++;
+      st.speed = Math.min(6.6, Math.max(st.speed, 4.3));
       st.dist += st.speed;
       st.score = Math.floor(st.dist / 10) + st.treats * 8;
       if (st.fcount % 6 === 0) setScore(st.score);
@@ -856,8 +858,8 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
         drawCape(dogX, GY - st.py, st.fcount);
         drawDog(ctx, dogX, GY - st.py, tone, breed.key, st.frame, true);
       }
-      drawLives(st);
       ctx.restore();
+      drawLives(st);
     };
     const loop = () => {
       if (!running) return;

@@ -366,7 +366,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
     ctx.imageSmoothingEnabled = true;
     let running = true;
     // capa de superhéroe (ondea)
-    const drawCape = (cx, baseY, f) => { const w = Math.sin(f*0.3)*3; ctx.fillStyle='#E23B3B'; ctx.beginPath(); ctx.moveTo(cx-1, baseY-26); ctx.quadraticCurveTo(cx-16+w, baseY-16, cx-9+w, baseY-1); ctx.lineTo(cx+5, baseY-9); ctx.closePath(); ctx.fill(); ctx.fillStyle='#b51d1d'; ctx.fillRect(cx-2, baseY-27, 7, 3); };
+    const drawCape = (cx, baseY, f) => { const w = Math.sin(f*0.3)*3; ctx.fillStyle='#E23B3B'; ctx.beginPath(); ctx.moveTo(cx+19, baseY-22); ctx.quadraticCurveTo(cx+4+w, baseY-25, cx-8+w, baseY-6); ctx.quadraticCurveTo(cx+1+w, baseY-2, cx+12, baseY-9); ctx.lineTo(cx+19, baseY-15); ctx.closePath(); ctx.fill(); ctx.fillStyle='#b51d1d'; ctx.fillRect(cx+15, baseY-23, 7, 3); };
     // HUD de vidas con la "B" de BPuppy (borde naranja brillante)
     const drawLives = (st) => { for(let i=0;i<MAXLIVES;i++){ const hx=8+i*16, hy=7, on=i<st.lives, w=12, h=13, r=3; ctx.save(); if(on){ ctx.shadowColor='#FF7A1A'; ctx.shadowBlur=7; } ctx.fillStyle= on?'#F58220':'rgba(45,36,33,0.13)'; ctx.beginPath(); ctx.moveTo(hx+r,hy); ctx.arcTo(hx+w,hy,hx+w,hy+h,r); ctx.arcTo(hx+w,hy+h,hx,hy+h,r); ctx.arcTo(hx,hy+h,hx,hy,r); ctx.arcTo(hx,hy,hx+w,hy,r); ctx.closePath(); ctx.fill(); ctx.shadowBlur=0; ctx.fillStyle= on?'#fff':'rgba(255,255,255,0.45)'; ctx.font='bold 10px sans-serif'; ctx.textAlign='center'; ctx.textBaseline='middle'; ctx.fillText('B', hx+w/2, hy+h/2+0.5); ctx.restore(); } ctx.textAlign='left'; ctx.textBaseline='alphabetic'; };
     // modo vuelo (transform → flyintro → fly)
@@ -381,11 +381,11 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
         drawCape(dogX, GY-st.py, st.transT); drawDog(ctx, dogX, GY-st.py, tone, breed.key, st.frame, true);
         ctx.fillStyle='#C2521E'; ctx.font='bold 18px sans-serif'; ctx.textAlign='center'; ctx.fillText('¡WOHOOO!', dogX+44, GY-st.py-30); ctx.textAlign='left';
         if(st.transT>=110){ st.mode='flyintro'; setFlyIntro(true); }
-        drawLives(st); ctx.restore(); return;
+        ctx.restore(); drawLives(st); return;
       }
-      if(st.mode==='flyintro'){ drawCape(dogX, GY-st.py, st.fcount); drawDog(ctx, dogX, GY-st.py, tone, breed.key, st.frame, true); drawLives(st); ctx.restore(); return; }
-      // ── fly ──
-      st.fcount++; st.dist += st.speed;
+      if(st.mode==='flyintro'){ drawCape(dogX, GY-st.py, st.fcount); drawDog(ctx, dogX, GY-st.py, tone, breed.key, st.frame, true); ctx.restore(); drawLives(st); return; }
+      // ── fly ── (rápido: piso de velocidad alto, ya venimos del minuto 3)
+      st.fcount++; st.speed = Math.min(6.6, Math.max(st.speed, 4.3)); st.dist += st.speed;
       st.score = Math.floor(st.dist/10) + st.treats*8; if(st.fcount%6===0) setScore(st.score);
       if(st.inv>0) st.inv--;
       st.py += (Math.max(24, Math.min(H-30, st.flyTarget)) - st.py)*0.18; // hacia el objetivo (mouse/flechas)
@@ -413,7 +413,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
       st.cats.forEach(cat=>{ ctx.fillStyle='#555'; ctx.fillRect(cat.x,cat.y-10,12,10); ctx.fillStyle='#555'; ctx.fillRect(cat.x,cat.y-13,3,3); ctx.fillRect(cat.x+9,cat.y-13,3,3); ctx.fillStyle='#ffd23f'; ctx.fillRect(cat.x+2,cat.y-8,2,2); ctx.fillRect(cat.x+8,cat.y-8,2,2); });
       st.projs.forEach(p=>{ ctx.fillStyle='#8a4b2a'; ctx.fillRect(p.x,p.y,6,6); });
       if(!(st.inv>0 && Math.floor(st.fcount/4)%2)){ drawCape(dogX, GY-st.py, st.fcount); drawDog(ctx, dogX, GY-st.py, tone, breed.key, st.frame, true); }
-      drawLives(st); ctx.restore();
+      ctx.restore(); drawLives(st);
     };
     const loop = () => {
       if(!running) return;
