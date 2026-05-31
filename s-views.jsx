@@ -1470,13 +1470,13 @@ function AccountScreen({ setScreen }) {
             <div>
               {plans.length===0 && <div style={{ ...card, textAlign:'center', color:BS.soft, fontSize:13 }}>No tienes planes de pago activos. <a href="/plan" style={{ color:BS.brand, fontWeight:700 }}>Armar mi plan →</a></div>}
               {plans.map((p,i)=>{
-                const est = p.total_amount || ((p.monthly_amount||0)*(p.months||0)) || 0;
-                const paid = payments.filter(x=>x.plan_id===p.id).reduce((a,x)=>a+(+x.amount||0),0);
+                const est = p.est_price || p.total_amount || ((p.monthly_amount||0)*(p.months||0)) || 0;
+                const paid = (+p.paid_total||0) || payments.filter(x=>x.plan_id===p.id).reduce((a,x)=>a+(+x.amount||0),0);
                 const bal = Math.max(0, est-paid);
                 const pct = est? Math.min(100, Math.round(paid/est*100)) : 0;
                 return (
                   <div key={i} style={card}>
-                    <div style={{ fontSize:14, fontWeight:800, color:BS.ink, marginBottom:8 }}>{p.pet_name||'Plan de pagos'}</div>
+                    <div style={{ fontSize:14, fontWeight:800, color:BS.ink, marginBottom:8 }}>{p.breed||p.pet_name||'Plan de pagos'}</div>
                     {row('Plan', (p.months||'—')+' meses · '+money(p.monthly_amount)+'/mes')}
                     {row('Total estimado', money(est))}
                     {row('Abonado', money(paid), '#1EB87A')}
