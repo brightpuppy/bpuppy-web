@@ -1,15 +1,7 @@
 // s-data.jsx — Sample data for B Social prototype
 const BSDATA = {
   me: { id:'u0', name:'María P.', username:'mariap', initials:'MP', color:'#F58220', city:'Miami, FL', bio:'Luna mom 🐾 Golden lover', verified:true, followers:847, following:312, posts:64 },
-  stories: [
-    { id:'s0', username:'Tu historia', initials:'+', color:'#F58220', isOwn:true, hasNew:false },
-    { id:'s1', username:'coco.f',   initials:'CF', color:'#E85D75', hasNew:true },
-    { id:'s2', username:'milo_rv',  initials:'MR', color:'#7C5CBF', hasNew:true },
-    { id:'s3', username:'bella_s',  initials:'BS', color:'#2196F3', hasNew:true },
-    { id:'s4', username:'rocky.m',  initials:'RM', color:'#4CAF50', hasNew:false },
-    { id:'s5', username:'luna_g',   initials:'LG', color:'#FF5722', hasNew:false },
-    { id:'s6', username:'diego_p',  initials:'DP', color:'#F5A623', hasNew:false },
-  ],
+  stories: [],
   posts: [
     { id:'p1', name:'Carlos R.',  username:'carlosrv',   initials:'CR', color:'#2196F3', city:'Dallas, TX',       verified:false, img:'assets/photos/g01.webp', caption:'Milo descubrió que la lluvia no es tan mala 🌧️ Ya no le tenemos que convencer de salir 😂', tags:['GoldenRetriever','PuppyLife'], likes:234,  comments:18, time:'2h',  liked:false, saved:false },
     { id:'p2', name:'Sofía K.',   username:'sof_kd',     initials:'SK', color:'#9C27B0', city:'New York, NY',     verified:true,  img:'assets/photos/g02.webp', caption:'Bella encontró su spot favorito ☀️ Todos los días mismo ritual, misma sonrisa.', tags:['Labrador','DogMom','NYC'], likes:512,  comments:34, time:'4h',  liked:true,  saved:false },

@@ -204,9 +204,10 @@ function PhotoPick({ label, preview, onPick, BS, round }) {
   );
 }
 
-function CreateProfileScreen({ me, onSave, onLogout }) {
+function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
   const BS = useBS();
   const m = me || {};
+  const editing = !!(onDone && m && m.username);
   const [firstName, setFirstName] = useState(m.first_name||'');
   const [lastName, setLastName]   = useState(m.last_name||'');
   const [bio, setBio]             = useState(m.bio||'');
@@ -244,6 +245,7 @@ function CreateProfileScreen({ me, onSave, onLogout }) {
         avatar_url, pet_photo_url, is_public:isPublic,
       });
       if (!(d && d.ok)) { setErr((d && d.error) || 'No se pudo guardar'); setBusy(false); }
+      else if (onDone) onDone();
     } catch(e) { setErr((e && e.message) || 'Error al guardar'); setBusy(false); }
   };
 
@@ -253,8 +255,8 @@ function CreateProfileScreen({ me, onSave, onLogout }) {
   const sectionTitle = { fontSize:11, fontWeight:800, letterSpacing:'0.06em', textTransform:'uppercase', color:BS.brand, margin:'18px 0 10px' };
   return (
     <div className="bs-fade" style={{ padding:'36px 22px 28px', minHeight:'100%', background:BS.bg }}>
-      <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:25, fontWeight:800, color:BS.ink, letterSpacing:'-0.03em', marginBottom:6 }}>Crea tu perfil</div>
-      <p style={{ fontSize:13, color:BS.ink2, lineHeight:1.5, margin:'0 0 14px' }}>Bienvenido{m.email?(' · '+m.email):''}. Completa tus datos para unirte a la comunidad.</p>
+      <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:25, fontWeight:800, color:BS.ink, letterSpacing:'-0.03em', marginBottom:6 }}>{editing?'Editar perfil':'Crea tu perfil'}</div>
+      <p style={{ fontSize:13, color:BS.ink2, lineHeight:1.5, margin:'0 0 14px' }}>{editing?'Actualiza tus datos y fotos cuando quieras.':('Bienvenido'+(m.email?(' · '+m.email):'')+'. Completa tus datos para unirte a la comunidad.')}</p>
 
       {/* Fotos */}
       <div style={{ display:'flex', gap:24, justifyContent:'center', marginBottom:6 }}>
@@ -307,8 +309,8 @@ function CreateProfileScreen({ me, onSave, onLogout }) {
         </div>
       </div>
       {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600, marginTop:10 }}>{err}</div>}
-      <button onClick={save} disabled={busy} className="bs-btn" style={{ width:'100%', marginTop:16, padding:'15px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:15, fontWeight:700, cursor:busy?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity:busy?0.7:1 }}>{busy?'Guardando…':'Entrar a la comunidad'}</button>
-      <button onClick={onLogout} className="bs-btn" style={{ width:'100%', marginTop:10, padding:'12px', borderRadius:12, border:'none', background:'transparent', color:BS.soft, fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>Usar otra cuenta</button>
+      <button onClick={save} disabled={busy} className="bs-btn" style={{ width:'100%', marginTop:16, padding:'15px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:15, fontWeight:700, cursor:busy?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity:busy?0.7:1 }}>{busy?'Guardando…':(editing?'Guardar cambios':'Entrar a la comunidad')}</button>
+      <button onClick={() => editing ? onDone() : onLogout()} className="bs-btn" style={{ width:'100%', marginTop:10, padding:'12px', borderRadius:12, border:'none', background:'transparent', color:BS.soft, fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>{editing?'Cancelar':'Usar otra cuenta'}</button>
     </div>
   );
 }
@@ -346,20 +348,49 @@ function OnboardingScreen({ onDone }) {
 
 function StoriesBar() {
   const BS = useBS();
+  const A = (typeof window!=='undefined' && window.BSAUTH) || {};
+  const fileRef = useRef(null);
+  const [busy, setBusy] = useState(false);
+  const [view, setView] = useState(null); // historia en pantalla completa
+  const stories = BSDATA.stories || [];
+  const pickStory = async (e) => {
+    const f = e.target.files && e.target.files[0]; if(!f) return;
+    if(f.size > 25*1024*1024) { return; }
+    setBusy(true);
+    try { const url = await bsUpload(f, 'stories'); if(url && A.createStory) await A.createStory(url); } catch(_e){} finally { setBusy(false); if(fileRef.current) fileRef.current.value=''; }
+  };
   return (
     <div style={{ background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
+      <input ref={fileRef} type="file" accept="image/*" onChange={pickStory} style={{ display:'none' }}/>
       <div className="bs-hscr" style={{ display:'flex', gap:12, padding:'12px 14px' }}>
-        {BSDATA.stories.map(s => (
-          <div key={s.id} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:5, cursor:'pointer', flexShrink:0 }}>
-            <div style={{ padding: s.hasNew ? 2.5 : 2, borderRadius:'50%', background: s.hasNew ? BS.grad : BS.border }}>
-              <div style={{ width:50, height:50, borderRadius:'50%', background: s.isOwn ? BS.bg : s.color, display:'grid', placeItems:'center', border:`2.5px solid ${BS.bg}` }}>
-                <span style={{ fontSize: s.isOwn ? 20 : 17, fontWeight:700, color: s.isOwn ? BS.brand : '#fff', fontFamily:'Plus Jakarta Sans,sans-serif' }}>{s.initials}</span>
+        {/* Tu historia: subir */}
+        <div onClick={() => !busy && fileRef.current && fileRef.current.click()} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:5, cursor:'pointer', flexShrink:0 }}>
+          <div style={{ width:54, height:54, borderRadius:'50%', border:`2px dashed ${BS.borderStrong}`, display:'grid', placeItems:'center', background:BS.surface2, color:BS.brand }}>
+            {busy ? <div style={{ width:18, height:18, border:`2px solid ${BS.border}`, borderTopColor:BS.brand, borderRadius:'50%', animation:'bpChatDot 0.8s linear infinite' }}/> : <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>}
+          </div>
+          <span style={{ fontSize:9.5, color:BS.ink, fontWeight:600 }}>Tu historia</span>
+        </div>
+        {stories.map(s => (
+          <div key={s.id} onClick={() => setView(s)} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:5, cursor:'pointer', flexShrink:0 }}>
+            <div style={{ padding:2.5, borderRadius:'50%', background:BS.grad }}>
+              <div style={{ width:50, height:50, borderRadius:'50%', background:s.color||BS.brand, display:'grid', placeItems:'center', border:`2.5px solid ${BS.surface}`, overflow:'hidden' }}>
+                {s.avatar ? <img src={s.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : <span style={{ fontSize:17, fontWeight:700, color:'#fff' }}>{s.initials}</span>}
               </div>
             </div>
-            <span style={{ fontSize:9.5, color: s.hasNew ? BS.ink : BS.soft, fontWeight: s.hasNew ? 600 : 400, maxWidth:56, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{s.username}</span>
+            <span style={{ fontSize:9.5, color:BS.ink, fontWeight:600, maxWidth:56, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{s.username}</span>
           </div>
         ))}
       </div>
+      {view && (
+        <div onClick={() => setView(null)} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.92)', zIndex:2000, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
+          <div style={{ position:'absolute', top:16, left:16, right:16, display:'flex', alignItems:'center', gap:10, color:'#fff' }}>
+            <div style={{ width:34, height:34, borderRadius:'50%', background:view.color||BS.brand, display:'grid', placeItems:'center', fontWeight:800, fontSize:13, overflow:'hidden' }}>{view.avatar ? <img src={view.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : view.initials}</div>
+            <span style={{ fontWeight:700, fontSize:14 }}>{view.username}</span>
+            <button onClick={(e)=>{ e.stopPropagation(); setView(null); }} style={{ marginLeft:'auto', background:'rgba(255,255,255,0.15)', border:'none', color:'#fff', width:32, height:32, borderRadius:'50%', cursor:'pointer', fontSize:15 }}>✕</button>
+          </div>
+          <img src={view.img} alt="" style={{ maxWidth:'100%', maxHeight:'86vh', borderRadius:16, objectFit:'contain' }}/>
+        </div>
+      )}
     </div>
   );
 }
@@ -473,7 +504,10 @@ function ProfileScreen({ posts, setScreen }) {
       <div style={{ padding:'0 16px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
         <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginTop:-28, marginBottom:12 }}>
           <div style={{ width:72, height:72, borderRadius:'50%', background:me.color, display:'grid', placeItems:'center', fontSize:24, fontWeight:800, color:'#fff', border:`3px solid ${BS.bg}`, fontFamily:'Plus Jakarta Sans,sans-serif' }}>{me.initials}</div>
-          <button onClick={() => A.logout && A.logout()} style={{ padding:'8px 18px', borderRadius:10, border:`1.5px solid ${BS.borderStrong}`, background:BS.surface2, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', color:BS.ink }}>Cambiar de usuario</button>
+          <div style={{ display:'flex', gap:8 }}>
+            <button onClick={() => setScreen('editprofile')} style={{ padding:'8px 16px', borderRadius:10, border:'none', background:BS.grad, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', color:'#fff' }}>Editar perfil</button>
+            <button onClick={() => A.logout && A.logout()} title="Cambiar de usuario" style={{ padding:'8px 14px', borderRadius:10, border:`1.5px solid ${BS.borderStrong}`, background:BS.surface2, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', color:BS.ink }}>Salir</button>
+          </div>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:3 }}>
           <span style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:18, fontWeight:800, color:BS.ink }}>{me.username}</span>

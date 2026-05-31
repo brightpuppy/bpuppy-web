@@ -129,6 +129,7 @@ function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave }) {
   if (screen === "upload") return /* @__PURE__ */ React.createElement(UploadScreen, { setScreen });
   if (screen === "pets") return /* @__PURE__ */ React.createElement(PetsScreen, null);
   if (screen === "messages") return /* @__PURE__ */ React.createElement(MessagesScreen, { setScreen });
+  if (screen === "editprofile") return /* @__PURE__ */ React.createElement(CreateProfileScreen, { me: window.BSAUTH && window.BSAUTH.me, onSave: window.BSAUTH && window.BSAUTH.saveProfile, onDone: () => setScreen("profile"), onLogout: window.BSAUTH && window.BSAUTH.logout });
   if (screen === "community") return /* @__PURE__ */ React.createElement(CommunityScreen, null);
   if (screen === "events") return /* @__PURE__ */ React.createElement(EventsScreen, null);
   if (screen === "news") return /* @__PURE__ */ React.createElement(NewsScreen, null);
@@ -223,6 +224,7 @@ function App() {
     if (d.news && d.news.length) BSDATA.news = d.news.map((n) => ({ id: n.id, title: n.title, excerpt: n.excerpt, tag: n.tag, date: dt(n.created_at, { day: "numeric", month: "short", year: "numeric" }), img: n.cover_url }));
     if (d.videos && d.videos.length) BSDATA.videos = d.videos.map((v) => ({ id: v.id, title: v.title, dur: v.duration, thumb: v.thumb_url }));
     BSDATA.community = (d.community || []).map((m) => ({ id: m.username, username: m.username, name: m.name, initials: m.initials, color: m.avatar_color, avatar: m.avatar_url, city: m.city, bio: m.bio, bpuppy: m.bpuppy, pet: { name: m.pet && m.pet.name || "", species: m.pet && m.pet.species || "", breed: m.pet && m.pet.breed || "", color: m.pet && m.pet.color || "", age: m.pet && m.pet.age || "", img: m.pet && m.pet.photo_url || "assets/photos/g01.webp" } }));
+    BSDATA.stories = (d.stories || []).map((s) => ({ id: s.id, username: s.name || s.username, initials: s.initials, color: s.avatar_color || s.color, avatar: s.avatar_url, img: s.media_url, hasNew: true }));
     if (d.feed && d.feed.length) setPosts(d.feed.map((p) => ({ id: p.id, username: p.username, initials: p.initials, color: p.color, avatar: p.avatar_url, city: p.city, location: p.location || "", time: rel(p.created_at), verified: p.username === "brightpuppy", img: p.img, caption: p.caption, tags: [], likes: p.likes || 0, comments: 0, liked: false, saved: false })));
   };
   const refresh = async () => {
@@ -305,6 +307,11 @@ function App() {
     },
     createPost: async (f) => {
       const d = await apiCall("post_create", f);
+      if (d && d.ok) await refresh();
+      return d;
+    },
+    createStory: async (media_url) => {
+      const d = await apiCall("story_create", { media_url });
       if (d && d.ok) await refresh();
       return d;
     },
