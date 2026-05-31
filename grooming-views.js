@@ -139,7 +139,10 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   const [step, setStep] = useState(1);
   const [bookStatus, setBookStatus] = useState("idle");
   const [bookErr, setBookErr] = useState("");
+  const [forOther, setForOther] = useState(false);
   const pets = me && me.pets || [];
+  const myName = me && me.client ? [me.client.first_name, me.client.last_name].filter(Boolean).join(" ").trim() : "";
+  const myPhone = me && me.client ? me.client.phone || me.client.phone_number || me.client.mobile || "" : "";
   const planQualifies = !!(activePlan && /total|vip/i.test(activeMembership && activeMembership.plan || activePlan.name || ""));
   const sizeFromWeight = (lb) => {
     const w = +lb || 0;
@@ -341,10 +344,34 @@ ${pickup ? isMember ? "\u{1F690} Pickup & Delivery: Incluido (miembro)" : "\u{1F
       onFocus: (e) => e.target.style.borderColor = "var(--orange)",
       onBlur: (e) => e.target.style.borderColor = "var(--line)"
     }
-  )), me && me.client && ownerName && phone ? /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "11px 14px", borderRadius: 10, border: "1px solid var(--line)", background: "var(--paper)" } }, /* @__PURE__ */ React.createElement("span", { style: { flexShrink: 0, color: "var(--orange)", display: "inline-flex" } }, /* @__PURE__ */ React.createElement(Icon, { name: "user", size: 18 })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 700, color: "var(--ink)" } }, ownerName), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "var(--ink-2)" } }, phone)), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 10.5, fontWeight: 700, color: "#1EB87A" } }, "\u2713 Tus datos")) : [
+  )), me && me.client && ownerName && phone && !forOther ? /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, padding: "11px 14px", borderRadius: 10, border: "1px solid var(--line)", background: "var(--paper)" } }, /* @__PURE__ */ React.createElement("span", { style: { flexShrink: 0, color: "var(--orange)", display: "inline-flex" } }, /* @__PURE__ */ React.createElement(Icon, { name: "user", size: 18 })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 700, color: "var(--ink)" } }, ownerName), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "var(--ink-2)" } }, phone)), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 10.5, fontWeight: 700, color: "#1EB87A" } }, "\u2713 Tus datos")), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: () => {
+        setForOther(true);
+        setOwnerName("");
+        setPhone("");
+        setPetName("");
+      },
+      style: { marginTop: 7, background: "none", border: "none", padding: 0, color: "var(--orange)", fontFamily: "inherit", fontSize: 12, fontWeight: 700, cursor: "pointer" }
+    },
+    "Reservar para otra persona \u2192"
+  )) : [
+    ...me && me.client && forOther ? [["__header__"]] : [],
     ["Tu nombre", ownerName, setOwnerName, "Nombre completo"],
     ["Tel\xE9fono", phone, setPhone, "+1 (305) 000-0000"]
-  ].map(([label, val, setter, ph]) => /* @__PURE__ */ React.createElement("div", { key: label }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, fontWeight: 700, color: "var(--ink-2)", marginBottom: 4 } }, label, " ", /* @__PURE__ */ React.createElement("span", { style: { color: "var(--orange)" } }, "*")), /* @__PURE__ */ React.createElement(
+  ].map(([label, val, setter, ph]) => label === "__header__" ? /* @__PURE__ */ React.createElement("div", { key: "__h", style: { display: "flex", justifyContent: "space-between", alignItems: "center" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, fontWeight: 700, color: "var(--ink-2)" } }, "Datos de quien recibe el servicio"), /* @__PURE__ */ React.createElement(
+    "button",
+    {
+      onClick: () => {
+        setForOther(false);
+        setOwnerName(myName);
+        setPhone(myPhone);
+      },
+      style: { background: "none", border: "none", padding: 0, color: "var(--orange)", fontFamily: "inherit", fontSize: 11.5, fontWeight: 700, cursor: "pointer" }
+    },
+    "\u2190 Usar mis datos"
+  )) : /* @__PURE__ */ React.createElement("div", { key: label }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, fontWeight: 700, color: "var(--ink-2)", marginBottom: 4 } }, label, " ", /* @__PURE__ */ React.createElement("span", { style: { color: "var(--orange)" } }, "*")), /* @__PURE__ */ React.createElement(
     "input",
     {
       value: val,

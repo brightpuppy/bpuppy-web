@@ -129,9 +129,12 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   const [step, setStep] = useState(1); // 1=services, 2=date, 3=confirm
   const [bookStatus, setBookStatus] = useState('idle'); // idle | sending | sent | error
   const [bookErr, setBookErr] = useState('');
+  const [forOther, setForOther] = useState(false); // reservar para otra persona/perro
 
   // ── Datos del cliente logueado ──
   const pets = (me && me.pets) || [];
+  const myName  = (me && me.client) ? [me.client.first_name, me.client.last_name].filter(Boolean).join(' ').trim() : '';
+  const myPhone = (me && me.client) ? (me.client.phone || me.client.phone_number || me.client.mobile || '') : '';
   const planQualifies = !!(activePlan && /total|vip/i.test((activeMembership && activeMembership.plan) || activePlan.name || ''));
   const sizeFromWeight = (lb) => { const w = +lb || 0; if (!w) return ''; if (w < 15) return 'Pequeño'; if (w < 40) return 'Mediano'; if (w < 70) return 'Grande'; return 'XL'; };
 
@@ -486,19 +489,32 @@ ${pickup ? (isMember ? '🚐 Pickup & Delivery: Incluido (miembro)' : '🚐 Pick
                   onFocus={e => e.target.style.borderColor = 'var(--orange)'} onBlur={e => e.target.style.borderColor = 'var(--line)'} />
               )}
             </div>
-            {(me && me.client && ownerName && phone) ? (
-              <div style={{ display:'flex', alignItems:'center', gap:10, padding:'11px 14px', borderRadius:10, border:'1px solid var(--line)', background:'var(--paper)' }}>
-                <span style={{ flexShrink:0, color:'var(--orange)', display:'inline-flex' }}><Icon name="user" size={18}/></span>
-                <div style={{ flex:1, minWidth:0 }}>
-                  <div style={{ fontSize:13, fontWeight:700, color:'var(--ink)' }}>{ownerName}</div>
-                  <div style={{ fontSize:12, color:'var(--ink-2)' }}>{phone}</div>
+            {(me && me.client && ownerName && phone && !forOther) ? (
+              <div>
+                <div style={{ display:'flex', alignItems:'center', gap:10, padding:'11px 14px', borderRadius:10, border:'1px solid var(--line)', background:'var(--paper)' }}>
+                  <span style={{ flexShrink:0, color:'var(--orange)', display:'inline-flex' }}><Icon name="user" size={18}/></span>
+                  <div style={{ flex:1, minWidth:0 }}>
+                    <div style={{ fontSize:13, fontWeight:700, color:'var(--ink)' }}>{ownerName}</div>
+                    <div style={{ fontSize:12, color:'var(--ink-2)' }}>{phone}</div>
+                  </div>
+                  <span style={{ fontSize:10.5, fontWeight:700, color:'#1EB87A' }}>✓ Tus datos</span>
                 </div>
-                <span style={{ fontSize:10.5, fontWeight:700, color:'#1EB87A' }}>✓ Tus datos</span>
+                <button onClick={() => { setForOther(true); setOwnerName(''); setPhone(''); setPetName(''); }}
+                  style={{ marginTop:7, background:'none', border:'none', padding:0, color:'var(--orange)', fontFamily:'inherit', fontSize:12, fontWeight:700, cursor:'pointer' }}>
+                  Reservar para otra persona →
+                </button>
               </div>
             ) : (
-              [['Tu nombre', ownerName, setOwnerName, 'Nombre completo'],
+              [...((me && me.client && forOther) ? [['__header__']] : []),
+               ['Tu nombre', ownerName, setOwnerName, 'Nombre completo'],
                ['Teléfono', phone, setPhone, '+1 (305) 000-0000'],
-              ].map(([label, val, setter, ph]) => (
+              ].map(([label, val, setter, ph]) => label === '__header__' ? (
+                <div key="__h" style={{ display:'flex', justifyContent:'space-between', alignItems:'center' }}>
+                  <span style={{ fontSize:11.5, fontWeight:700, color:'var(--ink-2)' }}>Datos de quien recibe el servicio</span>
+                  <button onClick={() => { setForOther(false); setOwnerName(myName); setPhone(myPhone); }}
+                    style={{ background:'none', border:'none', padding:0, color:'var(--orange)', fontFamily:'inherit', fontSize:11.5, fontWeight:700, cursor:'pointer' }}>← Usar mis datos</button>
+                </div>
+              ) : (
                 <div key={label}>
                   <div style={{ fontSize: 11.5, fontWeight: 700, color: 'var(--ink-2)', marginBottom: 4 }}>{label} <span style={{ color:'var(--orange)' }}>*</span></div>
                   <input value={val} onChange={e => setter(e.target.value)} placeholder={ph} style={{ width: '100%', padding: '11px 14px', borderRadius: 10, border: '1.5px solid var(--line)', background: 'var(--bg)', fontFamily: 'inherit', fontSize: 14, color: 'var(--ink)', outline: 'none' }}
