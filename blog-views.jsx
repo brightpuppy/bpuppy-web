@@ -229,6 +229,9 @@ function ArticleReader({ art, onBack }) {
 
   const cat = CAT_META[art.cat] || {};
 
+  const lang = ((typeof LangContext !== 'undefined' && React.useContext(LangContext)) || {}).lang || 'es';
+  const [ageSel, setAgeSel] = useState('dog-medium');
+
   // ── Compartir ──────────────────────────────────────────────────────────────
   const [shareMsg, setShareMsg] = useState('');
   const shareUrl = 'https://bpuppy.us/blog?art=' + art.id;
@@ -319,6 +322,31 @@ function ArticleReader({ art, onBack }) {
             <p style={{ fontSize: 16, lineHeight: 1.8, color: 'var(--ink-2)', margin: 0 }}>{s.p}</p>
           </div>
         ))}
+
+        {/* Widget interactivo: edad en años humanos */}
+        {art.widget === 'ageChart' && typeof window.AgeHumanChart === 'function' && (() => {
+          const opts = [
+            { id: 'dog-small', label: 'Perro pequeño', species: 'dog', size: 'small', lifespan: '14–16 años' },
+            { id: 'dog-medium', label: 'Perro mediano', species: 'dog', size: 'medium', lifespan: '11–13 años' },
+            { id: 'dog-large', label: 'Perro grande', species: 'dog', size: 'large', lifespan: '9–12 años' },
+            { id: 'dog-giant', label: 'Perro gigante', species: 'dog', size: 'giant', lifespan: '7–10 años' },
+            { id: 'cat', label: 'Gato', species: 'cat', size: 'small', lifespan: '14–16 años' },
+          ];
+          const sel = opts.find(o => o.id === ageSel) || opts[1];
+          return (
+            <div style={{ margin: '36px 0' }}>
+              <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap', marginBottom: 16 }}>
+                {opts.map(o => (
+                  <button key={o.id} onClick={() => setAgeSel(o.id)}
+                    style={{ padding: '7px 14px', borderRadius: 999, border: `1.5px solid ${ageSel === o.id ? 'var(--orange)' : 'var(--line)'}`, background: ageSel === o.id ? 'var(--orange)' : 'transparent', color: ageSel === o.id ? '#fff' : 'var(--ink-2)', fontFamily: 'inherit', fontSize: 13, fontWeight: 700, cursor: 'pointer' }}>
+                    {o.label}
+                  </button>
+                ))}
+              </div>
+              {React.createElement(window.AgeHumanChart, { species: sel.species, size: sel.size, lifespan: sel.lifespan, lang })}
+            </div>
+          );
+        })()}
 
         {/* Stat callout */}
         {art.stat && (

@@ -459,6 +459,31 @@ const BLOG_EXTRA = [
     stat: "El Rottweiler desciende de los perros romanos que acompa\xF1aban a las legiones. Su nombre viene de Rottweil, ciudad alemana medieval.",
     tips: ["Entrenamiento profesional recomendado para primerizos", "Socializaci\xF3n desde las 8 semanas", "Legislaci\xF3n BSL en algunas ciudades: inf\xF3rmate"],
     close: "Un Rottweiler bien criado es uno de los perros m\xE1s completos: guardi\xE1n, compa\xF1ero y amigo. La responsabilidad es proporcional a su tama\xF1o y capacidad."
+  },
+  // ── EDAD: PERROS Y GATOS EN AÑOS HUMANOS ──────────────────────────────────
+  {
+    id: 54,
+    cat: "guias",
+    emoji: "\u{1F382}",
+    color: "#1EB87A",
+    img: "fotos-razas/Beagle.webp",
+    widget: "ageChart",
+    title: "\xBFCu\xE1ntos a\xF1os tiene tu perro (o gato) en a\xF1os humanos?",
+    sub: 'Olvida la regla del "x7": la edad real depende del tama\xF1o y la especie',
+    date: "Mayo 2025",
+    read: 6,
+    tags: ["edad", "salud", "perros", "gatos"],
+    lead: 'Durante d\xE9cadas repetimos que "1 a\xF1o de perro = 7 a\xF1os humanos". Es una simplificaci\xF3n que se queda corta. Los perros maduran much\xEDsimo en su primer a\xF1o, y luego el ritmo cambia seg\xFAn su tama\xF1o. Los gatos siguen otra tabla. Aqu\xED est\xE1 c\xF3mo calcularlo bien, y por qu\xE9 importa para su cuidado.',
+    body: [
+      { h: "El primer a\xF1o vale por quince", p: 'Al cumplir 1 a\xF1o, un perro ya es pr\xE1cticamente un adolescente: equivale a unos 15 a\xF1os humanos. Al segundo a\xF1o suma unos 9 m\xE1s (\u224824 humanos). Por eso un cachorro de 8 meses ya tiene energ\xEDa, dientes y hormonas de "adolescente".' },
+      { h: "Despu\xE9s del segundo a\xF1o, el tama\xF1o manda", p: 'A partir del tercer a\xF1o, cada a\xF1o de perro suma distinto seg\xFAn su tama\xF1o: razas peque\xF1as ~4 a\xF1os humanos por a\xF1o, medianas ~5, grandes ~6 y gigantes ~7. Por eso un Gran Dan\xE9s es "senior" a los 6 y un Chihuahua sigue joven a esa edad. Las razas peque\xF1as viven m\xE1s.' },
+      { h: "Los gatos tienen su propia tabla", p: "El gato llega a ~15 a\xF1os humanos en su primer a\xF1o y ~24 en el segundo. Desde ah\xED, suma unos 4 a\xF1os humanos por cada a\xF1o felino. Un gato de 10 a\xF1os equivale a unos 56 humanos: oficialmente senior, aunque no lo parezca." },
+      { h: "Por qu\xE9 importa para su cuidado", p: 'Saber la edad "real" cambia decisiones: cu\xE1ndo pasar de comida de cachorro a adulto, cu\xE1ndo empezar chequeos de senior (articulaciones, ri\xF1\xF3n, dientes), y qu\xE9 nivel de ejercicio es seguro. Un perro grande de 7 a\xF1os necesita los mismos cuidados que una persona de 50+, aunque siga jugando.' },
+      { h: "Etapas de vida en una mirada", p: "Cachorro/gatito (0\u20131 a\xF1o): crecimiento y socializaci\xF3n. Joven (1\u20132 a\xF1os): energ\xEDa m\xE1xima. Adulto (2 a\xF1os hasta ~75% de su vida): rutina estable. Senior (\xFAltimo ~25%): chequeos m\xE1s frecuentes, comida espec\xEDfica y m\xE1s descanso. Usa la calculadora de abajo con el tama\xF1o de tu mascota." }
+    ],
+    stat: "Un perro peque\xF1o puede vivir 15\u201316 a\xF1os; uno gigante, 7\u201310. A mayor tama\xF1o, m\xE1s r\xE1pido envejecen: la gen\xE9tica del crecimiento acelera tambi\xE9n el reloj biol\xF3gico.",
+    tips: ["Cambia de comida cachorro\u2192adulto cuando alcanza ~el 90% de su peso adulto", 'Inicia chequeos "senior" a los 7 a\xF1os en razas grandes, a los 9\u201310 en peque\xF1as y gatos', "El peso saludable es el factor #1 para alargar la vida", "Cuida los dientes: la salud dental impacta coraz\xF3n y ri\xF1ones"],
+    close: "No hay una f\xF3rmula m\xE1gica \xFAnica, pero entender que tu mascota envejece distinto seg\xFAn su especie y tama\xF1o te ayuda a darle el cuidado correcto en cada etapa. Mira la tabla interactiva aqu\xED abajo."
   }
 ];
 BLOG.push(...BLOG_EXTRA);

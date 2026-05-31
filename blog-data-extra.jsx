@@ -351,6 +351,27 @@ const BLOG_EXTRA = [
     stat:'El Rottweiler desciende de los perros romanos que acompañaban a las legiones. Su nombre viene de Rottweil, ciudad alemana medieval.',
     tips:['Entrenamiento profesional recomendado para primerizos','Socialización desde las 8 semanas','Legislación BSL en algunas ciudades: infórmate'],
     close:'Un Rottweiler bien criado es uno de los perros más completos: guardián, compañero y amigo. La responsabilidad es proporcional a su tamaño y capacidad.'
+  },
+  // ── EDAD: PERROS Y GATOS EN AÑOS HUMANOS ──────────────────────────────────
+  {
+    id: 54, cat: 'guias', emoji: '🎂', color: '#1EB87A',
+    img: 'fotos-razas/Beagle.webp',
+    widget: 'ageChart',
+    title: '¿Cuántos años tiene tu perro (o gato) en años humanos?',
+    sub: 'Olvida la regla del "x7": la edad real depende del tamaño y la especie',
+    date: 'Mayo 2025', read: 6,
+    tags: ['edad', 'salud', 'perros', 'gatos'],
+    lead: 'Durante décadas repetimos que "1 año de perro = 7 años humanos". Es una simplificación que se queda corta. Los perros maduran muchísimo en su primer año, y luego el ritmo cambia según su tamaño. Los gatos siguen otra tabla. Aquí está cómo calcularlo bien, y por qué importa para su cuidado.',
+    body: [
+      { h: 'El primer año vale por quince', p: 'Al cumplir 1 año, un perro ya es prácticamente un adolescente: equivale a unos 15 años humanos. Al segundo año suma unos 9 más (≈24 humanos). Por eso un cachorro de 8 meses ya tiene energía, dientes y hormonas de "adolescente".' },
+      { h: 'Después del segundo año, el tamaño manda', p: 'A partir del tercer año, cada año de perro suma distinto según su tamaño: razas pequeñas ~4 años humanos por año, medianas ~5, grandes ~6 y gigantes ~7. Por eso un Gran Danés es "senior" a los 6 y un Chihuahua sigue joven a esa edad. Las razas pequeñas viven más.' },
+      { h: 'Los gatos tienen su propia tabla', p: 'El gato llega a ~15 años humanos en su primer año y ~24 en el segundo. Desde ahí, suma unos 4 años humanos por cada año felino. Un gato de 10 años equivale a unos 56 humanos: oficialmente senior, aunque no lo parezca.' },
+      { h: 'Por qué importa para su cuidado', p: 'Saber la edad "real" cambia decisiones: cuándo pasar de comida de cachorro a adulto, cuándo empezar chequeos de senior (articulaciones, riñón, dientes), y qué nivel de ejercicio es seguro. Un perro grande de 7 años necesita los mismos cuidados que una persona de 50+, aunque siga jugando.' },
+      { h: 'Etapas de vida en una mirada', p: 'Cachorro/gatito (0–1 año): crecimiento y socialización. Joven (1–2 años): energía máxima. Adulto (2 años hasta ~75% de su vida): rutina estable. Senior (último ~25%): chequeos más frecuentes, comida específica y más descanso. Usa la calculadora de abajo con el tamaño de tu mascota.' },
+    ],
+    stat: 'Un perro pequeño puede vivir 15–16 años; uno gigante, 7–10. A mayor tamaño, más rápido envejecen: la genética del crecimiento acelera también el reloj biológico.',
+    tips: ['Cambia de comida cachorro→adulto cuando alcanza ~el 90% de su peso adulto', 'Inicia chequeos "senior" a los 7 años en razas grandes, a los 9–10 en pequeñas y gatos', 'El peso saludable es el factor #1 para alargar la vida', 'Cuida los dientes: la salud dental impacta corazón y riñones'],
+    close: 'No hay una fórmula mágica única, pero entender que tu mascota envejece distinto según su especie y tamaño te ayuda a darle el cuidado correcto en cada etapa. Mira la tabla interactiva aquí abajo.'
   }
 
 ];

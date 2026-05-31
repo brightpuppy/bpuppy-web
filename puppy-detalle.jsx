@@ -224,7 +224,7 @@ function PdStatCard({ icon, label, value, wide }) {
   );
 }
 
-function PdBreed({ breed: b }) {
+function PdBreed({ breed: b, puppy, photo }) {
   const ratings = [
     ['Con familias',         b.rating_family],
     ['Con niños',             b.rating_kids],
@@ -263,6 +263,26 @@ function PdBreed({ breed: b }) {
             </div>
           )}
         </div>
+
+        {/* Infografías: crecimiento + edad en años humanos */}
+        {(function(){
+          const sp = String((puppy && puppy.species) || 'dog').toLowerCase();
+          const species = (sp.indexOf('cat') >= 0 || sp.indexOf('gat') >= 0) ? 'cat' : 'dog';
+          const wMin = b.weight_min_lbs, wMax = b.weight_max_lbs;
+          const avgLbs = (wMin && wMax) ? (wMin + wMax) / 2 : (wMin || wMax || null);
+          const size = species === 'cat' ? 'small'
+            : avgLbs == null ? 'medium'
+            : avgLbs < 25 ? 'small' : avgLbs <= 50 ? 'medium' : avgLbs <= 90 ? 'large' : 'giant';
+          const weightStr = (wMin && wMax) ? (wMin + '–' + wMax + ' lbs') : (avgLbs ? avgLbs + ' lbs' : '');
+          const lifeStr = (b.lifespan_min && b.lifespan_max) ? (b.lifespan_min + '–' + b.lifespan_max + ' años') : '';
+          if (typeof window.GrowthTimeline !== 'function') return null;
+          return (
+            <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:18, marginTop:36 }}>
+              {React.createElement(window.GrowthTimeline, { photo: photo || null, name: (puppy && puppy.name) || b.name, weight: weightStr, lifespan: lifeStr, size: size, species: species, lang: 'es' })}
+              {React.createElement(window.AgeHumanChart, { species: species, size: size, lifespan: lifeStr, lang: 'es' })}
+            </div>
+          );
+        })()}
       </div>
     </section>
   );
@@ -727,7 +747,7 @@ function PuppyDetalle() {
     <div>
       <PdHero p={p} photos={photos} age={age}/>
       <PdIncludes p={p}/>
-      {state.breed && <PdBreed breed={state.breed}/>}
+      {state.breed && <PdBreed breed={state.breed} puppy={p} photo={photos && photos[0]}/>}
       {(state.mom || state.dad) && <PdFamilyFin mom={state.mom} dad={state.dad} price={p.price}/>}
       {hasFin && (
         <section style={{ padding:'clamp(48px,6vw,80px) clamp(20px,5vw,80px)', background:'#fff', borderTop:'1px solid var(--line)' }}>
