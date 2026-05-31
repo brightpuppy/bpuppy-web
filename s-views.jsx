@@ -547,39 +547,72 @@ function UploadScreen({ setScreen }) {
   const [scanState, setScanState] = useState('idle');
   const [caption, setCaption] = useState('');
   const [vis, setVis] = useState('public');
-  const DEMO = 'assets/photos/g04.webp';
-  const startScan = () => { setStep(2); setScanState('scanning'); setTimeout(() => setScanState('approved'), 2800); };
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState('');
+  const [isVideo, setIsVideo] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const [err, setErr] = useState('');
+  const fileRef = useRef(null);
+  const pickFile = (e) => {
+    const f = e.target.files && e.target.files[0];
+    if (!f) return;
+    if (f.size > 25 * 1024 * 1024) { setErr('El archivo supera 25 MB'); return; }
+    setErr(''); setFile(f); setIsVideo(/^video\//.test(f.type));
+    try { setPreview(URL.createObjectURL(f)); } catch(_e) {}
+    setStep(1);
+  };
+  const startScan = () => { setStep(2); setScanState('scanning'); setTimeout(() => setScanState('approved'), 2200); };
+  const doPublish = async () => {
+    const A = window.BSAUTH || {}; const sb = window._bsSb;
+    setErr(''); setUploading(true);
+    try {
+      let mediaUrl = '';
+      if (file && sb) {
+        const ext = (file.name.split('.').pop() || 'jpg').toLowerCase();
+        const path = (Date.now() + '_' + Math.random().toString(36).slice(2)) + '.' + ext;
+        const up = await sb.storage.from('social-media').upload(path, file, { contentType: file.type, upsert: false });
+        if (up.error) throw up.error;
+        const { data: pub } = sb.storage.from('social-media').getPublicUrl(path);
+        mediaUrl = pub.publicUrl;
+      }
+      if (A.createPost) { const d = await A.createPost({ caption, media_url: mediaUrl, visibility: vis }); if (!(d && d.ok)) throw new Error((d && d.error) || 'No se pudo publicar'); }
+      setScreen('feed');
+    } catch(e) { setErr((e && e.message) || 'No se pudo subir el archivo'); setUploading(false); }
+  };
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%', display:'flex', flexDirection:'column' }}>
+      <input ref={fileRef} type="file" accept="image/*,video/mp4,video/quicktime" onChange={pickFile} style={{ display:'none' }}/>
       <div style={{ background:BS.surface, padding:'12px 16px', display:'flex', alignItems:'center', gap:12, borderBottom:`1px solid ${BS.border}`, position:'sticky', top:0, zIndex:10 }}>
-        <button onClick={() => step>0 ? setStep(s=>s-1) : setScreen('feed')} className="bs-btn" style={{ color:BS.ink2, fontSize:18 }}>{step===0?'X':'<'}</button>
-        <span style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:17, fontWeight:700, color:BS.ink, flex:1 }}>{['Nueva publicacion','Agregar detalles','Verificando...','Listo!'][step]}</span>
-        {step===1 && <button onClick={startScan} className="bs-btn" style={{ background:BS.grad, color:'#fff', border:'none', padding:'7px 16px', borderRadius:9, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>Publicar</button>}
+        <button onClick={() => step>0 ? setStep(s=>s-1) : setScreen('feed')} className="bs-btn" style={{ color:BS.ink2, fontSize:18 }}>{step===0?'✕':'‹'}</button>
+        <span style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:17, fontWeight:700, color:BS.ink, flex:1 }}>{['Nueva publicación','Agregar detalles','Publicando…','Listo'][step]}</span>
+        {step===1 && <button onClick={startScan} className="bs-btn" style={{ background:BS.grad, color:'#fff', border:'none', padding:'7px 16px', borderRadius:9, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>Siguiente</button>}
       </div>
       {step===0 && (
         <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:24, gap:16 }}>
-          <div onClick={() => setStep(1)} style={{ width:'100%', aspectRatio:'1', maxWidth:280, borderRadius:20, border:`2px dashed ${BS.borderStrong}`, background:BS.surface, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', cursor:'pointer', gap:14 }}>
-            <div style={{ width:64, height:64, borderRadius:20, background:BS.surface2, display:'grid', placeItems:'center', fontSize:28 }}>📷</div>
+          <div onClick={() => fileRef.current && fileRef.current.click()} style={{ width:'100%', aspectRatio:'1', maxWidth:280, borderRadius:20, border:`2px dashed ${BS.borderStrong}`, background:BS.surface, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', cursor:'pointer', gap:14 }}>
+            <div style={{ width:64, height:64, borderRadius:20, background:BS.surface2, display:'grid', placeItems:'center', color:BS.brand }}><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/><path d="M8 5l1.5-2h5L16 5"/></svg></div>
             <div style={{ textAlign:'center' }}>
               <div style={{ fontSize:15, fontWeight:700, color:BS.ink }}>Sube tu foto o video</div>
-              <div style={{ fontSize:12, color:BS.soft, marginTop:3 }}>JPG, PNG, MP4</div>
+              <div style={{ fontSize:12, color:BS.soft, marginTop:3 }}>JPG, PNG, WEBP, MP4 · hasta 25 MB</div>
             </div>
           </div>
+          {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600 }}>{err}</div>}
           <div style={{ display:'flex', gap:10, width:'100%', maxWidth:280 }}>
-            <button onClick={() => setStep(1)} className="bs-btn" style={{ flex:1, padding:'13px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:14, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>Galeria</button>
-            <button onClick={() => setStep(1)} className="bs-btn" style={{ flex:1, padding:'13px', borderRadius:14, border:`1.5px solid ${BS.borderStrong}`, background:BS.surface, color:BS.ink, fontSize:14, fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>Camara</button>
+            <button onClick={() => fileRef.current && fileRef.current.click()} className="bs-btn" style={{ flex:1, padding:'13px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:14, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>Elegir archivo</button>
           </div>
         </div>
       )}
       {step===1 && (
         <div>
           <div style={{ display:'flex', gap:12, padding:'14px 16px', alignItems:'flex-start', borderBottom:`1px solid ${BS.border}`, background:BS.surface }}>
-            <img src={DEMO} alt="" style={{ width:70, height:70, objectFit:'cover', borderRadius:12 }}/>
+            {isVideo
+              ? <video src={preview} style={{ width:70, height:70, objectFit:'cover', borderRadius:12, background:'#000' }} muted/>
+              : <img src={preview || 'assets/photos/g04.webp'} alt="" style={{ width:70, height:70, objectFit:'cover', borderRadius:12 }}/>}
             <textarea value={caption} onChange={e => setCaption(e.target.value)} placeholder="Escribe un pie de foto..." style={{ flex:1, border:'none', background:'none', resize:'none', fontSize:14, color:BS.ink, lineHeight:1.55, minHeight:80, padding:0 }}/>
           </div>
           <div style={{ padding:'14px 16px', background:BS.surface, marginTop:8 }}>
-            {[['public','Publico','Todos pueden ver'],['pack','Solo mi Pack','Solo mis amigos'],['private','Privado','Solo yo']].map(([v,l,sub]) => (
-              <div key={v} onClick={() => setVis(v)} style={{ display:'flex', alignItems:'center', gap:12, padding:'10px 14px', borderRadius:12, border:`1.5px solid ${vis===v ? BS.brand : BS.border}`, background: vis===v ? 'rgba(255,85,32,0.07)' : BS.surface2, cursor:'pointer', marginBottom:8 }}>
+            {[['public','Público','Todos pueden ver'],['pack','Solo mi Pack','Solo mis amigos'],['private','Privado','Solo yo']].map(([v,l,sub]) => (
+              <div key={v} onClick={() => setVis(v)} style={{ display:'flex', alignItems:'center', gap:12, padding:'10px 14px', borderRadius:12, border:`1.5px solid ${vis===v ? BS.brand : BS.border}`, background: vis===v ? 'rgba(14,165,233,0.08)' : BS.surface2, cursor:'pointer', marginBottom:8 }}>
                 <div style={{ flex:1 }}><div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>{l}</div><div style={{ fontSize:11.5, color:BS.soft }}>{sub}</div></div>
                 <div style={{ width:18, height:18, borderRadius:'50%', border:`2px solid ${vis===v ? BS.brand : BS.borderStrong}`, background: vis===v ? BS.brand : 'transparent', display:'grid', placeItems:'center' }}>
                   {vis===v && <div style={{ width:7, height:7, borderRadius:'50%', background:'#fff' }}/>}
@@ -592,13 +625,15 @@ function UploadScreen({ setScreen }) {
       {step===2 && (
         <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:28, gap:22 }}>
           <div style={{ position:'relative', width:'100%', maxWidth:240, borderRadius:20, overflow:'hidden' }}>
-            <img src={DEMO} alt="" style={{ width:'100%', aspectRatio:'1', objectFit:'cover', display:'block' }}/>
-            {scanState==='scanning' && (
+            {isVideo
+              ? <video src={preview} style={{ width:'100%', aspectRatio:'1', objectFit:'cover', display:'block', background:'#000' }} muted/>
+              : <img src={preview || 'assets/photos/g04.webp'} alt="" style={{ width:'100%', aspectRatio:'1', objectFit:'cover', display:'block' }}/>}
+            {(scanState==='scanning' || uploading) && (
               <div style={{ position:'absolute', inset:0, background:'rgba(0,0,0,0.2)' }}>
                 <div style={{ position:'absolute', left:0, right:0, height:3, background:BS.brand, boxShadow:`0 0 18px ${BS.brand}`, animation:'bsScan 1.1s ease-in-out infinite' }}/>
               </div>
             )}
-            {scanState==='approved' && (
+            {scanState==='approved' && !uploading && (
               <div style={{ position:'absolute', inset:0, background:'rgba(0,232,122,0.14)', display:'grid', placeItems:'center' }}>
                 <div className="bs-pop" style={{ background:'rgba(0,232,122,0.9)', borderRadius:'50%', width:56, height:56, display:'grid', placeItems:'center' }}>
                   <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><path d="M20 6L9 17l-5-5"/></svg>
@@ -607,8 +642,14 @@ function UploadScreen({ setScreen }) {
             )}
           </div>
           <div style={{ textAlign:'center' }}>
-            {scanState==='scanning' && <><div style={{ fontSize:16, fontWeight:700, color:BS.ink, marginBottom:6 }}>Verificando contenido...</div><div style={{ fontSize:13, color:BS.soft }}>Nuestro AI revisa que todo sea seguro</div></>}
-            {scanState==='approved' && <><div style={{ fontSize:17, fontWeight:800, color:BS.online, marginBottom:5 }}>Contenido aprobado</div><div style={{ fontSize:13, color:BS.soft, marginBottom:22 }}>Todo listo para compartir</div><button onClick={async () => { const A=(window.BSAUTH||{}); if(A.createPost){ try{ await A.createPost({ caption, media_url:'https://bpuppy.us/assets/photos/g04.webp', visibility:vis }); }catch(e){} } setScreen('feed'); }} className="bs-btn" style={{ padding:'14px 44px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:15, fontWeight:700, cursor:'pointer', fontFamily:'inherit', boxShadow:BS.glow, animation:'bsPop 0.45s 0.15s both' }}>Publicar ahora</button></>}
+            {uploading && <><div style={{ fontSize:16, fontWeight:700, color:BS.ink, marginBottom:6 }}>Subiendo…</div><div style={{ fontSize:13, color:BS.soft }}>Guardando tu publicación</div></>}
+            {!uploading && scanState==='scanning' && <><div style={{ fontSize:16, fontWeight:700, color:BS.ink, marginBottom:6 }}>Revisando contenido…</div><div style={{ fontSize:13, color:BS.soft }}>Verificamos que todo sea seguro</div></>}
+            {!uploading && scanState==='approved' && <>
+              <div style={{ fontSize:17, fontWeight:800, color:BS.online, marginBottom:5 }}>Listo para compartir</div>
+              <div style={{ fontSize:13, color:BS.soft, marginBottom:18 }}>Toca para publicar en la comunidad</div>
+              {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600, marginBottom:12 }}>{err}</div>}
+              <button onClick={doPublish} className="bs-btn" style={{ padding:'14px 44px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:15, fontWeight:700, cursor:'pointer', fontFamily:'inherit', boxShadow:BS.glow }}>Publicar ahora</button>
+            </>}
           </div>
         </div>
       )}
