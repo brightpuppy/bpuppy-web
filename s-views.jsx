@@ -598,16 +598,37 @@ function PostDetail({ post, onClose }) {
 function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
   const BS = useBS();
   const [filt, setFilt] = useState('Para ti');
+  // Navegación tipo Facebook (fila de iconos en la barra superior)
+  const FBNAV = [
+    { id:'feed',      label:'Inicio',    p:'<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>' },
+    { id:'community', label:'Comunidad', p:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>' },
+    { id:'events',    label:'Eventos',   p:'<rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>' },
+    { id:'pack',      label:'Mi Pack',   p:'<circle cx="7" cy="9" r="1.7"/><circle cx="12" cy="7.4" r="1.7"/><circle cx="17" cy="9" r="1.7"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/>' },
+    { id:'profile',   label:'Perfil',    p:'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
+  ];
   return (
     <div style={{ background:BS.bg }}>
-      <div style={{ background:BS.surface, padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', position:'sticky', top:0, zIndex:10, borderBottom:`1px solid ${BS.border}` }}>
-        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:23, fontWeight:800, letterSpacing:'-0.04em', background:BS.grad, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent' }}>B Social</div>
-        <div style={{ display:'flex', gap:16, alignItems:'center' }}>
-          <button className="bs-btn" style={{ color:BS.ink2 }}><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></button>
-          <button className="bs-btn" onClick={() => setScreen('messages')} style={{ color:BS.ink2, position:'relative' }}>
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-            <span style={{ position:'absolute', top:-2, right:-2, width:8, height:8, borderRadius:'50%', background:BS.rose, border:`2px solid ${BS.surface}` }}/>
+      <div style={{ background:BS.surface, padding:'10px 14px 0', position:'sticky', top:0, zIndex:11, borderBottom:`1px solid ${BS.border}` }}>
+        {/* Fila 1: marca + buscador + mensajes (estilo Facebook) */}
+        <div style={{ display:'flex', alignItems:'center', gap:10 }}>
+          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:21, fontWeight:800, letterSpacing:'-0.04em', background:BS.grad, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', flexShrink:0 }}>B Social</div>
+          <button className="bs-btn" onClick={() => setScreen('discover')} style={{ flex:1, minWidth:0, display:'flex', alignItems:'center', gap:8, background:BS.surface2, border:`1px solid ${BS.border}`, borderRadius:999, padding:'9px 14px', cursor:'pointer', textAlign:'left' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={BS.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <span style={{ fontSize:13, color:BS.soft, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>Buscar en B Social</span>
           </button>
+          <button className="bs-btn" onClick={() => setScreen('messages')} style={{ flexShrink:0, color:BS.ink2, position:'relative', width:38, height:38, borderRadius:'50%', background:BS.surface2, border:`1px solid ${BS.border}`, display:'grid', placeItems:'center', cursor:'pointer' }}>
+            <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            <span style={{ position:'absolute', top:-1, right:-1, width:9, height:9, borderRadius:'50%', background:BS.rose, border:`2px solid ${BS.surface}` }}/>
+          </button>
+        </div>
+        {/* Fila 2: navegación por iconos (estilo Facebook) */}
+        <div className="bs-hscr" style={{ display:'flex', gap:2, marginTop:6 }}>
+          {FBNAV.map(n => { const on = n.id==='feed'; return (
+            <button key={n.id} onClick={() => setScreen(n.id)} className="bs-btn" style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:3, padding:'7px 2px 7px', background:'transparent', border:'none', borderBottom:`2.5px solid ${on?BS.brand:'transparent'}`, cursor:'pointer', fontFamily:'inherit' }}>
+              <svg width="21" height="21" viewBox="0 0 24 24" fill="none" stroke={on?BS.brand:BS.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html:n.p }}/>
+              <span style={{ fontSize:9.5, fontWeight:on?700:600, color:on?BS.brand:BS.soft, whiteSpace:'nowrap' }}>{n.label}</span>
+            </button>
+          ); })}
         </div>
       </div>
       <div className="bs-hscr" style={{ background:BS.surface, padding:'8px 14px 10px', display:'flex', gap:7, borderBottom:`1px solid ${BS.border}` }}>
