@@ -242,6 +242,8 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
   if (m.username) pend = null; // si ya tiene perfil, ignorar el pendiente
   const [firstName, setFirstName] = useState(m.first_name||'');
   const [lastName, setLastName]   = useState(m.last_name||'');
+  const [birthdate, setBirthdate] = useState(m.birthdate||'');
+  const ageY = (d) => { if(!d) return null; const b=new Date(d+'T00:00:00'); if(isNaN(b)) return null; const n=new Date(); let a=n.getFullYear()-b.getFullYear(); const mo=n.getMonth()-b.getMonth(); if(mo<0||(mo===0&&n.getDate()<b.getDate())) a--; return a; };
   const [bio, setBio]             = useState(m.bio || (pend && pend.story) || '');
   const [petSpecies, setPetSpecies] = useState(m.pet_species||'');
   const [petName, setPetName]     = useState(m.pet_name || (pend && pend.pet_name) || '');
@@ -268,6 +270,9 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
 
   const save = async () => {
     if (!firstName.trim()) { setErr('Escribe tu nombre'); return; }
+    // Verificación de edad (estilo redes sociales): el perfil solo se crea para 18+.
+    if (!editing && !birthdate) { setErr('Ingresa tu fecha de nacimiento para continuar'); return; }
+    if (birthdate) { const a = ageY(birthdate); if (a !== null && a < 18) { setErr('Para crear un perfil en B Social debes tener 18 años o más. ¡Pero puedes seguir jugando y guardar tu puntaje en el juego!'); return; } }
     setBusy(true); setErr('');
     try {
       let avatar_url = m.avatar_url || (/^https?:/.test(avatarPrev) ? avatarPrev : null);
@@ -277,7 +282,7 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
       if (petFile)    pet_photo_url = await bsUpload(petFile, 'pets');
       if (coverFile)  cover_url = await bsUpload(coverFile, 'covers');
       const d = await onSave({
-        first_name:firstName.trim(), last_name:lastName.trim(), bio:bio.trim(),
+        first_name:firstName.trim(), last_name:lastName.trim(), bio:bio.trim(), birthdate:birthdate||null,
         pet_species:petSpecies, pet_name:petName.trim(), pet_breed:petBreed.trim(), pet_color:petColor.trim(), pet_age:petAge.trim(),
         address:address.trim(), city:city.trim(), state:stateV.trim(), zip:zip.trim(),
         avatar_url, pet_photo_url, cover_url, is_public:isPublic,
@@ -316,6 +321,14 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
       <div style={{ display:'flex', gap:10 }}>
         <div style={{ flex:1, ...grp }}><div style={lbl}>Nombre *</div><input value={firstName} onChange={e=>setFirstName(e.target.value)} placeholder="Luis" style={fld}/></div>
         <div style={{ flex:1, ...grp }}><div style={lbl}>Apellido</div><input value={lastName} onChange={e=>setLastName(e.target.value)} placeholder="Guzmán" style={fld}/></div>
+      </div>
+      <div style={grp}>
+        <div style={lbl}>Fecha de nacimiento *</div>
+        <input type="date" value={birthdate} max={new Date(Date.now()-86400000).toISOString().slice(0,10)} onChange={e=>setBirthdate(e.target.value)} style={fld}/>
+        <div style={{ fontSize:11, color:BS.soft, marginTop:5, lineHeight:1.45 }}>Solo para confirmar que eres mayor de edad. No se muestra en tu perfil. Crear un perfil requiere tener 18 años o más; los menores pueden jugar y guardar su puntaje.</div>
+        {birthdate && ageY(birthdate)!==null && ageY(birthdate)<18 && (
+          <div style={{ fontSize:12, fontWeight:700, color:BS.like||'#E5484D', background:'rgba(229,72,77,0.1)', border:'1px solid rgba(229,72,77,0.3)', borderRadius:10, padding:'8px 11px', marginTop:7, lineHeight:1.45 }}>Aún no puedes crear un perfil (debes tener 18+). ¡Pero puedes seguir jugando y guardar tu puntaje en el juego!</div>
+        )}
       </div>
       <div style={grp}><div style={lbl}>Bio (opcional)</div><input value={bio} onChange={e=>setBio(e.target.value)} placeholder="Amante de los Golden 🐾" style={fld}/></div>
 
@@ -357,7 +370,9 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
         </div>
       </div>
       {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600, marginTop:10 }}>{err}</div>}
-      <button onClick={save} disabled={busy} className="bs-btn" style={{ width:'100%', marginTop:16, padding:'15px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:15, fontWeight:700, cursor:busy?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity:busy?0.7:1 }}>{busy?'Guardando…':(editing?'Guardar cambios':'Entrar a la comunidad')}</button>
+      {(() => { const minor = birthdate && ageY(birthdate)!==null && ageY(birthdate)<18; const blocked = busy || minor; return (
+      <button onClick={save} disabled={blocked} className="bs-btn" style={{ width:'100%', marginTop:16, padding:'15px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:15, fontWeight:700, cursor:blocked?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity:blocked?0.6:1 }}>{busy?'Guardando…':(editing?'Guardar cambios':'Entrar a la comunidad')}</button>
+      ); })()}
       <button onClick={() => editing ? onDone() : onLogout()} className="bs-btn" style={{ width:'100%', marginTop:10, padding:'12px', borderRadius:12, border:'none', background:'transparent', color:BS.soft, fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>{editing?'Cancelar':'Usar otra cuenta'}</button>
     </div>
   );
