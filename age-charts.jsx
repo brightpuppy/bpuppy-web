@@ -3,6 +3,8 @@
 (function () {
   const { useState } = React;
   const h = React.createElement;
+  const AGE_SUPA_URL = 'https://oqqwmcplljirbreowrll.supabase.co';
+  const AGE_SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
 
   // ── Helpers numéricos ──────────────────────────────────────────────────────
   function avgYears(lifespan) {
@@ -91,12 +93,27 @@
       return tl(lang, 'Adulto', 'Adult');
     };
 
+    const aiEnabled = props.aiEnabled !== false && !!props.photo;
     const [aiMsg, setAiMsg] = useState('');
-    const genAI = () => {
+    const [aiUrl, setAiUrl] = useState('');
+    const [aiLoading, setAiLoading] = useState(false);
+    const genAI = async () => {
       if (typeof props.onGenerateAI === 'function') { props.onGenerateAI(); return; }
-      setAiMsg(tl(lang,
-        'La generación de fotos con IA se activa bajo demanda. Pídela y la habilitamos para este perfil.',
-        'AI photo aging is available on demand. Request it and we will enable it for this profile.'));
+      if (aiLoading) return;
+      setAiMsg(''); setAiLoading(true);
+      try {
+        const r = await fetch(AGE_SUPA_URL + '/functions/v1/pet_age_image', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json', 'apikey': AGE_SUPA_KEY, 'Authorization': 'Bearer ' + AGE_SUPA_KEY },
+          body: JSON.stringify({ photo_url: props.photo, breed: props.name || '', species: props.species || 'dog' }),
+        });
+        const d = await r.json();
+        if (d && d.ok && d.url) { setAiUrl(d.url); }
+        else if (d && d.error === 'no_key') { setAiMsg(tl(lang, 'La generación con IA aún no está configurada (falta la API key).', 'AI generation isn’t configured yet (missing API key).')); }
+        else { setAiMsg(tl(lang, 'No se pudo generar la imagen ahora. Intenta de nuevo más tarde.', 'Couldn’t generate the image right now. Try again later.')); }
+      } catch (e) {
+        setAiMsg(tl(lang, 'No se pudo generar la imagen ahora.', 'Couldn’t generate the image right now.'));
+      } finally { setAiLoading(false); }
     };
 
     const card = { background: '#fff', border: '1px solid var(--line,#ece7e1)', borderRadius: 20, padding: '22px 22px 24px', boxShadow: '0 2px 16px rgba(45,36,33,0.06)' };
@@ -105,11 +122,15 @@
       h('div', { style: { display: 'flex', alignItems: 'baseline', justifyContent: 'space-between', gap: 12, flexWrap: 'wrap', marginBottom: 4 } },
         h('div', { style: { fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 19, fontWeight: 800, color: 'var(--ink,#2D2421)' } },
           tl(lang, 'Cómo va creciendo', 'How they grow up')),
-        typeof props.onGenerateAI === 'function' && h('button', { onClick: genAI, style: { fontSize: 12, fontWeight: 700, color: orange, background: 'rgba(245,130,32,0.08)', border: '1px solid rgba(245,130,32,0.3)', borderRadius: 999, padding: '6px 12px', cursor: 'pointer', fontFamily: 'inherit' } },
-          tl(lang, 'Ver foto con IA', 'See AI photo'))),
+        aiEnabled && h('button', { onClick: genAI, disabled: aiLoading, style: { fontSize: 12, fontWeight: 700, color: orange, background: 'rgba(245,130,32,0.08)', border: '1px solid rgba(245,130,32,0.3)', borderRadius: 999, padding: '6px 12px', cursor: aiLoading ? 'default' : 'pointer', fontFamily: 'inherit', opacity: aiLoading ? 0.6 : 1 } },
+          aiLoading ? tl(lang, 'Generando…', 'Generating…') : tl(lang, 'Ver adulto con IA', 'See adult with AI'))),
       h('p', { style: { fontSize: 12.5, color: 'var(--ink-soft,#9a8f86)', margin: '0 0 16px' } },
         tl(lang, 'Tamaño y peso aproximados por etapa (varía según cada mascota).', 'Approximate size and weight per stage (varies per pet).')),
       aiMsg && h('div', { style: { fontSize: 12.5, color: 'var(--ink-2,#6B5A4E)', background: 'var(--paper,#FBF7F0)', borderRadius: 10, padding: '9px 12px', marginBottom: 14 } }, aiMsg),
+      aiUrl && h('div', { style: { marginBottom: 16, textAlign: 'center' } },
+        h('img', { src: aiUrl, alt: tl(lang, 'Posible aspecto de adulto', 'Possible adult look'), style: { width: '100%', maxWidth: 300, borderRadius: 16, border: '1px solid var(--line,#ece7e1)', display: 'inline-block' } }),
+        h('div', { style: { fontSize: 11.5, color: 'var(--ink-soft,#9a8f86)', marginTop: 6, fontStyle: 'italic' } },
+          tl(lang, 'Imagen generada con IA — es una estimación y puede no ser 100% exacta.', 'AI-generated image — it’s an estimate and may not be 100% accurate.'))),
       h('div', { style: { display: 'flex', gap: 14, overflowX: 'auto', paddingBottom: 8 }, className: 'bs-scr' },
         stages.map((st, i) => {
           const pct = pctAdult(st.months, size);
