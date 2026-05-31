@@ -6,11 +6,11 @@ const useBS = () => useContext(BSCtx);
 
 const THEMES = {
   clean: {
-    bg:'#F6F4EF', surface:'#FFFFFF', surface2:'#F1EDE6',
-    border:'rgba(45,36,33,0.10)', borderStrong:'rgba(45,36,33,0.20)',
+    bg:'#FBFAF8', surface:'#FFFFFF', surface2:'#F4F1EC',
+    border:'rgba(45,36,33,0.12)', borderStrong:'rgba(45,36,33,0.22)',
     brand:'#F58220', rose:'#E85D75',
     grad:'linear-gradient(135deg,#F58220 0%,#E85D75 100%)',
-    glow:'0 8px 24px rgba(245,130,32,0.22)',
+    glow:'0 2px 10px rgba(45,36,33,0.06)',
     ink:'#2D2421', ink2:'#5f5346', soft:'#A89C8E',
     like:'#E85D75', online:'#1EB87A', name:'Clean',
   },
@@ -454,6 +454,7 @@ function PostCard({ post, onLike, onSave }) {
 
 function FeedScreen({ posts, toggleLike, toggleSave, setScreen }) {
   const BS = useBS();
+  const [filt, setFilt] = useState('Para ti');
   return (
     <div style={{ background:BS.bg }}>
       <div style={{ background:BS.surface, padding:'12px 16px', display:'flex', alignItems:'center', justifyContent:'space-between', position:'sticky', top:0, zIndex:10, borderBottom:`1px solid ${BS.border}` }}>
@@ -467,9 +468,9 @@ function FeedScreen({ posts, toggleLike, toggleSave, setScreen }) {
         </div>
       </div>
       <div className="bs-hscr" style={{ background:BS.surface, padding:'8px 14px 10px', display:'flex', gap:7, borderBottom:`1px solid ${BS.border}` }}>
-        {['Para ti','Mi Pack','Razas','Cerca de mi'].map((f,i) => (
-          <button key={f} className="bs-btn" style={{ padding:'7px 16px', borderRadius:999, border:'none', background: i===0 ? BS.grad : BS.surface2, color: i===0 ? '#fff' : BS.ink2, fontSize:12.5, fontWeight:600, cursor:'pointer', whiteSpace:'nowrap', fontFamily:'inherit', boxShadow: i===0 ? BS.glow : 'none' }}>{f}</button>
-        ))}
+        {['Para ti','Mi Pack','Razas','Cerca de mi'].map((f) => { const on = filt===f; return (
+          <button key={f} onClick={()=>setFilt(f)} className="bs-btn" style={{ padding:'7px 16px', borderRadius:999, border:`1.5px solid ${on?BS.brand:BS.border}`, background:'transparent', color: on ? BS.brand : BS.ink2, fontSize:12.5, fontWeight: on?700:600, cursor:'pointer', whiteSpace:'nowrap', fontFamily:'inherit' }}>{f}</button>
+        ); })}
       </div>
       <StoriesBar/>
       {posts.map(p => <PostCard key={p.id} post={p} onLike={toggleLike} onSave={toggleSave}/>)}
@@ -925,7 +926,7 @@ function CommunityScreen() {
                 <div style={{ fontSize:13.5, fontWeight:800, color:BS.ink }}>{m.name}</div>
                 <div style={{ fontSize:11, color:BS.soft, marginBottom:4 }}>{m.city}</div>
                 {(m.pet.name || m.pet.breed) && <div style={{ fontSize:11, color:BS.brand, fontWeight:700, background:'rgba(245,130,32,0.1)', borderRadius:999, padding:'2px 9px', display:'inline-block', marginBottom:9 }}>{[m.pet.name, m.pet.breed].filter(Boolean).join(' · ')}</div>}
-                <button onClick={() => toggle(m)} className="bs-btn" style={{ width:'100%', padding:'7px', borderRadius:9, border:`1.5px solid ${fol?BS.border:BS.brand}`, background: fol?'transparent':BS.grad, color: fol?BS.soft:'#fff', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{fol?'Siguiendo':'+ Seguir'}</button>
+                <button onClick={() => toggle(m)} className="bs-btn" style={{ width:'100%', padding:'7px', borderRadius:999, border:`1.5px solid ${fol?BS.border:BS.brand}`, background:'transparent', color: fol?BS.soft:BS.brand, fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{fol?'Siguiendo':'Seguir'}</button>
               </div>
             </div>
           );

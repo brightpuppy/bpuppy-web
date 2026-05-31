@@ -147,18 +147,19 @@ function RightRail({ bs }) {
       </div>
       <div style={{ background:bs.surface, borderRadius:16, padding:'14px', border:`1px solid ${bs.border}` }}>
         <div style={{ fontSize:13, fontWeight:800, color:bs.ink, marginBottom:12, fontFamily:'Bricolage Grotesque,sans-serif' }}>Sugerencias</div>
-        {BSDATA.suggestions.map(u => (
+        {(BSDATA.suggestions||[]).map(u => (
           <div key={u.id} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:11 }}>
             <BSAvatar user={u} size={34}/>
             <div style={{ flex:1, minWidth:0 }}>
-              <div style={{ fontSize:12.5, fontWeight:700, color:bs.ink, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{u.username}</div>
-              <div style={{ fontSize:10.5, color:bs.soft }}>{u.mutual} mutual</div>
+              <div style={{ fontSize:12.5, fontWeight:700, color:bs.ink, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{u.name||u.username}</div>
+              <div style={{ fontSize:10.5, color:bs.soft, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{u.pet || u.city}</div>
             </div>
-            <button onClick={()=>toggle(u.id)} style={{ padding:'4px 11px', borderRadius:8, border:`1.5px solid ${added.has(u.id)?bs.border:bs.brand}`, background:'transparent', color:added.has(u.id)?bs.soft:bs.brand, fontSize:11.5, fontWeight:700, cursor:'pointer', fontFamily:'inherit', flexShrink:0 }}>
-              {added.has(u.id)?'en Pack':'+ Pack'}
+            <button onClick={()=>{ toggle(u.id); if(window.BSAUTH && window.BSAUTH.follow) try{ window.BSAUTH.follow(u.username, added.has(u.id)); }catch(e){} }} style={{ padding:'4px 11px', borderRadius:999, border:`1.5px solid ${added.has(u.id)?bs.border:bs.brand}`, background:'transparent', color:added.has(u.id)?bs.soft:bs.brand, fontSize:11.5, fontWeight:700, cursor:'pointer', fontFamily:'inherit', flexShrink:0 }}>
+              {added.has(u.id)?'Siguiendo':'Seguir'}
             </button>
           </div>
         ))}
+        {!(BSDATA.suggestions||[]).length && <div style={{ fontSize:12, color:bs.soft }}>Pronto verás sugerencias.</div>}
       </div>
       <div style={{ background:bs.surface, borderRadius:16, padding:'14px', border:`1px solid ${bs.border}` }}>
         <div style={{ fontSize:13, fontWeight:800, color:bs.ink, marginBottom:12, fontFamily:'Bricolage Grotesque,sans-serif' }}>Trending</div>
@@ -262,6 +263,7 @@ function App() {
     if (d.videos && d.videos.length) BSDATA.videos = d.videos.map(v=>({ id:v.id, title:v.title, dur:v.duration, thumb:v.thumb_url }));
     BSDATA.community = (d.community||[]).map(m=>({ id:m.username, username:m.username, name:m.name, initials:m.initials, color:m.avatar_color, avatar:m.avatar_url, city:m.city, bio:m.bio, bpuppy:m.bpuppy, pet:{ name:(m.pet&&m.pet.name)||'', species:(m.pet&&m.pet.species)||'', breed:(m.pet&&m.pet.breed)||'', color:(m.pet&&m.pet.color)||'', age:(m.pet&&m.pet.age)||'', img:(m.pet&&m.pet.photo_url)||'assets/photos/g01.webp' } }));
     BSDATA.stories = (d.stories || []).map(s=>({ id:s.id, username:s.name||s.username, initials:s.initials, color:s.avatar_color||s.color, avatar:s.avatar_url, img:s.media_url, hasNew:true }));
+    if (d.suggestions) BSDATA.suggestions = d.suggestions.map(c=>({ id:c.username, username:c.username, name:c.name, initials:c.initials, color:c.avatar_color, avatar:c.avatar_url, city:c.city, pet:(c.pet&&c.pet.breed)||'' }));
     if (d.feed && d.feed.length) setPosts(d.feed.map(p=>({ id:p.id, username:p.username, initials:p.initials, color:p.color, avatar:p.avatar_url, city:p.city, location:p.location||'', time:rel(p.created_at), verified:p.username==='brightpuppy', img:p.img, caption:p.caption, tags:[], likes:p.likes||0, comments:0, liked:false, saved:false })));
   };
   const refresh = async () => { try { const d = await apiCall('get',{}); if(d&&d.ok){ applyData(d); if(d.me && d.me.username){ BSDATA.me = { ...BSDATA.me, username:d.me.username, name:d.me.display_name||d.me.username, city:d.me.city||'', initials:(d.me.username||'?').slice(0,2).toUpperCase(), color:d.me.avatar_color||BSDATA.me.color, bio:d.me.bio||'', verified:d.me.username==='brightpuppy' }; } setMe(d.me||null); setFollowing(d.following||[]); setTick(t=>t+1); } } catch(e){} };
