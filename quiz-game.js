@@ -362,7 +362,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   const [lives, setLives] = useState(3);
   const [treats, setTreats] = useState(0);
   const W = 360, H = 200, GY = H - 24;
-  const MAXLIVES = 5, GRAV = 0.5, JUMPV = 8.4;
+  const MAXLIVES = 5, GRAV = 0.4, JUMPV = 8.7;
   const loadBoard = () => {
     const s = gameSupa();
     if (!s) return;
@@ -378,6 +378,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     py: 0,
     vy: 0,
     grounded: true,
+    jumps: 0,
     frame: 0,
     fcount: 0,
     speed: 1.6,
@@ -391,11 +392,12 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     heartArr: [],
     plats: [],
     clouds: [{ x: 60, y: 28 }, { x: 200, y: 46 }, { x: 320, y: 22 }],
+    hills: [{ x: 0, w: 200, h: 46 }, { x: 230, w: 240, h: 64 }, { x: 430, w: 200, h: 40 }],
     bldgs: [{ x: 40, w: 46, h: 54 }, { x: 150, w: 38, h: 74 }, { x: 250, w: 54, h: 46 }, { x: 330, w: 40, h: 64 }],
-    nextObst: 260,
+    nextObst: 300,
     nextTreat: 120,
     nextHeart: 1500,
-    nextPlat: 520,
+    nextPlat: 380,
     over: false
   });
   const jump = () => {
@@ -404,6 +406,11 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     if (st.grounded) {
       st.vy = JUMPV;
       st.grounded = false;
+      st.jumps = 1;
+      sndJump();
+    } else if ((st.jumps || 0) < 2) {
+      st.vy = JUMPV * 0.92;
+      st.jumps = (st.jumps || 0) + 1;
       sndJump();
     }
   };
@@ -470,6 +477,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
         st.py = floor;
         st.vy = 0;
         st.grounded = true;
+        st.jumps = 0;
       } else {
         st.grounded = false;
       }
@@ -493,13 +501,21 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
           b.h = 40 + Math.random() * 40;
         }
       });
+      st.hills.forEach((hl) => {
+        hl.x -= st.speed * 0.18;
+        if (hl.x + hl.w < -10) {
+          hl.x = W + Math.random() * 120;
+          hl.w = 180 + Math.random() * 120;
+          hl.h = 38 + Math.random() * 36;
+        }
+      });
       st.nextPlat -= st.speed;
       if (st.nextPlat <= 0) {
-        const top = 38 + Math.floor(Math.random() * 20);
-        const w = 42 + Math.floor(Math.random() * 34);
+        const top = 36 + Math.floor(Math.random() * 62);
+        const w = 48 + Math.floor(Math.random() * 38);
         st.plats.push({ x: W + 10, w, top });
-        if (Math.random() < 0.7) st.treatArr.push({ x: W + 10 + w / 2 - 4, y: GY - top - 16, got: false });
-        st.nextPlat = 360 + Math.random() * 340;
+        if (Math.random() < 0.75) st.treatArr.push({ x: W + 10 + w / 2 - 4, y: GY - top - 16, got: false });
+        st.nextPlat = 320 + Math.random() * 300;
       }
       st.plats.forEach((p) => {
         p.x -= st.speed;
@@ -573,10 +589,31 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
       grd.addColorStop(1, "#EAF6FB");
       ctx.fillStyle = grd;
       ctx.fillRect(0, 0, W, H);
+      ctx.save();
+      ctx.translate(W - 36, 30);
+      ctx.strokeStyle = "rgba(255,213,138,0.55)";
+      ctx.lineWidth = 2;
+      const ray = Math.floor(st.dist * 0.5) % 30;
+      for (let a = 0; a < 8; a++) {
+        const ang = a * Math.PI / 4 + ray * 0.01;
+        ctx.beginPath();
+        ctx.moveTo(Math.cos(ang) * 16, Math.sin(ang) * 16);
+        ctx.lineTo(Math.cos(ang) * 22, Math.sin(ang) * 22);
+        ctx.stroke();
+      }
       ctx.fillStyle = "#FFD98A";
       ctx.beginPath();
-      ctx.arc(W - 36, 30, 12, 0, 7);
+      ctx.arc(0, 0, 12, 0, 7);
       ctx.fill();
+      ctx.restore();
+      st.hills.forEach((hl) => {
+        ctx.fillStyle = "#CDE9B8";
+        ctx.beginPath();
+        ctx.moveTo(hl.x, GY + 4);
+        ctx.quadraticCurveTo(hl.x + hl.w / 2, GY + 4 - hl.h, hl.x + hl.w, GY + 4);
+        ctx.closePath();
+        ctx.fill();
+      });
       st.bldgs.forEach((b) => {
         ctx.fillStyle = "#cfe0d6";
         ctx.fillRect(b.x, GY - b.h, b.w, b.h);
@@ -731,7 +768,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   return /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 560, margin: "0 auto", padding: "18px 16px 80px" } }, /* @__PURE__ */ React.createElement("div", { className: "qg-pop", style: cardSt }, /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#F58220,#E85D75)", padding: "14px 18px", color: "#fff", display: "flex", alignItems: "center", justifyContent: "space-between" } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontWeight: 800, fontSize: 17 } }, t(["Corre con tu", "Run with your"]), " ", firstName), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 12, alignItems: "center", fontSize: 13, fontWeight: 800 } }, /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: 4 }, title: "Treats" }, /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 48 48", fill: "#fff" }, /* @__PURE__ */ React.createElement("rect", { x: "14", y: "20", width: "20", height: "8", rx: "4" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "29", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "29", r: "5" })), treats), /* @__PURE__ */ React.createElement("span", null, t(["Puntos", "Score"]), ": ", score), /* @__PURE__ */ React.createElement("span", { style: { opacity: 0.85 } }, t(["Mejor", "Best"]), ": ", best))), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", background: "#EAF6FB", lineHeight: 0 }, onMouseDown: tap, onTouchStart: (e) => {
     e.preventDefault();
     tap();
-  } }, /* @__PURE__ */ React.createElement("canvas", { ref: cvsRef, width: W, height: H, style: { width: "100%", height: "auto", display: "block", cursor: "pointer", touchAction: "none" } }), phase === "ready" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(255,255,255,0.55)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.78)", borderRadius: 16, padding: "16px 22px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ink)", lineHeight: 1.1 } }, t(["\xA1Toca para empezar!", "Tap to start!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, color: "var(--ink-2)" } }, t(["Click o toque = saltar", "Click or tap = jump"])))), phase === "over" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.45)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 28, fontWeight: 800 } }, t(["\xA1Buen intento!", "Nice run!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, marginTop: 2 } }, t(["Puntuaci\xF3n", "Score"]), ": ", /* @__PURE__ */ React.createElement("b", null, score))))), /* @__PURE__ */ React.createElement("div", { style: { padding: "18px 20px 22px" } }, phase !== "over" && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, alignItems: "center" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => phase === "playing" ? jump() : start(), className: "btn btn-primary", style: { flex: 1, justifyContent: "center", cursor: "pointer" } }, phase === "playing" ? t(["Saltar", "Jump"]) : t(["Empezar a jugar", "Start playing"]))), phase === "over" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 14, alignItems: "center", background: "#FFF7EE", border: "1.5px solid rgba(245,130,32,0.25)", borderRadius: 16, padding: "14px 16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 54, height: 54, borderRadius: "50%", overflow: "hidden", border: "2px solid var(--orange)", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("img", { src: breed.img, alt: breed.name, style: { width: "100%", height: "100%", objectFit: "cover" } })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, fontSize: 14, color: "var(--ink)", lineHeight: 1.5 } }, /* @__PURE__ */ React.createElement("b", null, firstName), " ", t(["te da un premio:", "gives you a prize:"]), " ", /* @__PURE__ */ React.createElement("b", { style: { color: "var(--orange2,#C2521E)" } }, prizeFor(score, lang)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: "var(--ink-2)", marginTop: 2 } }, score, " ", t(["puntos", "points"]), " \xB7 ", treats, " treats")), /* @__PURE__ */ React.createElement("div", { style: { flexShrink: 0 } }, /* @__PURE__ */ React.createElement(PrizeSymbol, { tier: prizeTier(score), size: 46 }))), !saved ? /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, marginBottom: 8, color: "var(--ink)" } }, t(["Guarda tu puntuaci\xF3n", "Save your score"])), /* @__PURE__ */ React.createElement(
+  } }, /* @__PURE__ */ React.createElement("canvas", { ref: cvsRef, width: W, height: H, style: { width: "100%", height: "auto", display: "block", cursor: "pointer", touchAction: "none" } }), phase === "ready" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(255,255,255,0.55)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.78)", borderRadius: 16, padding: "16px 22px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ink)", lineHeight: 1.1 } }, t(["\xA1Toca para empezar!", "Tap to start!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, color: "var(--ink-2)" } }, t(["Toca para saltar \xB7 doble toque = doble salto", "Tap to jump \xB7 double tap = double jump"])))), phase === "over" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.45)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 28, fontWeight: 800 } }, t(["\xA1Buen intento!", "Nice run!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, marginTop: 2 } }, t(["Puntuaci\xF3n", "Score"]), ": ", /* @__PURE__ */ React.createElement("b", null, score))))), /* @__PURE__ */ React.createElement("div", { style: { padding: "18px 20px 22px" } }, phase !== "over" && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, alignItems: "center" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => phase === "playing" ? jump() : start(), className: "btn btn-primary", style: { flex: 1, justifyContent: "center", cursor: "pointer" } }, phase === "playing" ? t(["Saltar", "Jump"]) : t(["Empezar a jugar", "Start playing"]))), phase === "over" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 14, alignItems: "center", background: "#FFF7EE", border: "1.5px solid rgba(245,130,32,0.25)", borderRadius: 16, padding: "14px 16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 54, height: 54, borderRadius: "50%", overflow: "hidden", border: "2px solid var(--orange)", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("img", { src: breed.img, alt: breed.name, style: { width: "100%", height: "100%", objectFit: "cover" } })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, fontSize: 14, color: "var(--ink)", lineHeight: 1.5 } }, /* @__PURE__ */ React.createElement("b", null, firstName), " ", t(["te da un premio:", "gives you a prize:"]), " ", /* @__PURE__ */ React.createElement("b", { style: { color: "var(--orange2,#C2521E)" } }, prizeFor(score, lang)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: "var(--ink-2)", marginTop: 2 } }, score, " ", t(["puntos", "points"]), " \xB7 ", treats, " treats")), /* @__PURE__ */ React.createElement("div", { style: { flexShrink: 0 } }, /* @__PURE__ */ React.createElement(PrizeSymbol, { tier: prizeTier(score), size: 46 }))), !saved ? /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, marginBottom: 8, color: "var(--ink)" } }, t(["Guarda tu puntuaci\xF3n", "Save your score"])), /* @__PURE__ */ React.createElement(
     "input",
     {
       value: name,

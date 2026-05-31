@@ -227,7 +227,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   const [treats, setTreats] = useState(0);
 
   const W = 360, H = 200, GY = H - 24; // ground line
-  const MAXLIVES = 5, GRAV = 0.5, JUMPV = 8.4;
+  const MAXLIVES = 5, GRAV = 0.40, JUMPV = 8.7; // salto más flotante (arco perdonador)
 
   const loadBoard = () => {
     const s = gameSupa(); if(!s) return;
@@ -237,17 +237,20 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   useEffect(()=>{ loadBoard(); }, []);
 
   const newState = () => ({
-    py: 0, vy: 0, grounded: true, frame: 0, fcount: 0,
+    py: 0, vy: 0, grounded: true, jumps: 0, frame: 0, fcount: 0,
     speed: 1.6, dist: 0, score: 0, treats: 0, lives: 3, inv: 0,
     obst: [], treatArr: [], heartArr: [], plats: [],
     clouds: [{x:60,y:28},{x:200,y:46},{x:320,y:22}],
+    hills: [{x:0,w:200,h:46},{x:230,w:240,h:64},{x:430,w:200,h:40}],
     bldgs: [{x:40,w:46,h:54},{x:150,w:38,h:74},{x:250,w:54,h:46},{x:330,w:40,h:64}],
-    nextObst: 260, nextTreat: 120, nextHeart: 1500, nextPlat: 520, over: false,
+    nextObst: 300, nextTreat: 120, nextHeart: 1500, nextPlat: 380, over: false,
   });
 
+  // Doble salto: 1er tap salta desde el suelo, 2do tap (en el aire) vuelve a impulsar.
   const jump = () => {
     const st = stRef.current; if(!st || st.over) return;
-    if(st.grounded){ st.vy = JUMPV; st.grounded = false; sndJump(); }
+    if(st.grounded){ st.vy = JUMPV; st.grounded = false; st.jumps = 1; sndJump(); }
+    else if((st.jumps || 0) < 2){ st.vy = JUMPV * 0.92; st.jumps = (st.jumps || 0) + 1; sndJump(); }
   };
 
   const endGame = (finalScore, treatsCollected) => {
@@ -293,15 +296,16 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
       const dogCx = dogX + 15;
       let floor = 0;
       for(const p of st.plats){ if(dogCx > p.x-3 && dogCx < p.x+p.w+3 && st.vy <= 0 && st.py >= p.top-7 && st.py <= p.top+14) floor = Math.max(floor, p.top); }
-      if(st.py <= floor){ st.py = floor; st.vy = 0; st.grounded = true; } else { st.grounded = false; }
+      if(st.py <= floor){ st.py = floor; st.vy = 0; st.grounded = true; st.jumps = 0; } else { st.grounded = false; }
       // animación de carrera
       st.fcount++; if(st.grounded && st.fcount % Math.max(4, 8-Math.floor(st.speed)) === 0){ st.frame++; if(st.fcount%20===0) sndStep(); }
       // parallax: nubes + edificios
       st.clouds.forEach(c=>{ c.x -= st.speed*0.25; if(c.x < -40){ c.x = W+20; c.y = 16+Math.random()*40; } });
       st.bldgs.forEach(b=>{ b.x -= st.speed*0.5; if(b.x+b.w < -6){ b.x = W+Math.random()*40; b.w = 34+Math.random()*26; b.h = 40+Math.random()*40; } });
+      st.hills.forEach(hl=>{ hl.x -= st.speed*0.18; if(hl.x+hl.w < -10){ hl.x = W+Math.random()*120; hl.w = 180+Math.random()*120; hl.h = 38+Math.random()*36; } });
       // plataformas (subir arriba y bajar) — a veces con un treat encima
       st.nextPlat -= st.speed;
-      if(st.nextPlat <= 0){ const top = 38+Math.floor(Math.random()*20); const w = 42+Math.floor(Math.random()*34); st.plats.push({ x:W+10, w, top }); if(Math.random()<0.7) st.treatArr.push({ x:W+10+w/2-4, y:GY-top-16, got:false }); st.nextPlat = 360+Math.random()*340; }
+      if(st.nextPlat <= 0){ const top = 36+Math.floor(Math.random()*62); const w = 48+Math.floor(Math.random()*38); st.plats.push({ x:W+10, w, top }); if(Math.random()<0.75) st.treatArr.push({ x:W+10+w/2-4, y:GY-top-16, got:false }); st.nextPlat = 320+Math.random()*300; }
       st.plats.forEach(p=>{ p.x -= st.speed; }); st.plats = st.plats.filter(p=> p.x+p.w > -6);
       // obstáculos (sólo tras un rato; cadencia generosa)
       st.nextObst -= st.speed;
@@ -329,7 +333,13 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
 
       // ── render ──
       const grd = ctx.createLinearGradient(0,0,0,H); grd.addColorStop(0,'#BFE3F2'); grd.addColorStop(1,'#EAF6FB'); ctx.fillStyle = grd; ctx.fillRect(0,0,W,H);
-      ctx.fillStyle='#FFD98A'; ctx.beginPath(); ctx.arc(W-36,30,12,0,7); ctx.fill();
+      // sol con rayos
+      ctx.save(); ctx.translate(W-36, 30);
+      ctx.strokeStyle='rgba(255,213,138,0.55)'; ctx.lineWidth=2; const ray=Math.floor(st.dist*0.5)%30;
+      for(let a=0;a<8;a++){ const ang=a*Math.PI/4 + ray*0.01; ctx.beginPath(); ctx.moveTo(Math.cos(ang)*16,Math.sin(ang)*16); ctx.lineTo(Math.cos(ang)*22,Math.sin(ang)*22); ctx.stroke(); }
+      ctx.fillStyle='#FFD98A'; ctx.beginPath(); ctx.arc(0,0,12,0,7); ctx.fill(); ctx.restore();
+      // colinas suaves (parallax lejano)
+      st.hills.forEach(hl=>{ ctx.fillStyle='#CDE9B8'; ctx.beginPath(); ctx.moveTo(hl.x, GY+4); ctx.quadraticCurveTo(hl.x+hl.w/2, GY+4-hl.h, hl.x+hl.w, GY+4); ctx.closePath(); ctx.fill(); });
       // edificios (parallax estilo arcade)
       st.bldgs.forEach(b=>{ ctx.fillStyle='#cfe0d6'; ctx.fillRect(b.x, GY-b.h, b.w, b.h); ctx.fillStyle='#b4c9bd'; for(let wy=GY-b.h+6; wy<GY-6; wy+=10){ for(let wx=b.x+5; wx<b.x+b.w-5; wx+=10){ ctx.fillRect(wx,wy,5,5); } } });
       // nubes
@@ -408,7 +418,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
             <div style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', background:'rgba(255,255,255,0.55)' }}>
               <div style={{ textAlign:'center', display:'flex', flexDirection:'column', alignItems:'center', gap:14, background:'rgba(255,255,255,0.78)', borderRadius:16, padding:'16px 22px' }}>
                 <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:22, fontWeight:800, color:'var(--ink)', lineHeight:1.1 }}>{t(['¡Toca para empezar!','Tap to start!'])}</div>
-                <div style={{ fontSize:13, fontWeight:600, color:'var(--ink-2)' }}>{t(['Click o toque = saltar','Click or tap = jump'])}</div>
+                <div style={{ fontSize:13, fontWeight:600, color:'var(--ink-2)' }}>{t(['Toca para saltar · doble toque = doble salto','Tap to jump · double tap = double jump'])}</div>
               </div>
             </div>
           )}
