@@ -103,7 +103,7 @@
           { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 19, fontWeight: 800, color: "var(--ink,#2D2421)" } },
           tl(lang, "C\xF3mo va creciendo", "How they grow up")
         ),
-        h(
+        typeof props.onGenerateAI === "function" && h(
           "button",
           { onClick: genAI, style: { fontSize: 12, fontWeight: 700, color: orange, background: "rgba(245,130,32,0.08)", border: "1px solid rgba(245,130,32,0.3)", borderRadius: 999, padding: "6px 12px", cursor: "pointer", fontFamily: "inherit" } },
           tl(lang, "Ver foto con IA", "See AI photo")

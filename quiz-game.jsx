@@ -240,6 +240,11 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
     if (phase !== 'playing') return;
     const cvs = cvsRef.current; if(!cvs) return;
     const ctx = cvs.getContext('2d');
+    // Render a mayor resolución para que se vea más nítido (menos pixelado)
+    const DPR = Math.min(window.devicePixelRatio || 1, 2) * 1.5;
+    cvs.width = W * DPR; cvs.height = H * DPR;
+    ctx.setTransform(DPR, 0, 0, DPR, 0, 0);
+    ctx.imageSmoothingEnabled = true;
     let running = true;
     const loop = () => {
       if(!running) return;
@@ -352,7 +357,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
 
         {/* Lienzo */}
         <div style={{ position:'relative', background:'#EAF6FB', lineHeight:0 }} onMouseDown={tap} onTouchStart={(e)=>{ e.preventDefault(); tap(); }}>
-          <canvas ref={cvsRef} width={W} height={H} style={{ width:'100%', height:'auto', display:'block', imageRendering:'pixelated', cursor:'pointer', touchAction:'none' }}/>
+          <canvas ref={cvsRef} width={W} height={H} style={{ width:'100%', height:'auto', display:'block', cursor:'pointer', touchAction:'none' }}/>
           {phase==='ready' && (
             <div style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', background:'rgba(255,255,255,0.55)' }}>
               <div style={{ textAlign:'center' }}>
@@ -364,7 +369,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
           {phase==='over' && (
             <div style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', background:'rgba(45,36,33,0.45)' }}>
               <div style={{ textAlign:'center', color:'#fff' }}>
-                <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:26, fontWeight:800 }}>{t(['¡Buen intento!','Nice run!'])}</div>
+                <div className="bp-rainbow" style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:28, fontWeight:800 }}>{t(['¡Buen intento!','Nice run!'])}</div>
                 <div style={{ fontSize:15, marginTop:2 }}>{t(['Puntuación','Score'])}: <b>{score}</b></div>
               </div>
             </div>
@@ -519,7 +524,7 @@ function QuizGame(){
             <div style={{ width:96, height:96, margin:'12px auto', borderRadius:'50%', overflow:'hidden', border:'3px solid rgba(255,255,255,0.7)', background:'rgba(255,255,255,0.2)', animation:'qgBounce 1.8s ease-in-out infinite' }}>
               <img src={b.img} alt={b.name} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/>
             </div>
-            <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:30, fontWeight:800, letterSpacing:'-0.02em' }}>{b.name}</div>
+            <div className="bp-rainbow" style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:32, fontWeight:800, letterSpacing:'-0.02em', textShadow:'0 1px 8px rgba(0,0,0,0.22)' }}>{b.name}</div>
             <div style={{ display:'inline-block', marginTop:8, background:'rgba(255,255,255,0.22)', borderRadius:999, padding:'4px 14px', fontSize:14, fontWeight:800 }}>{b.match}% {t(['compatible','match'])}</div>
           </div>
           <div style={{ padding:'22px 24px 26px' }}>
