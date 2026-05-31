@@ -292,6 +292,19 @@ html.media-dark .hdr .nav-dropdown a { color: var(--ink) !important; }
   .mobile-nav-footer { display: flex; align-items: center; gap: 18px; padding: 16px 6px 2px; margin-top: 8px; border-top: 1px solid rgba(45,36,33,.10); }
   .mobile-nav-footer .hdr-globe { display: block !important; color: var(--ink); }
   .mobile-nav-footer .hdr-phone { display: grid !important; }
+  /* El burger no se corta: ocultar el teléfono del header (queda en el footer del menú) */
+  .hdr-row .hdr-phone { display: none !important; }
+  .hdr-row { gap: 8px; }
+  /* Acordeones del menú móvil (submenús dentro del burger) */
+  .mnav-group { border-bottom: 1px solid rgba(45,36,33,.06); }
+  .mnav-head { display:flex; align-items:center; justify-content:space-between; width:100%; padding:13px 6px; font-size:16px; font-weight:600; color:var(--ink); background:none; border:none; cursor:pointer; font-family:inherit; text-align:left; }
+  .mnav-caret { width:18px; height:18px; flex-shrink:0; color:var(--ink-soft,#9b9088); transition:transform .2s; }
+  .mnav-group.open .mnav-caret { transform:rotate(180deg); }
+  .mnav-sub { display:flex; flex-direction:column; padding:0 0 8px 14px; border-top:1px solid rgba(45,36,33,.05); }
+  .mnav-sub a { padding:11px 6px !important; font-size:14.5px !important; font-weight:600; color:var(--ink-2,#6b5a4e) !important; border-bottom:none !important; }
+}
+@media (max-width: 560px) {
+  .hdr-logo .wm { display: none; } /* solo el ícono del logo en móviles chicos para que el burger entre */
 }
 
 /* ── Hero ── */

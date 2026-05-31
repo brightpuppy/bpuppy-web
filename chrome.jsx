@@ -256,11 +256,27 @@ function NavItem({ label, href, items, navClass }) {
 
 }
 
+function MobileGroup({ label, items, open, onToggle, onNav }) {
+  return (
+    <div className={`mnav-group${open ? ' open' : ''}`}>
+      <button type="button" className="mnav-head" aria-expanded={open} onClick={onToggle}>
+        <span>{label}</span>
+        <svg className="mnav-caret" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M6 9l6 6 6-6" /></svg>
+      </button>
+      {open &&
+        <div className="mnav-sub">
+          {items.map((it, i) => <a key={i} href={it.href} className={it.className || ''} style={it.style} onClick={onNav}>{it.label}</a>)}
+        </div>
+      }
+    </div>);
+}
+
 function Header({ overDark }) {
   const t = useT();
   const { lang, setLang } = useLang();
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [mobG, setMobG] = useState(null); // qué submenú del burger está expandido
   const [gtLang,  setGtLang]  = useState(() => localStorage.getItem('bpuppy-gt-lang')  || null);
   const [gtLabel, setGtLabel] = useState(() => localStorage.getItem('bpuppy-gt-label') || null);
 
@@ -407,14 +423,14 @@ function Header({ overDark }) {
       {menuOpen && (
         <nav className="mobile-nav">
           <a href="/social" className="mnav-social" onClick={() => setMenuOpen(false)}><span style={{ display:'inline-flex', width:8, height:8, borderRadius:'50%', background:'#0EA5E9', marginRight:8 }}/>{t(['Social · Comunidad','Social · Community'])}</a>
-          {pv['Cachorros'] !== false && <a href="/cachorros" onClick={() => setMenuOpen(false)}>{t(STRINGS.nav.puppies)}</a>}
-          {pv['Gatos'] !== false && <a href="/gatos" onClick={() => setMenuOpen(false)}>{t(['Gatos','Cats'])}</a>}
+          {pv['Cachorros'] !== false && <MobileGroup label={t(STRINGS.nav.puppies)} items={cachItems} open={mobG==='cach'} onToggle={()=>setMobG(g=>g==='cach'?null:'cach')} onNav={()=>setMenuOpen(false)}/>}
+          {pv['Gatos'] !== false && <MobileGroup label={t(['Gatos','Cats'])} items={[{label:t(['Gatos','Cats']),href:'/gatos',style:{fontWeight:700}},...gatosItems]} open={mobG==='gatos'} onToggle={()=>setMobG(g=>g==='gatos'?null:'gatos')} onNav={()=>setMenuOpen(false)}/>}
           <a href="/financiamiento" onClick={() => setMenuOpen(false)}>{t(['Financiamiento','Financing'])}</a>
           {pv['Grooming'] !== false && <a href="/grooming" onClick={() => setMenuOpen(false)}><span className="notranslate">Grooming</span></a>}
-          <a href="/media" onClick={() => setMenuOpen(false)}><span className="notranslate">Media</span></a>
-          <a href="/nosotros?tab=impacto" onClick={() => setMenuOpen(false)}>{t(['Impacto Social','Social Impact'])}</a>
-          <a href="/nosotros?tab=historia" onClick={() => setMenuOpen(false)}>{t(['Nuestra Historia','Our Story'])}</a>
-          <a href="/nosotros?tab=equipo" onClick={() => setMenuOpen(false)}>{t(['Nuestro Equipo','Our Team'])}</a>
+          {mediaItems.length > 1
+            ? <MobileGroup label={<span className="notranslate">Media</span>} items={mediaItems} open={mobG==='media'} onToggle={()=>setMobG(g=>g==='media'?null:'media')} onNav={()=>setMenuOpen(false)}/>
+            : <a href="/media" onClick={() => setMenuOpen(false)}><span className="notranslate">Media</span></a>}
+          <MobileGroup label={t(['Nosotros','About'])} items={[{label:t(['Impacto Social','Social Impact']),href:'/nosotros?tab=impacto'},{label:t(['Nuestra Historia','Our Story']),href:'/nosotros?tab=historia'},{label:t(['Nuestro Equipo','Our Team']),href:'/nosotros?tab=equipo'}]} open={mobG==='nos'} onToggle={()=>setMobG(g=>g==='nos'?null:'nos')} onNav={()=>setMenuOpen(false)}/>
           <div className="mobile-nav-footer">
             <GlobeDropdown isOverDark={false} onLangSelect={handleGtSelect} />
             <a href="tel:+18084928294" className="hdr-phone" aria-label="Llamar">
