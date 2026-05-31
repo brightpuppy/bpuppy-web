@@ -100,6 +100,13 @@ const THEMES = {
     .bs-hscr::-webkit-scrollbar { display:none }
     .bs-btn  { transition:opacity .15s,transform .12s;background:none;border:none;cursor:pointer;padding:0 }
     .bs-btn:active { transform:scale(0.94);opacity:.8 }
+    @keyframes bsRainbow { to { background-position:0 0,-300% 0 } }
+    .bs-rainbow { border:3px solid transparent; border-radius:16px;
+      background:var(--bsr-fill,linear-gradient(135deg,#F58220,#E85D75)) padding-box, linear-gradient(90deg,#ff4d4d,#ff9f1c,#ffd93d,#4ade80,#38bdf8,#a855f7,#ff4d4d) border-box;
+      background-size:100% 100%,300% 100%; animation:bsRainbow 3s linear infinite;
+      color:#fff; cursor:pointer; transition:transform .12s; }
+    .bs-rainbow:hover  { transform:translateY(-2px) }
+    .bs-rainbow:active { transform:scale(.98) }
     * { box-sizing:border-box }
     input,textarea { outline:none;font-family:inherit }
   `;
@@ -169,8 +176,8 @@ function WelcomeScreen({ onSendLink }) {
   return (
     <div style={{ height:'100%', display:'flex', flexDirection:'column', overflow:'hidden' }}>
       <div style={{ flex:1, position:'relative', overflow:'hidden' }}>
-        <img src="assets/photos/g03.webp" alt="" style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 20%', display:'block' }}/>
-        <div style={{ position:'absolute', inset:0, background:'linear-gradient(to bottom,rgba(5,5,18,0.1) 0%,rgba(5,5,18,0.94) 100%)' }}/>
+        <img src="assets/photos/bsocial-pool.webp" alt="Perritos en una fiesta de piscina" style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 28%', display:'block' }}/>
+        <div style={{ position:'absolute', inset:0, background:'linear-gradient(to bottom,rgba(5,5,18,0.05) 0%,rgba(5,5,18,0.35) 48%,rgba(5,5,18,0.93) 100%)' }}/>
         <div style={{ position:'absolute', bottom:0, left:0, right:0, padding:'28px 26px 34px' }}>
           <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:18 }}>
             <div style={{ background:'rgba(255,255,255,0.08)', borderRadius:18, padding:'7px 8px 4px', backdropFilter:'blur(20px)', border:'1px solid rgba(255,255,255,0.12)', display:'grid', placeItems:'center' }}>
@@ -201,12 +208,16 @@ function WelcomeScreen({ onSendLink }) {
             <input type="email" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>{ if(e.key==='Enter') send(); }} placeholder="tu@correo.com"
               style={{ width:'100%', padding:'14px 15px', borderRadius:14, border:`1.5px solid ${BS.borderStrong}`, background:BS.surface2, fontSize:14.5, color:BS.ink, fontFamily:'inherit' }}/>
             {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600 }}>{err}</div>}
-            <button onClick={send} disabled={busy} className="bs-btn" style={{ padding:'14px', borderRadius:14, border:'none', background:BS.grad, fontSize:14.5, fontWeight:700, color:'#fff', cursor: busy?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity: busy?0.7:1 }}>
+            <button onClick={send} disabled={busy} className="bs-btn bs-rainbow" style={{ '--bsr-fill':BS.grad, padding:'15px', fontSize:15, fontWeight:800, cursor: busy?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity: busy?0.7:1 }}>
               {busy ? 'Enviando…' : 'Enviarme mi enlace mágico'}
             </button>
             <p style={{ textAlign:'center', fontSize:11.5, color:BS.soft, margin:'4px 0 0', lineHeight:1.5 }}>Sin contraseñas. Usa el mismo correo de tu cuenta BrightPuppy si ya eres cliente.</p>
           </>
         )}
+        <a href="/" className="bs-btn" style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:7, marginTop:4, padding:'11px', borderRadius:12, textDecoration:'none', color:BS.soft, fontSize:13, fontWeight:600 }}>
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+          Volver a la página web
+        </a>
       </div>
     </div>
   );
@@ -304,7 +315,7 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
       {/* Portada */}
       <div style={{ marginBottom:12 }}>
         <div style={lbl}>Foto de portada</div>
-        <label style={{ display:'block', height:92, borderRadius:14, border:`1.5px dashed ${BS.borderStrong}`, background: coverPrev ? `url(${coverPrev}) center/cover` : BS.surface2, cursor:'pointer', position:'relative', overflow:'hidden' }}>
+        <label style={{ display:'block', height:120, borderRadius:14, border:`1.5px dashed ${BS.borderStrong}`, background: coverPrev ? `url(${coverPrev}) center/cover` : BS.surface2, cursor:'pointer', position:'relative', overflow:'hidden' }}>
           <input type="file" accept="image/*" onChange={e=>{ const f=e.target.files&&e.target.files[0]; if(f) pickCover(f); }} style={{ display:'none' }}/>
           {!coverPrev && <div style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', color:BS.soft, fontSize:12.5, fontWeight:700 }}>+ Sube o elige una portada</div>}
           {coverPrev && <div style={{ position:'absolute', bottom:6, right:8, background:'rgba(0,0,0,0.45)', color:'#fff', fontSize:11, fontWeight:700, padding:'3px 9px', borderRadius:999 }}>Cambiar</div>}
@@ -371,9 +382,13 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
       </div>
       {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600, marginTop:10 }}>{err}</div>}
       {(() => { const minor = birthdate && ageY(birthdate)!==null && ageY(birthdate)<18; const blocked = busy || minor; return (
-      <button onClick={save} disabled={blocked} className="bs-btn" style={{ width:'100%', marginTop:16, padding:'15px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:15, fontWeight:700, cursor:blocked?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity:blocked?0.6:1 }}>{busy?'Guardando…':(editing?'Guardar cambios':'Entrar a la comunidad')}</button>
+      <button onClick={save} disabled={blocked} className="bs-btn bs-rainbow" style={{ '--bsr-fill':BS.grad, width:'100%', marginTop:16, padding:'15px', fontSize:15, fontWeight:800, cursor:blocked?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity:blocked?0.55:1 }}>{busy?'Guardando…':(editing?'Guardar cambios':'Entrar a la comunidad')}</button>
       ); })()}
       <button onClick={() => editing ? onDone() : onLogout()} className="bs-btn" style={{ width:'100%', marginTop:10, padding:'12px', borderRadius:12, border:'none', background:'transparent', color:BS.soft, fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>{editing?'Cancelar':'Usar otra cuenta'}</button>
+      {!editing && <a href="/" className="bs-btn" style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:7, marginTop:2, padding:'10px', textDecoration:'none', color:BS.soft, fontSize:12.5, fontWeight:600 }}>
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
+        Volver a la página web
+      </a>}
     </div>
   );
 }
@@ -663,7 +678,7 @@ function ProfileScreen({ posts, setScreen }) {
   const BS = useBS();
   const A = (typeof window!=='undefined' && window.BSAUTH) || {};
   const r = A.me;
-  const me = (r && r.username) ? { username:r.username, name:r.display_name||r.username, city:r.city||'', bio:r.bio||(r.pet_name?(r.pet_name+(r.pet_breed?(' · '+r.pet_breed):'')):''), initials:(r.username||'?').slice(0,2).toUpperCase(), color:r.avatar_color||BS.brand, verified:r.username==='brightpuppy', posts:0, followers:0, following:(A.following||[]).length } : BSDATA.me;
+  const me = (r && r.username) ? { username:r.username, name:r.display_name||r.username, city:r.city||'', bio:r.bio||'', avatar:r.avatar_url||'', initials:(r.username||'?').slice(0,2).toUpperCase(), color:r.avatar_color||BS.brand, verified:r.username==='brightpuppy', posts:0, followers:0, following:(A.following||[]).length } : BSDATA.me;
   const [tab, setTab] = useState('posts');
   const [isPublic, setIsPublic] = useState(r ? !!r.is_public : false);
   const persistPublic = async (val) => {
@@ -677,7 +692,7 @@ function ProfileScreen({ posts, setScreen }) {
   };
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
-      <div style={{ height:110, background: (r&&r.cover_url) ? `url(${r.cover_url}) center/cover` : BS.grad, position:'relative' }}>
+      <div style={{ height:170, background: (r&&r.cover_url) ? `url(${r.cover_url}) center/cover` : BS.grad, position:'relative' }}>
         <button onClick={() => setScreen('feed')} style={{ position:'absolute', top:44, left:14, background:'rgba(0,0,0,0.32)', border:'none', borderRadius:'50%', width:32, height:32, cursor:'pointer', display:'grid', placeItems:'center', color:'#fff' }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
@@ -691,8 +706,10 @@ function ProfileScreen({ posts, setScreen }) {
         </button>
       </div>
       <div style={{ padding:'0 16px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginTop:-28, marginBottom:12 }}>
-          <div style={{ width:72, height:72, borderRadius:'50%', background:me.color, display:'grid', placeItems:'center', fontSize:24, fontWeight:800, color:'#fff', border:`3px solid ${BS.bg}`, fontFamily:'Plus Jakarta Sans,sans-serif' }}>{me.initials}</div>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginTop:-40, marginBottom:12 }}>
+          <div style={{ width:88, height:88, borderRadius:'50%', background:me.color, display:'grid', placeItems:'center', fontSize:30, fontWeight:800, color:'#fff', border:`4px solid ${BS.surface}`, fontFamily:'Plus Jakarta Sans,sans-serif', overflow:'hidden', flexShrink:0, boxShadow:'0 6px 20px rgba(0,0,0,0.20)' }}>
+            {me.avatar ? <img src={me.avatar} alt={me.username} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/> : me.initials}
+          </div>
           <div style={{ display:'flex', gap:8 }}>
             <button onClick={() => setScreen('editprofile')} style={{ padding:'8px 16px', borderRadius:10, border:'none', background:BS.grad, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', color:'#fff' }}>Editar perfil</button>
             <button onClick={() => A.logout && A.logout()} title="Cambiar de usuario" style={{ padding:'8px 14px', borderRadius:10, border:`1.5px solid ${BS.borderStrong}`, background:BS.surface2, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', color:BS.ink }}>Salir</button>
