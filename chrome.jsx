@@ -312,17 +312,24 @@ function Header({ overDark }) {
     if (sel) { sel.value = 'es'; sel.dispatchEvent(new Event('change')); }
   };
 
+  // Idioma nativo: además de setLang, persistir en bpuppy-lang y avisar al resto (ej. el chat) que cambió.
+  const applyNativeLang = (code) => {
+    setLang(code);
+    try { localStorage.setItem('bpuppy-lang', code); } catch(e) {}
+    try { window.dispatchEvent(new CustomEvent('bpuppy:lang', { detail: code })); } catch(e) {}
+  };
+
   const handleGtSelect = (code) => {
-    if (code === 'es') { clearGtCode(); setLang('es'); return; }
-    if (code === 'en') { clearGtCode(); setLang('en'); return; }
+    if (code === 'es') { clearGtCode(); applyNativeLang('es'); return; }
+    if (code === 'en') { clearGtCode(); applyNativeLang('en'); return; }
     applyGtCode(code);
   };
 
   const handleLeftClick  = () => {
     if (gtLang) { if (window.bpTriggerTranslate) window.bpTriggerTranslate(gtLang); }
-    else { clearGtCode(); setLang('es'); }
+    else { clearGtCode(); applyNativeLang('es'); }
   };
-  const handleRightClick = () => { clearGtCode(); setLang('en'); };
+  const handleRightClick = () => { clearGtCode(); applyNativeLang('en'); };
 
   const leftLabel  = gtLabel || 'ES';
   const leftActive = !!gtLang || (!gtLang && lang === 'es');

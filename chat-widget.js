@@ -232,8 +232,17 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
       /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: "#ccc", marginTop: 2 } }, h.startedAt ? new Date(h.startedAt).toLocaleDateString() : "", " \xB7 ", h.msgCount, " ", isEn ? "msgs" : "msgs")
     ))));
   }
-  function ChatWindow({ onClose }) {
-    const lang = localStorage.getItem("bpuppy-lang") || "es";
+  function ChatWindow({ onClose, winRef }) {
+    const [lang, setLangState] = useState(() => localStorage.getItem("bpuppy-lang") || "es");
+    useEffect(() => {
+      const h = () => setLangState(localStorage.getItem("bpuppy-lang") || "es");
+      window.addEventListener("bpuppy:lang", h);
+      window.addEventListener("storage", h);
+      return () => {
+        window.removeEventListener("bpuppy:lang", h);
+        window.removeEventListener("storage", h);
+      };
+    }, []);
     const isEn = lang === "en";
     const tl = (es, en) => isEn ? en : es;
     const [sessionKey, setSessionKey] = useState(() => getCurrKey() || (() => {
@@ -346,7 +355,7 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
     const hasUser = msgs.some((m) => m.role === "user");
     const visTopics = topicsExp ? TOPICS : TOPICS.slice(0, 4);
     const sendDisabled = !input.trim() || loading;
-    return /* @__PURE__ */ React.createElement("div", { style: {
+    return /* @__PURE__ */ React.createElement("div", { ref: winRef, style: {
       position: "fixed",
       bottom: 88,
       right: 20,
@@ -443,10 +452,11 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
       /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: sendDisabled ? "#bbb" : "white", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M22 2L11 13M22 2L15 22 11 13 2 9l20-7z" }))
     )), showHist && /* @__PURE__ */ React.createElement(HistoryPanel, { onSelect: loadHist, onClose: () => setShowHist(false), currentKey: sessionKey })));
   }
-  function ChatBtn({ open, onClick }) {
+  function ChatBtn({ open, onClick, btnRef }) {
     return /* @__PURE__ */ React.createElement(
       "button",
       {
+        ref: btnRef,
         onClick,
         "aria-label": "Chat con BPuppy",
         style: { position: "fixed", bottom: 20, right: 20, width: 52, height: 52, borderRadius: "50%", border: "none", cursor: "pointer", background: "linear-gradient(135deg,#E85D75,#C44A61)", boxShadow: "0 6px 24px -4px rgba(232,93,117,0.55)", display: "grid", placeItems: "center", zIndex: 1001, transition: "transform .22s cubic-bezier(0.34,1.56,0.64,1)" },
@@ -506,7 +516,19 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
   }
   function BPuppyChat() {
     const [open, setOpen] = useState(false);
-    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(ChatBtn, { open, onClick: () => setOpen((o) => !o) }), open && /* @__PURE__ */ React.createElement(ChatWindow, { onClose: () => setOpen(false) }));
+    const winRef = useRef(null);
+    const btnRef = useRef(null);
+    useEffect(() => {
+      if (!open) return;
+      const onDown = (e) => {
+        if (winRef.current && winRef.current.contains(e.target)) return;
+        if (btnRef.current && btnRef.current.contains(e.target)) return;
+        setOpen(false);
+      };
+      document.addEventListener("mousedown", onDown);
+      return () => document.removeEventListener("mousedown", onDown);
+    }, [open]);
+    return /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement(ChatBtn, { open, onClick: () => setOpen((o) => !o), btnRef }), open && /* @__PURE__ */ React.createElement(ChatWindow, { onClose: () => setOpen(false), winRef }));
   }
   if (!document.getElementById("bpuppy-chat-root")) {
     const el = document.createElement("div");

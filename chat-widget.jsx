@@ -253,8 +253,14 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
   }
 
   // ── Chat Window ───────────────────────────────────────────────────────────────
-  function ChatWindow({ onClose }) {
-    const lang = localStorage.getItem('bpuppy-lang') || 'es';
+  function ChatWindow({ onClose, winRef }) {
+    const [lang, setLangState] = useState(() => localStorage.getItem('bpuppy-lang') || 'es');
+    useEffect(() => {
+      const h = () => setLangState(localStorage.getItem('bpuppy-lang') || 'es');
+      window.addEventListener('bpuppy:lang', h);
+      window.addEventListener('storage', h);
+      return () => { window.removeEventListener('bpuppy:lang', h); window.removeEventListener('storage', h); };
+    }, []);
     const isEn = lang === 'en';
     const tl   = (es, en) => isEn ? en : es;
 
@@ -369,7 +375,7 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
     const sendDisabled = !input.trim() || loading;
 
     return (
-      <div style={{
+      <div ref={winRef} style={{
         position:'fixed', bottom:88, right:20,
         width:'min(350px, calc(100vw - 24px))',
         borderRadius:22, overflow:'visible',
@@ -500,9 +506,9 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
   }
 
   // ── Floating button ───────────────────────────────────────────────────────────
-  function ChatBtn({ open, onClick }) {
+  function ChatBtn({ open, onClick, btnRef }) {
     return (
-      <button onClick={onClick} aria-label="Chat con BPuppy"
+      <button ref={btnRef} onClick={onClick} aria-label="Chat con BPuppy"
         style={{ position:'fixed', bottom:20, right:20, width:52, height:52, borderRadius:'50%', border:'none', cursor:'pointer', background:'linear-gradient(135deg,#E85D75,#C44A61)', boxShadow:'0 6px 24px -4px rgba(232,93,117,0.55)', display:'grid', placeItems:'center', zIndex:1001, transition:'transform .22s cubic-bezier(0.34,1.56,0.64,1)' }}
         onMouseEnter={e => e.currentTarget.style.transform = 'scale(1.1)'}
         onMouseLeave={e => e.currentTarget.style.transform = 'scale(1)'}>
@@ -571,10 +577,22 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
   // ── Mount ─────────────────────────────────────────────────────────────────────
   function BPuppyChat() {
     const [open, setOpen] = useState(false);
+    const winRef = useRef(null);
+    const btnRef = useRef(null);
+    useEffect(() => {
+      if (!open) return;
+      const onDown = (e) => {
+        if (winRef.current && winRef.current.contains(e.target)) return;
+        if (btnRef.current && btnRef.current.contains(e.target)) return;
+        setOpen(false); // cierra al hacer click afuera; la conversación queda guardada y se recarga al reabrir
+      };
+      document.addEventListener('mousedown', onDown);
+      return () => document.removeEventListener('mousedown', onDown);
+    }, [open]);
     return (
       <>
-        <ChatBtn open={open} onClick={() => setOpen(o => !o)}/>
-        {open && <ChatWindow onClose={() => setOpen(false)}/>}
+        <ChatBtn open={open} onClick={() => setOpen(o => !o)} btnRef={btnRef}/>
+        {open && <ChatWindow onClose={() => setOpen(false)} winRef={winRef}/>}
       </>
     );
   }

@@ -372,15 +372,26 @@ function Header({ overDark }) {
       sel.dispatchEvent(new Event("change"));
     }
   };
+  const applyNativeLang = (code) => {
+    setLang(code);
+    try {
+      localStorage.setItem("bpuppy-lang", code);
+    } catch (e) {
+    }
+    try {
+      window.dispatchEvent(new CustomEvent("bpuppy:lang", { detail: code }));
+    } catch (e) {
+    }
+  };
   const handleGtSelect = (code) => {
     if (code === "es") {
       clearGtCode();
-      setLang("es");
+      applyNativeLang("es");
       return;
     }
     if (code === "en") {
       clearGtCode();
-      setLang("en");
+      applyNativeLang("en");
       return;
     }
     applyGtCode(code);
@@ -390,12 +401,12 @@ function Header({ overDark }) {
       if (window.bpTriggerTranslate) window.bpTriggerTranslate(gtLang);
     } else {
       clearGtCode();
-      setLang("es");
+      applyNativeLang("es");
     }
   };
   const handleRightClick = () => {
     clearGtCode();
-    setLang("en");
+    applyNativeLang("en");
   };
   const leftLabel = gtLabel || "ES";
   const leftActive = !!gtLang || !gtLang && lang === "es";
