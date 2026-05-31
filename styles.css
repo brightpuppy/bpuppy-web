@@ -195,21 +195,28 @@ html.media-dark .hdr-portal { color: rgba(255,255,255,.85); background: rgba(255
 @keyframes bpShineText { 0% { background-position: 0% 50%; } 100% { background-position: 200% 50%; } }
 @keyframes bpRainbow { 0% { background-position: 0% 50%; } 100% { background-position: 300% 50%; } }
 @keyframes bpGlowBox  { 0%,100% { box-shadow: 0 0 0 rgba(245,130,32,0); } 50% { box-shadow: 0 0 18px rgba(245,130,32,.32); } }
-/* Aura constante para destacar (Cachorros) — visible aunque no esté seleccionado */
+/* Aura constante para destacar (Cachorros) — fuerte, visible aunque no esté seleccionado */
 @keyframes bpAura {
-  0%,100% { text-shadow: 0 0 6px rgba(245,130,32,.45), 0 0 15px rgba(245,130,32,.28); }
-  50%     { text-shadow: 0 0 12px rgba(245,130,32,.8), 0 0 28px rgba(245,130,32,.55); }
+  0%,100% { text-shadow: 0 0 10px rgba(245,130,32,.7), 0 0 22px rgba(245,130,32,.5), 0 0 34px rgba(245,130,32,.32); }
+  50%     { text-shadow: 0 0 16px rgba(245,130,32,1), 0 0 40px rgba(245,130,32,.75), 0 0 60px rgba(245,130,32,.45); }
 }
 /* Texto que cambia de color: rojo, azul, verde, naranja — divertido */
 .bp-rainbow, .bp-shine {
   background-image: linear-gradient(90deg, #E23B3B, #2F6BFF, #1FB85A, #F58220, #E23B3B);
   background-size: 300% auto;
   -webkit-background-clip: text; background-clip: text;
-  -webkit-text-fill-color: transparent; color: transparent !important;
+  -webkit-text-fill-color: transparent; color: transparent;
   animation: bpRainbow 4s linear infinite;
   font-weight: 800;
 }
-.nav-dropdown a.bp-rainbow, .nav-dropdown a.bp-shine { font-weight: 700; }
+/* En el menú desplegable, el texto cambia de color pero SIEMPRE legible (sin recorte) */
+@keyframes bpColorCycle { 0%,100% { color: #E23B3B; } 25% { color: #2F6BFF; } 50% { color: #1FB85A; } 75% { color: #F58220; } }
+.nav-dropdown a.bp-rainbow, .nav-dropdown a.bp-shine {
+  font-weight: 800;
+  background: none; -webkit-background-clip: border-box; background-clip: border-box;
+  -webkit-text-fill-color: currentColor;
+  animation: bpColorCycle 4s linear infinite;
+}
 /* Botón CTA del quiz: borde con leve iluminación (el texto va en .bp-rainbow) */
 .bp-quiz-cta {
   display: inline-flex !important; align-items: center; gap: 6px;
@@ -220,13 +227,13 @@ html.media-dark .hdr-portal { color: rgba(255,255,255,.85); background: rgba(255
 }
 .bp-quiz-cta:hover { border-color: rgba(245,130,32,.75); transform: translateY(-1px); }
 /* Cachorros: aura naranja brillante constante para destacarlo del menú */
-.nav-item.bp-nav-glow > a { color: var(--orange) !important; font-weight: 700; animation: bpAura 2.6s ease-in-out infinite; }
+.nav-item.bp-nav-glow > a { color: var(--orange) !important; font-weight: 800; animation: bpAura 2.4s ease-in-out infinite; }
 .nav-item.bp-nav-glow > a .nav-caret { stroke: currentColor; }
 .hdr.over-dark .nav-item.bp-nav-glow > a { color: #fff !important; }
-.hdr.over-dark .nav-item.bp-nav-glow > a { animation: bpAuraDark 2.6s ease-in-out infinite; }
+.hdr.over-dark .nav-item.bp-nav-glow > a { animation: bpAuraDark 2.4s ease-in-out infinite; }
 @keyframes bpAuraDark {
-  0%,100% { text-shadow: 0 0 7px rgba(255,255,255,.5), 0 0 16px rgba(245,130,32,.55); }
-  50%     { text-shadow: 0 0 13px rgba(255,255,255,.7), 0 0 30px rgba(245,130,32,.8); }
+  0%,100% { text-shadow: 0 0 10px rgba(255,255,255,.7), 0 0 24px rgba(255,180,90,.8), 0 0 40px rgba(245,130,32,.6); }
+  50%     { text-shadow: 0 0 16px rgba(255,255,255,.95), 0 0 42px rgba(255,180,90,1), 0 0 64px rgba(245,130,32,.8); }
 }
 
 .lang { display: flex; align-items: center; padding: 4px; border-radius: 999px; background: rgba(45,36,33,0.06); }
@@ -897,7 +904,7 @@ image-slot {
 .nd-icon { width: 30px; height: 30px; border-radius: 8px; background: var(--bg-2, var(--bg)); display: grid; place-items: center; flex-shrink: 0; color: var(--orange); }
 .nd-sep { height: 1px; background: var(--line); margin: 4px 0; }
 /* Fix: dropdown text always dark regardless of hero overlay */
-.hdr.over-dark .nav-dropdown a { color: var(--ink-2) !important; }
+.hdr.over-dark .nav-dropdown a:not(.bp-rainbow):not(.bp-shine) { color: var(--ink-2) !important; }
 .hdr.over-dark .nav-dropdown { background: var(--paper); }
 .divider-line { height: 1px; background: var(--line); width: 100%; }
 

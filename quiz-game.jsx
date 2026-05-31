@@ -129,6 +129,11 @@ function ensureCss(){
     .qg-opt{ transition:transform .12s, border-color .15s, background .15s }
     .qg-opt:hover{ transform:translateY(-3px) }
     .qg-opt:active{ transform:scale(.97) }
+    @keyframes qgDriftA { 0%,100%{transform:translateY(0) rotate(0)} 50%{transform:translateY(-30px) rotate(10deg)} }
+    @keyframes qgDriftB { 0%,100%{transform:translateY(0) translateX(0) rotate(0)} 50%{transform:translateY(24px) translateX(10px) rotate(-12deg)} }
+    @keyframes qgPulseBlob { 0%,100%{transform:scale(1); opacity:.5} 50%{transform:scale(1.18); opacity:.8} }
+    .qg-deco{ position:absolute; pointer-events:none; z-index:0; will-change:transform; }
+    @media (max-width:820px){ .qg-deco{ display:none } }
   `;
   document.head.appendChild(s);
 }
@@ -360,9 +365,9 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
           <canvas ref={cvsRef} width={W} height={H} style={{ width:'100%', height:'auto', display:'block', cursor:'pointer', touchAction:'none' }}/>
           {phase==='ready' && (
             <div style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', background:'rgba(255,255,255,0.55)' }}>
-              <div style={{ textAlign:'center' }}>
-                <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:22, fontWeight:800, color:'var(--ink)', marginBottom:6 }}>{t(['¡Toca para empezar!','Tap to start!'])}</div>
-                <div style={{ fontSize:13, color:'var(--ink-2)' }}>{t(['Click o toque = saltar','Click or tap = jump'])}</div>
+              <div style={{ textAlign:'center', display:'flex', flexDirection:'column', alignItems:'center', gap:14, background:'rgba(255,255,255,0.78)', borderRadius:16, padding:'16px 22px' }}>
+                <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:22, fontWeight:800, color:'var(--ink)', lineHeight:1.1 }}>{t(['¡Toca para empezar!','Tap to start!'])}</div>
+                <div style={{ fontSize:13, fontWeight:600, color:'var(--ink-2)' }}>{t(['Click o toque = saltar','Click or tap = jump'])}</div>
               </div>
             </div>
           )}
@@ -604,13 +609,49 @@ function QuizGame(){
   );
 }
 
+function PawDeco({ c, size }){
+  return <svg width={size} height={size} viewBox="0 0 64 64" fill={c}>
+    <ellipse cx="32" cy="44" rx="14" ry="11"/><ellipse cx="12" cy="28" rx="6" ry="8"/>
+    <ellipse cx="52" cy="28" rx="6" ry="8"/><ellipse cx="23" cy="15" rx="5.5" ry="7"/><ellipse cx="41" cy="15" rx="5.5" ry="7"/>
+  </svg>;
+}
+function BoneDeco({ c, size }){
+  return <svg width={size} height={size*0.62} viewBox="0 0 64 40" fill={c}>
+    <rect x="14" y="14" width="36" height="12" rx="6"/>
+    <circle cx="14" cy="12" r="8"/><circle cx="14" cy="28" r="8"/><circle cx="50" cy="12" r="8"/><circle cx="50" cy="28" r="8"/>
+  </svg>;
+}
+function QuizDecor(){
+  // Detalles suaves flotando a los lados (decorativo, no interfiere con el contenido)
+  const items = [
+    { t:'paw',  side:{left:'5%'},  top:'14vh', size:54, c:'#F58220', anim:'qgDriftA', dur:7,  delay:0,   op:.5,  rot:-12 },
+    { t:'bone', side:{left:'9%'},  top:'40vh', size:60, c:'#E85D75', anim:'qgDriftB', dur:9,  delay:1.2, op:.45, rot:18 },
+    { t:'paw',  side:{left:'4%'},  top:'66vh', size:42, c:'#1EB87A', anim:'qgDriftB', dur:8,  delay:.5,  op:.45, rot:8 },
+    { t:'blob', side:{left:'2%'},  top:'30vh', size:150, c:'#FFD9B3', anim:'qgPulseBlob', dur:10, delay:0, op:.5 },
+    { t:'bone', side:{right:'6%'}, top:'18vh', size:50, c:'#5B7CFA', anim:'qgDriftA', dur:8.5,delay:.8, op:.45, rot:-16 },
+    { t:'paw',  side:{right:'4%'}, top:'46vh', size:58, c:'#F5A623', anim:'qgDriftB', dur:7.5,delay:.3, op:.5,  rot:14 },
+    { t:'paw',  side:{right:'9%'}, top:'72vh', size:40, c:'#E85D75', anim:'qgDriftA', dur:9,  delay:1.5, op:.4,  rot:-8 },
+    { t:'blob', side:{right:'1%'}, top:'58vh', size:170, c:'#FFE0EC', anim:'qgPulseBlob', dur:11, delay:1, op:.5 },
+  ];
+  return <div aria-hidden="true">{items.map((it,i)=>(
+    <div key={i} className="qg-deco" style={{ ...it.side, top:it.top, opacity:it.op, animation:`${it.anim} ${it.dur}s ease-in-out ${it.delay}s infinite`, transform:it.rot?`rotate(${it.rot}deg)`:undefined }}>
+      {it.t==='paw'  && <PawDeco c={it.c} size={it.size}/>}
+      {it.t==='bone' && <BoneDeco c={it.c} size={it.size}/>}
+      {it.t==='blob' && <div style={{ width:it.size, height:it.size, borderRadius:'50%', background:`radial-gradient(circle at 50% 50%, ${it.c}, rgba(255,255,255,0))`, filter:'blur(6px)' }}/>}
+    </div>
+  ))}</div>;
+}
+
 function QuizGameRoot(){
   const [lang, setLang] = useState('es');
-  useEffect(()=>{ document.documentElement.lang = lang; }, [lang]);
+  useEffect(()=>{ document.documentElement.lang = lang; ensureCss(); }, [lang]);
   return (
     <LangContext.Provider value={{ lang, setLang }}>
       <Header overDark={false}/>
-      <main style={{ paddingTop:80, background:'var(--bg,#fff)', minHeight:'100vh' }}><QuizGame/></main>
+      <main style={{ paddingTop:80, background:'var(--bg,#fff)', minHeight:'100vh', position:'relative', overflow:'hidden' }}>
+        <QuizDecor/>
+        <div style={{ position:'relative', zIndex:1 }}><QuizGame/></div>
+      </main>
       <Footer/>
     </LangContext.Provider>
   );
