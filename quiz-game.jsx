@@ -405,35 +405,46 @@ const CITY_HINTS = ['Miami','Orlando','Houston','Los Ángeles','Nueva York','Chi
 
 // Dibuja un perrito pixel-art (más detallado) según la raza
 function drawDog(ctx, x, baseY, tone, key, frame, airborne){
-  const P = 2.4; // tamaño de "pixel" (perrito más pequeño)
+  const m = (typeof BREED_MATCH !== 'undefined' && BREED_MATCH[key]) || {};
+  const P = m.sz === 3 ? 2.6 : m.sz === 1 ? 2.2 : 2.4; // tamaño según la raza
   const px = (cx,cy,w,h,col)=>{ ctx.fillStyle=col; ctx.fillRect(Math.round(x+cx*P), Math.round(baseY+cy*P), Math.max(1,w*P), Math.max(1,h*P)); };
-  const dark='#2D2421', white='#FBF7F0', belly='#F4E9D6', collar='#E23B3B', tag='#F5C53A', nose='#2D2421';
+  // sombreado a partir del color de la raza (luz arriba / sombra abajo)
+  const sh = (hex,a)=>{ hex=String(hex||'#caa').replace('#',''); if(hex.length===3) hex=hex.split('').map(function(c){return c+c;}).join(''); var r=parseInt(hex.slice(0,2),16); var g=parseInt(hex.slice(2,4),16); var b=parseInt(hex.slice(4,6),16); if(isNaN(r))r=180; if(isNaN(g))g=150; if(isNaN(b))b=120; var f=a<0?(1+a):1, add=a>0?a*255:0; return 'rgb('+Math.round(Math.min(255,r*f+add))+','+Math.round(Math.min(255,g*f+add))+','+Math.round(Math.min(255,b*f+add))+')'; };
+  const hi = sh(tone,0.24), lo = sh(tone,-0.20), ear = sh(tone,-0.16);
+  const dark='#2D2421', white='#FBF7F0', belly=sh(tone,0.30), collar='#E23B3B', tag='#F5C53A', nose='#2D2421';
+  const coat = m.coat || (key==='poodle'?'c':'s');
+  const POINTY = { germanshepherd:1, husky:1, corgi:1, pomeranian:1, chihuahua:1, aussie:1, schnauzer:1, yorkie:1 };
+  const BAT = { frenchie:1, boston:1 };
+  // sombra de contacto en el piso (solo en el suelo)
+  if (!airborne) { ctx.save(); ctx.globalAlpha=0.15; ctx.fillStyle='#2D2421'; ctx.beginPath(); ctx.ellipse(x+9*P, baseY+1.3*P, 9*P, 2*P, 0, 0, 7); ctx.fill(); ctx.restore(); }
   // patas (carrera de 2 fases)
-  if (airborne) { px(3,-1,2,2,dark); px(9,-1,2,2,dark); }
-  else if (frame % 2 === 0) { px(2,0,2,2,dark); px(9,0,2,2,dark); }
-  else { px(4,0,2,2,dark); px(7,0,2,2,dark); }
-  // cola (mueve)
+  if (airborne) { px(3,-1,2,2,lo); px(9,-1,2,2,lo); }
+  else if (frame % 2 === 0) { px(2,0,2,2,lo); px(9,0,2,2,lo); }
+  else { px(4,0,2,2,lo); px(7,0,2,2,lo); }
+  // cola (mueve) — según pelaje
   const tw = airborne ? -1 : (frame % 2 ? -1 : 0);
-  if (key === 'poodle') { px(-1,-8+tw,3,3,white); }
+  if (coat==='c') { px(-1,-8+tw,3,3,hi); px(-2,-6+tw,2,2,tone); }
+  else if (coat==='f') { px(-3,-8+tw,4,4,tone); px(-3,-9+tw,3,2,hi); }
   else { px(-2,-7+tw,3,2,tone); px(-1,-9+tw,2,2,tone); }
-  // cuerpo + barriga
-  px(1,-7,12,6,tone); px(1,-8,12,1,tone);
+  // cuerpo con sombreado
+  px(1,-7,12,6,tone); px(1,-8,12,1,hi); px(1,-2,12,1,lo);
   px(2,-3,9,2,belly);
+  if (coat==='f') { px(2,-9,2,1,hi); px(6,-9,2,1,hi); px(10,-9,2,1,hi); } // mechones esponjosos
   // collar + placa
   px(9,-7,2,3,collar); px(9,-5,1,1,tag);
-  // cabeza
-  px(9,-13,7,6,tone); px(10,-14,5,1,tone);
+  // cabeza con sombreado
+  px(9,-13,7,6,tone); px(10,-14,5,1,hi); px(9,-9,7,1,lo);
   // hocico + nariz
-  px(15,-10,3,3, key==='beagle' ? white : tone);
+  px(15,-10,3,3, (key==='beagle'||key==='boston'||key==='bordercollie') ? white : (coat==='s'?tone:hi));
   px(17,-10,1,1,nose); px(16,-8,2,1,nose);
   // ojo + brillo
-  px(13,-12,1,1,dark); px(13,-12,1,1,dark);
+  px(13,-12,1,1,dark); px(13.4,-12.4,0.6,0.6,white);
   // orejas según raza
-  if (key==='frenchie') { px(9,-15,2,2,tone); px(14,-15,2,2,tone); }
-  else if (key==='cavalier'||key==='beagle') { const ec = key==='beagle' ? '#8a5a32' : '#7a3d22'; px(8,-13,2,5,ec); px(15,-13,2,4,ec); }
-  else if (key==='poodle') { px(9,-15,3,3,white); px(14,-15,2,2,white); }
-  else { px(8,-14,2,3,tone); px(15,-14,2,3,tone); }
-  if (key==='golden') { px(0,-7,1,6,'#cf8f2e'); }
+  if (BAT[key]) { px(9,-15,2,2,hi); px(14,-15,2,2,hi); }                                 // murciélago
+  else if (POINTY[key]) { px(8,-16,2,3,tone); px(15,-16,2,3,tone); px(8,-16,1,1,hi); px(15,-16,1,1,hi); } // paradas
+  else if (coat==='c') { px(8,-15,3,4,hi); px(14,-15,3,4,hi); }                          // rizadas
+  else { px(8,-13,2,5,ear); px(15,-13,2,4,ear); }                                        // caídas
+  if (key==='golden'||key==='goldendoodle') { px(0,-7,1,6,sh(tone,-0.14)); }
 }
 // Símbolos del premio (SVG, sin emojis)
 function PrizeSymbol({ tier, size }){
