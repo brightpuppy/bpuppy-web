@@ -242,6 +242,332 @@ const BREED_HISTORY = {
   poodle: ['Naci\xF3 en Alemania como perro cobrador de agua (su nombre viene de "pudeln", chapotear); el corte elegante proteg\xEDa sus articulaciones al nadar. Francia lo adopt\xF3 como \xEDcono nacional.', 'Originated in Germany as a water retriever (its name comes from "pudeln", to splash); the fancy clip protected its joints while swimming. France later adopted it as a national icon.'],
   beagle: ["Antiguo sabueso ingl\xE9s de rastro, criado en jaur\xEDas para cazar conejos y liebres gracias a su olfato extraordinario. Su tama\xF1o y nobleza lo hicieron un excelente perro de familia.", "An ancient English scent hound, bred in packs to hunt rabbits and hares thanks to its extraordinary nose. Its size and good nature made it an excellent family dog."]
 };
+const BREED_MATCH = {
+  golden: { sz: 3, en: 3, coat: "f", hypo: 0, kids: 2, apt: 0, train: 3, lap: 2, guard: 0, indep: 0 },
+  frenchie: { sz: 1, en: 1, coat: "s", hypo: 0, kids: 2, apt: 2, train: 2, lap: 2, guard: 0, indep: 0 },
+  cavalier: { sz: 1, en: 1, coat: "f", hypo: 0, kids: 2, apt: 2, train: 2, lap: 2, guard: 0, indep: 0 },
+  labrador: { sz: 3, en: 3, coat: "s", hypo: 0, kids: 2, apt: 0, train: 3, lap: 1, guard: 0, indep: 0 },
+  poodle: { sz: 2, en: 2, coat: "c", hypo: 1, kids: 2, apt: 1, train: 3, lap: 1, guard: 0, indep: 0 },
+  beagle: { sz: 2, en: 3, coat: "s", hypo: 0, kids: 2, apt: 1, train: 1, lap: 1, guard: 0, indep: 1 },
+  germanshepherd: { sz: 3, en: 3, coat: "s", hypo: 0, kids: 1, apt: 0, train: 3, lap: 0, guard: 2, indep: 1 },
+  dachshund: { sz: 1, en: 2, coat: "s", hypo: 0, kids: 1, apt: 2, train: 1, lap: 2, guard: 1, indep: 1 },
+  englishbulldog: { sz: 2, en: 1, coat: "s", hypo: 0, kids: 2, apt: 2, train: 1, lap: 2, guard: 0, indep: 0 },
+  rottweiler: { sz: 3, en: 2, coat: "s", hypo: 0, kids: 1, apt: 0, train: 2, lap: 0, guard: 2, indep: 1 },
+  pomeranian: { sz: 1, en: 2, coat: "f", hypo: 0, kids: 1, apt: 2, train: 2, lap: 2, guard: 1, indep: 0 },
+  yorkie: { sz: 1, en: 2, coat: "f", hypo: 1, kids: 1, apt: 2, train: 2, lap: 2, guard: 1, indep: 0 },
+  boxer: { sz: 3, en: 3, coat: "s", hypo: 0, kids: 2, apt: 0, train: 2, lap: 1, guard: 1, indep: 0 },
+  doberman: { sz: 3, en: 3, coat: "s", hypo: 0, kids: 1, apt: 0, train: 3, lap: 0, guard: 2, indep: 1 },
+  greatdane: { sz: 3, en: 1, coat: "s", hypo: 0, kids: 2, apt: 0, train: 2, lap: 1, guard: 1, indep: 0 },
+  schnauzer: { sz: 1, en: 2, coat: "c", hypo: 1, kids: 2, apt: 2, train: 2, lap: 1, guard: 1, indep: 0 },
+  husky: { sz: 3, en: 3, coat: "f", hypo: 0, kids: 1, apt: 0, train: 1, lap: 0, guard: 0, indep: 2 },
+  bernese: { sz: 3, en: 2, coat: "f", hypo: 0, kids: 2, apt: 0, train: 2, lap: 2, guard: 1, indep: 0 },
+  boston: { sz: 1, en: 2, coat: "s", hypo: 0, kids: 2, apt: 2, train: 2, lap: 1, guard: 0, indep: 0 },
+  corgi: { sz: 1, en: 2, coat: "f", hypo: 0, kids: 2, apt: 1, train: 2, lap: 1, guard: 1, indep: 0 },
+  aussie: { sz: 2, en: 3, coat: "f", hypo: 0, kids: 2, apt: 0, train: 3, lap: 0, guard: 1, indep: 0 },
+  shihtzu: { sz: 1, en: 1, coat: "f", hypo: 1, kids: 2, apt: 2, train: 1, lap: 2, guard: 0, indep: 0 },
+  pug: { sz: 1, en: 1, coat: "s", hypo: 0, kids: 2, apt: 2, train: 1, lap: 2, guard: 0, indep: 0 },
+  havanese: { sz: 1, en: 2, coat: "f", hypo: 1, kids: 2, apt: 2, train: 2, lap: 2, guard: 0, indep: 0 },
+  cocker: { sz: 2, en: 2, coat: "f", hypo: 0, kids: 2, apt: 1, train: 2, lap: 2, guard: 0, indep: 0 },
+  maltese: { sz: 1, en: 1, coat: "f", hypo: 1, kids: 1, apt: 2, train: 2, lap: 2, guard: 0, indep: 0 },
+  bordercollie: { sz: 2, en: 3, coat: "f", hypo: 0, kids: 1, apt: 0, train: 3, lap: 0, guard: 1, indep: 1 },
+  chihuahua: { sz: 1, en: 2, coat: "s", hypo: 0, kids: 0, apt: 2, train: 1, lap: 2, guard: 1, indep: 1 },
+  goldendoodle: { sz: 3, en: 2, coat: "c", hypo: 1, kids: 2, apt: 1, train: 3, lap: 2, guard: 0, indep: 0 },
+  maltipoo: { sz: 1, en: 2, coat: "c", hypo: 1, kids: 2, apt: 2, train: 2, lap: 2, guard: 0, indep: 0 }
+};
+const _EXTRA = [
+  {
+    name: "German Shepherd",
+    key: "germanshepherd",
+    tone: "#6E5A3E",
+    match: 93,
+    img: "fotos-razas/German Shepherd.webp",
+    desc: ["S\xFAper inteligente, valiente y leal. El compa\xF1ero protector por excelencia.", "Super smart, brave and loyal. The protective companion par excellence."],
+    size: ["Grande", "Large"],
+    energy: ["Alta", "High"],
+    facts: [["Es de los perros m\xE1s f\xE1ciles de entrenar del mundo.", "One of the most trainable dogs in the world."], ["Trabaja con la polic\xEDa y en rescates.", "Works in police and rescue teams."]],
+    info: { lifespan: ["9\u201313 a\xF1os", "9\u201313 yrs"], food: ["3\u20134 tazas", "3\u20134 cups"], weight: ["22\u201340 kg", "50\u201390 lb"], exercise: ["1\u20132 h/d\xEDa", "1\u20132 h/day"], energyPct: 88, exercisePct: 85, healthPct: 70, trainPct: 96, health: ["Cuidar caderas y articulaciones.", "Mind hips and joints."], goodFor: [["Familias activas", "Active families"], ["Protecci\xF3n", "Protection"], ["Trabajo y servicio", "Work & service"], ["Due\xF1os con experiencia", "Experienced owners"]] }
+  },
+  {
+    name: "Dachshund",
+    key: "dachshund",
+    tone: "#7A3B1E",
+    match: 88,
+    img: "fotos-razas/Dachshund.webp",
+    desc: ['El "perro salchicha": valiente, curioso y muy apegado a su familia.', 'The "wiener dog": brave, curious and very attached to its family.'],
+    size: ["Peque\xF1o", "Small"],
+    energy: ["Media", "Medium"],
+    facts: [["Fue criado para cazar tejones en madrigueras.", "Bred to hunt badgers in their burrows."], ["Su ladrido es enorme para su tama\xF1o.", "Its bark is huge for its size."]],
+    info: { lifespan: ["12\u201316 a\xF1os", "12\u201316 yrs"], food: ["\xBD\u20131\xBD tazas", "\xBD\u20131\xBD cups"], weight: ["7\u201315 kg", "16\u201332 lb"], exercise: ["30\u201345 min/d\xEDa", "30\u201345 min/day"], energyPct: 55, exercisePct: 45, healthPct: 62, trainPct: 60, health: ["Cuidar la espalda; evitar saltos altos.", "Protect the back; avoid high jumps."], goodFor: [["Apartamentos", "Apartments"], ["Compa\xF1\xEDa", "Companionship"], ["Adultos", "Adults"], ["Vida en ciudad", "City life"]] }
+  },
+  {
+    name: "English Bulldog",
+    key: "englishbulldog",
+    tone: "#D9C3A0",
+    match: 86,
+    img: "fotos-razas/English Bulldog.webp",
+    desc: ["Tranquilo, dulce y muy cari\xF1oso. Le encanta descansar contigo.", "Calm, sweet and very affectionate. Loves to relax with you."],
+    size: ["Mediano", "Medium"],
+    energy: ["Baja", "Low"],
+    facts: [["Ronca y hace ruiditos graciosos al dormir.", "Snores and makes funny sounds when sleeping."], ["Es famoso por su carita arrugada.", "Famous for its wrinkly face."]],
+    info: { lifespan: ["8\u201310 a\xF1os", "8\u201310 yrs"], food: ["1\u20132 tazas", "1\u20132 cups"], weight: ["18\u201325 kg", "40\u201355 lb"], exercise: ["20\u201330 min/d\xEDa", "20\u201330 min/day"], energyPct: 30, exercisePct: 25, healthPct: 48, trainPct: 55, health: ["Cuidar respiraci\xF3n y calor.", "Mind breathing and heat."], goodFor: [["Apartamentos", "Apartments"], ["Familias tranquilas", "Calm families"], ["Poco ejercicio", "Low exercise"], ["Compa\xF1\xEDa en casa", "Home companion"]] }
+  },
+  {
+    name: "Rottweiler",
+    key: "rottweiler",
+    tone: "#2D2421",
+    match: 88,
+    img: "fotos-razas/Rottweiler.webp",
+    desc: ["Fuerte, seguro y muy leal. Un guardi\xE1n cari\xF1oso con su familia.", "Strong, confident and very loyal. A loving guardian with its family."],
+    size: ["Grande", "Large"],
+    energy: ["Media-alta", "Medium-high"],
+    facts: [["Ayudaba a los romanos a arrear ganado.", "Helped the Romans herd cattle."], ["Es protector pero muy dulce en casa.", "Protective yet very sweet at home."]],
+    info: { lifespan: ["9\u201310 a\xF1os", "9\u201310 yrs"], food: ["3\u20135 tazas", "3\u20135 cups"], weight: ["35\u201360 kg", "80\u2013135 lb"], exercise: ["1 h/d\xEDa", "1 h/day"], energyPct: 72, exercisePct: 68, healthPct: 62, trainPct: 88, health: ["Cuidar caderas y peso.", "Mind hips and weight."], goodFor: [["Protecci\xF3n", "Protection"], ["Due\xF1os con experiencia", "Experienced owners"], ["Casa con patio", "House with yard"], ["Familias firmes", "Firm families"]] }
+  },
+  {
+    name: "Pomeranian",
+    key: "pomeranian",
+    tone: "#E8A53D",
+    match: 89,
+    img: "fotos-razas/Pomeranian.webp",
+    desc: ["Una bolita de pelos llena de energ\xEDa y personalidad. \xA1Pura alegr\xEDa!", "A fluffy ball full of energy and personality. Pure joy!"],
+    size: ["Peque\xF1o", "Small"],
+    energy: ["Media", "Medium"],
+    facts: [["La reina Victoria los hizo famosos.", "Queen Victoria made them famous."], ["Parece un peluchito de juguete.", "Looks like a little plush toy."]],
+    info: { lifespan: ["12\u201316 a\xF1os", "12\u201316 yrs"], food: ["\xBC\u2013\xBD taza", "\xBC\u2013\xBD cup"], weight: ["1.5\u20133.5 kg", "3\u20137 lb"], exercise: ["20\u201330 min/d\xEDa", "20\u201330 min/day"], energyPct: 60, exercisePct: 40, healthPct: 65, trainPct: 70, health: ["Cuidar dientes y rodillas.", "Mind teeth and knees."], goodFor: [["Apartamentos", "Apartments"], ["Compa\xF1\xEDa", "Companionship"], ["Adultos", "Adults"], ["Vida en ciudad", "City life"]] }
+  },
+  {
+    name: "Yorkshire Terrier",
+    key: "yorkie",
+    tone: "#6B5A45",
+    match: 88,
+    img: "fotos-razas/Yorkshire Terrier.webp",
+    desc: ["Chiquito, valiente y elegante. Casi no suelta pelo y adora su regazo.", "Tiny, brave and elegant. Barely sheds and loves your lap."],
+    size: ["Peque\xF1o", "Small"],
+    energy: ["Media", "Medium"],
+    facts: [["Su pelito parece de seda.", "Its coat feels like silk."], ["Era cazador de ratas en f\xE1bricas inglesas.", "Was a rat-catcher in English mills."]],
+    info: { lifespan: ["13\u201316 a\xF1os", "13\u201316 yrs"], food: ["\xBC\u2013\xBD taza", "\xBC\u2013\xBD cup"], weight: ["2\u20133.5 kg", "4\u20137 lb"], exercise: ["20\u201330 min/d\xEDa", "20\u201330 min/day"], energyPct: 58, exercisePct: 40, healthPct: 64, trainPct: 72, health: ["Cuidar dientes; pelo necesita peinado.", "Mind teeth; coat needs grooming."], goodFor: [["Apartamentos", "Apartments"], ["Poco pelo", "Low shedding"], ["Compa\xF1\xEDa", "Companionship"], ["Ciudad", "City life"]] }
+  },
+  {
+    name: "Boxer",
+    key: "boxer",
+    tone: "#C58A4B",
+    match: 89,
+    img: "fotos-razas/Boxer.webp",
+    desc: ["Juguet\xF3n, atl\xE9tico y muy cari\xF1oso con los ni\xF1os. \xA1Un payaso leal!", "Playful, athletic and very loving with kids. A loyal clown!"],
+    size: ["Grande", "Large"],
+    energy: ["Alta", "High"],
+    facts: [['"Boxea" con las patas delanteras al jugar.', '"Boxes" with its front paws when playing.'], ["Se mantiene cachorro de coraz\xF3n por a\xF1os.", "Stays a puppy at heart for years."]],
+    info: { lifespan: ["10\u201312 a\xF1os", "10\u201312 yrs"], food: ["2\u20133 tazas", "2\u20133 cups"], weight: ["25\u201332 kg", "55\u201370 lb"], exercise: ["1\u20132 h/d\xEDa", "1\u20132 h/day"], energyPct: 88, exercisePct: 82, healthPct: 62, trainPct: 80, health: ["Cuidar coraz\xF3n y calor.", "Mind heart and heat."], goodFor: [["Familias con ni\xF1os", "Families with kids"], ["Vida activa", "Active life"], ["Casa con patio", "House with yard"], ["Juego", "Play"]] }
+  },
+  {
+    name: "Doberman Pinscher",
+    key: "doberman",
+    tone: "#2D2421",
+    match: 88,
+    img: "fotos-razas/Doberman Pinscher.webp",
+    desc: ["Elegante, veloz y muy inteligente. Leal y protector con su familia.", "Elegant, fast and very smart. Loyal and protective of its family."],
+    size: ["Grande", "Large"],
+    energy: ["Alta", "High"],
+    facts: [["Es de los perros m\xE1s r\xE1pidos y listos.", "One of the fastest and smartest dogs."], ["Te sigue como una sombra leal.", "Follows you like a loyal shadow."]],
+    info: { lifespan: ["10\u201313 a\xF1os", "10\u201313 yrs"], food: ["3\u20134 tazas", "3\u20134 cups"], weight: ["27\u201345 kg", "60\u2013100 lb"], exercise: ["1\u20132 h/d\xEDa", "1\u20132 h/day"], energyPct: 86, exercisePct: 82, healthPct: 66, trainPct: 94, health: ["Cuidar coraz\xF3n; revisiones veterinarias.", "Mind heart; vet checkups."], goodFor: [["Protecci\xF3n", "Protection"], ["Due\xF1os con experiencia", "Experienced owners"], ["Vida activa", "Active life"], ["Casa con patio", "House with yard"]] }
+  },
+  {
+    name: "Great Dane",
+    key: "greatdane",
+    tone: "#B8B0A4",
+    match: 87,
+    img: "fotos-razas/Great Dane.webp",
+    desc: ["Un gigante gentil y tranquilo. Cree que es un perrito de regazo.", "A gentle, calm giant. Thinks it is a lap dog."],
+    size: ["Muy grande", "Very large"],
+    energy: ["Media-baja", "Medium-low"],
+    facts: [["Es uno de los perros m\xE1s altos del mundo.", "One of the tallest dogs in the world."], ["A pesar de su tama\xF1o, es muy dulce.", "Despite its size, it is very sweet."]],
+    info: { lifespan: ["7\u201310 a\xF1os", "7\u201310 yrs"], food: ["4\u20138 tazas", "4\u20138 cups"], weight: ["45\u201380 kg", "100\u2013175 lb"], exercise: ["45\u201360 min/d\xEDa", "45\u201360 min/day"], energyPct: 48, exercisePct: 50, healthPct: 50, trainPct: 75, health: ["Cuidar coraz\xF3n y est\xF3mago.", "Mind heart and stomach."], goodFor: [["Familias", "Families"], ["Casa amplia", "Spacious home"], ["Compa\xF1\xEDa gigante", "Giant companion"], ["Ni\xF1os", "Kids"]] }
+  },
+  {
+    name: "Miniature Schnauzer",
+    key: "schnauzer",
+    tone: "#8A8A8A",
+    match: 89,
+    img: "fotos-razas/Miniature Schnauzer.webp",
+    desc: ["Listo, alegre y con su barbita simp\xE1tica. Casi no suelta pelo.", "Smart, cheerful and with a charming beard. Barely sheds."],
+    size: ["Peque\xF1o", "Small"],
+    energy: ["Media", "Medium"],
+    facts: [["Su barba y cejas lo hacen \xFAnico.", "Its beard and eyebrows make it unique."], ["Es excelente alarma de la casa.", "It is a great little watchdog."]],
+    info: { lifespan: ["12\u201315 a\xF1os", "12\u201315 yrs"], food: ["\xBD\u20131 taza", "\xBD\u20131 cup"], weight: ["5\u20139 kg", "11\u201320 lb"], exercise: ["30\u201360 min/d\xEDa", "30\u201360 min/day"], energyPct: 65, exercisePct: 55, healthPct: 72, trainPct: 82, health: ["Cuidar peso; pelo necesita corte.", "Mind weight; coat needs trimming."], goodFor: [["Apartamentos", "Apartments"], ["Poco pelo", "Low shedding"], ["Familias", "Families"], ["Alarma", "Watchdog"]] }
+  },
+  {
+    name: "Siberian Husky",
+    key: "husky",
+    tone: "#B8C2CC",
+    match: 88,
+    img: "fotos-razas/Siberian Husky.webp",
+    desc: ['Hermoso, energ\xE9tico y aventurero. Ama correr y "hablar".', 'Beautiful, energetic and adventurous. Loves to run and "talk".'],
+    size: ["Grande", "Large"],
+    energy: ["Muy alta", "Very high"],
+    facts: [["Tira de trineos en la nieve por horas.", "Pulls sleds in the snow for hours."], ["Hace aullidos y sonidos muy graciosos.", "Makes funny howls and sounds."]],
+    info: { lifespan: ["12\u201315 a\xF1os", "12\u201315 yrs"], food: ["1\xBD\u20132 tazas", "1\xBD\u20132 cups"], weight: ["16\u201327 kg", "35\u201360 lb"], exercise: ["2 h/d\xEDa", "2 h/day"], energyPct: 95, exercisePct: 92, healthPct: 74, trainPct: 62, health: ["Necesita MUCHO ejercicio; suelta pelo.", "Needs LOTS of exercise; sheds a lot."], goodFor: [["Vida muy activa", "Very active life"], ["Aventura y correr", "Adventure & running"], ["Casa con patio", "House with yard"], ["Clima fresco", "Cool climate"]] }
+  },
+  {
+    name: "Bernese Mountain Dog",
+    key: "bernese",
+    tone: "#2D2421",
+    match: 90,
+    img: "fotos-razas/Bernese Mountain Dog.webp",
+    desc: ["Enorme, peludo y de coraz\xF3n gigante. Dulce y tranquilo con todos.", "Huge, fluffy and big-hearted. Sweet and calm with everyone."],
+    size: ["Muy grande", "Very large"],
+    energy: ["Media", "Medium"],
+    facts: [["Ayudaba en las granjas de los Alpes suizos.", "Helped on farms in the Swiss Alps."], ["Adora la nieve y los abrazos.", "Loves snow and cuddles."]],
+    info: { lifespan: ["7\u201310 a\xF1os", "7\u201310 yrs"], food: ["3\u20135 tazas", "3\u20135 cups"], weight: ["35\u201350 kg", "80\u2013110 lb"], exercise: ["45\u201360 min/d\xEDa", "45\u201360 min/day"], energyPct: 58, exercisePct: 55, healthPct: 52, trainPct: 80, health: ["Cuidar articulaciones; suelta pelo.", "Mind joints; sheds a lot."], goodFor: [["Familias con ni\xF1os", "Families with kids"], ["Casa amplia", "Spacious home"], ["Compa\xF1\xEDa gigante", "Giant companion"], ["Clima fresco", "Cool climate"]] }
+  },
+  {
+    name: "Boston Terrier",
+    key: "boston",
+    tone: "#2D2421",
+    match: 88,
+    img: "fotos-razas/Boston Terrier.webp",
+    desc: ['El "caballerito americano": elegante, alegre y perfecto para ciudad.', 'The "American Gentleman": dapper, cheerful and perfect for the city.'],
+    size: ["Peque\xF1o", "Small"],
+    energy: ["Media", "Medium"],
+    facts: [["Parece que lleva esmoquin puesto.", "Looks like it is wearing a tuxedo."], ["Es muy bueno con todo el mundo.", "Gets along with everyone."]],
+    info: { lifespan: ["11\u201313 a\xF1os", "11\u201313 yrs"], food: ["\xBD\u20131\xBD tazas", "\xBD\u20131\xBD cups"], weight: ["5\u201311 kg", "12\u201325 lb"], exercise: ["30\u201345 min/d\xEDa", "30\u201345 min/day"], energyPct: 62, exercisePct: 50, healthPct: 62, trainPct: 78, health: ["Cuidar respiraci\xF3n y ojos.", "Mind breathing and eyes."], goodFor: [["Apartamentos", "Apartments"], ["Familias", "Families"], ["Ciudad", "City life"], ["Primer perro", "First-time owners"]] }
+  },
+  {
+    name: "Pembroke Welsh Corgi",
+    key: "corgi",
+    tone: "#E0A85A",
+    match: 90,
+    img: "fotos-razas/Pembroke Welsh Corgi.webp",
+    desc: ["Patitas cortas, orejas grandes y mucha inteligencia. \xA1Adorable y listo!", "Short legs, big ears and lots of smarts. Adorable and clever!"],
+    size: ["Peque\xF1o", "Small"],
+    energy: ["Media", "Medium"],
+    facts: [["Es el perro favorito de la reina de Inglaterra.", "It was the Queen of England\u2019s favorite dog."], ["Arreaba vacas a pesar de ser chiquito.", "Herded cattle despite being tiny."]],
+    info: { lifespan: ["12\u201315 a\xF1os", "12\u201315 yrs"], food: ["\xBE\u20131\xBD tazas", "\xBE\u20131\xBD cups"], weight: ["10\u201314 kg", "22\u201331 lb"], exercise: ["45 min/d\xEDa", "45 min/day"], energyPct: 68, exercisePct: 60, healthPct: 66, trainPct: 85, health: ["Cuidar espalda y peso.", "Mind back and weight."], goodFor: [["Familias con ni\xF1os", "Families with kids"], ["Listos para juegos", "Game-loving"], ["Ciudad o campo", "City or country"], ["Primer perro", "First-time owners"]] }
+  },
+  {
+    name: "Australian Shepherd",
+    key: "aussie",
+    tone: "#8A6A4A",
+    match: 90,
+    img: "fotos-razas/Australian Shepherd.webp",
+    desc: ["Brillante, atl\xE9tico y leal. Aprende trucos rapid\xEDsimo.", "Brilliant, athletic and loyal. Learns tricks super fast."],
+    size: ["Mediano", "Medium"],
+    energy: ["Muy alta", "Very high"],
+    facts: [["A veces tiene un ojo de cada color.", "Sometimes has one eye of each color."], ["Es campe\xF3n en deportes caninos.", "A champion in dog sports."]],
+    info: { lifespan: ["12\u201315 a\xF1os", "12\u201315 yrs"], food: ["1\xBD\u20132\xBD tazas", "1\xBD\u20132\xBD cups"], weight: ["16\u201332 kg", "35\u201370 lb"], exercise: ["1\u20132 h/d\xEDa", "1\u20132 h/day"], energyPct: 92, exercisePct: 88, healthPct: 74, trainPct: 94, health: ["Necesita mucho ejercicio mental y f\xEDsico.", "Needs lots of mental and physical exercise."], goodFor: [["Vida muy activa", "Very active life"], ["Deportes caninos", "Dog sports"], ["Casa con patio", "House with yard"], ["Due\xF1os activos", "Active owners"]] }
+  },
+  {
+    name: "Shih Tzu",
+    key: "shihtzu",
+    tone: "#D9C3A0",
+    match: 88,
+    img: "fotos-razas/Shih Tzu.webp",
+    desc: ["Dulce, tranquilo y muy cari\xF1oso. Naci\xF3 para acompa\xF1ar y mimar.", "Sweet, calm and very affectionate. Born to be a cuddly companion."],
+    size: ["Peque\xF1o", "Small"],
+    energy: ["Baja", "Low"],
+    facts: [["Viv\xEDa en palacios chinos como perro real.", "Lived in Chinese palaces as a royal dog."], ['Su nombre significa "perro le\xF3n".', 'Its name means "lion dog".']],
+    info: { lifespan: ["10\u201316 a\xF1os", "10\u201316 yrs"], food: ["\xBD\u20131 taza", "\xBD\u20131 cup"], weight: ["4\u20137.5 kg", "9\u201316 lb"], exercise: ["20\u201330 min/d\xEDa", "20\u201330 min/day"], energyPct: 38, exercisePct: 30, healthPct: 62, trainPct: 60, health: ["Cuidar ojos y respiraci\xF3n; peinar el pelo.", "Mind eyes and breathing; brush the coat."], goodFor: [["Apartamentos", "Apartments"], ["Compa\xF1\xEDa", "Companionship"], ["Abuelitos", "Seniors"], ["Poco ejercicio", "Low exercise"]] }
+  },
+  {
+    name: "Pug",
+    key: "pug",
+    tone: "#E8C98A",
+    match: 87,
+    img: "fotos-razas/Pug.webp",
+    desc: ["Carita arrugada, payaso y muy amoroso. Vive para hacerte re\xEDr.", "Wrinkly face, clown and very loving. Lives to make you laugh."],
+    size: ["Peque\xF1o", "Small"],
+    energy: ["Baja", "Low"],
+    facts: [["Su carita arrugada enamora a todos.", "Its wrinkly face charms everyone."], ["Le encanta dormir en tu regazo.", "Loves to nap in your lap."]],
+    info: { lifespan: ["12\u201315 a\xF1os", "12\u201315 yrs"], food: ["\xBD\u20131 taza", "\xBD\u20131 cup"], weight: ["6\u20138 kg", "14\u201318 lb"], exercise: ["20\u201330 min/d\xEDa", "20\u201330 min/day"], energyPct: 40, exercisePct: 30, healthPct: 50, trainPct: 62, health: ["Cuidar respiraci\xF3n, peso y calor.", "Mind breathing, weight and heat."], goodFor: [["Apartamentos", "Apartments"], ["Familias", "Families"], ["Compa\xF1\xEDa", "Companionship"], ["Ciudad", "City life"]] }
+  },
+  {
+    name: "Havanese",
+    key: "havanese",
+    tone: "#E8DCC8",
+    match: 89,
+    img: "fotos-razas/Havanese.webp",
+    desc: ["Alegre, sociable y muy apegado. Casi no suelta pelo. \xA1Pura ternura!", "Cheerful, social and very attached. Barely sheds. Pure sweetness!"],
+    size: ["Peque\xF1o", "Small"],
+    energy: ["Media", "Medium"],
+    facts: [["Es el perro nacional de Cuba.", "It is the national dog of Cuba."], ["Le encanta seguir a su familia a todos lados.", "Loves to follow its family everywhere."]],
+    info: { lifespan: ["14\u201316 a\xF1os", "14\u201316 yrs"], food: ["\xBD\u20131 taza", "\xBD\u20131 cup"], weight: ["3\u20136 kg", "7\u201313 lb"], exercise: ["30 min/d\xEDa", "30 min/day"], energyPct: 55, exercisePct: 45, healthPct: 74, trainPct: 80, health: ["Pelo necesita peinado regular.", "Coat needs regular brushing."], goodFor: [["Apartamentos", "Apartments"], ["Poco pelo", "Low shedding"], ["Familias", "Families"], ["Compa\xF1\xEDa", "Companionship"]] }
+  },
+  {
+    name: "Cocker Spaniel",
+    key: "cocker",
+    tone: "#C9663B",
+    match: 88,
+    img: "fotos-razas/Cocker Spaniel.webp",
+    desc: ["Orejas largas, mirada dulce y coraz\xF3n juguet\xF3n. Gran amigo familiar.", "Long ears, sweet eyes and a playful heart. A great family friend."],
+    size: ["Mediano", "Medium"],
+    energy: ["Media", "Medium"],
+    facts: [["Sus orejas largas y sedosas son famosas.", "Its long, silky ears are famous."], ['Inspir\xF3 a "La Dama" de Disney.', 'Inspired "Lady" from the Disney movie.']],
+    info: { lifespan: ["10\u201314 a\xF1os", "10\u201314 yrs"], food: ["1\u20132 tazas", "1\u20132 cups"], weight: ["7\u201314 kg", "15\u201330 lb"], exercise: ["45\u201360 min/d\xEDa", "45\u201360 min/day"], energyPct: 62, exercisePct: 58, healthPct: 64, trainPct: 78, health: ["Cuidar orejas; peinar el pelo.", "Mind ears; brush the coat."], goodFor: [["Familias con ni\xF1os", "Families with kids"], ["Compa\xF1\xEDa", "Companionship"], ["Casa o apto", "House or apt"], ["Primer perro", "First-time owners"]] }
+  },
+  {
+    name: "Maltese",
+    key: "maltese",
+    tone: "#FBF7F0",
+    match: 88,
+    img: "fotos-razas/Maltese.webp",
+    desc: ["Blanco, sedoso y elegante. Cari\xF1oso, valiente y casi no suelta pelo.", "White, silky and elegant. Affectionate, brave and barely sheds."],
+    size: ["Peque\xF1o", "Small"],
+    energy: ["Baja", "Low"],
+    facts: [["Es una raza con m\xE1s de 2,000 a\xF1os.", "A breed over 2,000 years old."], ["Su pelo blanco parece de seda.", "Its white coat looks like silk."]],
+    info: { lifespan: ["12\u201315 a\xF1os", "12\u201315 yrs"], food: ["\xBC\u2013\xBD taza", "\xBC\u2013\xBD cup"], weight: ["2\u20134 kg", "4\u20138 lb"], exercise: ["20\u201330 min/d\xEDa", "20\u201330 min/day"], energyPct: 45, exercisePct: 35, healthPct: 66, trainPct: 72, health: ["Cuidar dientes; peinar a diario.", "Mind teeth; brush daily."], goodFor: [["Apartamentos", "Apartments"], ["Poco pelo", "Low shedding"], ["Compa\xF1\xEDa", "Companionship"], ["Abuelitos", "Seniors"]] }
+  },
+  {
+    name: "Border Collie",
+    key: "bordercollie",
+    tone: "#2D2421",
+    match: 90,
+    img: "fotos-razas/Border Collie.webp",
+    desc: ["El perro m\xE1s inteligente del mundo. Energ\xE9tico y aprende todo al instante.", "The smartest dog in the world. Energetic and learns everything instantly."],
+    size: ["Mediano", "Medium"],
+    energy: ["Muy alta", "Very high"],
+    facts: [["Puede aprender cientos de palabras.", "Can learn hundreds of words."], ["Pastorea ovejas con la mirada.", "Herds sheep with its stare."]],
+    info: { lifespan: ["12\u201315 a\xF1os", "12\u201315 yrs"], food: ["1\xBD\u20132 tazas", "1\xBD\u20132 cups"], weight: ["14\u201320 kg", "30\u201345 lb"], exercise: ["2 h/d\xEDa", "2 h/day"], energyPct: 96, exercisePct: 95, healthPct: 76, trainPct: 98, health: ["Necesita MUCHO ejercicio y tareas.", "Needs LOTS of exercise and jobs."], goodFor: [["Vida muy activa", "Very active life"], ["Deportes y trucos", "Sports & tricks"], ["Casa con patio", "House with yard"], ["Due\xF1os dedicados", "Dedicated owners"]] }
+  },
+  {
+    name: "Chihuahua",
+    key: "chihuahua",
+    tone: "#E0A85A",
+    match: 86,
+    img: "fotos-razas/Chihuahua.webp",
+    desc: ["El m\xE1s chiquito del mundo, con un coraz\xF3n valiente y gran personalidad.", "The smallest dog in the world, with a brave heart and big personality."],
+    size: ["Muy peque\xF1o", "Tiny"],
+    energy: ["Media", "Medium"],
+    facts: [["Es el perro m\xE1s peque\xF1o del mundo.", "It is the smallest dog breed in the world."], ["Le encanta el calorcito y las cobijas.", "Loves warmth and cozy blankets."]],
+    info: { lifespan: ["14\u201318 a\xF1os", "14\u201318 yrs"], food: ["\xBC\u2013\xBD taza", "\xBC\u2013\xBD cup"], weight: ["1.5\u20133 kg", "3\u20136 lb"], exercise: ["20\u201330 min/d\xEDa", "20\u201330 min/day"], energyPct: 58, exercisePct: 40, healthPct: 68, trainPct: 60, health: ["Cuidar dientes; protegerlo del fr\xEDo.", "Mind teeth; keep it warm."], goodFor: [["Apartamentos", "Apartments"], ["Adultos", "Adults"], ["Compa\xF1\xEDa", "Companionship"], ["Ciudad", "City life"]] }
+  },
+  {
+    name: "Goldendoodle",
+    key: "goldendoodle",
+    tone: "#E8C98A",
+    match: 93,
+    img: "fotos-razas/Goldendoodle.webp",
+    desc: ["Mezcla de Golden y Poodle: tierno, listo y casi no suelta pelo. \xA1El favorito de las familias!", "A Golden + Poodle mix: sweet, smart and barely sheds. A family favorite!"],
+    size: ["Mediano-grande", "Medium-large"],
+    energy: ["Media-alta", "Medium-high"],
+    facts: [["Casi no suelta pelo, ideal para alergias.", "Barely sheds, great for allergies."], ["Es s\xFAper cari\xF1oso y f\xE1cil de entrenar.", "Super affectionate and easy to train."]],
+    info: { lifespan: ["10\u201315 a\xF1os", "10\u201315 yrs"], food: ["1\xBD\u20133 tazas", "1\xBD\u20133 cups"], weight: ["14\u201340 kg", "30\u201390 lb"], exercise: ["1 h/d\xEDa", "1 h/day"], energyPct: 72, exercisePct: 68, healthPct: 78, trainPct: 92, health: ["Pelo necesita corte y peinado.", "Coat needs trimming and brushing."], goodFor: [["Familias con ni\xF1os", "Families with kids"], ["Alergias (poco pelo)", "Allergies (low shed)"], ["Terapia", "Therapy"], ["Primer perro", "First-time owners"]] }
+  },
+  {
+    name: "Maltipoo",
+    key: "maltipoo",
+    tone: "#F0E6D6",
+    match: 90,
+    img: "fotos-razas/Maltipoo.webp",
+    desc: ["Mezcla de Malt\xE9s y Poodle: peque\xF1ito, mimoso y casi no suelta pelo.", "A Maltese + Poodle mix: tiny, cuddly and barely sheds."],
+    size: ["Peque\xF1o", "Small"],
+    energy: ["Media", "Medium"],
+    facts: [["Es como un peluche que casi no suelta pelo.", "Like a plushie that barely sheds."], ["Adora estar en brazos y dar besitos.", "Loves being held and giving kisses."]],
+    info: { lifespan: ["12\u201316 a\xF1os", "12\u201316 yrs"], food: ["\xBC\u2013\xBE taza", "\xBC\u2013\xBE cup"], weight: ["2.5\u20137 kg", "5\u201315 lb"], exercise: ["30 min/d\xEDa", "30 min/day"], energyPct: 58, exercisePct: 45, healthPct: 74, trainPct: 82, health: ["Pelo necesita corte; cuidar dientes.", "Coat needs trimming; mind teeth."], goodFor: [["Apartamentos", "Apartments"], ["Alergias (poco pelo)", "Allergies (low shed)"], ["Familias", "Families"], ["Compa\xF1\xEDa", "Companionship"]] }
+  }
+];
+_EXTRA.forEach(function(x) {
+  BREEDS.push({ name: x.name, key: x.key, art: 0, match: x.match, tone: x.tone, img: x.img, desc: x.desc, size: x.size, energy: x.energy, facts: x.facts });
+  BREED_INFO[x.key] = x.info;
+});
 let _ac = null;
 const ac = () => {
   try {
@@ -1409,14 +1735,42 @@ function QuizGame() {
     setResult(false);
   };
   const breedFor = () => {
-    const a = answers;
-    if (a[2] === 2) return BREEDS[4];
-    if ((a[0] === 0 || a[0] === 3) && a[3] === 0) return BREEDS[1];
-    if (a[7] === 0 || a[7] === 1) return BREEDS[2];
-    if (a[1] === 1 && a[3] >= 2) return BREEDS[3];
-    if (a[6] === 0 || a[6] === 1 || a[1] === 3) return BREEDS[0];
-    if (a[9] === 1) return BREEDS[5];
-    return BREEDS[0];
+    const a = (answers || []).map((x) => x == null ? -1 : x);
+    const we = a[3] <= 0 ? 1 : a[3] === 1 ? 2 : 3;
+    const wantSz = a[5] === 0 ? 1 : a[5] === 1 ? 2 : a[5] === 2 ? 3 : 0;
+    let best = BREEDS[0], bestScore = -1;
+    for (const b of BREEDS) {
+      const m = BREED_MATCH[b.key];
+      if (!m) continue;
+      let s = 0;
+      if (wantSz) s += (3 - Math.abs(m.sz - wantSz)) * 3;
+      if (a[0] === 0 || a[0] === 3) s += m.apt * 2 + (m.sz <= 2 ? 2 : -2);
+      else if (a[0] === 2) s += (m.en >= 2 ? 2 : 0) + (m.sz >= 2 ? 1 : 0);
+      s += (3 - Math.abs(m.en - we)) * 2;
+      if (a[8] === 0) s += m.indep + (m.en <= 1 ? 2 : 0);
+      else if (a[8] >= 3) s += m.en >= 2 ? 2 : 0;
+      if (a[2] === 0 && m.coat === "s") s += 4;
+      else if (a[2] === 1 && m.coat === "f") s += 4;
+      else if (a[2] === 2) s += (m.hypo ? 5 : 0) + (m.coat === "c" ? 2 : 0);
+      if (a[1] === 0 || a[1] === 2 || a[1] === 4) s += m.lap * 2;
+      else if (a[1] === 1) s += m.en >= 2 ? 3 : 0;
+      else if (a[1] === 3) s += m.kids * 2;
+      if (a[9] === 0) s += m.lap * 2;
+      else if (a[9] === 1) s += m.en >= 2 ? 3 : 0;
+      else if (a[9] === 2) s += m.guard * 3;
+      else if (a[9] === 3) s += m.indep * 2;
+      if (a[6] === 0 || a[6] === 1) s += m.kids * 2;
+      if (a[7] === 0 || a[7] === 1) s += m.lap + (m.train >= 2 ? 1 : 0);
+      else if (a[7] === 2) s += m.lap + (m.sz === 1 ? 1 : 0);
+      if (a[4] === 0) s += m.train;
+      if ((a[1] === 4 || a[7] === 2) && m.sz === 1) s += 1;
+      s += (b.match || 80) * 0.01;
+      if (s > bestScore) {
+        bestScore = s;
+        best = b;
+      }
+    }
+    return best;
   };
   const pct = Math.round((result ? Q.length : step) / Q.length * 100);
   const wrap = { maxWidth: 560, margin: "0 auto", padding: "24px 18px 80px" };
