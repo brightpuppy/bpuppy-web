@@ -43,8 +43,20 @@
   .card:hover{ transform:translateY(-3px); box-shadow:0 1px 2px rgba(45,36,33,.06), 0 26px 56px -24px rgba(45,36,33,.3); }
   .photo{ position:relative; width:100%; aspect-ratio:1/1; background:#F2ECE2; overflow:hidden; }
   .photo img{ width:100%; height:100%; object-fit:cover; display:block; }
-  /* logo-crop: zoom slightly + anchor top to clip the bottom watermark strip of Lancaster/Greenfield photos */
-  .photo.crop img{ width:118%; height:118%; margin-left:-9%; object-position:center top; }
+  /* logo-crop: zoom slightly + anchor top to clip the bottom watermark strip of Lancaster/Greenfield photos (sourced only) */
+  .photo.crop img{ width:112%; height:112%; margin-left:-6%; object-position:center top; }
+  .brandmark{ position:absolute; right:8px; bottom:8px; display:flex; align-items:center; gap:5px; background:rgba(45,36,33,.62); color:#fff; font-size:10px; font-weight:800; letter-spacing:.02em; padding:3px 9px; border-radius:999px; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); z-index:2; }
+  .brandmark .dot{ width:7px; height:7px; border-radius:50%; background:var(--orange); }
+  .gcount{ position:absolute; left:12px; bottom:12px; background:rgba(45,36,33,.55); color:#fff; font-size:11px; font-weight:700; padding:3px 9px; border-radius:999px; z-index:2; }
+  .thumbs{ display:flex; gap:6px; padding:8px 12px 0; overflow-x:auto; }
+  .thumbs img{ width:46px; height:46px; border-radius:8px; object-fit:cover; cursor:pointer; border:2px solid transparent; flex:0 0 auto; }
+  .thumbs img.on{ border-color:var(--orange); }
+  .lbx{ position:fixed; inset:0; background:rgba(20,15,12,.93); z-index:100; display:none; align-items:center; justify-content:center; padding:20px; }
+  .lbx.open{ display:flex; }
+  .lbx img{ max-width:96vw; max-height:90vh; border-radius:14px; box-shadow:0 20px 60px rgba(0,0,0,.5); }
+  .lbx .x{ position:absolute; top:14px; right:18px; color:#fff; font-size:32px; line-height:1; cursor:pointer; background:none; border:none; }
+  .lbx .nav{ position:absolute; top:50%; transform:translateY(-50%); color:#fff; font-size:44px; line-height:1; cursor:pointer; background:none; border:none; padding:0 16px; }
+  .lbx .nav.prev{ left:4px; } .lbx .nav.next{ right:4px; }
   .photo .ph-empty{ position:absolute; inset:0; display:grid; place-items:center; color:var(--ink-soft); }
   .photo .ph-empty svg{ width:46px; height:46px; opacity:.5; }
   .badge{ position:absolute; top:12px; left:12px; font-size:11px; font-weight:700; letter-spacing:0.03em; text-transform:uppercase; padding:5px 11px; border-radius:999px; color:#fff; }
@@ -91,6 +103,8 @@
     <div class="center"><div><div class="spinner"></div><div style="color:var(--ink-soft);font-weight:600">Cargando tu catálogo…</div></div></div>
   </div>
 
+  <div class="lbx" id="lbx" onclick="lbxClose()"><button class="x" onclick="lbxClose()">&times;</button><button class="nav prev" onclick="lbxNav(-1,event)">&lsaquo;</button><img id="lbximg" src="" alt="" onclick="event.stopPropagation()"><button class="nav next" onclick="lbxNav(1,event)">&rsaquo;</button></div>
+
   <footer><div class="wrap">
     <div class="disc">Enlace privado y personal — por favor no lo compartas. Precios y disponibilidad sujetos a confirmación. © BrightPuppy.</div>
     <a class="wa" href="https://wa.me/18084928294" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.488-.927z"/></svg> Escríbenos por WhatsApp</a>
@@ -110,7 +124,15 @@
   function money(n){ if(n==null||isNaN(n)) return 'Consultar'; return '$'+Number(n).toLocaleString('en-US'); }
   function genderEs(g){ g=(g||'').toLowerCase(); if(g.indexOf('fem')===0||g==='f'||g==='hembra') return 'Hembra'; if(g.indexOf('mal')===0||g==='m'||g==='macho') return 'Macho'; return g?g.charAt(0).toUpperCase()+g.slice(1):''; }
   function ageEs(w){ if(!w&&w!==0) return ''; if(w<10) return w+(w===1?' semana':' semanas'); var m=Math.round(w/4.345); return m+(m===1?' mes':' meses'); }
-  function photoOf(p){ var arr=(p.photos_order&&p.photos_order.length)?p.photos_order:(p.photos&&p.photos.length?p.photos:null); var u=arr?arr[0]:p.photo_url; if(u&&typeof u==='object') u=u.url||u.src||''; return u||p.photo_url||''; }
+  var GAL={}, _lb={i:0,idx:0};
+  function photosOf(p){ var arr=(p.photos_order&&p.photos_order.length)?p.photos_order:(p.photos&&p.photos.length?p.photos:[]); arr=(arr||[]).map(function(u){ return (u&&typeof u==='object')?(u.url||u.src||''):u; }).filter(Boolean); if(!arr.length && p.photo_url) arr=[p.photo_url]; return arr; }
+  function photoOf(p){ var a=photosOf(p); return a[0]||''; }
+  function gswap(i, idx, el){ var u=(GAL[i]||[])[idx]; if(!u)return; var m=document.getElementById('gm-'+i); if(m){ m.src=u; m.dataset.idx=idx; } if(el&&el.parentNode){ [].slice.call(el.parentNode.children).forEach(function(c){c.classList.remove('on');}); el.classList.add('on'); } }
+  function lbxOpen(i){ var m=document.getElementById('gm-'+i); var idx=m?parseInt(m.dataset.idx||'0',10):0; _lb.i=i; _lb.idx=idx; var u=(GAL[i]||[])[idx]; var lb=document.getElementById('lbx'); var im=document.getElementById('lbximg'); if(u&&lb&&im){ im.src=u; lb.classList.add('open'); } }
+  function lbxNav(dir, ev){ if(ev)ev.stopPropagation(); var ph=GAL[_lb.i]||[]; if(ph.length<2)return; _lb.idx=(_lb.idx+dir+ph.length)%ph.length; var im=document.getElementById('lbximg'); if(im)im.src=ph[_lb.idx]; }
+  function lbxClose(){ var lb=document.getElementById('lbx'); if(lb)lb.classList.remove('open'); }
+  window.gswap=gswap; window.lbxOpen=lbxOpen; window.lbxNav=lbxNav; window.lbxClose=lbxClose;
+  document.addEventListener('keydown',function(e){ var lb=document.getElementById('lbx'); if(!lb||!lb.classList.contains('open'))return; if(e.key==='Escape')lbxClose(); else if(e.key==='ArrowLeft')lbxNav(-1); else if(e.key==='ArrowRight')lbxNav(1); });
 
   function stateBox(icon, title, msg, showWa){
     return '<div class="center"><div class="state-box">'
@@ -131,20 +153,27 @@
     var title = d.label ? esc(d.label) : 'Cachorritos elegidos <em>para ti</em>';
     var note = d.note ? '<p>'+esc(d.note)+'</p>' : '<p>Estos son los cachorros que seleccionamos especialmente para ti. Toca <b>Me interesa</b> en el que te enamore y seguimos por WhatsApp.</p>';
 
-    var cards = pups.map(function(p){
-      var ph = photoOf(p);
+    var cards = pups.map(function(p, i){
+      var photos = photosOf(p); GAL[i]=photos;
+      var ph = photos[0]||'';
       var reserved = (p.status==='reserved');
+      var isSourced = !!p.sourced;
+      var cropCls = (crop && isSourced) ? ' crop' : '';
+      var brand = isSourced ? '<div class="brandmark"><span class="dot"></span>BrightPuppy</div>' : '';
+      var count = photos.length>1 ? '<span class="gcount">'+photos.length+' fotos</span>' : '';
       var meta = [];
       var g = genderEs(p.gender); if(g) meta.push(g);
       if(p.color) meta.push(esc(p.color));
-      var a = ageEs(p.age_weeks); if(a) meta.push(a);
+      var a = p.age_text ? esc(p.age_text) : ageEs(p.age_weeks); if(a) meta.push(a);
       var waText = 'Hola! Me interesa '+(p.name? p.name+' ' : '')+'('+(p.breed||'cachorro')+') que vi en mi catálogo. ¿Sigue disponible?';
+      var thumbs = photos.length>1 ? '<div class="thumbs">'+photos.slice(0,10).map(function(u,idx){ return '<img src="'+esc(u)+'" class="'+(idx===0?'on':'')+'" referrerpolicy="no-referrer" onerror="this.remove()" onclick="gswap('+i+','+idx+',this)">'; }).join('')+'</div>' : '';
       return '<div class="card">'
-        + '<div class="photo'+(crop?' crop':'')+'">'
-          + (ph? '<img src="'+esc(ph)+'" alt="'+esc(p.breed||'Cachorro')+'" loading="lazy" onerror="this.parentNode.classList.add(\'noimg\');this.remove();">' : '')
-          + (ph? '' : '<div class="ph-empty">'+pawIcon+'</div>')
+        + '<div class="photo'+cropCls+'">'
+          + (ph? '<img id="gm-'+i+'" data-idx="0" src="'+esc(ph)+'" alt="'+esc(p.breed||'Cachorro')+'" loading="lazy" referrerpolicy="no-referrer" style="cursor:zoom-in" onclick="lbxOpen('+i+')" onerror="this.style.display=\'none\'">' : '<div class="ph-empty">'+pawIcon+'</div>')
+          + brand + count
           + '<span class="badge '+(reserved?'reserved':'available')+'">'+(reserved?'Reservado':'Disponible')+'</span>'
         + '</div>'
+        + thumbs
         + '<div class="body">'
           + '<div class="breed">'+esc(p.breed||'')+'</div>'
           + (p.name? '<h3>'+esc(p.name)+'</h3>':'')
