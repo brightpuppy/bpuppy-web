@@ -323,7 +323,7 @@ const sndBark = () => { beep(300,0.09,'sawtooth',0,0.06); beep(190,0.13,'sawtoot
 const sndHit  = () => { beep(200,0.14,'square',0,0.06); beep(140,0.16,'square',0.08,0.05); };
 const sndLife = () => { [784,1047,1319,1568].forEach((f,i)=>beep(f,0.10,'triangle',i*0.06,0.05)); };
 // ── Modo héroe: avión despegando + fanfarria + wohoo ──
-const sndPlane = () => { const c=ac(); if(!c||window._quizMuted) return; try{ if(c.state==='suspended') c.resume(); }catch(e){} const o=c.createOscillator(),g=c.createGain(); o.type='sawtooth'; o.connect(g); g.connect(c.destination); const t0=c.currentTime; o.frequency.setValueAtTime(110,t0); o.frequency.exponentialRampToValueAtTime(880,t0+1.2); g.gain.setValueAtTime(0.0001,t0); g.gain.linearRampToValueAtTime(0.05,t0+0.2); g.gain.exponentialRampToValueAtTime(0.0001,t0+1.4); o.start(t0); o.stop(t0+1.45); };
+const sndPlane = () => { const c=ac(); if(!c||window._quizMuted) return; try{ if(c.state==='suspended') c.resume(); }catch(e){} const o=c.createOscillator(),o2=c.createOscillator(),g=c.createGain(); o.type='sine'; o2.type='sine'; o.connect(g); o2.connect(g); g.connect(c.destination); const t0=c.currentTime; o.frequency.setValueAtTime(330,t0); o.frequency.exponentialRampToValueAtTime(784,t0+0.9); o2.frequency.setValueAtTime(660,t0); o2.frequency.exponentialRampToValueAtTime(1568,t0+0.9); g.gain.setValueAtTime(0.0001,t0); g.gain.linearRampToValueAtTime(0.03,t0+0.3); g.gain.exponentialRampToValueAtTime(0.0001,t0+1.0); o.start(t0); o2.start(t0); o.stop(t0+1.05); o2.stop(t0+1.05); }; // suave "ascenso mágico" (antes era una sierra brusca)
 const sndHero = () => { [392,523,659,784,1047].forEach((f,i)=>beep(f,0.20,'triangle',i*0.10,0.06)); };
 const sndWohoo = () => { const c=ac(); if(!c||window._quizMuted) return; const o=c.createOscillator(),g=c.createGain(); o.type='triangle'; o.connect(g); g.connect(c.destination); const t0=c.currentTime; o.frequency.setValueAtTime(520,t0); o.frequency.exponentialRampToValueAtTime(1046,t0+0.45); g.gain.setValueAtTime(0.0001,t0); g.gain.linearRampToValueAtTime(0.06,t0+0.05); g.gain.exponentialRampToValueAtTime(0.0001,t0+0.55); o.start(t0); o.stop(t0+0.6); };
 // ── Música jazz-hiphop chiptune (loop) ──
@@ -554,7 +554,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
       const dogX = 60, dogW = 22;
       // Ensanche gradual SOLO de ancho: el lienzo interno y el contenedor crecen juntos para que la altura no cambie.
       if(st.widening){
-        st.wideT = Math.min(1, (st.wideT||0) + 0.018);
+        st.wideT = Math.min(1, (st.wideT||0) + 0.012);
         const e = 1 - Math.pow(1 - st.wideT, 3);
         st.vW = Math.round(W + (FLYW - W) * e);
         const need = Math.round(st.vW * DPR);
@@ -574,7 +574,9 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
         // brillo creciente alrededor del cachorro
         const gx=dogX+11, gy=GY-st.py-10, gr=14 + st.transT*0.55 + Math.sin(st.transT*0.4)*3;
         const gl=ctx.createRadialGradient(gx,gy,2,gx,gy,Math.max(6,gr)); gl.addColorStop(0,'rgba(255,236,150,0.95)'); gl.addColorStop(0.45,'rgba(255,180,60,0.55)'); gl.addColorStop(1,'rgba(255,170,50,0)');
-        ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(gx,gy,Math.max(6,gr),0,7); ctx.fill(); ctx.restore();
+        ctx.save(); ctx.globalCompositeOperation='lighter'; ctx.fillStyle=gl; ctx.beginPath(); ctx.arc(gx,gy,Math.max(6,gr),0,7); ctx.fill();
+        for(var _k=0; _k<6; _k++){ var _ang=st.transT*0.11 + _k*1.047; var _rr=20 + Math.sin(st.transT*0.18+_k)*8; var _sx=gx+Math.cos(_ang)*_rr, _sy=gy+Math.sin(_ang)*_rr*0.7, _ss=1.4+Math.abs(Math.sin(st.transT*0.3+_k))*1.6; ctx.fillStyle='rgba(255,244,180,0.95)'; ctx.fillRect(_sx-_ss/2,_sy-_ss/2,_ss,_ss); }
+        ctx.restore();
         drawCape(dogX, GY-st.py, st.transT); drawDog(ctx, dogX, GY-st.py, tone, breed.key, st.frame, true);
         ctx.fillStyle='#C2521E'; ctx.font='bold 18px sans-serif'; ctx.textAlign='center'; ctx.fillText('¡WOHOOO!', dogX+44, GY-st.py-30); ctx.textAlign='left';
         if(st.transT>=110){ st.mode='flyintro'; setFlyIntro(true); }
@@ -585,10 +587,12 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
       st.fcount++; st.speed = Math.min(6.6, Math.max(st.speed, 4.3)); st.dist += st.speed;
       st.score = Math.floor(st.dist/10) + st.treats*8; if(st.fcount%6===0) setScore(st.score);
       if(st.inv>0) st.inv--;
-      st.py += (Math.max(24, Math.min(H-30, st.flyTarget)) - st.py)*0.42; // sigue al cursor más rápido
+      if(st.holdUp) st.flyTarget = Math.min(H-30, (st.flyTarget==null?st.py:st.flyTarget) + 3.4);
+      if(st.holdDown) st.flyTarget = Math.max(6, (st.flyTarget==null?st.py:st.flyTarget) - 3.4);
+      st.py += (Math.max(6, Math.min(H-30, st.flyTarget)) - st.py)*0.42; // sigue al cursor/teclas y llega hasta abajo
       st.frame = Math.floor(st.fcount/6)%2;
       // obstáculos aéreos
-      st.nextObst -= st.speed; if(st.nextObst<=0){ st.airObst.push({ x:VW+12, y:26+Math.random()*120, w:16, h:12 }); st.nextObst = (150 - Math.min(st.speed*10,60)) + Math.random()*120; }
+      st.nextObst -= st.speed; if(st.nextObst<=0){ st.airObst.push({ x:VW+12, y:26+Math.random()*120, w:16, h:12 }); st.nextObst = (215 - Math.min(st.speed*8,46)) + Math.random()*150; }
       st.airObst.forEach(o=>o.x-=st.speed); st.airObst = st.airObst.filter(o=>o.x+o.w>-6);
       // treats aéreos
       st.nextTreat -= st.speed; if(st.nextTreat<=0){ let tx=VW+12; for(const o of st.airObst){ if(Math.abs(o.x-tx)<50){ tx=o.x+o.w+45; break; } } st.treatArr.push({ x:tx, y:GY-(40+Math.random()*110), got:false }); st.nextTreat=80+Math.random()*120; }
@@ -712,15 +716,22 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
       e.preventDefault();
       const st = stRef.current;
       if(phase!=='playing'){ if(phase!=='over') start(); return; }
+      if(st && st.paused) return;
       if(st && st.mode==='flyintro'){ dismissFlyIntro(); return; }
-      if(st && st.mode==='fly'){ const d = e.code==='ArrowDown' ? -22 : 22; st.flyTarget = Math.max(24, Math.min(H-30, (st.flyTarget==null?st.py:st.flyTarget) + d)); return; }
+      if(st && st.mode==='fly'){ // vuelo continuo mientras se mantiene la tecla (no paso a paso)
+        if(e.code==='ArrowUp'){ st.holdUp=true; st.flyTarget=Math.min(H-30,(st.flyTarget==null?st.py:st.flyTarget)+10); }
+        else if(e.code==='ArrowDown'){ st.holdDown=true; st.flyTarget=Math.max(6,(st.flyTarget==null?st.py:st.flyTarget)-10); }
+        return;
+      }
       if(e.code!=='ArrowDown') jump(); // modo run: salta con Space/ArrowUp
     };
+    const onUp = (e)=>{ const st=stRef.current; if(!st) return; if(e.code==='ArrowUp') st.holdUp=false; if(e.code==='ArrowDown') st.holdDown=false; };
     window.addEventListener('keydown', onKey);
-    return ()=> window.removeEventListener('keydown', onKey);
+    window.addEventListener('keyup', onUp);
+    return ()=>{ window.removeEventListener('keydown', onKey); window.removeEventListener('keyup', onUp); };
   }, [phase]);
 
-  const flyAim = (clientY, el) => { const st=stRef.current; if(!st||st.mode!=='fly'||!el) return; const r=el.getBoundingClientRect(); if(!r.height) return; const ly=(clientY-r.top)*(H/r.height); st.flyTarget = Math.max(24, Math.min(H-30, GY-ly)); };
+  const flyAim = (clientY, el) => { const st=stRef.current; if(!st||st.mode!=='fly'||!el) return; const r=el.getBoundingClientRect(); if(!r.height) return; const ly=(clientY-r.top)*(H/r.height); st.flyTarget = Math.max(6, Math.min(H-30, GY-ly)); };
   const tap = () => { const st=stRef.current; if(phase==='ready'){ start(); return; } if(phase!=='playing') return; if(st && st.mode==='flyintro'){ dismissFlyIntro(); return; } if(st && st.mode==='fly'){ st.flyTarget = Math.min(H-30, (st.flyTarget==null?st.py:st.flyTarget)+22); return; } jump(); };
 
   const submitScore = () => {
