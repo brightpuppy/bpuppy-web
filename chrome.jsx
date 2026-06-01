@@ -360,7 +360,6 @@ function Header({ overDark }) {
   const klass = `hdr ${scrolled ? 'scrolled' : ''} ${overDark && !scrolled ? 'over-dark' : ''}`;
 
   const cachItems = [
-    { label: t(['Cachorros', 'Puppies']), href: '/cachorros', style: { fontWeight: 700 } },
     { label: t(['Conoce las razas', 'Meet the breeds']), href: '/razas' },
     { label: t(['Encuentra tu Match', 'Find Your Match']), href: '/quiz', className: 'bp-shine' },
     { label: t(['Solicita tu cachorro ideal', 'Request your ideal puppy']), href: '/solicitud' },
@@ -385,8 +384,8 @@ function Header({ overDark }) {
           <span className="wm notranslate">Bright Puppy</span>
         </a>
         <nav className="nav">
-          {pv['Cachorros'] !== false && <NavItem label={t(STRINGS.nav.puppies)} href="/cachorros" items={cachItems} navClass="bp-nav-glow"/>}
-          {pv['Gatos']     !== false && <NavItem label={t(['Gatos','Cats'])} href="/gatos" items={gatosItems}/>}
+          {pv['Cachorros'] !== false && <NavItem label={t(STRINGS.nav.puppies)} href="/razas" items={cachItems} navClass="bp-nav-glow"/>}
+          {pv['Gatos']     !== false && <NavItem label={t(['Gatos','Cats'])} href="/razas-gatos" items={gatosItems}/>}
           <a href="/financiamiento">{t(['Financiamiento','Financing'])}</a>
           {pv['Tienda']    !== false && <a href="/tienda">{t(['Tienda','Shop'])}</a>}
           {pv['Grooming']  !== false && <a href="/grooming"><span className="notranslate">Grooming</span></a>}
@@ -424,7 +423,7 @@ function Header({ overDark }) {
         <nav className="mobile-nav">
           <a href="/social" className="mnav-social" onClick={() => setMenuOpen(false)}><span style={{ display:'inline-flex', width:8, height:8, borderRadius:'50%', background:'#0EA5E9', marginRight:8 }}/>{t(['Social · Comunidad','Social · Community'])}</a>
           {pv['Cachorros'] !== false && <MobileGroup label={t(STRINGS.nav.puppies)} items={cachItems} open={mobG==='cach'} onToggle={()=>setMobG(g=>g==='cach'?null:'cach')} onNav={()=>setMenuOpen(false)}/>}
-          {pv['Gatos'] !== false && <MobileGroup label={t(['Gatos','Cats'])} items={[{label:t(['Gatos','Cats']),href:'/gatos',style:{fontWeight:700}},...gatosItems]} open={mobG==='gatos'} onToggle={()=>setMobG(g=>g==='gatos'?null:'gatos')} onNav={()=>setMenuOpen(false)}/>}
+          {pv['Gatos'] !== false && <MobileGroup label={t(['Gatos','Cats'])} items={gatosItems} open={mobG==='gatos'} onToggle={()=>setMobG(g=>g==='gatos'?null:'gatos')} onNav={()=>setMenuOpen(false)}/>}
           <a href="/financiamiento" onClick={() => setMenuOpen(false)}>{t(['Financiamiento','Financing'])}</a>
           {pv['Grooming'] !== false && <a href="/grooming" onClick={() => setMenuOpen(false)}><span className="notranslate">Grooming</span></a>}
           {mediaItems.length > 1

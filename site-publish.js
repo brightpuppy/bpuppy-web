@@ -63,7 +63,7 @@
 
   // ── Default live/draft state for pages ──────────────────────────────────────
   var DEFAULTS = {
-    Home: true, Cachorros: true, 'Cachorros-Entregados': true, 'Gatos-Entregados': true,
+    Home: true, Cachorros: true, 'Cachorros-Entregados': false, 'Gatos-Entregados': false,
     Nosotros: true, 'Razas-Perros': true, Media: true,
     Adopciones: true, Tienda: false, Blog: true, Grooming: true,
     Gatos: true, 'Razas-Gatos': true, Historia: true, Social: true,
