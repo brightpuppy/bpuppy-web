@@ -6,12 +6,12 @@ const PD_SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZS
 const pdSb = (() => { try { return supabase.createClient(PD_SUPA_URL, PD_SUPA_KEY); } catch(e) { return null; } })();
 
 // ── Helpers ───────────────────────────────────────────────────────────────────
-function pdAge(p) {
+function pdAge(p, t) {
   const w = p.age_weeks || (p.birth_date ? Math.floor((Date.now() - new Date(p.birth_date)) / 604800000) : null);
   if (!w && w !== 0) return null;
-  if (w < 16) return w + ' semanas';
-  if (w < 52) return Math.floor(w / 4) + ' meses';
-  return Math.floor(w / 52) + ' años';
+  if (w < 16) return w + ' ' + t(['semanas', 'weeks']);
+  if (w < 52) return Math.floor(w / 4) + ' ' + t(['meses', 'months']);
+  return Math.floor(w / 52) + ' ' + t(['años', 'years']);
 }
 function pdPhotos(p) {
   if (Array.isArray(p.photos) && p.photos.length) return p.photos;
@@ -33,9 +33,10 @@ function PdTag({ children, accent, green }) {
 
 // ── Gallery ───────────────────────────────────────────────────────────────────
 function PdGallery({ photos, name, status }) {
+  const t = useT();
   const [cur, setCur] = React.useState(0);
   const ph = photos[cur];
-  const statusLabel = status === 'available' ? 'Disponible' : status === 'reserved' ? 'Reservado' : null;
+  const statusLabel = status === 'available' ? t(['Disponible', 'Available']) : status === 'reserved' ? t(['Reservado', 'Reserved']) : null;
   const statusBg    = status === 'available' ? 'var(--orange)' : '#2D2421';
 
   return (
@@ -69,10 +70,10 @@ function PdGallery({ photos, name, status }) {
 
 // ── Financing Calculator ──────────────────────────────────────────────────────
 const PD_FIN_PLANS = [
-  { id:'k4',   name:'Klarna',   sub:'4 pagos · Sin interés', type:'split', count:4,  apr:0,  brandColor:'#FFB3C7', brandText:'#1A1A1A' },
-  { id:'cash', name:'Cash App', sub:'Paga al instante',      type:'split', count:1,  apr:0,  brandColor:'#00D54B', brandText:'#0a0a0a' },
-  { id:'af12', name:'Affirm',   sub:'12 meses · ~15% APR',   type:'loan',  count:12, apr:15, brandColor:'#0FA0EA', brandText:'#fff'    },
-  { id:'af24', name:'Affirm',   sub:'24 meses · ~18% APR',   type:'loan',  count:24, apr:18, brandColor:'#0FA0EA', brandText:'#fff'    },
+  { id:'k4',   name:'Klarna',   sub:['4 pagos · Sin interés', '4 payments · No interest'], type:'split', count:4,  apr:0,  brandColor:'#FFB3C7', brandText:'#1A1A1A' },
+  { id:'cash', name:'Cash App', sub:['Paga al instante', 'Pay instantly'],      type:'split', count:1,  apr:0,  brandColor:'#00D54B', brandText:'#0a0a0a' },
+  { id:'af12', name:'Affirm',   sub:['12 meses · ~15% APR', '12 months · ~15% APR'],   type:'loan',  count:12, apr:15, brandColor:'#0FA0EA', brandText:'#fff'    },
+  { id:'af24', name:'Affirm',   sub:['24 meses · ~18% APR', '24 months · ~18% APR'],   type:'loan',  count:24, apr:18, brandColor:'#0FA0EA', brandText:'#fff'    },
 ];
 
 function pdCalcPmt(fin, plan) {
@@ -85,6 +86,7 @@ function pdCalcPmt(fin, plan) {
 function pdFmt(n) { return '$' + Math.round(n).toLocaleString('en-US'); }
 
 function PdFinCalc({ price }) {
+  const t = useT();
   const [dp, setDp]   = React.useState(0);
   const [sel, setSel] = React.useState('k4');
   const fin  = Math.max(0, (price || 0) - dp);
@@ -93,15 +95,15 @@ function PdFinCalc({ price }) {
 
   return (
     <div style={{ background:'#fff', border:'1px solid var(--line)', borderRadius:'var(--r)', padding:28 }}>
-      <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:6 }}>Financiamiento</div>
+      <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:6 }}>{t(['Financiamiento', 'Financing'])}</div>
       <div style={{ fontFamily:'var(--display)', fontSize:24, fontWeight:700, letterSpacing:'-0.02em', marginBottom:20, color:'var(--ink)' }}>
-        Llévalo a casa hoy
+        {t(['Llévalo a casa hoy', 'Bring him home today'])}
       </div>
 
       {/* Down payment slider */}
       <div style={{ marginBottom:18 }}>
         <div style={{ display:'flex', justifyContent:'space-between', marginBottom:6 }}>
-          <span style={{ fontSize:12, fontWeight:600, color:'var(--ink-2)' }}>Pago inicial</span>
+          <span style={{ fontSize:12, fontWeight:600, color:'var(--ink-2)' }}>{t(['Pago inicial', 'Down payment'])}</span>
           <span style={{ fontSize:13, fontWeight:700, color:'var(--orange)' }}>
             {price ? Math.round((dp / price) * 100) : 0}%
           </span>
@@ -114,7 +116,7 @@ function PdFinCalc({ price }) {
 
       {/* Amount to finance */}
       <div style={{ background:'var(--bg)', borderRadius:10, padding:'10px 16px', marginBottom:18, display:'flex', justifyContent:'space-between', alignItems:'center' }}>
-        <span style={{ fontSize:12, color:'var(--ink-2)', fontWeight:600 }}>A financiar</span>
+        <span style={{ fontSize:12, color:'var(--ink-2)', fontWeight:600 }}>{t(['A financiar', 'To finance'])}</span>
         <span style={{ fontSize:20, fontWeight:800, color:'var(--ink)' }}>{pdFmt(fin)}</span>
       </div>
 
@@ -123,7 +125,7 @@ function PdFinCalc({ price }) {
         {PD_FIN_PLANS.map(function(pl) {
           const r    = pdCalcPmt(fin, pl);
           const active = sel === pl.id;
-          const lbl  = pl.type === 'split' ? 'por pago' : '/mes';
+          const lbl  = pl.type === 'split' ? t(['por pago', 'per payment']) : t(['/mes', '/mo']);
           return (
             <button key={pl.id} onClick={function(){ setSel(pl.id); }}
               style={{ display:'flex', justifyContent:'space-between', alignItems:'center', padding:'12px 16px', borderRadius:12, cursor:'pointer', border: active ? `2px solid ${pl.brandColor}` : '1.5px solid var(--line)', background: active ? pl.brandColor+'18' : 'var(--bg)', fontFamily:'var(--body)', transition:'all .15s' }}>
@@ -131,7 +133,7 @@ function PdFinCalc({ price }) {
                 <div style={{ display:'flex', alignItems:'center', gap:8 }}>
                   <span style={{ fontSize:11, fontWeight:900, padding:'2px 8px', borderRadius:999, background:pl.brandColor, color:pl.brandText, letterSpacing:'0.02em' }}>{pl.name}</span>
                 </div>
-                <div style={{ fontSize:11, color: active ? 'var(--ink-2)' : 'var(--ink-2)', marginTop:3 }}>{pl.sub}</div>
+                <div style={{ fontSize:11, color: active ? 'var(--ink-2)' : 'var(--ink-2)', marginTop:3 }}>{t(pl.sub)}</div>
               </div>
               <div style={{ textAlign:'right' }}>
                 <div style={{ fontSize:17, fontWeight:800, color: active ? 'var(--ink)' : 'var(--ink)' }}>{pdFmt(r.pmt)}</div>
@@ -143,15 +145,15 @@ function PdFinCalc({ price }) {
       </div>
 
       <div style={{ fontSize:11, color:'var(--ink-soft)', textAlign:'center', fontStyle:'italic', marginBottom:16 }}>
-        * Estimaciones. Términos finales dependen de aprobación de crédito.
+        {t(['* Estimaciones. Términos finales dependen de aprobación de crédito.', '* Estimates. Final terms are subject to credit approval.'])}
       </div>
 
       {/* Action buttons */}
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
         {[
-          { label:'WhatsApp', icon:'💬', bg:'#25D366', href:`https://wa.me/18084928294?text=Hola, me interesa financiar un cachorro`, color:'#fff' },
-          { label:'SMS',      icon:'📱', bg:'var(--bg)', href:`sms:+18084928294?body=Hola, me interesa financiar un cachorro`, color:'var(--ink)', bdr:'var(--line)' },
-          { label:'Aplicar',  icon:'✓',  bg:'var(--orange)', href:'legal/financing.html', color:'#fff', blank:true },
+          { label:'WhatsApp', icon:'💬', bg:'#25D366', href:`https://wa.me/18084928294?text=${encodeURIComponent(t(['Hola, me interesa financiar un cachorro', "Hi, I'm interested in financing a puppy"]))}`, color:'#fff' },
+          { label:'SMS',      icon:'📱', bg:'var(--bg)', href:`sms:+18084928294?body=${encodeURIComponent(t(['Hola, me interesa financiar un cachorro', "Hi, I'm interested in financing a puppy"]))}`, color:'var(--ink)', bdr:'var(--line)' },
+          { label:t(['Aplicar', 'Apply']),  icon:'✓',  bg:'var(--orange)', href:'legal/financing.html', color:'#fff', blank:true },
         ].map(function(b, i) {
           return (
             <a key={i} href={b.href} target={b.blank ? '_blank' : '_self'} rel="noreferrer"
@@ -168,29 +170,30 @@ function PdFinCalc({ price }) {
 
 // ── Includes section ──────────────────────────────────────────────────────────
 function PdIncludes({ p }) {
+  const t = useT();
   const items = [
-    { icon:'💉', label:'Vacunas al día',                ok: p.vaccinated  },
-    { icon:'📋', label:'Certificado de salud',            ok: p.health_cert },
-    { icon:'🏠', label:'Criado en familia',              ok: true          },
-    { icon:'📡', label:'Microchip incluido',              ok: true          },
-    { icon:'🛡️', label:'Garantía de salud',              ok: true          },
-    { icon:'✈️', label:'Entrega a nivel nacional',        ok: true          },
-    { icon:'💬', label:'Asesoría 24/7 — chat y equipo',  ok: true          },
-    { icon:'🎁', label:'Kit: alimento, platitos y juguete', ok: true        },
+    { icon:'💉', label:['Vacunas al día', 'Up-to-date vaccinations'],                ok: p.vaccinated  },
+    { icon:'📋', label:['Certificado de salud', 'Health certificate'],            ok: p.health_cert },
+    { icon:'🏠', label:['Criado en familia', 'Raised in a family home'],              ok: true          },
+    { icon:'📡', label:['Microchip incluido', 'Microchip included'],              ok: true          },
+    { icon:'🛡️', label:['Garantía de salud', 'Health guarantee'],              ok: true          },
+    { icon:'✈️', label:['Entrega a nivel nacional', 'Nationwide delivery'],        ok: true          },
+    { icon:'💬', label:['Asesoría 24/7 — chat y equipo', '24/7 support — chat and team'],  ok: true          },
+    { icon:'🎁', label:['Kit: alimento, platitos y juguete', 'Starter kit: food, bowls, and a toy'], ok: true        },
   ];
   return (
     <section style={{ padding:'clamp(48px,6vw,80px) clamp(20px,5vw,80px)', background:'#fff', borderTop:'1px solid var(--line)' }}>
       <div style={{ maxWidth:1000, margin:'0 auto' }}>
-        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>Lo que incluye</div>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>{t(['Lo que incluye', "What's included"])}</div>
         <h2 style={{ fontFamily:'var(--display)', fontSize:'clamp(26px,4vw,42px)', fontWeight:700, letterSpacing:'-0.025em', margin:'0 0 32px', color:'var(--ink)' }}>
-          Todo listo para su nuevo hogar
+          {t(['Todo listo para su nuevo hogar', 'Everything ready for their new home'])}
         </h2>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(190px,1fr))', gap:12 }}>
           {items.filter(function(it){ return it.ok !== false; }).map(function(it, i) {
             return (
               <div key={i} style={{ display:'flex', alignItems:'center', gap:12, padding:'14px 18px', borderRadius:'var(--r-sm)', background:'var(--bg)', border:'1px solid var(--line)' }}>
                 <span style={{ fontSize:22, flexShrink:0 }}>{it.icon}</span>
-                <span style={{ fontSize:13, fontWeight:600, color:'var(--ink)', lineHeight:1.3 }}>{it.label}</span>
+                <span style={{ fontSize:13, fontWeight:600, color:'var(--ink)', lineHeight:1.3 }}>{t(it.label)}</span>
               </div>
             );
           })}
@@ -225,19 +228,21 @@ function PdStatCard({ icon, label, value, wide }) {
 }
 
 function PdBreed({ breed: b, puppy, photo }) {
+  const t = useT();
+  const { lang } = useLang();
   const ratings = [
-    ['Con familias',         b.rating_family],
-    ['Con niños',             b.rating_kids],
-    ['Con otras mascotas',    b.rating_other_pets],
-    ['Nivel de energía',      b.rating_energy],
-    ['Entrenabilidad',        b.rating_trainability],
-    ['Apto para apartamento', b.rating_apartment],
+    [['Con familias', 'With families'],              b.rating_family],
+    [['Con niños', 'With children'],                  b.rating_kids],
+    [['Con otras mascotas', 'With other pets'],       b.rating_other_pets],
+    [['Nivel de energía', 'Energy level'],            b.rating_energy],
+    [['Entrenabilidad', 'Trainability'],              b.rating_trainability],
+    [['Apto para apartamento', 'Apartment-friendly'], b.rating_apartment],
   ].filter(function(r){ return r[1]; });
 
   return (
     <section style={{ padding:'clamp(48px,6vw,80px) clamp(20px,5vw,80px)', background:'#fff', borderTop:'1px solid var(--line)' }}>
       <div style={{ maxWidth:1000, margin:'0 auto' }}>
-        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>Sobre la raza</div>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>{t(['Sobre la raza', 'About the breed'])}</div>
         <h2 style={{ fontFamily:'var(--display)', fontSize:'clamp(26px,4vw,42px)', fontWeight:700, letterSpacing:'-0.025em', margin:'0 0 32px', color:'var(--ink)' }}>
           {b.name}
         </h2>
@@ -245,20 +250,20 @@ function PdBreed({ breed: b, puppy, photo }) {
           <div>
             {b.description && <p style={{ fontSize:15, color:'var(--ink-2)', lineHeight:1.75, marginBottom:24 }}>{b.description}</p>}
             <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10 }}>
-              {b.weight_min_lbs && b.weight_max_lbs && <PdStatCard icon="⚖️" label="Peso adulto" value={`${b.weight_min_lbs}–${b.weight_max_lbs} lbs`}/>}
-              {b.lifespan_min   && b.lifespan_max   && <PdStatCard icon="⏳" label="Longevidad"   value={`${b.lifespan_min}–${b.lifespan_max} años`}/>}
-              {b.coat_type      && <PdStatCard icon="✨" label="Pelaje"      value={b.coat_type}/>}
-              {b.best_for_home  && <PdStatCard icon="🏠" label="Ideal para"  value={b.best_for_home} wide={true}/>}
+              {b.weight_min_lbs && b.weight_max_lbs && <PdStatCard icon="⚖️" label={t(['Peso adulto', 'Adult weight'])} value={`${b.weight_min_lbs}–${b.weight_max_lbs} lbs`}/>}
+              {b.lifespan_min   && b.lifespan_max   && <PdStatCard icon="⏳" label={t(['Longevidad', 'Lifespan'])}   value={`${b.lifespan_min}–${b.lifespan_max} ${t(['años', 'years'])}`}/>}
+              {b.coat_type      && <PdStatCard icon="✨" label={t(['Pelaje', 'Coat'])}      value={b.coat_type}/>}
+              {b.best_for_home  && <PdStatCard icon="🏠" label={t(['Ideal para', 'Best for'])}  value={b.best_for_home} wide={true}/>}
             </div>
           </div>
           {ratings.length > 0 && (
             <div>
-              {ratings.map(function(r, i){ return <PdRatingBar key={i} label={r[0]} value={r[1]}/>; })}
+              {ratings.map(function(r, i){ return <PdRatingBar key={i} label={t(r[0])} value={r[1]}/>; })}
               <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginTop:18 }}>
-                {b.hypoallergenic === true  && <PdTag green>✓ Hipoalergénico</PdTag>}
-                {b.hypoallergenic === false && <PdTag>No hipoalergénico</PdTag>}
-                {b.good_for_first_time === true  && <PdTag green>✓ Ideal para principiantes</PdTag>}
-                {b.good_for_first_time === false && <PdTag>Mejor con experiencia</PdTag>}
+                {b.hypoallergenic === true  && <PdTag green>{t(['✓ Hipoalergénico', '✓ Hypoallergenic'])}</PdTag>}
+                {b.hypoallergenic === false && <PdTag>{t(['No hipoalergénico', 'Not hypoallergenic'])}</PdTag>}
+                {b.good_for_first_time === true  && <PdTag green>{t(['✓ Ideal para principiantes', '✓ Great for first-time owners'])}</PdTag>}
+                {b.good_for_first_time === false && <PdTag>{t(['Mejor con experiencia', 'Best with experience'])}</PdTag>}
               </div>
             </div>
           )}
@@ -274,12 +279,12 @@ function PdBreed({ breed: b, puppy, photo }) {
             : avgLbs == null ? 'medium'
             : avgLbs < 25 ? 'small' : avgLbs <= 50 ? 'medium' : avgLbs <= 90 ? 'large' : 'giant';
           const weightStr = (wMin && wMax) ? (wMin + '–' + wMax + ' lbs') : (avgLbs ? avgLbs + ' lbs' : '');
-          const lifeStr = (b.lifespan_min && b.lifespan_max) ? (b.lifespan_min + '–' + b.lifespan_max + ' años') : '';
+          const lifeStr = (b.lifespan_min && b.lifespan_max) ? (b.lifespan_min + '–' + b.lifespan_max + ' ' + t(['años', 'years'])) : '';
           if (typeof window.GrowthTimeline !== 'function') return null;
           return (
             <div style={{ display:'grid', gridTemplateColumns:'1fr', gap:18, marginTop:36 }}>
-              {React.createElement(window.GrowthTimeline, { photo: photo || null, name: (puppy && puppy.name) || b.name, weight: weightStr, lifespan: lifeStr, size: size, species: species, lang: 'es' })}
-              {React.createElement(window.AgeHumanChart, { species: species, size: size, lifespan: lifeStr, lang: 'es' })}
+              {React.createElement(window.GrowthTimeline, { photo: photo || null, name: (puppy && puppy.name) || b.name, weight: weightStr, lifespan: lifeStr, size: size, species: species, lang: lang })}
+              {React.createElement(window.AgeHumanChart, { species: species, size: size, lifespan: lifeStr, lang: lang })}
             </div>
           );
         })()}
@@ -290,6 +295,8 @@ function PdBreed({ breed: b, puppy, photo }) {
 
 // ── Parents + Financing ───────────────────────────────────────────────────────
 function PdParentCard({ parent: par, role }) {
+  const t = useT();
+  const roleLabel = role === 'Mamá' ? t(['Mamá', 'Mom']) : t(['Papá', 'Dad']);
   const ph = par.photo_url || null;
   return (
     <div style={{ display:'flex', gap:14, padding:16, background:'var(--bg)', border:'1px solid var(--line)', borderRadius:'var(--r-sm)', alignItems:'center' }}>
@@ -300,7 +307,7 @@ function PdParentCard({ parent: par, role }) {
         }
       </div>
       <div>
-        <div style={{ fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--orange)', marginBottom:2 }}>{role}</div>
+        <div style={{ fontSize:10, fontWeight:700, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--orange)', marginBottom:2 }}>{roleLabel}</div>
         <div style={{ fontFamily:'var(--display)', fontSize:18, fontWeight:700, color:'var(--ink)', marginBottom:3 }}>{par.name}</div>
         <div style={{ fontSize:12, color:'var(--ink-2)' }}>
           {[par.breed, par.color, par.weight_lbs && par.weight_lbs + ' lbs'].filter(Boolean).join(' · ')}
@@ -312,14 +319,15 @@ function PdParentCard({ parent: par, role }) {
 }
 
 function PdFamilyFin({ mom, dad, price }) {
+  const t = useT();
   return (
     <section style={{ padding:'clamp(48px,6vw,80px) clamp(20px,5vw,80px)', background:'#fff', borderTop:'1px solid var(--line)' }}>
       <div style={{ maxWidth:1000, margin:'0 auto' }}>
         <div className="pd-family-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1.1fr', gap:48 }}>
           <div>
-            <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>Sus padres</div>
+            <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>{t(['Sus padres', 'Their parents'])}</div>
             <h2 style={{ fontFamily:'var(--display)', fontSize:'clamp(24px,3.5vw,38px)', fontWeight:700, letterSpacing:'-0.025em', margin:'0 0 24px', color:'var(--ink)' }}>
-              Conoce a su familia
+              {t(['Conoce a su familia', 'Meet their family'])}
             </h2>
             <div style={{ display:'flex', flexDirection:'column', gap:12 }}>
               {mom && <PdParentCard parent={mom} role="Mamá"/>}
@@ -337,6 +345,7 @@ function PdFamilyFin({ mom, dad, price }) {
 
 // ── Mini card (siblings / similar) ────────────────────────────────────────────
 function PdMiniCard({ p }) {
+  const t = useT();
   const ph = (Array.isArray(p.photos) && p.photos[0]) || p.photo_url || null;
   return (
     <a href={`/puppy-detalle?id=${p.id}`}
@@ -350,15 +359,15 @@ function PdMiniCard({ p }) {
         }
       </div>
       <div style={{ padding:'14px 16px' }}>
-        <div style={{ fontFamily:'var(--display)', fontSize:17, fontWeight:700, color:'var(--ink)', marginBottom:3 }}>{p.name || 'Sin nombre'}</div>
+        <div style={{ fontFamily:'var(--display)', fontSize:17, fontWeight:700, color:'var(--ink)', marginBottom:3 }}>{p.name || t(['Sin nombre', 'Unnamed'])}</div>
         <div style={{ fontSize:12, color:'var(--ink-2)', marginBottom:6 }}>
-          {[p.breed, p.gender === 'female' ? 'Hembra' : p.gender === 'male' ? 'Macho' : null].filter(Boolean).join(' · ')}
+          {[p.breed, p.gender === 'female' ? t(['Hembra', 'Female']) : p.gender === 'male' ? t(['Macho', 'Male']) : null].filter(Boolean).join(' · ')}
         </div>
         {p.status === 'available' && (
-          <span style={{ fontSize:10, fontWeight:700, padding:'3px 10px', borderRadius:999, background:'rgba(245,130,32,0.1)', color:'var(--orange)', letterSpacing:'0.06em', textTransform:'uppercase' }}>Disponible</span>
+          <span style={{ fontSize:10, fontWeight:700, padding:'3px 10px', borderRadius:999, background:'rgba(245,130,32,0.1)', color:'var(--orange)', letterSpacing:'0.06em', textTransform:'uppercase' }}>{t(['Disponible', 'Available'])}</span>
         )}
         {p.status === 'reserved' && (
-          <span style={{ fontSize:10, fontWeight:700, padding:'3px 10px', borderRadius:999, background:'var(--bg)', color:'var(--ink-2)', letterSpacing:'0.06em', textTransform:'uppercase' }}>Reservado</span>
+          <span style={{ fontSize:10, fontWeight:700, padding:'3px 10px', borderRadius:999, background:'var(--bg)', color:'var(--ink-2)', letterSpacing:'0.06em', textTransform:'uppercase' }}>{t(['Reservado', 'Reserved'])}</span>
         )}
       </div>
     </a>
@@ -366,11 +375,12 @@ function PdMiniCard({ p }) {
 }
 
 function PdSiblingsSection({ siblings }) {
+  const t = useT();
   return (
     <section style={{ padding:'clamp(48px,6vw,80px) clamp(20px,5vw,80px)', background:'#fff', borderTop:'1px solid var(--line)' }}>
       <div style={{ maxWidth:1000, margin:'0 auto' }}>
-        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>De la misma camada</div>
-        <h2 style={{ fontFamily:'var(--display)', fontSize:'clamp(24px,3.5vw,38px)', fontWeight:700, letterSpacing:'-0.025em', margin:'0 0 28px', color:'var(--ink)' }}>Sus hermanos</h2>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>{t(['De la misma camada', 'From the same litter'])}</div>
+        <h2 style={{ fontFamily:'var(--display)', fontSize:'clamp(24px,3.5vw,38px)', fontWeight:700, letterSpacing:'-0.025em', margin:'0 0 28px', color:'var(--ink)' }}>{t(['Sus hermanos', 'Their littermates'])}</h2>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))', gap:14 }}>
           {siblings.map(function(s){ return <PdMiniCard key={s.id} p={s}/>; })}
         </div>
@@ -380,12 +390,13 @@ function PdSiblingsSection({ siblings }) {
 }
 
 function PdSimilarSection({ similar, breed }) {
+  const t = useT();
   return (
     <section style={{ padding:'clamp(48px,6vw,80px) clamp(20px,5vw,80px)', background:'#fff', borderTop:'1px solid var(--line)' }}>
       <div style={{ maxWidth:1000, margin:'0 auto' }}>
-        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>También te puede gustar</div>
+        <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>{t(['También te puede gustar', 'You may also like'])}</div>
         <h2 style={{ fontFamily:'var(--display)', fontSize:'clamp(24px,3.5vw,38px)', fontWeight:700, letterSpacing:'-0.025em', margin:'0 0 28px', color:'var(--ink)' }}>
-          Más {breed || 'cachorros'}
+          {t(['Más ', 'More '])}{breed || t(['cachorros', 'puppies'])}
         </h2>
         <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(190px,1fr))', gap:16 }}>
           {similar.map(function(s){ return <PdMiniCard key={s.id} p={s}/>; })}
@@ -397,6 +408,7 @@ function PdSimilarSection({ similar, breed }) {
 
 // ── Reserve modal ─────────────────────────────────────────────────────────────
 function PdReserveModal({ puppy, onClose }) {
+  const t = useT();
   const [sent, setSent]       = React.useState(false);
   const [loading, setLoading] = React.useState(false);
 
@@ -411,17 +423,17 @@ function PdReserveModal({ puppy, onClose }) {
       });
       setSent(true);
     } catch(err) {
-      alert('Error al enviar. Por favor contáctanos directamente por WhatsApp.');
+      alert(t(['Error al enviar. Por favor contáctanos directamente por WhatsApp.', 'There was an error sending your request. Please contact us directly on WhatsApp.']));
     } finally {
       setLoading(false);
     }
   }
 
   const fields = [
-    ['name','Nombre completo *','text',true],
-    ['email','Email *','email',true],
-    ['phone','Teléfono *','tel',true],
-    ['zip','Código postal','text',false],
+    ['name',['Nombre completo *', 'Full name *'],'text',true],
+    ['email',['Email *', 'Email *'],'email',true],
+    ['phone',['Teléfono *', 'Phone *'],'tel',true],
+    ['zip',['Código postal', 'ZIP code'],'text',false],
   ];
 
   return (
@@ -431,39 +443,39 @@ function PdReserveModal({ puppy, onClose }) {
         <button onClick={onClose} style={{ position:'absolute', top:14, right:14, width:34, height:34, borderRadius:'50%', border:'1px solid var(--line)', background:'none', cursor:'pointer', fontSize:18, display:'grid', placeItems:'center', color:'var(--ink-2)' }}>×</button>
 
         <div style={{ padding:'28px 28px 0' }}>
-          <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--orange)', marginBottom:6 }}>Solicitar información</div>
+          <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--orange)', marginBottom:6 }}>{t(['Solicitar información', 'Request information'])}</div>
           <div style={{ fontFamily:'var(--display)', fontSize:22, fontWeight:700, letterSpacing:'-0.02em', marginBottom:6, color:'var(--ink)' }}>
-            {puppy.name ? `Reservar a ${puppy.name}` : 'Solicitar información'}
+            {puppy.name ? `${t(['Reservar a ', 'Reserve '])}${puppy.name}` : t(['Solicitar información', 'Request information'])}
           </div>
-          <p style={{ fontSize:13, color:'var(--ink-2)', marginBottom:20, lineHeight:1.6 }}>Te contactamos en horario hábil. Sin compromiso.</p>
+          <p style={{ fontSize:13, color:'var(--ink-2)', marginBottom:20, lineHeight:1.6 }}>{t(['Te contactamos en horario hábil. Sin compromiso.', "We'll reach out during business hours. No obligation."])}</p>
         </div>
 
         {sent ? (
           <div style={{ padding:'20px 28px 28px', textAlign:'center' }}>
             <div style={{ fontSize:52, marginBottom:12 }}>🎉</div>
-            <div style={{ fontFamily:'var(--display)', fontSize:20, fontWeight:700, color:'var(--ink)', marginBottom:8 }}>¡Solicitud enviada!</div>
-            <p style={{ fontSize:14, color:'var(--ink-2)', marginBottom:20, lineHeight:1.65 }}>Gracias por tu interés en {puppy.name || 'este cachorro'}. Te contactaremos muy pronto.</p>
-            <button onClick={onClose} style={{ background:'var(--orange)', color:'#fff', border:'none', padding:'12px 28px', borderRadius:999, fontWeight:700, cursor:'pointer', fontFamily:'var(--body)', fontSize:14 }}>Cerrar</button>
+            <div style={{ fontFamily:'var(--display)', fontSize:20, fontWeight:700, color:'var(--ink)', marginBottom:8 }}>{t(['¡Solicitud enviada!', 'Request sent!'])}</div>
+            <p style={{ fontSize:14, color:'var(--ink-2)', marginBottom:20, lineHeight:1.65 }}>{t(['Gracias por tu interés en ', 'Thank you for your interest in '])}{puppy.name || t(['este cachorro', 'this puppy'])}{t(['. Te contactaremos muy pronto.', '. We will be in touch very soon.'])}</p>
+            <button onClick={onClose} style={{ background:'var(--orange)', color:'#fff', border:'none', padding:'12px 28px', borderRadius:999, fontWeight:700, cursor:'pointer', fontFamily:'var(--body)', fontSize:14 }}>{t(['Cerrar', 'Close'])}</button>
           </div>
         ) : (
           <form onSubmit={submit} style={{ padding:'0 28px 28px', display:'flex', flexDirection:'column', gap:12 }}>
             {fields.map(function(f) {
               return (
                 <div key={f[0]}>
-                  <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>{f[1]}</label>
+                  <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>{t(f[1])}</label>
                   <input id={'pdrf-'+f[0]} type={f[2]} required={f[3]}
                     style={{ width:'100%', padding:'10px 12px', border:'1.5px solid var(--line)', borderRadius:8, fontFamily:'var(--body)', fontSize:14, color:'var(--ink)', background:'var(--bg)', outline:'none' }}/>
                 </div>
               );
             })}
             <div>
-              <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>Cuéntanos sobre tu hogar</label>
-              <textarea id="pdrf-msg" rows="3" placeholder="Familia, otras mascotas, experiencia con la raza…"
+              <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>{t(['Cuéntanos sobre tu hogar', 'Tell us about your home'])}</label>
+              <textarea id="pdrf-msg" rows="3" placeholder={t(['Familia, otras mascotas, experiencia con la raza…', 'Family, other pets, experience with the breed…'])}
                 style={{ width:'100%', padding:'10px 12px', border:'1.5px solid var(--line)', borderRadius:8, fontFamily:'var(--body)', fontSize:14, color:'var(--ink)', background:'var(--bg)', resize:'vertical', outline:'none' }}/>
             </div>
             <button type="submit" disabled={loading}
               style={{ background:'var(--orange)', color:'#fff', border:'none', padding:'14px 24px', borderRadius:999, fontWeight:700, fontSize:15, cursor:'pointer', fontFamily:'var(--body)', marginTop:4, opacity: loading ? 0.7 : 1, boxShadow:'0 8px 24px -8px rgba(245,130,32,0.45)' }}>
-              {loading ? 'Enviando…' : '📩 Enviar solicitud'}
+              {loading ? t(['Enviando…', 'Sending…']) : t(['📩 Enviar solicitud', '📩 Send request'])}
             </button>
           </form>
         )}
@@ -474,6 +486,7 @@ function PdReserveModal({ puppy, onClose }) {
 
 // ── Hero section ──────────────────────────────────────────────────────────────
 function PdHero({ p, photos, age }) {
+  const t = useT();
   const [modal, setModal]   = React.useState(false);
   const [intlModal, setIntlModal] = React.useState(false);
   const available = p.status === 'available';
@@ -487,7 +500,7 @@ function PdHero({ p, photos, age }) {
           {/* Breadcrumb */}
           <a href="/cachorros"
             style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:13, fontWeight:600, color:'var(--ink-2)', textDecoration:'none', marginBottom:28, padding:'7px 14px', borderRadius:999, background:'var(--paper)', border:'1px solid var(--line)' }}>
-            ← Todos los cachorros
+            {t(['← Todos los cachorros', '← All puppies'])}
           </a>
 
           <div className="pd-hero-grid" style={{ display:'grid', gridTemplateColumns:'1.1fr 1fr', gap:48, alignItems:'start' }}>
@@ -499,24 +512,24 @@ function PdHero({ p, photos, age }) {
             <div>
               <div style={{ fontSize:13, fontWeight:600, color:'var(--orange)', letterSpacing:'0.04em', marginBottom:8 }}>{p.breed}</div>
               <h1 style={{ fontFamily:'var(--display)', fontSize:'clamp(40px,6vw,72px)', fontWeight:800, letterSpacing:'-0.04em', lineHeight:0.93, margin:'0 0 18px', color:'var(--ink)' }}>
-                {p.name || 'Cachorro'}
+                {p.name || t(['Cachorro', 'Puppy'])}
               </h1>
 
               {/* Tags */}
               <div style={{ display:'flex', gap:8, flexWrap:'wrap', marginBottom:20 }}>
-                {p.gender === 'female' && <PdTag>♀ Hembra</PdTag>}
-                {p.gender === 'male'   && <PdTag>♂ Macho</PdTag>}
+                {p.gender === 'female' && <PdTag>{t(['♀ Hembra', '♀ Female'])}</PdTag>}
+                {p.gender === 'male'   && <PdTag>{t(['♂ Macho', '♂ Male'])}</PdTag>}
                 {age     && <PdTag>{age}</PdTag>}
                 {p.color && <PdTag>{p.color}</PdTag>}
                 {p.weight_lbs   && <PdTag>{p.weight_lbs} lbs</PdTag>}
                 {p.pedigree_org && <PdTag accent>📜 {p.pedigree_org}</PdTag>}
-                {p.vaccinated   && <PdTag green>✓ Vacunado</PdTag>}
-                {p.health_cert  && <PdTag green>✓ Cert. de salud</PdTag>}
+                {p.vaccinated   && <PdTag green>{t(['✓ Vacunado', '✓ Vaccinated'])}</PdTag>}
+                {p.health_cert  && <PdTag green>{t(['✓ Cert. de salud', '✓ Health cert.'])}</PdTag>}
               </div>
 
               {/* Story */}
               <p style={{ fontSize:15, color:'var(--ink-2)', lineHeight:1.75, marginBottom:22, padding:'16px 18px', background:'var(--bg)', borderRadius:'var(--r-sm)', borderLeft:'3px solid var(--orange)' }}>
-                {p.description || `${p.name || 'Este cachorro'} ha sido criado con amor en familia, con toda la socialización y cuidados que merece desde sus primeras semanas.`}
+                {p.description || `${p.name || t(['Este cachorro', 'This puppy'])}${t([' ha sido criado con amor en familia, con toda la socialización y cuidados que merece desde sus primeras semanas.', ' has been raised with love in a family home, with all the socialization and care they deserve from their very first weeks.'])}`}
               </p>
 
               {/* Price */}
@@ -526,7 +539,7 @@ function PdHero({ p, photos, age }) {
                     ${Number(p.price).toLocaleString()}
                   </div>
                   <div style={{ fontSize:12, color:'var(--ink-2)', marginTop:5 }}>
-                    Precio total · Incluye garantía, vacunas y documentación completa
+                    {t(['Precio total · Incluye garantía, vacunas y documentación completa', 'Total price · Includes guarantee, vaccinations, and full documentation'])}
                   </div>
                 </div>
               )}
@@ -536,27 +549,27 @@ function PdHero({ p, photos, age }) {
                 {available && (
                   <button onClick={function(){ setModal(true); }}
                     style={{ padding:'15px 24px', background:'var(--orange)', color:'#fff', border:'none', borderRadius:999, fontFamily:'var(--body)', fontSize:15, fontWeight:700, cursor:'pointer', boxShadow:'0 8px 24px -8px rgba(245,130,32,0.5)' }}>
-                    💛 Me interesa {p.name || 'este cachorro'}
+                    {t(['💛 Me interesa ', "💛 I'm interested in "])}{p.name || t(['este cachorro', 'this puppy'])}
                   </button>
                 )}
                 {reserved && (
                   <button onClick={function(){ setModal(true); }}
                     style={{ padding:'15px 24px', background:'var(--ink)', color:'#fff', border:'none', borderRadius:999, fontFamily:'var(--body)', fontSize:15, fontWeight:700, cursor:'pointer' }}>
-                    ⏰ Lista de espera
+                    {t(['⏰ Lista de espera', '⏰ Join the waitlist'])}
                   </button>
                 )}
-                <a href={`https://wa.me/18084928294?text=Hola! Me interesa ${encodeURIComponent(p.name || p.breed || 'un cachorro')}`}
+                <a href={`https://wa.me/18084928294?text=${encodeURIComponent(t(['Hola! Me interesa', "Hi! I'm interested in"]))} ${encodeURIComponent(p.name || p.breed || t(['un cachorro', 'a puppy']))}`}
                   target="_blank" rel="noreferrer"
                   style={{ padding:'13px 24px', background:'#25D366', color:'#fff', borderRadius:999, fontWeight:700, fontSize:14, textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
-                  💬 Escribir por WhatsApp
+                  {t(['💬 Escribir por WhatsApp', '💬 Message us on WhatsApp'])}
                 </a>
-                <a href={`sms:+18084928294?body=Hola! Me interesa ${encodeURIComponent(p.name || p.breed || 'un cachorro')}`}
+                <a href={`sms:+18084928294?body=${encodeURIComponent(t(['Hola! Me interesa', "Hi! I'm interested in"]))} ${encodeURIComponent(p.name || p.breed || t(['un cachorro', 'a puppy']))}`}
                   style={{ padding:'13px 24px', background:'var(--bg)', color:'var(--ink)', borderRadius:999, fontWeight:700, fontSize:14, textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'center', gap:8, border:'1.5px solid var(--line)' }}>
-                  📱 Enviar SMS
+                  {t(['📱 Enviar SMS', '📱 Send a text'])}
                 </a>
                 <button onClick={function(){ setIntlModal(true); }}
                   style={{ padding:'11px 20px', background:'none', border:'1.5px solid var(--line)', borderRadius:999, fontFamily:'var(--body)', fontSize:13, fontWeight:600, cursor:'pointer', color:'var(--ink-2)', display:'flex', alignItems:'center', justifyContent:'center', gap:6 }}>
-                  ✈️ Solicitar envío internacional
+                  {t(['✈️ Solicitar envío internacional', '✈️ Request international shipping'])}
                 </button>
               </div>
             </div>
@@ -573,24 +586,25 @@ function PdHero({ p, photos, age }) {
 // ── International Shipping Modal ─────────────────────────────────────────────
 const INTL_REQS = {
   dog: [
-    'Certificado de salud veterinario (emitido ≤10 días antes del vuelo)',
-    'Chip de microchip ISO 11784/11785',
-    'Vacuna antirrábica vigente (some countries req. titer test)',
-    'Endoso USDA APHIS del certificado de salud',
-    'Permiso de importación del país destino (si aplica)',
-    'Tiempo estimado de proceso: 2-4 semanas',
+    ['Certificado de salud veterinario (emitido ≤10 días antes del vuelo)', 'Veterinary health certificate (issued ≤10 days before the flight)'],
+    ['Chip de microchip ISO 11784/11785', 'ISO 11784/11785 microchip'],
+    ['Vacuna antirrábica vigente (some countries req. titer test)', 'Current rabies vaccination (some countries require a titer test)'],
+    ['Endoso USDA APHIS del certificado de salud', 'USDA APHIS endorsement of the health certificate'],
+    ['Permiso de importación del país destino (si aplica)', 'Import permit from the destination country (if applicable)'],
+    ['Tiempo estimado de proceso: 2-4 semanas', 'Estimated processing time: 2-4 weeks'],
   ],
   cat: [
-    'Certificado de salud veterinario (emitido ≤10 días antes del vuelo)',
-    'Chip de microchip ISO 11784/11785',
-    'Vacuna antirrábica vigente',
-    'Endoso USDA APHIS del certificado de salud',
-    'Permiso de importación del país destino (si aplica)',
-    'Tiempo estimado de proceso: 2-4 semanas',
+    ['Certificado de salud veterinario (emitido ≤10 días antes del vuelo)', 'Veterinary health certificate (issued ≤10 days before the flight)'],
+    ['Chip de microchip ISO 11784/11785', 'ISO 11784/11785 microchip'],
+    ['Vacuna antirrábica vigente', 'Current rabies vaccination'],
+    ['Endoso USDA APHIS del certificado de salud', 'USDA APHIS endorsement of the health certificate'],
+    ['Permiso de importación del país destino (si aplica)', 'Import permit from the destination country (if applicable)'],
+    ['Tiempo estimado de proceso: 2-4 semanas', 'Estimated processing time: 2-4 weeks'],
   ],
 };
 
 function IntlShippingModal({ puppyName, puppyBreed, defaultSpecies, onClose }) {
+  const t = useT();
   const [sent, setSent]       = React.useState(false);
   const [loading, setLoading] = React.useState(false);
   const [species, setSpecies] = React.useState(defaultSpecies || 'dog');
@@ -609,7 +623,7 @@ function IntlShippingModal({ puppyName, puppyBreed, defaultSpecies, onClose }) {
       });
       setSent(true);
     } catch(err) {
-      alert('Error al enviar. Contáctanos por WhatsApp: +1 (808) 492-8294');
+      alert(t(['Error al enviar. Contáctanos por WhatsApp: +1 (808) 492-8294', 'There was an error sending your request. Contact us on WhatsApp: +1 (808) 492-8294']));
     } finally { setLoading(false); }
   }
 
@@ -620,17 +634,17 @@ function IntlShippingModal({ puppyName, puppyBreed, defaultSpecies, onClose }) {
         <button onClick={onClose} style={{ position:'absolute', top:14, right:14, width:34, height:34, borderRadius:'50%', border:'1px solid var(--line)', background:'none', cursor:'pointer', fontSize:18, display:'grid', placeItems:'center', color:'var(--ink-2)' }}>×</button>
 
         <div style={{ padding:'28px 28px 0' }}>
-          <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--orange)', marginBottom:6 }}>Envío Internacional</div>
+          <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.12em', textTransform:'uppercase', color:'var(--orange)', marginBottom:6 }}>{t(['Envío Internacional', 'International Shipping'])}</div>
           <div style={{ fontFamily:'var(--display)', fontSize:22, fontWeight:700, letterSpacing:'-0.02em', marginBottom:6, color:'var(--ink)' }}>
-            Llevamos a tu mascota donde estés
+            {t(['Llevamos a tu mascota donde estés', 'We bring your pet wherever you are'])}
           </div>
           <p style={{ fontSize:13, color:'var(--ink-2)', marginBottom:16, lineHeight:1.65 }}>
-            Cuéntanos tu destino y te enviamos una cotización personalizada con todos los requisitos para importar tu mascota a ese país.
+            {t(['Cuéntanos tu destino y te enviamos una cotización personalizada con todos los requisitos para importar tu mascota a ese país.', 'Tell us your destination and we will send you a personalized quote with all the requirements to import your pet to that country.'])}
           </p>
 
           {/* Species selector */}
           <div style={{ display:'flex', gap:8, marginBottom:20 }}>
-            {[['dog','🐶 Perro'],['cat','🐱 Gato']].map(function(s){
+            {[['dog',t(['🐶 Perro', '🐶 Dog'])],['cat',t(['🐱 Gato', '🐱 Cat'])]].map(function(s){
               return (
                 <button key={s[0]} onClick={function(){ setSpecies(s[0]); }}
                   style={{ flex:1, padding:'10px 16px', borderRadius:10, border: species===s[0] ? '2px solid var(--orange)' : '1.5px solid var(--line)', background: species===s[0] ? 'rgba(245,130,32,0.08)' : 'var(--bg)', fontFamily:'var(--body)', fontWeight:700, fontSize:14, cursor:'pointer', color:'var(--ink)' }}>
@@ -642,42 +656,42 @@ function IntlShippingModal({ puppyName, puppyBreed, defaultSpecies, onClose }) {
 
           {/* Requirements */}
           <div style={{ background:'var(--bg)', borderRadius:10, padding:'14px 16px', marginBottom:20 }}>
-            <div style={{ fontSize:11, fontWeight:700, color:'var(--orange)', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:10 }}>Requisitos generales</div>
+            <div style={{ fontSize:11, fontWeight:700, color:'var(--orange)', letterSpacing:'0.1em', textTransform:'uppercase', marginBottom:10 }}>{t(['Requisitos generales', 'General requirements'])}</div>
             {reqs.map(function(r, i){
-              return <div key={i} style={{ display:'flex', gap:8, fontSize:12, color:'var(--ink-2)', marginBottom:6, lineHeight:1.5 }}><span style={{ color:'var(--orange)', flexShrink:0 }}>✓</span>{r}</div>;
+              return <div key={i} style={{ display:'flex', gap:8, fontSize:12, color:'var(--ink-2)', marginBottom:6, lineHeight:1.5 }}><span style={{ color:'var(--orange)', flexShrink:0 }}>✓</span>{t(r)}</div>;
             })}
-            <div style={{ fontSize:11, color:'var(--ink-soft)', marginTop:8, fontStyle:'italic' }}>* Los requisitos específicos varían por país. Te informamos con detalle al contactarte.</div>
+            <div style={{ fontSize:11, color:'var(--ink-soft)', marginTop:8, fontStyle:'italic' }}>{t(['* Los requisitos específicos varían por país. Te informamos con detalle al contactarte.', '* Specific requirements vary by country. We will share the details when we contact you.'])}</div>
           </div>
         </div>
 
         {sent ? (
           <div style={{ padding:'20px 28px 28px', textAlign:'center' }}>
             <div style={{ fontSize:52, marginBottom:12 }}>✈️</div>
-            <div style={{ fontFamily:'var(--display)', fontSize:20, fontWeight:700, color:'var(--ink)', marginBottom:8 }}>¡Solicitud recibida!</div>
-            <p style={{ fontSize:14, color:'var(--ink-2)', marginBottom:20, lineHeight:1.65 }}>Te contactaremos con la cotización y requisitos completos para tu país de destino.</p>
-            <button onClick={onClose} style={{ background:'var(--orange)', color:'#fff', border:'none', padding:'12px 28px', borderRadius:999, fontWeight:700, cursor:'pointer', fontFamily:'var(--body)', fontSize:14 }}>Cerrar</button>
+            <div style={{ fontFamily:'var(--display)', fontSize:20, fontWeight:700, color:'var(--ink)', marginBottom:8 }}>{t(['¡Solicitud recibida!', 'Request received!'])}</div>
+            <p style={{ fontSize:14, color:'var(--ink-2)', marginBottom:20, lineHeight:1.65 }}>{t(['Te contactaremos con la cotización y requisitos completos para tu país de destino.', 'We will reach out with the quote and complete requirements for your destination country.'])}</p>
+            <button onClick={onClose} style={{ background:'var(--orange)', color:'#fff', border:'none', padding:'12px 28px', borderRadius:999, fontWeight:700, cursor:'pointer', fontFamily:'var(--body)', fontSize:14 }}>{t(['Cerrar', 'Close'])}</button>
           </div>
         ) : (
           <form onSubmit={submit} style={{ padding:'0 28px 28px', display:'flex', flexDirection:'column', gap:12 }}>
             <div>
-              <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>País de destino *</label>
-              <input id="is-country" required placeholder="Ej. México, España, Colombia…" style={{ width:'100%', padding:'10px 12px', border:'1.5px solid var(--line)', borderRadius:8, fontFamily:'var(--body)', fontSize:14, color:'var(--ink)', background:'var(--bg)', outline:'none' }}/>
+              <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>{t(['País de destino *', 'Destination country *'])}</label>
+              <input id="is-country" required placeholder={t(['Ej. México, España, Colombia…', 'e.g. Mexico, Spain, Colombia…'])} style={{ width:'100%', padding:'10px 12px', border:'1.5px solid var(--line)', borderRadius:8, fontFamily:'var(--body)', fontSize:14, color:'var(--ink)', background:'var(--bg)', outline:'none' }}/>
             </div>
-            {[['name','Nombre completo *','text',true],['email','Email *','email',true],['phone','Teléfono / WhatsApp *','tel',true]].map(function(f){
+            {[['name',['Nombre completo *', 'Full name *'],'text',true],['email',['Email *', 'Email *'],'email',true],['phone',['Teléfono / WhatsApp *', 'Phone / WhatsApp *'],'tel',true]].map(function(f){
               return (
                 <div key={f[0]}>
-                  <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>{f[1]}</label>
+                  <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>{t(f[1])}</label>
                   <input id={'is-'+f[0]} type={f[2]} required={f[3]} style={{ width:'100%', padding:'10px 12px', border:'1.5px solid var(--line)', borderRadius:8, fontFamily:'var(--body)', fontSize:14, color:'var(--ink)', background:'var(--bg)', outline:'none' }}/>
                 </div>
               );
             })}
             <div>
-              <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>Notas adicionales</label>
-              <textarea id="is-notes" rows="2" placeholder="Raza, edad, fechas tentativas…" style={{ width:'100%', padding:'10px 12px', border:'1.5px solid var(--line)', borderRadius:8, fontFamily:'var(--body)', fontSize:14, color:'var(--ink)', background:'var(--bg)', resize:'vertical', outline:'none' }}/>
+              <label style={{ fontSize:11, fontWeight:700, color:'var(--ink-2)', display:'block', marginBottom:4 }}>{t(['Notas adicionales', 'Additional notes'])}</label>
+              <textarea id="is-notes" rows="2" placeholder={t(['Raza, edad, fechas tentativas…', 'Breed, age, tentative dates…'])} style={{ width:'100%', padding:'10px 12px', border:'1.5px solid var(--line)', borderRadius:8, fontFamily:'var(--body)', fontSize:14, color:'var(--ink)', background:'var(--bg)', resize:'vertical', outline:'none' }}/>
             </div>
             <button type="submit" disabled={loading}
               style={{ background:'var(--orange)', color:'#fff', border:'none', padding:'14px 24px', borderRadius:999, fontWeight:700, fontSize:15, cursor:'pointer', fontFamily:'var(--body)', marginTop:4, opacity: loading ? 0.7 : 1 }}>
-              {loading ? 'Enviando…' : '✈️ Solicitar cotización internacional'}
+              {loading ? t(['Enviando…', 'Sending…']) : t(['✈️ Solicitar cotización internacional', '✈️ Request international quote'])}
             </button>
           </form>
         )}
@@ -688,6 +702,7 @@ function IntlShippingModal({ puppyName, puppyBreed, defaultSpecies, onClose }) {
 
 // ── Main component ────────────────────────────────────────────────────────────
 function PuppyDetalle() {
+  const t = useT();
   const [state, setState] = React.useState({ status:'loading', puppy:null, breed:null, mom:null, dad:null, siblings:[], similar:[] });
 
   const id = React.useMemo(function() {
@@ -703,7 +718,7 @@ function PuppyDetalle() {
         var r = await pdSb.from('puppies_public').select('*').eq('id', id).single();
         if (r.error || !r.data) throw new Error('Not found');
         var p = r.data;
-        document.title = (p.name || 'Cachorro') + ' — BPuppy';
+        document.title = (p.name || t(['Cachorro', 'Puppy'])) + ' — BPuppy';
 
         var breed = null, mom = null, dad = null, siblings = [], similar = [];
         var tasks = [];
@@ -723,24 +738,24 @@ function PuppyDetalle() {
   if (state.status === 'loading') return (
     <div style={{ minHeight:'60vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16 }}>
       <div className="bp-spinner"/>
-      <p style={{ color:'var(--ink-2)', fontSize:15 }}>Cargando cachorro…</p>
+      <p style={{ color:'var(--ink-2)', fontSize:15 }}>{t(['Cargando cachorro…', 'Loading puppy…'])}</p>
     </div>
   );
 
   if (state.status === 'error') return (
     <div style={{ minHeight:'60vh', display:'flex', alignItems:'center', justifyContent:'center', flexDirection:'column', gap:16, padding:40, textAlign:'center' }}>
       <div style={{ fontSize:56 }}>🐾</div>
-      <h2 style={{ fontFamily:'var(--display)', fontSize:28, fontWeight:700, letterSpacing:'-0.02em' }}>Cachorro no encontrado</h2>
-      <p style={{ color:'var(--ink-2)', fontSize:15 }}>No pudimos cargar este cachorro. Puede que ya no esté disponible.</p>
+      <h2 style={{ fontFamily:'var(--display)', fontSize:28, fontWeight:700, letterSpacing:'-0.02em' }}>{t(['Cachorro no encontrado', 'Puppy not found'])}</h2>
+      <p style={{ color:'var(--ink-2)', fontSize:15 }}>{t(['No pudimos cargar este cachorro. Puede que ya no esté disponible.', "We couldn't load this puppy. It may no longer be available."])}</p>
       <a href="/cachorros" style={{ background:'var(--orange)', color:'#fff', padding:'13px 26px', borderRadius:999, textDecoration:'none', fontWeight:700, fontSize:14, boxShadow:'0 8px 24px -8px rgba(245,130,32,0.4)' }}>
-        Ver todos los cachorros
+        {t(['Ver todos los cachorros', 'View all puppies'])}
       </a>
     </div>
   );
 
   var p        = state.puppy;
   var photos   = pdPhotos(p);
-  var age      = pdAge(p);
+  var age      = pdAge(p, t);
   var hasFin   = !state.mom && !state.dad && p.price;
 
   return (
@@ -752,13 +767,13 @@ function PuppyDetalle() {
       {hasFin && (
         <section style={{ padding:'clamp(48px,6vw,80px) clamp(20px,5vw,80px)', background:'#fff', borderTop:'1px solid var(--line)' }}>
           <div style={{ maxWidth:1000, margin:'0 auto' }}>
-            <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>Financiamiento</div>
+            <div style={{ fontSize:11, fontWeight:700, letterSpacing:'0.14em', textTransform:'uppercase', color:'var(--orange)', marginBottom:10 }}>{t(['Financiamiento', 'Financing'])}</div>
             <h2 style={{ fontFamily:'var(--display)', fontSize:'clamp(28px,4vw,48px)', fontWeight:700, letterSpacing:'-0.03em', margin:'0 0 32px', color:'var(--ink)' }}>
-              Lleva a {p.name || 'tu cachorro'} <em style={{ fontFamily:'var(--serif)', fontStyle:'italic', color:'var(--orange)' }}>a tu hogar hoy.</em>
+              {t(['Lleva a ', 'Bring '])}{p.name || t(['tu cachorro', 'your puppy'])} <em style={{ fontFamily:'var(--serif)', fontStyle:'italic', color:'var(--orange)' }}>{t(['a tu hogar hoy.', 'home today.'])}</em>
             </h2>
             <div className="pd-family-grid" style={{ display:'grid', gridTemplateColumns:'1fr 1.1fr', gap:48, alignItems:'start' }}>
               <div style={{ display:'none' }} className="pd-fin-img">
-                <image-slot id="fin-photo" shape="rounded" radius="22" placeholder="Sube una foto del cachorro" style={{ width:'100%', aspectRatio:'1/1', display:'block' }}/>
+                <image-slot id="fin-photo" shape="rounded" radius="22" placeholder={t(['Sube una foto del cachorro', 'Upload a photo of the puppy'])} style={{ width:'100%', aspectRatio:'1/1', display:'block' }}/>
               </div>
               <div style={{ gridColumn:'1/-1' }}>
                 <PdFinCalc price={p.price}/>
