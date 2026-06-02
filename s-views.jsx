@@ -706,7 +706,23 @@ function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
         ); })}
       </div>
       <StoriesBar/>
-      {posts.map(p => <PostCard key={p.id} post={p} onLike={toggleLike} onSave={toggleSave} onOpen={onOpenPost}/>)}
+      {(() => {
+        const shown = filt==='parati' ? posts : posts.filter(p => {
+          if(filt==='pack')  return !!(p.pack || p.following || p.is_pack);
+          if(filt==='razas') return !!((p.tags && p.tags.length) || p.breed);
+          if(filt==='cerca') return !!(p.near || p.location || p.distance!=null);
+          return true;
+        });
+        if(!shown.length) return (
+          <div style={{ textAlign:'center', color:BS.soft, padding:'48px 26px', fontSize:14, lineHeight:1.55 }}>
+            {filt==='pack'  ? t(['Aún no sigues a nadie. Cuando armes tu Pack, sus publicaciones aparecerán aquí.','You are not following anyone yet. When you build your Pack, their posts will show up here.'])
+             : filt==='razas' ? t(['Aún no hay publicaciones por raza.','No breed posts yet.'])
+             : filt==='cerca' ? t(['Aún no hay publicaciones cerca de ti.','No posts near you yet.'])
+             : t(['Aún no hay publicaciones. ¡Sé el primero en publicar!','No posts yet — be the first to post!'])}
+          </div>
+        );
+        return shown.map(p => <PostCard key={p.id} post={p} onLike={toggleLike} onSave={toggleSave} onOpen={onOpenPost}/>);
+      })()}
       <div style={{ height:20 }}/>
     </div>
   );

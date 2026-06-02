@@ -289,21 +289,29 @@ function App() {
     } catch (e) {
     }
     const landing = wantProfile ? "profile" : "feed";
+    let landed = false;
+    const goLanding = () => {
+      if (!landed) {
+        landed = true;
+        setScreen(landing);
+      }
+    };
     sb.auth.getSession().then(({ data }) => {
       if (data && data.session && data.session.access_token) {
         setAuthed(true);
-        setScreen(landing);
+        goLanding();
         refresh();
       }
     });
     const sub = sb.auth.onAuthStateChange((_e, sess) => {
       if (sess && sess.access_token) {
         setAuthed(true);
-        setScreen(landing);
+        goLanding();
         refresh();
       } else {
         setAuthed(false);
         setMe(null);
+        landed = false;
       }
     });
     return () => {

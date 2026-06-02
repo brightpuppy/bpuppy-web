@@ -300,8 +300,10 @@ function App() {
     const sb = window._bsSb; if(!sb) return;
     let wantProfile = false; try { wantProfile = new URLSearchParams(location.search).get('view') === 'profile'; } catch(e){}
     const landing = wantProfile ? 'profile' : 'feed';
-    sb.auth.getSession().then(({data})=>{ if(data&&data.session&&data.session.access_token){ setAuthed(true); setScreen(landing); refresh(); } });
-    const sub = sb.auth.onAuthStateChange((_e, sess)=>{ if(sess&&sess.access_token){ setAuthed(true); setScreen(landing); refresh(); } else { setAuthed(false); setMe(null); } });
+    let landed = false; // solo navegamos al landing en el PRIMER login; al volver de otra pestaña no reseteamos la pantalla
+    const goLanding = () => { if(!landed){ landed = true; setScreen(landing); } };
+    sb.auth.getSession().then(({data})=>{ if(data&&data.session&&data.session.access_token){ setAuthed(true); goLanding(); refresh(); } });
+    const sub = sb.auth.onAuthStateChange((_e, sess)=>{ if(sess&&sess.access_token){ setAuthed(true); goLanding(); refresh(); } else { setAuthed(false); setMe(null); landed=false; } });
     return () => { try{sub.data.subscription.unsubscribe();}catch(e){} };
   }, []);
 

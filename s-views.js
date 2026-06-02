@@ -566,7 +566,16 @@ function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
   }))), /* @__PURE__ */ React.createElement("div", { className: "bs-hscr", style: { background: BS.surface, padding: "8px 14px 10px", display: "flex", gap: 7, borderBottom: `1px solid ${BS.border}` } }, FEED_FILTERS.map((f) => {
     const on = filt === f.id;
     return /* @__PURE__ */ React.createElement("button", { key: f.id, onClick: () => setFilt(f.id), className: "bs-btn", style: { padding: "7px 16px", borderRadius: 999, border: `1.5px solid ${on ? BS.brand : BS.border}`, background: "transparent", color: on ? BS.brand : BS.ink2, fontSize: 12.5, fontWeight: on ? 700 : 600, cursor: "pointer", whiteSpace: "nowrap", fontFamily: "inherit" } }, f.label);
-  })), /* @__PURE__ */ React.createElement(StoriesBar, null), posts.map((p) => /* @__PURE__ */ React.createElement(PostCard, { key: p.id, post: p, onLike: toggleLike, onSave: toggleSave, onOpen: onOpenPost })), /* @__PURE__ */ React.createElement("div", { style: { height: 20 } }));
+  })), /* @__PURE__ */ React.createElement(StoriesBar, null), (() => {
+    const shown = filt === "parati" ? posts : posts.filter((p) => {
+      if (filt === "pack") return !!(p.pack || p.following || p.is_pack);
+      if (filt === "razas") return !!(p.tags && p.tags.length || p.breed);
+      if (filt === "cerca") return !!(p.near || p.location || p.distance != null);
+      return true;
+    });
+    if (!shown.length) return /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: BS.soft, padding: "48px 26px", fontSize: 14, lineHeight: 1.55 } }, filt === "pack" ? t(["A\xFAn no sigues a nadie. Cuando armes tu Pack, sus publicaciones aparecer\xE1n aqu\xED.", "You are not following anyone yet. When you build your Pack, their posts will show up here."]) : filt === "razas" ? t(["A\xFAn no hay publicaciones por raza.", "No breed posts yet."]) : filt === "cerca" ? t(["A\xFAn no hay publicaciones cerca de ti.", "No posts near you yet."]) : t(["A\xFAn no hay publicaciones. \xA1S\xE9 el primero en publicar!", "No posts yet \u2014 be the first to post!"]));
+    return shown.map((p) => /* @__PURE__ */ React.createElement(PostCard, { key: p.id, post: p, onLike: toggleLike, onSave: toggleSave, onOpen: onOpenPost }));
+  })(), /* @__PURE__ */ React.createElement("div", { style: { height: 20 } }));
 }
 function ProfileScreen({ posts, setScreen }) {
   const BS = useBS();
