@@ -338,7 +338,7 @@ function Header({ overDark }) {
   const applyNativeLang = (code) => {
     setLang(code);
     try { localStorage.setItem('bpuppy-lang', code); } catch(e) {}
-    try { window.dispatchEvent(new CustomEvent('bpuppy:lang', { detail: code })); } catch(e) {}
+    try { window.dispatchEvent(new CustomEvent('bpuppy:lang', { detail: code })); window.dispatchEvent(new CustomEvent('bpuppy-lang-change', { detail: code })); } catch(e) {}
   };
 
   const handleGtSelect = (code) => {

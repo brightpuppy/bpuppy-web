@@ -395,6 +395,7 @@ function Header({ overDark }) {
     }
     try {
       window.dispatchEvent(new CustomEvent("bpuppy:lang", { detail: code }));
+      window.dispatchEvent(new CustomEvent("bpuppy-lang-change", { detail: code }));
     } catch (e) {
     }
   };
