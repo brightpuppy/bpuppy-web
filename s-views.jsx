@@ -4,6 +4,26 @@ const { useState, useRef, useEffect, useContext, createContext } = React;
 const BSCtx = createContext(null);
 const useBS = () => useContext(BSCtx);
 
+// ── Idioma (bilingüe) ────────────────────────────────────────────────────────
+// Usa los helpers globales de i18n si están presentes; si no, define un
+// fallback equivalente que lee/escucha la preferencia del sitio ('bpuppy-lang').
+const bsPick = (typeof window !== 'undefined' && window.pick)
+  ? window.pick
+  : (t, lang) => Array.isArray(t) ? (lang === 'en' ? (t[1] != null ? t[1] : t[0]) : t[0]) : t;
+const bsReadLang = () => {
+  try { if (typeof window !== 'undefined' && window.bpGetLang) return window.bpGetLang() || 'es'; } catch(e){}
+  try { return localStorage.getItem('bpuppy-lang') || 'es'; } catch(e){ return 'es'; }
+};
+const BSLangContext = (typeof window !== 'undefined' && window.LangContext)
+  ? window.LangContext
+  : createContext({ lang: bsReadLang(), setLang: () => {} });
+const useLang = (typeof window !== 'undefined' && window.useLang)
+  ? window.useLang
+  : () => useContext(BSLangContext);
+const useT = (typeof window !== 'undefined' && window.useT)
+  ? window.useT
+  : () => { const { lang } = useLang(); return (t) => bsPick(t, lang); };
+
 // ── Status / insignias de miembro ───────────────────────────────────────────
 const BS_STATUS = {
   nuevo:     { es:'Nuevo',              en:'New',               color:'#9aa0a6', glow:false },
@@ -17,6 +37,8 @@ const BS_STATUS = {
 };
 const bsStatusLabel = (key, lang) => { const s = BS_STATUS[key] || BS_STATUS.nuevo; return lang==='en' ? s.en : s.es; };
 function StatusChip({ status, lang, size }){
+  const ctx = useLang();
+  const lg = lang || (ctx && ctx.lang) || bsReadLang();
   const s = BS_STATUS[status] || BS_STATUS.nuevo;
   const sm = size === 'sm';
   return (
@@ -24,14 +46,16 @@ function StatusChip({ status, lang, size }){
       color: s.glow ? '#fff' : s.color, background: s.glow ? s.color : (s.color+'1A'),
       border:`1px solid ${s.color}${s.glow?'':'55'}`, boxShadow: s.glow ? `0 0 10px ${s.color}88` : 'none', whiteSpace:'nowrap' }}>
       <span style={{ width:6, height:6, borderRadius:'50%', background: s.glow ? '#fff' : s.color }}/>
-      {bsStatusLabel(status, lang||'es')}
+      {bsStatusLabel(status, lg)}
     </span>
   );
 }
 function BadgeChips({ badges, lang, max }){
+  const ctx = useLang();
+  const lg = lang || (ctx && ctx.lang) || bsReadLang();
   const list = (badges||[]).filter(b=>b!=='nuevo').slice(0, max||4);
   if(!list.length) return null;
-  return <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>{list.map(b=> <StatusChip key={b} status={b} lang={lang} size="sm"/>)}</div>;
+  return <div style={{ display:'flex', flexWrap:'wrap', gap:6 }}>{list.map(b=> <StatusChip key={b} status={b} lang={lg} size="sm"/>)}</div>;
 }
 
 const THEMES = {
@@ -161,22 +185,23 @@ function BSocialLogo({ size=48 }) {
 
 function WelcomeScreen({ onSendLink }) {
   const BS = useBS();
+  const t = useT();
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
   const [sent, setSent] = useState(false);
   const [err, setErr] = useState('');
   const send = async () => {
     const e = (email||'').trim().toLowerCase();
-    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) { setErr('Escribe un correo válido'); return; }
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(e)) { setErr(t(['Escribe un correo válido','Enter a valid email'])); return; }
     setBusy(true); setErr('');
-    try { const d = await onSendLink(e); if (d && d.ok) setSent(true); else setErr((d && d.error) || 'No se pudo enviar el enlace'); }
-    catch(_e) { setErr('Error de red, intenta de nuevo'); }
+    try { const d = await onSendLink(e); if (d && d.ok) setSent(true); else setErr((d && d.error) || t(['No se pudo enviar el enlace','We couldn’t send the link'])); }
+    catch(_e) { setErr(t(['Error de red, intenta de nuevo','Network error, please try again'])); }
     finally { setBusy(false); }
   };
   return (
     <div style={{ height:'100%', display:'flex', flexDirection:'column', overflow:'hidden' }}>
       <div style={{ flex:1, position:'relative', overflow:'hidden' }}>
-        <img src="assets/photos/bsocial-pool.webp" alt="Perritos en una fiesta de piscina" style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 28%', display:'block' }}/>
+        <img src="assets/photos/bsocial-pool.webp" alt={t(['Perritos en una fiesta de piscina','Puppies at a pool party'])} style={{ width:'100%', height:'100%', objectFit:'cover', objectPosition:'center 28%', display:'block' }}/>
         <div style={{ position:'absolute', inset:0, background:'linear-gradient(to bottom,rgba(5,5,18,0.05) 0%,rgba(5,5,18,0.35) 48%,rgba(5,5,18,0.93) 100%)' }}/>
         <div style={{ position:'absolute', bottom:0, left:0, right:0, padding:'28px 26px 34px' }}>
           <div style={{ display:'flex', alignItems:'center', gap:12, marginBottom:18 }}>
@@ -188,10 +213,10 @@ function WelcomeScreen({ onSendLink }) {
               <div style={{ fontSize:10, color:'rgba(255,255,255,0.45)', fontWeight:600, letterSpacing:'0.08em', textTransform:'uppercase', marginTop:2 }}>by BrightPuppy</div>
             </div>
           </div>
-          <div style={{ fontSize:21, fontWeight:700, color:'#fff', lineHeight:1.3, marginBottom:12 }}>La comunidad<br/>más leal de internet</div>
+          <div style={{ fontSize:21, fontWeight:700, color:'#fff', lineHeight:1.3, marginBottom:12 }}>{t(['La comunidad más leal de internet','The most loyal community on the internet'])}</div>
           <div style={{ display:'flex', alignItems:'center', gap:6 }}>
             <div style={{ width:7, height:7, borderRadius:'50%', background:BS.online }}/>
-            <span style={{ fontSize:12, color:'rgba(255,255,255,0.5)', fontWeight:500 }}>Comunidad BrightPuppy</span>
+            <span style={{ fontSize:12, color:'rgba(255,255,255,0.5)', fontWeight:500 }}>{t(['Comunidad BrightPuppy','BrightPuppy Community'])}</span>
           </div>
         </div>
       </div>
@@ -199,24 +224,24 @@ function WelcomeScreen({ onSendLink }) {
         {sent ? (
           <div style={{ textAlign:'center', padding:'8px 0 4px' }}>
             <div style={{ display:'flex', justifyContent:'center', marginBottom:10, color:BS.brand }}><svg width="38" height="38" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.6" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/></svg></div>
-            <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:19, fontWeight:800, color:BS.ink, marginBottom:6 }}>Revisa tu correo</div>
-            <p style={{ fontSize:13, color:BS.ink2, lineHeight:1.55, margin:0 }}>Te enviamos un enlace a <b style={{ color:BS.ink }}>{email.trim().toLowerCase()}</b>. Tócalo para entrar — sin contraseñas.</p>
+            <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:19, fontWeight:800, color:BS.ink, marginBottom:6 }}>{t(['Revisa tu correo','Check your email'])}</div>
+            <p style={{ fontSize:13, color:BS.ink2, lineHeight:1.55, margin:0 }}>{t(['Te enviamos un enlace a','We sent a link to'])} <b style={{ color:BS.ink }}>{email.trim().toLowerCase()}</b>. {t(['Tócalo para entrar — sin contraseñas.','Tap it to sign in — no passwords.'])}</p>
           </div>
         ) : (
           <>
-            <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink, marginBottom:2 }}>Entra o crea tu cuenta</div>
-            <input type="email" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>{ if(e.key==='Enter') send(); }} placeholder="tu@correo.com"
+            <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink, marginBottom:2 }}>{t(['Entra o crea tu cuenta','Sign in or create your account'])}</div>
+            <input type="email" value={email} onChange={e=>setEmail(e.target.value)} onKeyDown={e=>{ if(e.key==='Enter') send(); }} placeholder={t(['tu@correo.com','you@email.com'])}
               style={{ width:'100%', padding:'14px 15px', borderRadius:14, border:`1.5px solid ${BS.borderStrong}`, background:BS.surface2, fontSize:14.5, color:BS.ink, fontFamily:'inherit' }}/>
             {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600 }}>{err}</div>}
             <button onClick={send} disabled={busy} className="bs-btn bs-rainbow" style={{ '--bsr-fill':BS.grad, padding:'15px', fontSize:15, fontWeight:800, cursor: busy?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity: busy?0.7:1 }}>
-              {busy ? 'Enviando…' : 'Enviarme mi enlace mágico'}
+              {busy ? t(['Enviando…','Sending…']) : t(['Enviarme mi enlace mágico','Send me my magic link'])}
             </button>
-            <p style={{ textAlign:'center', fontSize:11.5, color:BS.soft, margin:'4px 0 0', lineHeight:1.5 }}>Sin contraseñas. Usa el mismo correo de tu cuenta BrightPuppy si ya eres cliente.</p>
+            <p style={{ textAlign:'center', fontSize:11.5, color:BS.soft, margin:'4px 0 0', lineHeight:1.5 }}>{t(['Sin contraseñas. Usa el mismo correo de tu cuenta BrightPuppy si ya eres cliente.','No passwords. Use the same email as your BrightPuppy account if you’re already a client.'])}</p>
           </>
         )}
         <a href="/" className="bs-btn" style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:7, marginTop:4, padding:'11px', borderRadius:12, textDecoration:'none', color:BS.soft, fontSize:13, fontWeight:600 }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-          Volver a la página web
+          {t(['Volver a la página web','Back to the website'])}
         </a>
       </div>
     </div>
@@ -247,6 +272,7 @@ function PhotoPick({ label, preview, onPick, BS, round }) {
 
 function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
   const BS = useBS();
+  const t = useT();
   const m = me || {};
   const editing = !!(onDone && m && m.username);
   let pend = null; try { pend = JSON.parse(localStorage.getItem('bp_pending_social')||'null'); } catch(e){}
@@ -280,10 +306,10 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
   const pickCover  = (f) => { setCoverFile(f);  try{ setCoverPrev(URL.createObjectURL(f)); }catch(e){} };
 
   const save = async () => {
-    if (!firstName.trim()) { setErr('Escribe tu nombre'); return; }
+    if (!firstName.trim()) { setErr(t(['Escribe tu nombre','Enter your name'])); return; }
     // Verificación de edad (estilo redes sociales): el perfil solo se crea para 18+.
-    if (!editing && !birthdate) { setErr('Ingresa tu fecha de nacimiento para continuar'); return; }
-    if (birthdate) { const a = ageY(birthdate); if (a !== null && a < 18) { setErr('Para crear un perfil en B Social debes tener 18 años o más. ¡Pero puedes seguir jugando y guardar tu puntaje en el juego!'); return; } }
+    if (!editing && !birthdate) { setErr(t(['Ingresa tu fecha de nacimiento para continuar','Enter your date of birth to continue'])); return; }
+    if (birthdate) { const a = ageY(birthdate); if (a !== null && a < 18) { setErr(t(['Para crear un perfil en B Social debes tener 18 años o más. ¡Pero puedes seguir jugando y guardar tu puntaje en el juego!','To create a B Social profile you must be 18 or older. But you can keep playing and save your score in the game!'])); return; } }
     setBusy(true); setErr('');
     try {
       let avatar_url = m.avatar_url || (/^https?:/.test(avatarPrev) ? avatarPrev : null);
@@ -298,9 +324,9 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
         address:address.trim(), city:city.trim(), state:stateV.trim(), zip:zip.trim(),
         avatar_url, pet_photo_url, cover_url, is_public:isPublic,
       });
-      if (!(d && d.ok)) { setErr((d && d.error) || 'No se pudo guardar'); setBusy(false); }
+      if (!(d && d.ok)) { setErr((d && d.error) || t(['No se pudo guardar','We couldn’t save'])); setBusy(false); }
       else if (onDone) onDone();
-    } catch(e) { setErr((e && e.message) || 'Error al guardar'); setBusy(false); }
+    } catch(e) { setErr((e && e.message) || t(['Error al guardar','Error while saving'])); setBusy(false); }
   };
 
   const fld = { width:'100%', padding:'12px 14px', borderRadius:12, border:`1.5px solid ${BS.borderStrong}`, background:BS.surface2, fontSize:14, color:BS.ink, fontFamily:'inherit' };
@@ -309,72 +335,72 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
   const sectionTitle = { fontSize:11, fontWeight:800, letterSpacing:'0.06em', textTransform:'uppercase', color:BS.brand, margin:'18px 0 10px' };
   return (
     <div className="bs-fade" style={{ padding:'36px 22px 28px', minHeight:'100%', background:BS.bg }}>
-      <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:25, fontWeight:800, color:BS.ink, letterSpacing:'-0.03em', marginBottom:6 }}>{editing?'Editar perfil':'Crea tu perfil'}</div>
-      <p style={{ fontSize:13, color:BS.ink2, lineHeight:1.5, margin:'0 0 14px' }}>{editing?'Actualiza tus datos y fotos cuando quieras.':('Bienvenido'+(m.email?(' · '+m.email):'')+'. Completa tus datos para unirte a la comunidad.')}</p>
+      <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:25, fontWeight:800, color:BS.ink, letterSpacing:'-0.03em', marginBottom:6 }}>{editing?t(['Editar perfil','Edit profile']):t(['Crea tu perfil','Create your profile'])}</div>
+      <p style={{ fontSize:13, color:BS.ink2, lineHeight:1.5, margin:'0 0 14px' }}>{editing?t(['Actualiza tus datos y fotos cuando quieras.','Update your details and photos whenever you like.']):(t(['Bienvenido','Welcome'])+(m.email?(' · '+m.email):'')+'. '+t(['Completa tus datos para unirte a la comunidad.','Complete your details to join the community.']))}</p>
 
       {/* Portada */}
       <div style={{ marginBottom:12 }}>
-        <div style={lbl}>Foto de portada</div>
+        <div style={lbl}>{t(['Foto de portada','Cover photo'])}</div>
         <label style={{ display:'block', height:120, borderRadius:14, border:`1.5px dashed ${BS.borderStrong}`, background: coverPrev ? `url(${coverPrev}) center/cover` : BS.surface2, cursor:'pointer', position:'relative', overflow:'hidden' }}>
           <input type="file" accept="image/*" onChange={e=>{ const f=e.target.files&&e.target.files[0]; if(f) pickCover(f); }} style={{ display:'none' }}/>
-          {!coverPrev && <div style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', color:BS.soft, fontSize:12.5, fontWeight:700 }}>+ Sube o elige una portada</div>}
-          {coverPrev && <div style={{ position:'absolute', bottom:6, right:8, background:'rgba(0,0,0,0.45)', color:'#fff', fontSize:11, fontWeight:700, padding:'3px 9px', borderRadius:999 }}>Cambiar</div>}
+          {!coverPrev && <div style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', color:BS.soft, fontSize:12.5, fontWeight:700 }}>{t(['+ Sube o elige una portada','+ Upload or choose a cover'])}</div>}
+          {coverPrev && <div style={{ position:'absolute', bottom:6, right:8, background:'rgba(0,0,0,0.45)', color:'#fff', fontSize:11, fontWeight:700, padding:'3px 9px', borderRadius:999 }}>{t(['Cambiar','Change'])}</div>}
         </label>
       </div>
 
       {/* Fotos */}
       <div style={{ display:'flex', gap:24, justifyContent:'center', marginBottom:6 }}>
-        <PhotoPick label="Tu foto" preview={avatarPrev} onPick={pickAvatar} BS={BS} round/>
-        <PhotoPick label="Foto de tu mascota" preview={petPrev} onPick={pickPet} BS={BS}/>
+        <PhotoPick label={t(['Tu foto','Your photo'])} preview={avatarPrev} onPick={pickAvatar} BS={BS} round/>
+        <PhotoPick label={t(['Foto de tu mascota','Your pet’s photo'])} preview={petPrev} onPick={pickPet} BS={BS}/>
       </div>
 
-      <div style={sectionTitle}>Tus datos</div>
+      <div style={sectionTitle}>{t(['Tus datos','Your details'])}</div>
       <div style={{ display:'flex', gap:10 }}>
-        <div style={{ flex:1, ...grp }}><div style={lbl}>Nombre *</div><input value={firstName} onChange={e=>setFirstName(e.target.value)} placeholder="Luis" style={fld}/></div>
-        <div style={{ flex:1, ...grp }}><div style={lbl}>Apellido</div><input value={lastName} onChange={e=>setLastName(e.target.value)} placeholder="Guzmán" style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>{t(['Nombre *','First name *'])}</div><input value={firstName} onChange={e=>setFirstName(e.target.value)} placeholder="Luis" style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>{t(['Apellido','Last name'])}</div><input value={lastName} onChange={e=>setLastName(e.target.value)} placeholder="Guzmán" style={fld}/></div>
       </div>
       <div style={grp}>
-        <div style={lbl}>Fecha de nacimiento *</div>
+        <div style={lbl}>{t(['Fecha de nacimiento *','Date of birth *'])}</div>
         <input type="date" value={birthdate} max={new Date(Date.now()-86400000).toISOString().slice(0,10)} onChange={e=>setBirthdate(e.target.value)} style={fld}/>
-        <div style={{ fontSize:11, color:BS.soft, marginTop:5, lineHeight:1.45 }}>Solo para confirmar que eres mayor de edad. No se muestra en tu perfil. Crear un perfil requiere tener 18 años o más; los menores pueden jugar y guardar su puntaje.</div>
+        <div style={{ fontSize:11, color:BS.soft, marginTop:5, lineHeight:1.45 }}>{t(['Solo para confirmar que eres mayor de edad. No se muestra en tu perfil. Crear un perfil requiere tener 18 años o más; los menores pueden jugar y guardar su puntaje.','Only to confirm you’re of legal age. It’s never shown on your profile. Creating a profile requires being 18 or older; minors can still play and save their score.'])}</div>
         {birthdate && ageY(birthdate)!==null && ageY(birthdate)<18 && (
-          <div style={{ fontSize:12, fontWeight:700, color:BS.like||'#E5484D', background:'rgba(229,72,77,0.1)', border:'1px solid rgba(229,72,77,0.3)', borderRadius:10, padding:'8px 11px', marginTop:7, lineHeight:1.45 }}>Aún no puedes crear un perfil (debes tener 18+). ¡Pero puedes seguir jugando y guardar tu puntaje en el juego!</div>
+          <div style={{ fontSize:12, fontWeight:700, color:BS.like||'#E5484D', background:'rgba(229,72,77,0.1)', border:'1px solid rgba(229,72,77,0.3)', borderRadius:10, padding:'8px 11px', marginTop:7, lineHeight:1.45 }}>{t(['Aún no puedes crear un perfil (debes tener 18+). ¡Pero puedes seguir jugando y guardar tu puntaje en el juego!','You can’t create a profile yet (you must be 18+). But you can keep playing and save your score in the game!'])}</div>
         )}
       </div>
-      <div style={grp}><div style={lbl}>Bio (opcional)</div><input value={bio} onChange={e=>setBio(e.target.value)} placeholder="Amante de los Golden 🐾" style={fld}/></div>
+      <div style={grp}><div style={lbl}>{t(['Bio (opcional)','Bio (optional)'])}</div><input value={bio} onChange={e=>setBio(e.target.value)} placeholder={t(['Amante de los Golden 🐾','Golden lover 🐾'])} style={fld}/></div>
 
-      <div style={sectionTitle}>Tu mascota</div>
+      <div style={sectionTitle}>{t(['Tu mascota','Your pet'])}</div>
       <div style={{ ...grp }}>
-        <div style={lbl}>¿Qué tipo de mascota?</div>
+        <div style={lbl}>{t(['¿Qué tipo de mascota?','What kind of pet?'])}</div>
         <div style={{ display:'flex', gap:8 }}>
-          {[['perro','Perro'],['gato','Gato'],['otra','Otra']].map(([v,l]) => (
+          {[['perro',t(['Perro','Dog'])],['gato',t(['Gato','Cat'])],['otra',t(['Otra','Other'])]].map(([v,l]) => (
             <button key={v} onClick={()=>setPetSpecies(v)} className="bs-btn" style={{ flex:1, padding:'10px', borderRadius:11, border:`1.5px solid ${petSpecies===v?BS.brand:BS.border}`, background: petSpecies===v?'rgba(245,130,32,0.08)':BS.surface2, color: petSpecies===v?BS.brand:BS.ink2, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{l}</button>
           ))}
         </div>
       </div>
       <div style={{ display:'flex', gap:10 }}>
-        <div style={{ flex:1, ...grp }}><div style={lbl}>Nombre</div><input value={petName} onChange={e=>setPetName(e.target.value)} placeholder="Luna" style={fld}/></div>
-        <div style={{ flex:1, ...grp }}><div style={lbl}>Raza / tipo</div><input value={petBreed} onChange={e=>setPetBreed(e.target.value)} placeholder="Golden Retriever" style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>{t(['Nombre','Name'])}</div><input value={petName} onChange={e=>setPetName(e.target.value)} placeholder="Luna" style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>{t(['Raza / tipo','Breed / type'])}</div><input value={petBreed} onChange={e=>setPetBreed(e.target.value)} placeholder="Golden Retriever" style={fld}/></div>
       </div>
       <div style={{ display:'flex', gap:10 }}>
-        <div style={{ flex:1, ...grp }}><div style={lbl}>Color</div><input value={petColor} onChange={e=>setPetColor(e.target.value)} placeholder="Dorado" style={fld}/></div>
-        <div style={{ flex:1, ...grp }}><div style={lbl}>Edad</div><input value={petAge} onChange={e=>setPetAge(e.target.value)} placeholder="2 años" style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>{t(['Color','Color'])}</div><input value={petColor} onChange={e=>setPetColor(e.target.value)} placeholder={t(['Dorado','Golden'])} style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>{t(['Edad','Age'])}</div><input value={petAge} onChange={e=>setPetAge(e.target.value)} placeholder={t(['2 años','2 years'])} style={fld}/></div>
       </div>
 
-      <div style={sectionTitle}>Tu dirección <span style={{ textTransform:'none', letterSpacing:0, color:BS.soft, fontWeight:600 }}>· privada, nunca pública</span></div>
-      <div style={grp}><div style={lbl}>Calle y número</div><input value={address} onChange={e=>setAddress(e.target.value)} placeholder="123 Main St, Apt 4" style={fld}/></div>
+      <div style={sectionTitle}>{t(['Tu dirección','Your address'])} <span style={{ textTransform:'none', letterSpacing:0, color:BS.soft, fontWeight:600 }}>· {t(['privada, nunca pública','private, never public'])}</span></div>
+      <div style={grp}><div style={lbl}>{t(['Calle y número','Street and number'])}</div><input value={address} onChange={e=>setAddress(e.target.value)} placeholder="123 Main St, Apt 4" style={fld}/></div>
       <div style={{ display:'flex', gap:10 }}>
-        <div style={{ flex:2, ...grp }}><div style={lbl}>Ciudad</div><input value={city} onChange={e=>setCity(e.target.value)} list="bs-cities" placeholder="Empieza a escribir…" style={fld}/>
+        <div style={{ flex:2, ...grp }}><div style={lbl}>{t(['Ciudad','City'])}</div><input value={city} onChange={e=>setCity(e.target.value)} list="bs-cities" placeholder={t(['Empieza a escribir…','Start typing…'])} style={fld}/>
           <datalist id="bs-cities"><option value="Miami, FL"/><option value="Orlando, FL"/><option value="Tampa, FL"/><option value="Haines City, FL"/><option value="Kissimmee, FL"/><option value="Lakeland, FL"/><option value="Davenport, FL"/></datalist>
         </div>
-        <div style={{ flex:1, ...grp }}><div style={lbl}>Estado</div><input value={stateV} onChange={e=>setStateV(e.target.value)} placeholder="FL" style={fld}/></div>
-        <div style={{ flex:1, ...grp }}><div style={lbl}>ZIP</div><input value={zip} onChange={e=>setZip(e.target.value)} placeholder="33844" style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>{t(['Estado','State'])}</div><input value={stateV} onChange={e=>setStateV(e.target.value)} placeholder="FL" style={fld}/></div>
+        <div style={{ flex:1, ...grp }}><div style={lbl}>{t(['ZIP','ZIP'])}</div><input value={zip} onChange={e=>setZip(e.target.value)} placeholder="33844" style={fld}/></div>
       </div>
 
       <div onClick={()=>setIsPublic(v=>!v)} style={{ display:'flex', alignItems:'center', gap:12, padding:'13px 14px', borderRadius:13, border:`1.5px solid ${isPublic?BS.brand:BS.border}`, background: isPublic?'rgba(245,130,32,0.07)':BS.surface2, cursor:'pointer', marginTop:8 }}>
         <div style={{ flex:1 }}>
-          <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>Perfil público</div>
-          <div style={{ fontSize:11.5, color:BS.soft, lineHeight:1.5 }}>Si lo activas, en Comunidad solo se verá: <b style={{ color:BS.ink2 }}>tu nombre, ciudad y tu mascota</b> (con foto si subiste). <b style={{ color:BS.ink2 }}>Tu correo, teléfono y dirección NUNCA se hacen públicos.</b> Por defecto tu perfil es privado.</div>
+          <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>{t(['Perfil público','Public profile'])}</div>
+          <div style={{ fontSize:11.5, color:BS.soft, lineHeight:1.5 }}>{t(['Si lo activas, en Comunidad solo se verá:','If you turn it on, Community will only show:'])} <b style={{ color:BS.ink2 }}>{t(['tu nombre, ciudad y tu mascota','your name, city and pet'])}</b> {t(['(con foto si subiste).','(with a photo if you added one).'])} <b style={{ color:BS.ink2 }}>{t(['Tu correo, teléfono y dirección NUNCA se hacen públicos.','Your email, phone and address are NEVER made public.'])}</b> {t(['Por defecto tu perfil es privado.','By default your profile is private.'])}</div>
         </div>
         <div style={{ width:46, height:26, borderRadius:999, background:isPublic?BS.grad:BS.border, position:'relative', flexShrink:0 }}>
           <span style={{ position:'absolute', top:3, left:isPublic?23:3, width:20, height:20, borderRadius:'50%', background:'#fff', transition:'left .2s' }}/>
@@ -382,12 +408,12 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
       </div>
       {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600, marginTop:10 }}>{err}</div>}
       {(() => { const minor = birthdate && ageY(birthdate)!==null && ageY(birthdate)<18; const blocked = busy || minor; return (
-      <button onClick={save} disabled={blocked} className="bs-btn bs-rainbow" style={{ '--bsr-fill':BS.grad, width:'100%', marginTop:16, padding:'15px', fontSize:15, fontWeight:800, cursor:blocked?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity:blocked?0.55:1 }}>{busy?'Guardando…':(editing?'Guardar cambios':'Entrar a la comunidad')}</button>
+      <button onClick={save} disabled={blocked} className="bs-btn bs-rainbow" style={{ '--bsr-fill':BS.grad, width:'100%', marginTop:16, padding:'15px', fontSize:15, fontWeight:800, cursor:blocked?'default':'pointer', fontFamily:'inherit', boxShadow:BS.glow, opacity:blocked?0.55:1 }}>{busy?t(['Guardando…','Saving…']):(editing?t(['Guardar cambios','Save changes']):t(['Entrar a la comunidad','Enter the community']))}</button>
       ); })()}
-      <button onClick={() => editing ? onDone() : onLogout()} className="bs-btn" style={{ width:'100%', marginTop:10, padding:'12px', borderRadius:12, border:'none', background:'transparent', color:BS.soft, fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>{editing?'Cancelar':'Usar otra cuenta'}</button>
+      <button onClick={() => editing ? onDone() : onLogout()} className="bs-btn" style={{ width:'100%', marginTop:10, padding:'12px', borderRadius:12, border:'none', background:'transparent', color:BS.soft, fontSize:13, fontWeight:600, cursor:'pointer', fontFamily:'inherit' }}>{editing?t(['Cancelar','Cancel']):t(['Usar otra cuenta','Use another account'])}</button>
       {!editing && <a href="/" className="bs-btn" style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:7, marginTop:2, padding:'10px', textDecoration:'none', color:BS.soft, fontSize:12.5, fontWeight:600 }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-        Volver a la página web
+        {t(['Volver a la página web','Back to the website'])}
       </a>}
     </div>
   );
@@ -395,18 +421,19 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
 
 function OnboardingScreen({ onDone }) {
   const BS = useBS();
+  const t = useT();
   const [pick, setPick] = useState(null);
   const opts = [
-    { id:'dog', emoji:'🐕', label:'Perros', sub:'Tengo o quiero un perro' },
-    { id:'cat', emoji:'🐱', label:'Gatos', sub:'Tengo o quiero un gato' },
-    { id:'both', emoji:'🐾', label:'Ambos', sub:'Amo a todos por igual' },
-    { id:'soon', emoji:'🌱', label:'Pronto', sub:'Estoy pensandolo' },
+    { id:'dog', emoji:'🐕', label:t(['Perros','Dogs']), sub:t(['Tengo o quiero un perro','I have or want a dog']) },
+    { id:'cat', emoji:'🐱', label:t(['Gatos','Cats']), sub:t(['Tengo o quiero un gato','I have or want a cat']) },
+    { id:'both', emoji:'🐾', label:t(['Ambos','Both']), sub:t(['Amo a todos por igual','I love them all equally']) },
+    { id:'soon', emoji:'🌱', label:t(['Pronto','Soon']), sub:t(['Estoy pensándolo','I’m thinking about it']) },
   ];
   return (
     <div className="bs-fade" style={{ height:'100%', background:BS.bg, padding:'44px 22px 28px', display:'flex', flexDirection:'column' }}>
       <div style={{ marginBottom:28 }}>
-        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:28, fontWeight:800, letterSpacing:'-0.03em', color:BS.ink, marginBottom:6 }}>Cual es tu mundo?</div>
-        <p style={{ fontSize:14, color:BS.ink2, lineHeight:1.5, margin:0 }}>Personaliza tu experiencia en B Social</p>
+        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:28, fontWeight:800, letterSpacing:'-0.03em', color:BS.ink, marginBottom:6 }}>{t(['¿Cuál es tu mundo?','What’s your world?'])}</div>
+        <p style={{ fontSize:14, color:BS.ink2, lineHeight:1.5, margin:0 }}>{t(['Personaliza tu experiencia en B Social','Personalize your B Social experience'])}</p>
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:10, flex:1 }}>
         {opts.map(o => (
@@ -418,7 +445,7 @@ function OnboardingScreen({ onDone }) {
         ))}
       </div>
       <button onClick={onDone} disabled={!pick} className="bs-btn" style={{ marginTop:22, padding:'15px', borderRadius:14, border:'none', background: pick ? BS.grad : BS.surface2, fontSize:15, fontWeight:700, color: pick ? '#fff' : BS.soft, cursor: pick ? 'pointer' : 'default', fontFamily:'inherit', transition:'all .2s', boxShadow: pick ? BS.glow : 'none' }}>
-        Empezar
+        {t(['Empezar','Get started'])}
       </button>
     </div>
   );
@@ -426,6 +453,7 @@ function OnboardingScreen({ onDone }) {
 
 function StoriesBar() {
   const BS = useBS();
+  const t = useT();
   const A = (typeof window!=='undefined' && window.BSAUTH) || {};
   const fileRef = useRef(null);
   const [busy, setBusy] = useState(false);
@@ -446,7 +474,7 @@ function StoriesBar() {
           <div style={{ width:54, height:54, borderRadius:'50%', border:`2px dashed ${BS.borderStrong}`, display:'grid', placeItems:'center', background:BS.surface2, color:BS.brand }}>
             {busy ? <div style={{ width:18, height:18, border:`2px solid ${BS.border}`, borderTopColor:BS.brand, borderRadius:'50%', animation:'bpChatDot 0.8s linear infinite' }}/> : <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round"><path d="M12 5v14M5 12h14"/></svg>}
           </div>
-          <span style={{ fontSize:9.5, color:BS.ink, fontWeight:600 }}>Tu historia</span>
+          <span style={{ fontSize:9.5, color:BS.ink, fontWeight:600 }}>{t(['Tu historia','Your story'])}</span>
         </div>
         {stories.map(s => (
           <div key={s.id} onClick={() => setView(s)} style={{ display:'flex', flexDirection:'column', alignItems:'center', gap:5, cursor:'pointer', flexShrink:0 }}>
@@ -475,6 +503,7 @@ function StoriesBar() {
 
 function PostCard({ post, onLike, onSave, onOpen }) {
   const BS = useBS();
+  const t = useT();
   const [animLike, setAnimLike] = useState(false);
   const [heart, setHeart] = useState(null);
   const open = () => { if (onOpen) onOpen(post); };
@@ -508,7 +537,7 @@ function PostCard({ post, onLike, onSave, onOpen }) {
             <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>
           </svg>
         </button>
-        <button className="bs-btn" onClick={open} style={{ color:BS.ink2 }} title="Comentarios">
+        <button className="bs-btn" onClick={open} style={{ color:BS.ink2 }} title={t(['Comentarios','Comments'])}>
           <svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
         </button>
         <button className="bs-btn" style={{ color:BS.ink2 }}>
@@ -520,12 +549,12 @@ function PostCard({ post, onLike, onSave, onOpen }) {
         </button>
       </div>
       <div style={{ padding:'2px 14px 18px' }}>
-        <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink, marginBottom:5 }}>{fmt(post.likes)} me gusta</div>
+        <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink, marginBottom:5 }}>{fmt(post.likes)} {t(['me gusta','likes'])}</div>
         <div style={{ fontSize:13.5, color:BS.ink, lineHeight:1.55 }}>
           <span style={{ fontWeight:700 }}>{post.username}</span>{' '}{post.caption}{' '}
-          {(post.tags||[]).map((t,i) => <span key={t} style={{ color:BS.brand, fontWeight:600, cursor:'pointer' }}>{i>0?' ':''} #{t}</span>)}
+          {(post.tags||[]).map((tag,i) => <span key={tag} style={{ color:BS.brand, fontWeight:600, cursor:'pointer' }}>{i>0?' ':''} #{tag}</span>)}
         </div>
-        <div onClick={open} style={{ fontSize:12.5, color:BS.soft, marginTop:6, cursor:'pointer', fontWeight:600 }}>Ver comentarios y detalles</div>
+        <div onClick={open} style={{ fontSize:12.5, color:BS.soft, marginTop:6, cursor:'pointer', fontWeight:600 }}>{t(['Ver comentarios y detalles','View comments and details'])}</div>
       </div>
     </div>
   );
@@ -534,6 +563,8 @@ function PostCard({ post, onLike, onSave, onOpen }) {
 // Detalle de post estilo Facebook: foto grande + likes + comentarios
 function PostDetail({ post, onClose }) {
   const BS = useBS();
+  const t = useT();
+  const { lang } = useLang();
   const A = (typeof window !== 'undefined' && window.BSAUTH) || {};
   const [data, setData] = useState(null);
   const [liked, setLiked] = useState(!!post.liked);
@@ -566,7 +597,7 @@ function PostDetail({ post, onClose }) {
     } catch (e) {} finally { setSending(false); }
   };
   const author = (data && data.author) || { username: post.username, initials: post.initials, avatar_color: post.color, avatar_url: post.avatar, status: 'nuevo' };
-  const rel = (iso) => { try { const s = (Date.now() - new Date(iso).getTime()) / 1000; if (s < 60) return 'ahora'; if (s < 3600) return Math.round(s/60)+'m'; if (s < 86400) return Math.round(s/3600)+'h'; return Math.round(s/86400)+'d'; } catch (e) { return ''; } };
+  const rel = (iso) => { try { const s = (Date.now() - new Date(iso).getTime()) / 1000; if (s < 60) return t(['ahora','now']); if (s < 3600) return Math.round(s/60)+'m'; if (s < 86400) return Math.round(s/3600)+'h'; return Math.round(s/86400)+'d'; } catch (e) { return ''; } };
 
   return (
     <div onClick={(e) => { if (e.target === e.currentTarget) onClose(); }} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.6)', zIndex:3000, display:'flex', alignItems:'center', justifyContent:'center', padding:16 }}>
@@ -581,7 +612,7 @@ function PostDetail({ post, onClose }) {
             <div style={{ flex:1, minWidth:0 }}>
               <div style={{ display:'flex', alignItems:'center', gap:6 }}>
                 <span style={{ fontSize:14, fontWeight:800, color:BS.ink }}>{author.username}</span>
-                {author.status && author.status!=='nuevo' && <StatusChip status={author.status} lang="es" size="sm"/>}
+                {author.status && author.status!=='nuevo' && <StatusChip status={author.status} lang={lang} size="sm"/>}
               </div>
               <div style={{ fontSize:11.5, color:BS.soft }}>{(data&&data.location)||post.location||post.city||''} {data?('· '+rel(data.created_at)):''}</div>
             </div>
@@ -590,8 +621,8 @@ function PostDetail({ post, onClose }) {
           {/* caption + comments scroll */}
           <div style={{ flex:1, overflowY:'auto', padding:'14px 16px' }} className="bs-scr">
             {(data&&data.caption)||post.caption ? <div style={{ fontSize:14, color:BS.ink, lineHeight:1.55, marginBottom:14 }}><b>{author.username}</b> {(data&&data.caption)||post.caption}</div> : null}
-            {loading && <div style={{ fontSize:13, color:BS.soft }}>Cargando comentarios…</div>}
-            {!loading && comments.length===0 && <div style={{ fontSize:13, color:BS.soft }}>Sé el primero en comentar.</div>}
+            {loading && <div style={{ fontSize:13, color:BS.soft }}>{t(['Cargando comentarios…','Loading comments…'])}</div>}
+            {!loading && comments.length===0 && <div style={{ fontSize:13, color:BS.soft }}>{t(['Sé el primero en comentar.','Be the first to comment.'])}</div>}
             {comments.map(c => (
               <div key={c.id} style={{ display:'flex', gap:10, marginBottom:12 }}>
                 <div style={{ width:30, height:30, borderRadius:'50%', background:c.color||BS.brand, display:'grid', placeItems:'center', color:'#fff', fontWeight:800, fontSize:11, overflow:'hidden', flexShrink:0 }}>{c.avatar_url ? <img src={c.avatar_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : c.initials}</div>
@@ -609,10 +640,10 @@ function PostDetail({ post, onClose }) {
                 <svg width="22" height="22" viewBox="0 0 24 24" fill={liked ? BS.like : 'none'} stroke={liked ? BS.like : BS.ink2} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
                 {likeCount}
               </button>
-              <span style={{ fontSize:13, color:BS.soft }}>{comments.length} comentarios</span>
+              <span style={{ fontSize:13, color:BS.soft }}>{comments.length} {t(['comentarios','comments'])}</span>
             </div>
             <div style={{ display:'flex', gap:8, alignItems:'center' }}>
-              <input value={text} onChange={e=>setText(e.target.value)} onKeyDown={e=>{ if(e.key==='Enter') send(); }} placeholder={A.me ? 'Escribe un comentario…' : 'Inicia sesión para comentar'} disabled={!A.me}
+              <input value={text} onChange={e=>setText(e.target.value)} onKeyDown={e=>{ if(e.key==='Enter') send(); }} placeholder={A.me ? t(['Escribe un comentario…','Write a comment…']) : t(['Inicia sesión para comentar','Sign in to comment'])} disabled={!A.me}
                 style={{ flex:1, border:`1px solid ${BS.border}`, borderRadius:999, background:BS.bg, padding:'10px 14px', fontSize:13.5, color:BS.ink, fontFamily:'inherit', outline:'none' }}/>
               <button onClick={send} disabled={!text.trim()||sending||!A.me} style={{ width:38, height:38, borderRadius:'50%', border:'none', background:BS.brand, color:'#fff', cursor: (text.trim()&&A.me)?'pointer':'default', opacity:(text.trim()&&A.me)?1:0.5, display:'grid', placeItems:'center', flexShrink:0 }}>
                 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
@@ -627,15 +658,22 @@ function PostDetail({ post, onClose }) {
 
 function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
   const BS = useBS();
-  const [filt, setFilt] = useState('Para ti');
+  const t = useT();
+  const [filt, setFilt] = useState('parati');
   // Navegación tipo Facebook (fila de iconos en la barra superior)
   const FBNAV = [
-    { id:'feed',      label:'Inicio',    p:'<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>' },
-    { id:'community', label:'Comunidad', p:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>' },
-    { id:'events',    label:'Eventos',   p:'<rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>' },
-    { id:'pack',      label:'Mi Pack',   p:'<circle cx="7" cy="9" r="1.7"/><circle cx="12" cy="7.4" r="1.7"/><circle cx="17" cy="9" r="1.7"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/>' },
-    { id:'account',   label:'Cuenta',    p:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v4"/>' },
-    { id:'profile',   label:'Perfil',    p:'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
+    { id:'feed',      label:t(['Inicio','Home']),        p:'<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>' },
+    { id:'community', label:t(['Comunidad','Community']), p:'<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>' },
+    { id:'events',    label:t(['Eventos','Events']),     p:'<rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>' },
+    { id:'pack',      label:t(['Mi Pack','My Pack']),    p:'<circle cx="7" cy="9" r="1.7"/><circle cx="12" cy="7.4" r="1.7"/><circle cx="17" cy="9" r="1.7"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/>' },
+    { id:'account',   label:t(['Cuenta','Account']),     p:'<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v4"/>' },
+    { id:'profile',   label:t(['Perfil','Profile']),     p:'<path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/>' },
+  ];
+  const FEED_FILTERS = [
+    { id:'parati', label:t(['Para ti','For you']) },
+    { id:'pack',   label:t(['Mi Pack','My Pack']) },
+    { id:'razas',  label:t(['Razas','Breeds']) },
+    { id:'cerca',  label:t(['Cerca de mí','Near me']) },
   ];
   return (
     <div style={{ background:BS.bg }}>
@@ -645,7 +683,7 @@ function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
           <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:21, fontWeight:800, letterSpacing:'-0.04em', background:BS.grad, WebkitBackgroundClip:'text', WebkitTextFillColor:'transparent', flexShrink:0 }}>B Social</div>
           <button className="bs-btn" onClick={() => setScreen('discover')} style={{ flex:1, minWidth:0, display:'flex', alignItems:'center', gap:8, background:BS.surface2, border:`1px solid ${BS.border}`, borderRadius:999, padding:'9px 14px', cursor:'pointer', textAlign:'left' }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={BS.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <span style={{ fontSize:13, color:BS.soft, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>Buscar en B Social</span>
+            <span style={{ fontSize:13, color:BS.soft, whiteSpace:'nowrap', overflow:'hidden', textOverflow:'ellipsis' }}>{t(['Buscar en B Social','Search B Social'])}</span>
           </button>
           <button className="bs-btn" onClick={() => setScreen('messages')} style={{ flexShrink:0, color:BS.ink2, position:'relative', width:38, height:38, borderRadius:'50%', background:BS.surface2, border:`1px solid ${BS.border}`, display:'grid', placeItems:'center', cursor:'pointer' }}>
             <svg width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
@@ -663,8 +701,8 @@ function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
         </div>
       </div>
       <div className="bs-hscr" style={{ background:BS.surface, padding:'8px 14px 10px', display:'flex', gap:7, borderBottom:`1px solid ${BS.border}` }}>
-        {['Para ti','Mi Pack','Razas','Cerca de mi'].map((f) => { const on = filt===f; return (
-          <button key={f} onClick={()=>setFilt(f)} className="bs-btn" style={{ padding:'7px 16px', borderRadius:999, border:`1.5px solid ${on?BS.brand:BS.border}`, background:'transparent', color: on ? BS.brand : BS.ink2, fontSize:12.5, fontWeight: on?700:600, cursor:'pointer', whiteSpace:'nowrap', fontFamily:'inherit' }}>{f}</button>
+        {FEED_FILTERS.map((f) => { const on = filt===f.id; return (
+          <button key={f.id} onClick={()=>setFilt(f.id)} className="bs-btn" style={{ padding:'7px 16px', borderRadius:999, border:`1.5px solid ${on?BS.brand:BS.border}`, background:'transparent', color: on ? BS.brand : BS.ink2, fontSize:12.5, fontWeight: on?700:600, cursor:'pointer', whiteSpace:'nowrap', fontFamily:'inherit' }}>{f.label}</button>
         ); })}
       </div>
       <StoriesBar/>
@@ -676,6 +714,8 @@ function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
 
 function ProfileScreen({ posts, setScreen }) {
   const BS = useBS();
+  const t = useT();
+  const { lang } = useLang();
   const A = (typeof window!=='undefined' && window.BSAUTH) || {};
   const r = A.me;
   const me = (r && r.username) ? { username:r.username, name:r.display_name||r.username, city:r.city||'', bio:r.bio||'', avatar:r.avatar_url||'', initials:(r.username||'?').slice(0,2).toUpperCase(), color:r.avatar_color||BS.brand, verified:r.username==='brightpuppy', posts:0, followers:0, following:(A.following||[]).length } : BSDATA.me;
@@ -700,9 +740,9 @@ function ProfileScreen({ posts, setScreen }) {
           <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/></svg>
           BPuppy
         </a>
-        <button onClick={() => setScreen('editprofile')} title="Cambiar portada" style={{ position:'absolute', bottom:8, right:14, background:'rgba(0,0,0,0.32)', border:'none', borderRadius:999, padding:'5px 10px', cursor:'pointer', display:'inline-flex', alignItems:'center', gap:5, color:'#fff', fontSize:11, fontWeight:700 }}>
+        <button onClick={() => setScreen('editprofile')} title={t(['Cambiar portada','Change cover'])} style={{ position:'absolute', bottom:8, right:14, background:'rgba(0,0,0,0.32)', border:'none', borderRadius:999, padding:'5px 10px', cursor:'pointer', display:'inline-flex', alignItems:'center', gap:5, color:'#fff', fontSize:11, fontWeight:700 }}>
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg>
-          Portada
+          {t(['Portada','Cover'])}
         </button>
       </div>
       <div style={{ padding:'0 16px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
@@ -711,8 +751,8 @@ function ProfileScreen({ posts, setScreen }) {
             {me.avatar ? <img src={me.avatar} alt={me.username} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/> : me.initials}
           </div>
           <div style={{ display:'flex', gap:8 }}>
-            <button onClick={() => setScreen('editprofile')} style={{ padding:'8px 16px', borderRadius:10, border:'none', background:BS.grad, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', color:'#fff' }}>Editar perfil</button>
-            <button onClick={() => A.logout && A.logout()} title="Cambiar de usuario" style={{ padding:'8px 14px', borderRadius:10, border:`1.5px solid ${BS.borderStrong}`, background:BS.surface2, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', color:BS.ink }}>Salir</button>
+            <button onClick={() => setScreen('editprofile')} style={{ padding:'8px 16px', borderRadius:10, border:'none', background:BS.grad, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', color:'#fff' }}>{t(['Editar perfil','Edit profile'])}</button>
+            <button onClick={() => A.logout && A.logout()} title={t(['Cambiar de usuario','Switch account'])} style={{ padding:'8px 14px', borderRadius:10, border:`1.5px solid ${BS.borderStrong}`, background:BS.surface2, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', color:BS.ink }}>{t(['Salir','Log out'])}</button>
           </div>
         </div>
         <div style={{ display:'flex', alignItems:'center', gap:6, marginBottom:3 }}>
@@ -721,27 +761,27 @@ function ProfileScreen({ posts, setScreen }) {
         </div>
         <div style={{ fontSize:13, color:BS.ink2, marginBottom:8 }}>{me.name} · {me.city}</div>
         <div style={{ display:'flex', alignItems:'center', gap:8, flexWrap:'wrap', marginBottom:8 }}>
-          <StatusChip status={(r&&r.status)||'nuevo'} lang="es"/>
-          <BadgeChips badges={(r&&r.badges)||[]} lang="es"/>
+          <StatusChip status={(r&&r.status)||'nuevo'} lang={lang}/>
+          <BadgeChips badges={(r&&r.badges)||[]} lang={lang}/>
         </div>
         {r && r.free_grooming > 0 && (
           <div style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:12, fontWeight:700, color:'#1EB87A', background:'rgba(30,184,122,0.1)', border:'1px solid rgba(30,184,122,0.3)', borderRadius:999, padding:'4px 11px', marginBottom:10 }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 12v8a2 2 0 01-2 2H6a2 2 0 01-2-2v-8"/><rect x="2" y="7" width="20" height="5" rx="1"/><path d="M12 22V7M12 7C12 7 11 2 8 2a2.5 2.5 0 000 5M12 7s1-5 4-5a2.5 2.5 0 010 5"/></svg>
-            {r.free_grooming} grooming gratis en FL
+            {r.free_grooming} {t(['grooming gratis en FL','free grooming in FL'])}
           </div>
         )}
         <div style={{ fontSize:13.5, color:BS.ink, marginBottom:14 }}>{me.bio}</div>
         <div style={{ display:'flex', gap:24 }}>
-          {[{n:me.posts,l:'posts'},{n:me.followers,l:'seguidores'},{n:me.following,l:'siguiendo'}].map(s => (
-            <div key={s.l}><div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:18, fontWeight:800, color:BS.ink }}>{s.n}</div><div style={{ fontSize:11, color:BS.soft }}>{s.l}</div></div>
+          {[{n:me.posts,l:t(['posts','posts'])},{n:me.followers,l:t(['seguidores','followers'])},{n:me.following,l:t(['siguiendo','following'])}].map((s,si) => (
+            <div key={si}><div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:18, fontWeight:800, color:BS.ink }}>{s.n}</div><div style={{ fontSize:11, color:BS.soft }}>{s.l}</div></div>
           ))}
         </div>
       </div>
       <div style={{ padding:'14px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
         <div style={{ display:'flex', alignItems:'center', gap:12, padding:'12px 14px', borderRadius:14, border:`1.5px solid ${isPublic?BS.brand:BS.border}`, background: isPublic?'rgba(14,165,233,0.07)':BS.surface2 }}>
           <div style={{ flex:1 }}>
-            <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>Perfil público</div>
-            <div style={{ fontSize:11.5, color:BS.soft, lineHeight:1.45 }}>{isPublic ? 'Visible en Comunidad: tu usuario, ciudad y tu mascota (nombre y raza). Nunca tu contacto.' : 'Tu perfil es privado. Actívalo para aparecer en Comunidad.'}</div>
+            <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>{t(['Perfil público','Public profile'])}</div>
+            <div style={{ fontSize:11.5, color:BS.soft, lineHeight:1.45 }}>{isPublic ? t(['Visible en Comunidad: tu usuario, ciudad y tu mascota (nombre y raza). Nunca tu contacto.','Visible in Community: your username, city and pet (name and breed). Never your contact info.']) : t(['Tu perfil es privado. Actívalo para aparecer en Comunidad.','Your profile is private. Turn it on to appear in Community.'])}</div>
           </div>
           <button onClick={() => persistPublic(!isPublic)} className="bs-btn" style={{ width:46, height:26, borderRadius:999, background: isPublic?BS.grad:BS.border, position:'relative', flexShrink:0, cursor:'pointer', border:'none' }}>
             <span style={{ position:'absolute', top:3, left: isPublic?23:3, width:20, height:20, borderRadius:'50%', background:'#fff', transition:'left .2s', boxShadow:'0 1px 4px rgba(0,0,0,0.3)' }}/>
@@ -750,15 +790,15 @@ function ProfileScreen({ posts, setScreen }) {
         <button onClick={() => setScreen('account')} className="bs-btn" style={{ display:'flex', alignItems:'center', gap:12, width:'100%', marginTop:10, padding:'13px 14px', borderRadius:14, border:`1.5px solid ${BS.border}`, background:BS.surface2, cursor:'pointer', fontFamily:'inherit', textAlign:'left' }}>
           <span style={{ flexShrink:0, color:BS.brand, display:'inline-flex' }}><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v4"/></svg></span>
           <div style={{ flex:1, minWidth:0 }}>
-            <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>Mi Cuenta</div>
-            <div style={{ fontSize:11.5, color:BS.soft }}>Mascotas, grooming, pagos y membresías · privado</div>
+            <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>{t(['Mi Cuenta','My Account'])}</div>
+            <div style={{ fontSize:11.5, color:BS.soft }}>{t(['Mascotas, grooming, pagos y membresías · privado','Pets, grooming, payments and memberships · private'])}</div>
           </div>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke={BS.soft} strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 18l6-6-6-6"/></svg>
         </button>
       </div>
       <div style={{ display:'flex', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
-        {[['posts','Posts'],['pets','Mascotas'],['saved','Guardados']].map(([t,lbl]) => (
-          <button key={t} onClick={() => setTab(t)} style={{ flex:1, padding:'13px', border:'none', background:'none', cursor:'pointer', borderBottom:`2.5px solid ${tab===t ? BS.brand : 'transparent'}`, fontSize:13, fontWeight:700, color: tab===t ? BS.brand : BS.soft, fontFamily:'inherit' }}>{lbl}</button>
+        {[['posts',t(['Posts','Posts'])],['pets',t(['Mascotas','Pets'])],['saved',t(['Guardados','Saved'])]].map(([tb,lbl]) => (
+          <button key={tb} onClick={() => setTab(tb)} style={{ flex:1, padding:'13px', border:'none', background:'none', cursor:'pointer', borderBottom:`2.5px solid ${tab===tb ? BS.brand : 'transparent'}`, fontSize:13, fontWeight:700, color: tab===tb ? BS.brand : BS.soft, fontFamily:'inherit' }}>{lbl}</button>
         ))}
       </div>
       {tab==='posts' && <div style={{ display:'grid', gridTemplateColumns:'repeat(3,1fr)', gap:2 }}>
@@ -773,7 +813,7 @@ function ProfileScreen({ posts, setScreen }) {
                 <span style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink }}>{pet.name}</span>
                 {pet.bpuppy && <span style={{ background:BS.brand, color:'#fff', fontSize:10, fontWeight:700, padding:'2px 9px', borderRadius:999 }}>BrightPuppy</span>}
               </div>
-              <div style={{ fontSize:13, color:BS.ink2 }}>{pet.breed} · {pet.gender} · {pet.dob}</div>
+              <div style={{ fontSize:13, color:BS.ink2 }}>{pet.breed} · {pet.gender==='Hembra'?t(['Hembra','Female']):pet.gender==='Macho'?t(['Macho','Male']):pet.gender} · {pet.dob}</div>
             </div>
           </div>
         ))}
@@ -787,22 +827,23 @@ function ProfileScreen({ posts, setScreen }) {
 
 function PackScreen({ setScreen }) {
   const BS = useBS();
+  const t = useT();
   const [added, setAdded] = useState(new Set());
   const toggle = id => setAdded(s => { const n=new Set(s); n.has(id)?n.delete(id):n.add(id); return n; });
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
       <div style={{ padding:'14px 16px 10px', display:'flex', alignItems:'center', background:BS.surface, borderBottom:`1px solid ${BS.border}`, position:'sticky', top:0, zIndex:10 }}>
-        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink, flex:1 }}>Mi Pack</div>
+        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink, flex:1 }}>{t(['Mi Pack','My Pack'])}</div>
         <div style={{ background:BS.grad, color:'#fff', borderRadius:999, padding:'2px 10px', fontSize:12, fontWeight:700 }}>{BSDATA.pack.length}</div>
       </div>
       <div style={{ padding:'10px 14px', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
         <div style={{ background:BS.surface2, borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:9 }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={BS.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <span style={{ fontSize:13.5, color:BS.soft }}>Buscar en tu Pack...</span>
+          <span style={{ fontSize:13.5, color:BS.soft }}>{t(['Buscar en tu Pack...','Search your Pack...'])}</span>
         </div>
       </div>
       <div style={{ padding:'14px 16px 6px' }}>
-        <div style={{ fontSize:11, fontWeight:700, color:BS.soft, marginBottom:10, textTransform:'uppercase', letterSpacing:'0.06em' }}>Sugerencias</div>
+        <div style={{ fontSize:11, fontWeight:700, color:BS.soft, marginBottom:10, textTransform:'uppercase', letterSpacing:'0.06em' }}>{t(['Sugerencias','Suggestions'])}</div>
         <div className="bs-hscr" style={{ display:'flex', gap:10 }}>
           {BSDATA.suggestions.map(u => (
             <div key={u.id} style={{ flexShrink:0, background:BS.surface, borderRadius:18, padding:'14px 12px', width:120, textAlign:'center', border:`1px solid ${BS.border}` }}>
@@ -810,7 +851,7 @@ function PackScreen({ setScreen }) {
               <div style={{ marginTop:8, fontSize:11.5, fontWeight:700, color:BS.ink, marginBottom:1 }}>{u.username}</div>
               <div style={{ fontSize:10, color:BS.soft, marginBottom:8 }}>{u.pet}</div>
               <button onClick={() => toggle(u.id)} className="bs-btn" style={{ width:'100%', padding:'6px', borderRadius:8, border:'none', background: added.has(u.id) ? BS.surface2 : BS.grad, color: added.has(u.id) ? BS.ink2 : '#fff', fontSize:11, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>
-                {added.has(u.id) ? 'En Pack' : '+ Pack'}
+                {added.has(u.id) ? t(['En Pack','In Pack']) : t(['+ Pack','+ Pack'])}
               </button>
             </div>
           ))}
@@ -827,7 +868,7 @@ function PackScreen({ setScreen }) {
               <span style={{ fontSize:14, fontWeight:700, color:BS.ink }}>{u.username}</span>
               <div style={{ fontSize:11.5, color:BS.soft }}>{u.city} · {u.pet}</div>
             </div>
-            <button className="bs-btn" style={{ padding:'7px 14px', borderRadius:9, border:`1.5px solid ${BS.borderStrong}`, background:'none', fontSize:12, fontWeight:600, color:BS.ink2, cursor:'pointer', fontFamily:'inherit' }}>Mensaje</button>
+            <button className="bs-btn" style={{ padding:'7px 14px', borderRadius:9, border:`1.5px solid ${BS.borderStrong}`, background:'none', fontSize:12, fontWeight:600, color:BS.ink2, cursor:'pointer', fontFamily:'inherit' }}>{t(['Mensaje','Message'])}</button>
           </div>
         ))}
       </div>
@@ -837,16 +878,17 @@ function PackScreen({ setScreen }) {
 
 function DiscoverScreen() {
   const BS = useBS();
+  const t = useT();
   const [filter, setFilter] = useState('todos');
-  const filters = [{id:'todos',label:'Todos'},{id:'park',label:'Parques'},{id:'cafe',label:'Cafes'},{id:'vet',label:'Vets'},{id:'store',label:'Tiendas'}];
+  const filters = [{id:'todos',label:t(['Todos','All'])},{id:'park',label:t(['Parques','Parks'])},{id:'cafe',label:t(['Cafés','Cafés'])},{id:'vet',label:t(['Veterinarias','Vets'])},{id:'store',label:t(['Tiendas','Stores'])}];
   const filtered = filter==='todos' ? BSDATA.places : BSDATA.places.filter(p => p.type===filter);
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
       <div style={{ padding:'14px 16px 10px', background:BS.surface, borderBottom:`1px solid ${BS.border}`, position:'sticky', top:0, zIndex:10 }}>
-        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink, marginBottom:10 }}>Descubrir</div>
+        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink, marginBottom:10 }}>{t(['Descubrir','Discover'])}</div>
         <div style={{ background:BS.surface2, borderRadius:12, padding:'10px 14px', display:'flex', alignItems:'center', gap:9, marginBottom:10 }}>
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke={BS.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-          <span style={{ fontSize:13.5, color:BS.soft }}>Buscar lugares, eventos...</span>
+          <span style={{ fontSize:13.5, color:BS.soft }}>{t(['Buscar lugares, eventos...','Search places, events...'])}</span>
         </div>
         <div className="bs-hscr" style={{ display:'flex', gap:7 }}>
           {filters.map(f => (
@@ -868,7 +910,7 @@ function DiscoverScreen() {
         <div style={{ position:'absolute', bottom:8, right:10, background:`${BS.surface}cc`, padding:'4px 9px', borderRadius:8, fontSize:11, fontWeight:600, color:BS.ink2, backdropFilter:'blur(8px)' }}>Miami, FL</div>
       </div>
       <div style={{ padding:'12px 16px 6px' }}>
-        <div style={{ fontSize:13, fontWeight:700, color:BS.ink, marginBottom:10 }}>Eventos cerca de ti</div>
+        <div style={{ fontSize:13, fontWeight:700, color:BS.ink, marginBottom:10 }}>{t(['Eventos cerca de ti','Events near you'])}</div>
         <div className="bs-hscr" style={{ display:'flex', gap:10 }}>
           {BSDATA.events.map((ev,i) => (
             <div key={i} style={{ flexShrink:0, background: i===0 ? BS.grad : BS.surface, borderRadius:16, padding:'14px', width:155, border:`1px solid ${BS.border}`, boxShadow: i===0 ? BS.glow : 'none' }}>
@@ -897,6 +939,7 @@ function DiscoverScreen() {
 
 function UploadScreen({ setScreen }) {
   const BS = useBS();
+  const t = useT();
   const [step, setStep] = useState(0);
   const [scanState, setScanState] = useState('idle');
   const [caption, setCaption] = useState('');
@@ -911,7 +954,7 @@ function UploadScreen({ setScreen }) {
   const pickFile = (e) => {
     const f = e.target.files && e.target.files[0];
     if (!f) return;
-    if (f.size > 25 * 1024 * 1024) { setErr('El archivo supera 25 MB'); return; }
+    if (f.size > 25 * 1024 * 1024) { setErr(t(['El archivo supera 25 MB','The file exceeds 25 MB'])); return; }
     setErr(''); setFile(f); setIsVideo(/^video\//.test(f.type));
     try { setPreview(URL.createObjectURL(f)); } catch(_e) {}
     setStep(1);
@@ -930,30 +973,30 @@ function UploadScreen({ setScreen }) {
         const { data: pub } = sb.storage.from('social-media').getPublicUrl(path);
         mediaUrl = pub.publicUrl;
       }
-      if (A.createPost) { const d = await A.createPost({ caption, media_url: mediaUrl, visibility: vis, location: loc.trim() }); if (!(d && d.ok)) throw new Error((d && d.error) || 'No se pudo publicar'); }
+      if (A.createPost) { const d = await A.createPost({ caption, media_url: mediaUrl, visibility: vis, location: loc.trim() }); if (!(d && d.ok)) throw new Error((d && d.error) || t(['No se pudo publicar','We couldn’t post'])); }
       setScreen('feed');
-    } catch(e) { setErr((e && e.message) || 'No se pudo subir el archivo'); setUploading(false); }
+    } catch(e) { setErr((e && e.message) || t(['No se pudo subir el archivo','We couldn’t upload the file'])); setUploading(false); }
   };
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%', display:'flex', flexDirection:'column' }}>
       <input ref={fileRef} type="file" accept="image/*,video/mp4,video/quicktime" onChange={pickFile} style={{ display:'none' }}/>
       <div style={{ background:BS.surface, padding:'12px 16px', display:'flex', alignItems:'center', gap:12, borderBottom:`1px solid ${BS.border}`, position:'sticky', top:0, zIndex:10 }}>
         <button onClick={() => step>0 ? setStep(s=>s-1) : setScreen('feed')} className="bs-btn" style={{ color:BS.ink2, fontSize:18 }}>{step===0?'✕':'‹'}</button>
-        <span style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:17, fontWeight:700, color:BS.ink, flex:1 }}>{['Nueva publicación','Agregar detalles','Publicando…','Listo'][step]}</span>
-        {step===1 && <button onClick={startScan} className="bs-btn" style={{ background:BS.grad, color:'#fff', border:'none', padding:'7px 16px', borderRadius:9, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>Siguiente</button>}
+        <span style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:17, fontWeight:700, color:BS.ink, flex:1 }}>{[t(['Nueva publicación','New post']),t(['Agregar detalles','Add details']),t(['Publicando…','Posting…']),t(['Listo','Done'])][step]}</span>
+        {step===1 && <button onClick={startScan} className="bs-btn" style={{ background:BS.grad, color:'#fff', border:'none', padding:'7px 16px', borderRadius:9, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{t(['Siguiente','Next'])}</button>}
       </div>
       {step===0 && (
         <div style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', padding:24, gap:16 }}>
           <div onClick={() => fileRef.current && fileRef.current.click()} style={{ width:'100%', aspectRatio:'1', maxWidth:280, borderRadius:20, border:`2px dashed ${BS.borderStrong}`, background:BS.surface, display:'flex', flexDirection:'column', alignItems:'center', justifyContent:'center', cursor:'pointer', gap:14 }}>
             <div style={{ width:64, height:64, borderRadius:20, background:BS.surface2, display:'grid', placeItems:'center', color:BS.brand }}><svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.7" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="5" width="18" height="14" rx="2"/><circle cx="12" cy="12" r="3.2"/><path d="M8 5l1.5-2h5L16 5"/></svg></div>
             <div style={{ textAlign:'center' }}>
-              <div style={{ fontSize:15, fontWeight:700, color:BS.ink }}>Sube tu foto o video</div>
-              <div style={{ fontSize:12, color:BS.soft, marginTop:3 }}>JPG, PNG, WEBP, MP4 · hasta 25 MB</div>
+              <div style={{ fontSize:15, fontWeight:700, color:BS.ink }}>{t(['Sube tu foto o video','Upload your photo or video'])}</div>
+              <div style={{ fontSize:12, color:BS.soft, marginTop:3 }}>{t(['JPG, PNG, WEBP, MP4 · hasta 25 MB','JPG, PNG, WEBP, MP4 · up to 25 MB'])}</div>
             </div>
           </div>
           {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600 }}>{err}</div>}
           <div style={{ display:'flex', gap:10, width:'100%', maxWidth:280 }}>
-            <button onClick={() => fileRef.current && fileRef.current.click()} className="bs-btn" style={{ flex:1, padding:'13px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:14, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>Elegir archivo</button>
+            <button onClick={() => fileRef.current && fileRef.current.click()} className="bs-btn" style={{ flex:1, padding:'13px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:14, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{t(['Elegir archivo','Choose file'])}</button>
           </div>
         </div>
       )}
@@ -963,14 +1006,14 @@ function UploadScreen({ setScreen }) {
             {isVideo
               ? <video src={preview} style={{ width:70, height:70, objectFit:'cover', borderRadius:12, background:'#000' }} muted/>
               : <img src={preview || 'assets/photos/g04.webp'} alt="" style={{ width:70, height:70, objectFit:'cover', borderRadius:12 }}/>}
-            <textarea value={caption} onChange={e => setCaption(e.target.value)} placeholder="Escribe un pie de foto..." style={{ flex:1, border:'none', background:'none', resize:'none', fontSize:14, color:BS.ink, lineHeight:1.55, minHeight:80, padding:0 }}/>
+            <textarea value={caption} onChange={e => setCaption(e.target.value)} placeholder={t(['Escribe un pie de foto...','Write a caption...'])} style={{ flex:1, border:'none', background:'none', resize:'none', fontSize:14, color:BS.ink, lineHeight:1.55, minHeight:80, padding:0 }}/>
           </div>
           <div style={{ padding:'12px 16px', background:BS.surface, marginTop:8, display:'flex', alignItems:'center', gap:9 }}>
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={BS.brand} strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink:0 }}><path d="M12 21s7-6.4 7-11a7 7 0 1 0-14 0c0 4.6 7 11 7 11z"/><circle cx="12" cy="10" r="2.5"/></svg>
-            <input value={loc} onChange={e=>setLoc(e.target.value)} placeholder="Agregar ubicación (para «Cerca de mí»)" style={{ flex:1, border:'none', background:'none', fontSize:13.5, color:BS.ink, fontFamily:'inherit' }}/>
+            <input value={loc} onChange={e=>setLoc(e.target.value)} placeholder={t(['Agregar ubicación (para «Cerca de mí»)','Add location (for “Near me”)'])} style={{ flex:1, border:'none', background:'none', fontSize:13.5, color:BS.ink, fontFamily:'inherit' }}/>
           </div>
           <div style={{ padding:'14px 16px', background:BS.surface, marginTop:8 }}>
-            {[['public','Público','Todos pueden ver'],['pack','Solo mi Pack','Solo mis amigos'],['private','Privado','Solo yo']].map(([v,l,sub]) => (
+            {[['public',t(['Público','Public']),t(['Todos pueden ver','Everyone can see'])],['pack',t(['Solo mi Pack','My Pack only']),t(['Solo mis amigos','Only my friends'])],['private',t(['Privado','Private']),t(['Solo yo','Only me'])]].map(([v,l,sub]) => (
               <div key={v} onClick={() => setVis(v)} style={{ display:'flex', alignItems:'center', gap:12, padding:'10px 14px', borderRadius:12, border:`1.5px solid ${vis===v ? BS.brand : BS.border}`, background: vis===v ? 'rgba(14,165,233,0.08)' : BS.surface2, cursor:'pointer', marginBottom:8 }}>
                 <div style={{ flex:1 }}><div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>{l}</div><div style={{ fontSize:11.5, color:BS.soft }}>{sub}</div></div>
                 <div style={{ width:18, height:18, borderRadius:'50%', border:`2px solid ${vis===v ? BS.brand : BS.borderStrong}`, background: vis===v ? BS.brand : 'transparent', display:'grid', placeItems:'center' }}>
@@ -1001,13 +1044,13 @@ function UploadScreen({ setScreen }) {
             )}
           </div>
           <div style={{ textAlign:'center' }}>
-            {uploading && <><div style={{ fontSize:16, fontWeight:700, color:BS.ink, marginBottom:6 }}>Subiendo…</div><div style={{ fontSize:13, color:BS.soft }}>Guardando tu publicación</div></>}
-            {!uploading && scanState==='scanning' && <><div style={{ fontSize:16, fontWeight:700, color:BS.ink, marginBottom:6 }}>Revisando contenido…</div><div style={{ fontSize:13, color:BS.soft }}>Verificamos que todo sea seguro</div></>}
+            {uploading && <><div style={{ fontSize:16, fontWeight:700, color:BS.ink, marginBottom:6 }}>{t(['Subiendo…','Uploading…'])}</div><div style={{ fontSize:13, color:BS.soft }}>{t(['Guardando tu publicación','Saving your post'])}</div></>}
+            {!uploading && scanState==='scanning' && <><div style={{ fontSize:16, fontWeight:700, color:BS.ink, marginBottom:6 }}>{t(['Revisando contenido…','Reviewing content…'])}</div><div style={{ fontSize:13, color:BS.soft }}>{t(['Verificamos que todo sea seguro','We make sure everything is safe'])}</div></>}
             {!uploading && scanState==='approved' && <>
-              <div style={{ fontSize:17, fontWeight:800, color:BS.online, marginBottom:5 }}>Listo para compartir</div>
-              <div style={{ fontSize:13, color:BS.soft, marginBottom:18 }}>Toca para publicar en la comunidad</div>
+              <div style={{ fontSize:17, fontWeight:800, color:BS.online, marginBottom:5 }}>{t(['Listo para compartir','Ready to share'])}</div>
+              <div style={{ fontSize:13, color:BS.soft, marginBottom:18 }}>{t(['Toca para publicar en la comunidad','Tap to post to the community'])}</div>
               {err && <div style={{ fontSize:12.5, color:BS.like, fontWeight:600, marginBottom:12 }}>{err}</div>}
-              <button onClick={doPublish} className="bs-btn" style={{ padding:'14px 44px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:15, fontWeight:700, cursor:'pointer', fontFamily:'inherit', boxShadow:BS.glow }}>Publicar ahora</button>
+              <button onClick={doPublish} className="bs-btn" style={{ padding:'14px 44px', borderRadius:14, border:'none', background:BS.grad, color:'#fff', fontSize:15, fontWeight:700, cursor:'pointer', fontFamily:'inherit', boxShadow:BS.glow }}>{t(['Publicar ahora','Post now'])}</button>
             </>}
           </div>
         </div>
@@ -1018,12 +1061,13 @@ function UploadScreen({ setScreen }) {
 
 function PetsScreen() {
   const BS = useBS();
+  const t = useT();
   const pet = BSDATA.pets[0];
   const maxW = Math.max(...pet.weight.map(w=>w.v));
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
       <div style={{ padding:'14px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}`, position:'sticky', top:0, zIndex:10 }}>
-        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink }}>Mis Mascotas</div>
+        <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink }}>{t(['Mis Mascotas','My Pets'])}</div>
       </div>
       <div style={{ margin:'14px 16px 0', background:BS.surface, borderRadius:20, overflow:'hidden', border:`1px solid ${BS.border}` }}>
         <div style={{ position:'relative' }}>
@@ -1035,12 +1079,12 @@ function PetsScreen() {
             <span style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:22, fontWeight:800, color:BS.ink }}>{pet.name}</span>
             <span style={{ fontSize:12, fontWeight:700, color:BS.brand, background:'rgba(255,85,32,0.12)', padding:'2px 10px', borderRadius:999 }}>{pet.breed}</span>
           </div>
-          <div style={{ fontSize:12.5, color:BS.soft }}>{pet.gender} · Nacio {pet.dob}</div>
+          <div style={{ fontSize:12.5, color:BS.soft }}>{pet.gender==='Hembra'?t(['Hembra','Female']):pet.gender==='Macho'?t(['Macho','Male']):pet.gender} · {t(['Nació','Born'])} {pet.dob}</div>
         </div>
       </div>
       <div style={{ margin:'12px 16px 0', background:BS.surface, borderRadius:16, overflow:'hidden', border:`1px solid ${BS.border}` }}>
         <div style={{ padding:'12px 16px', borderBottom:`1px solid ${BS.border}`, display:'flex', alignItems:'center', justifyContent:'space-between' }}>
-          <span style={{ fontSize:14, fontWeight:700, color:BS.ink }}>Vacunas</span>
+          <span style={{ fontSize:14, fontWeight:700, color:BS.ink }}>{t(['Vacunas','Vaccines'])}</span>
           <span style={{ fontSize:12, color:BS.soft }}>{pet.vaccines.filter(v=>v.done).length}/{pet.vaccines.length}</span>
         </div>
         {pet.vaccines.map(v => (
@@ -1050,12 +1094,12 @@ function PetsScreen() {
               <div style={{ fontSize:13.5, fontWeight:700, color:BS.ink }}>{v.name}</div>
               <div style={{ fontSize:11.5, color:BS.soft }}>{v.date}</div>
             </div>
-            {v.upcoming && <span style={{ background:'rgba(255,85,32,0.1)', color:BS.brand, fontSize:11, fontWeight:700, padding:'3px 9px', borderRadius:999 }}>Proxima</span>}
+            {v.upcoming && <span style={{ background:'rgba(255,85,32,0.1)', color:BS.brand, fontSize:11, fontWeight:700, padding:'3px 9px', borderRadius:999 }}>{t(['Próxima','Upcoming'])}</span>}
           </div>
         ))}
       </div>
       <div style={{ margin:'12px 16px 20px', background:BS.surface, borderRadius:16, padding:'14px 16px', border:`1px solid ${BS.border}` }}>
-        <div style={{ fontSize:14, fontWeight:700, color:BS.ink, marginBottom:14 }}>Peso (kg)</div>
+        <div style={{ fontSize:14, fontWeight:700, color:BS.ink, marginBottom:14 }}>{t(['Peso (kg)','Weight (kg)'])}</div>
         <div style={{ display:'flex', alignItems:'flex-end', gap:8, height:80 }}>
           {pet.weight.map(w => (
             <div key={w.m} style={{ flex:1, display:'flex', flexDirection:'column', alignItems:'center', gap:4 }}>
@@ -1071,13 +1115,14 @@ function PetsScreen() {
 }
 
 function MessagesThread({ m, BS, onBack }) {
+  const t = useT();
   const [msgs, setMsgs] = useState(() => ([
     { from:'them', text:m.preview, time:m.time },
   ]));
   const [draft, setDraft] = useState('');
   const send = () => {
-    const t = draft.trim(); if(!t) return;
-    setMsgs(prev => [...prev, { from:'me', text:t, time:'ahora' }]);
+    const tx = draft.trim(); if(!tx) return;
+    setMsgs(prev => [...prev, { from:'me', text:tx, time:t(['ahora','now']) }]);
     setDraft('');
   };
   return (
@@ -1087,7 +1132,7 @@ function MessagesThread({ m, BS, onBack }) {
         <BSAvatar user={m} size={36}/>
         <div style={{ flex:1, minWidth:0 }}>
           <div style={{ fontSize:14.5, fontWeight:700, color:BS.ink }}>{m.user}</div>
-          <div style={{ fontSize:11, color: m.online ? BS.online : BS.soft }}>{m.online ? 'En línea' : 'Desconectado'}</div>
+          <div style={{ fontSize:11, color: m.online ? BS.online : BS.soft }}>{m.online ? t(['En línea','Online']) : t(['Desconectado','Offline'])}</div>
         </div>
       </div>
       <div style={{ flex:1, overflowY:'auto', padding:'16px', display:'flex', flexDirection:'column', gap:8 }}>
@@ -1098,11 +1143,11 @@ function MessagesThread({ m, BS, onBack }) {
           </div>
         ))}
         <div style={{ alignSelf:'center', margin:'8px 0', padding:'8px 12px', borderRadius:10, background:BS.surface2, border:`1px solid ${BS.border}`, fontSize:11, color:BS.soft, textAlign:'center', maxWidth:'90%' }}>
-          La mensajería en tiempo real entre miembros está activándose. Por ahora puedes ver tus conversaciones y redactar; el envío entre cuentas llegará muy pronto.
+          {t(['La mensajería en tiempo real entre miembros está activándose. Por ahora puedes ver tus conversaciones y redactar; el envío entre cuentas llegará muy pronto.','Real-time messaging between members is rolling out. For now you can view your conversations and draft messages; sending between accounts is coming very soon.'])}
         </div>
       </div>
       <div style={{ padding:'12px 16px', background:BS.surface, borderTop:`1px solid ${BS.border}`, display:'flex', alignItems:'center', gap:10 }}>
-        <input value={draft} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{ if(e.key==='Enter') send(); }} placeholder="Escribe un mensaje…" style={{ flex:1, border:`1px solid ${BS.border}`, borderRadius:999, background:BS.bg, padding:'10px 15px', fontSize:13.5, color:BS.ink, fontFamily:'inherit', outline:'none' }}/>
+        <input value={draft} onChange={e=>setDraft(e.target.value)} onKeyDown={e=>{ if(e.key==='Enter') send(); }} placeholder={t(['Escribe un mensaje…','Write a message…'])} style={{ flex:1, border:`1px solid ${BS.border}`, borderRadius:999, background:BS.bg, padding:'10px 15px', fontSize:13.5, color:BS.ink, fontFamily:'inherit', outline:'none' }}/>
         <button onClick={send} style={{ width:40, height:40, borderRadius:'50%', border:'none', background:BS.brand, color:'#fff', cursor:'pointer', display:'grid', placeItems:'center', flexShrink:0 }}>
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
         </button>
@@ -1113,13 +1158,14 @@ function MessagesThread({ m, BS, onBack }) {
 
 function MessagesScreen({ setScreen }) {
   const BS = useBS();
+  const t = useT();
   const [active, setActive] = useState(null);
   if (active) return <MessagesThread m={active} BS={BS} onBack={() => setActive(null)}/>;
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
       <div style={{ padding:'14px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}`, display:'flex', alignItems:'center', gap:12, position:'sticky', top:0, zIndex:10 }}>
         <button onClick={() => setScreen('feed')} className="bs-btn" style={{ color:BS.ink2, fontSize:16 }}>{'<'}</button>
-        <div style={{ flex:1, fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink }}>Mensajes</div>
+        <div style={{ flex:1, fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink }}>{t(['Mensajes','Messages'])}</div>
       </div>
       {BSDATA.messages.map((m,i) => (
         <div key={i} onClick={() => setActive(m)} style={{ display:'flex', alignItems:'center', gap:12, padding:'13px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}`, cursor:'pointer' }}>
@@ -1163,6 +1209,7 @@ function SearchBar({ value, onChange, placeholder, BS }) {
 
 function CommunityScreen() {
   const BS = useBS();
+  const t = useT();
   const [following, setFollowing] = useState(new Set());
   const [q, setQ] = useState('');
   const toggle = (m) => {
@@ -1173,10 +1220,10 @@ function CommunityScreen() {
   const list = ql ? BSDATA.community.filter(m => [m.name,m.username,m.city,m.pet.name,m.pet.breed].filter(Boolean).join(' ').toLowerCase().includes(ql)) : BSDATA.community;
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
-      <ScreenHeader title="Comunidad" sub="Dueños que comparten su perfil público"/>
-      <SearchBar value={q} onChange={setQ} placeholder="Buscar por nombre, ciudad o raza…" BS={BS}/>
+      <ScreenHeader title={t(['Comunidad','Community'])} sub={t(['Dueños que comparten su perfil público','Owners who share their public profile'])}/>
+      <SearchBar value={q} onChange={setQ} placeholder={t(['Buscar por nombre, ciudad o raza…','Search by name, city or breed…'])} BS={BS}/>
       <div style={{ margin:'8px 16px 4px', padding:'10px 13px', borderRadius:12, background:'rgba(245,130,32,0.08)', border:`1px solid ${BS.borderStrong}`, fontSize:11.5, color:BS.ink2, lineHeight:1.5 }}>
-        Tu perfil es <b style={{ color:BS.ink }}>privado por defecto</b>. Solo apareces aquí si activas “perfil público”, y solo con los datos que tú elijas.
+        {t(['Tu perfil es','Your profile is'])} <b style={{ color:BS.ink }}>{t(['privado por defecto','private by default'])}</b>. {t(['Solo apareces aquí si activas “perfil público”, y solo con los datos que tú elijas.','You only appear here if you turn on “public profile”, and only with the details you choose.'])}
       </div>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(150px,1fr))', gap:12, padding:'8px 16px 22px' }}>
         {list.map(m => {
@@ -1191,14 +1238,14 @@ function CommunityScreen() {
                 <div style={{ width:46, height:46, borderRadius:'50%', background:m.color, display:'grid', placeItems:'center', color:'#fff', fontWeight:800, fontSize:16, border:`3px solid ${BS.surface}`, margin:'0 auto 6px', overflow:'hidden' }}>{m.avatar ? <img src={m.avatar} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : m.initials}</div>
                 <div style={{ fontSize:13.5, fontWeight:800, color:BS.ink }}>{m.name}</div>
                 <div style={{ fontSize:11, color:BS.soft, marginBottom:6 }}>{m.city}</div>
-                {m.status && m.status!=='nuevo' && <div style={{ marginBottom:7, display:'flex', justifyContent:'center' }}><StatusChip status={m.status} lang="es" size="sm"/></div>}
+                {m.status && m.status!=='nuevo' && <div style={{ marginBottom:7, display:'flex', justifyContent:'center' }}><StatusChip status={m.status} size="sm"/></div>}
                 {(m.pet.name || m.pet.breed) && <div style={{ fontSize:11, color:BS.brand, fontWeight:700, background:'rgba(245,130,32,0.1)', borderRadius:999, padding:'2px 9px', display:'inline-block', marginBottom:9 }}>{[m.pet.name, m.pet.breed].filter(Boolean).join(' · ')}</div>}
-                <button onClick={() => toggle(m)} className="bs-btn" style={{ width:'100%', padding:'7px', borderRadius:999, border:`1.5px solid ${fol?BS.border:BS.brand}`, background:'transparent', color: fol?BS.soft:BS.brand, fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{fol?'Siguiendo':'Seguir'}</button>
+                <button onClick={() => toggle(m)} className="bs-btn" style={{ width:'100%', padding:'7px', borderRadius:999, border:`1.5px solid ${fol?BS.border:BS.brand}`, background:'transparent', color: fol?BS.soft:BS.brand, fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{fol?t(['Siguiendo','Following']):t(['Seguir','Follow'])}</button>
               </div>
             </div>
           );
         })}
-        {list.length === 0 && <div style={{ gridColumn:'1/-1', textAlign:'center', color:BS.soft, fontSize:13, padding:'30px 0' }}>Nadie coincide con tu búsqueda todavía.</div>}
+        {list.length === 0 && <div style={{ gridColumn:'1/-1', textAlign:'center', color:BS.soft, fontSize:13, padding:'30px 0' }}>{t(['Nadie coincide con tu búsqueda todavía.','No one matches your search yet.'])}</div>}
       </div>
     </div>
   );
@@ -1206,11 +1253,12 @@ function CommunityScreen() {
 
 function EventsScreen() {
   const BS = useBS();
+  const t = useT();
   const [going, setGoing] = useState(new Set());
   const toggle = id => setGoing(s => { const n=new Set(s); n.has(id)?n.delete(id):n.add(id); return n; });
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
-      <ScreenHeader title="Eventos BPuppy" sub="Reuniones y actividades de la comunidad"/>
+      <ScreenHeader title={t(['Eventos BPuppy','BPuppy Events'])} sub={t(['Reuniones y actividades de la comunidad','Community meetups and activities'])}/>
       <div style={{ padding:'14px 16px 22px', display:'flex', flexDirection:'column', gap:14 }}>
         {BSDATA.bpuppyEvents.map(ev => {
           const on = going.has(ev.id);
@@ -1222,8 +1270,8 @@ function EventsScreen() {
                 <div style={{ fontSize:12.5, color:BS.brand, fontWeight:700, marginBottom:2 }}>{ev.date}</div>
                 <div style={{ fontSize:12, color:BS.soft, marginBottom:12 }}>{ev.place}</div>
                 <div style={{ display:'flex', alignItems:'center', gap:12 }}>
-                  <button onClick={() => toggle(ev.id)} className="bs-btn" style={{ padding:'9px 20px', borderRadius:11, border:'none', background: on?BS.surface2:BS.grad, color: on?BS.ink:'#fff', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', boxShadow: on?'none':BS.glow }}>{on?'Asistirás ✓':'Asistir'}</button>
-                  <span style={{ fontSize:12, color:BS.soft }}>{ev.attendees + (on?1:0)} asistentes</span>
+                  <button onClick={() => toggle(ev.id)} className="bs-btn" style={{ padding:'9px 20px', borderRadius:11, border:'none', background: on?BS.surface2:BS.grad, color: on?BS.ink:'#fff', fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit', boxShadow: on?'none':BS.glow }}>{on?t(['Asistirás ✓','Going ✓']):t(['Asistir','Attend'])}</button>
+                  <span style={{ fontSize:12, color:BS.soft }}>{ev.attendees + (on?1:0)} {t(['asistentes','attending'])}</span>
                 </div>
               </div>
             </div>
@@ -1236,9 +1284,10 @@ function EventsScreen() {
 
 function NewsScreen() {
   const BS = useBS();
+  const t = useT();
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
-      <ScreenHeader title="Noticias" sub="Novedades de BrightPuppy"/>
+      <ScreenHeader title={t(['Noticias','News'])} sub={t(['Novedades de BrightPuppy','BrightPuppy updates'])}/>
       <div style={{ padding:'14px 16px 22px', display:'flex', flexDirection:'column', gap:14 }}>
         {BSDATA.news.map(n => (
           <div key={n.id} className="bs-pop" style={{ background:BS.surface, borderRadius:18, overflow:'hidden', border:`1px solid ${BS.border}`, display:'flex', cursor:'pointer' }}>
@@ -1258,9 +1307,10 @@ function NewsScreen() {
 
 function VideosScreen() {
   const BS = useBS();
+  const t = useT();
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
-      <ScreenHeader title="Videos" sub="Mira a la comunidad en acción"/>
+      <ScreenHeader title={t(['Videos','Videos'])} sub={t(['Mira a la comunidad en acción','Watch the community in action'])}/>
       <div style={{ display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(160px,1fr))', gap:12, padding:'14px 16px 22px' }}>
         {BSDATA.videos.map(v => (
           <div key={v.id} className="bs-pop" style={{ background:BS.surface, borderRadius:16, overflow:'hidden', border:`1px solid ${BS.border}`, cursor:'pointer' }}>
@@ -1283,35 +1333,36 @@ function VideosScreen() {
 
 // ── Mi Cuenta (portal) DENTRO de B Social — datos privados, leídos de Supabase (mismas tablas que el CRM) ──
 function PetForm({ BS, initial, petId, onDone, onCancel }) {
+  const t = useT();
   const [f, setF] = useState({ name:(initial&&initial.name)||'', breed:(initial&&initial.breed)||'', size:(initial&&initial.size)||'', sex:(initial&&initial.sex)||'', weight_lbs:(initial&&initial.weight_lbs)||'' });
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState('');
   const inp = { width:'100%', padding:'10px 12px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontFamily:'inherit', fontSize:13, outline:'none', boxSizing:'border-box' };
   const save = async () => {
-    if(!f.name.trim()){ setMsg('El nombre es obligatorio.'); return; }
+    if(!f.name.trim()){ setMsg(t(['El nombre es obligatorio.','Name is required.'])); return; }
     setBusy(true); setMsg('');
     try {
       const A = (typeof window!=='undefined' && window.BSAUTH) || {};
-      const d = petId ? (A.updatePet ? await A.updatePet({ id:petId, ...f }) : { error:'No disponible' })
-                      : (A.addPet ? await A.addPet(f) : { error:'No disponible' });
+      const d = petId ? (A.updatePet ? await A.updatePet({ id:petId, ...f }) : { error:t(['No disponible','Not available']) })
+                      : (A.addPet ? await A.addPet(f) : { error:t(['No disponible','Not available']) });
       if(d && d.error){ setMsg(d.error); setBusy(false); return; }
       onDone();
-    } catch(e){ setMsg('No se pudo guardar.'); setBusy(false); }
+    } catch(e){ setMsg(t(['No se pudo guardar.','We couldn’t save.'])); setBusy(false); }
   };
   return (
     <div style={{ background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:16, padding:16, marginTop:4, marginBottom:12 }}>
-      <div style={{ fontSize:14, fontWeight:800, color:BS.ink, marginBottom:10 }}>{petId ? 'Editar mascota' : 'Agregar mascota'}</div>
+      <div style={{ fontSize:14, fontWeight:800, color:BS.ink, marginBottom:10 }}>{petId ? t(['Editar mascota','Edit pet']) : t(['Agregar mascota','Add pet'])}</div>
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8 }}>
-        <input style={{ ...inp, gridColumn:'1/-1' }} placeholder="Nombre *" value={f.name} onChange={e=>setF({...f,name:e.target.value})}/>
-        <input style={inp} placeholder="Raza" value={f.breed} onChange={e=>setF({...f,breed:e.target.value})}/>
-        <select style={inp} value={f.size} onChange={e=>setF({...f,size:e.target.value})}><option value="">Tamaño</option><option>Pequeño</option><option>Mediano</option><option>Grande</option><option>XL</option></select>
-        <select style={inp} value={f.sex} onChange={e=>setF({...f,sex:e.target.value})}><option value="">Sexo</option><option>Macho</option><option>Hembra</option></select>
-        <input style={inp} type="number" placeholder="Peso (lb)" value={f.weight_lbs} onChange={e=>setF({...f,weight_lbs:e.target.value})}/>
+        <input style={{ ...inp, gridColumn:'1/-1' }} placeholder={t(['Nombre *','Name *'])} value={f.name} onChange={e=>setF({...f,name:e.target.value})}/>
+        <input style={inp} placeholder={t(['Raza','Breed'])} value={f.breed} onChange={e=>setF({...f,breed:e.target.value})}/>
+        <select style={inp} value={f.size} onChange={e=>setF({...f,size:e.target.value})}><option value="">{t(['Tamaño','Size'])}</option><option value="Pequeño">{t(['Pequeño','Small'])}</option><option value="Mediano">{t(['Mediano','Medium'])}</option><option value="Grande">{t(['Grande','Large'])}</option><option value="XL">XL</option></select>
+        <select style={inp} value={f.sex} onChange={e=>setF({...f,sex:e.target.value})}><option value="">{t(['Sexo','Sex'])}</option><option value="Macho">{t(['Macho','Male'])}</option><option value="Hembra">{t(['Hembra','Female'])}</option></select>
+        <input style={inp} type="number" placeholder={t(['Peso (lb)','Weight (lb)'])} value={f.weight_lbs} onChange={e=>setF({...f,weight_lbs:e.target.value})}/>
       </div>
       {msg && <div style={{ fontSize:12, color:BS.rose, marginTop:8 }}>{msg}</div>}
       <div style={{ display:'flex', gap:8, marginTop:12 }}>
-        <button onClick={onCancel} className="bs-btn" style={{ flex:1, padding:'11px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:'transparent', color:BS.ink2, fontWeight:700, fontSize:13, cursor:'pointer', fontFamily:'inherit' }}>Cancelar</button>
-        <button onClick={save} disabled={busy} className="bs-btn" style={{ flex:2, padding:'11px', borderRadius:10, border:'none', background:BS.grad, color:'#fff', fontWeight:700, fontSize:13, cursor:busy?'default':'pointer', fontFamily:'inherit', opacity:busy?0.7:1 }}>{busy?'Guardando…':(petId?'Guardar cambios':'Guardar mascota')}</button>
+        <button onClick={onCancel} className="bs-btn" style={{ flex:1, padding:'11px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:'transparent', color:BS.ink2, fontWeight:700, fontSize:13, cursor:'pointer', fontFamily:'inherit' }}>{t(['Cancelar','Cancel'])}</button>
+        <button onClick={save} disabled={busy} className="bs-btn" style={{ flex:2, padding:'11px', borderRadius:10, border:'none', background:BS.grad, color:'#fff', fontWeight:700, fontSize:13, cursor:busy?'default':'pointer', fontFamily:'inherit', opacity:busy?0.7:1 }}>{busy?t(['Guardando…','Saving…']):(petId?t(['Guardar cambios','Save changes']):t(['Guardar mascota','Save pet']))}</button>
       </div>
     </div>
   );
@@ -1319,6 +1370,8 @@ function PetForm({ BS, initial, petId, onDone, onCancel }) {
 
 function AccountScreen({ setScreen }) {
   const BS = useBS();
+  const t = useT();
+  const { lang } = useLang();
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [err, setErr] = useState('');
@@ -1333,17 +1386,17 @@ function AccountScreen({ setScreen }) {
     setLoading(true); setErr('');
     try {
       const A = (typeof window!=='undefined' && window.BSAUTH) || {};
-      if (!A.accountData) { setErr('No disponible.'); setLoading(false); return; }
+      if (!A.accountData) { setErr(t(['No disponible.','Not available.'])); setLoading(false); return; }
       const d = await A.accountData();
       if (d && d.error) setErr(d.error);
       else setData(d || {});
-    } catch(e){ setErr('No pudimos cargar tu cuenta.'); }
+    } catch(e){ setErr(t(['No pudimos cargar tu cuenta.','We couldn’t load your account.'])); }
     setLoading(false);
   };
   useEffect(() => { load(); }, []);
 
   const money = n => '$' + Number(n||0).toLocaleString('en-US');
-  const fmtD = iso => { if(!iso) return '—'; try { return new Date(String(iso).length<=10?iso+'T00:00:00':iso).toLocaleDateString('es-US',{day:'numeric',month:'short',year:'numeric'}); } catch(e){ return '—'; } };
+  const fmtD = iso => { if(!iso) return '—'; try { return new Date(String(iso).length<=10?iso+'T00:00:00':iso).toLocaleDateString(lang==='en'?'en-US':'es-US',{day:'numeric',month:'short',year:'numeric'}); } catch(e){ return '—'; } };
 
   const d = data || {};
   const pets = d.pets || [];
@@ -1354,27 +1407,27 @@ function AccountScreen({ setScreen }) {
   const baths = memberships.reduce((a,m)=>a+(m.credits_balance||0),0);
 
   const cancelBooking = async (b) => {
-    if(!(window.confirm('¿Cancelar esta cita? Cancelar con menos de 24h puede tener cargo del 50%.'))) return;
+    if(!(window.confirm(t(['¿Cancelar esta cita? Cancelar con menos de 24h puede tener cargo del 50%.','Cancel this appointment? Cancelling with less than 24h notice may incur a 50% charge.'])))) return;
     setBkBusy(b.id); setBkMsg('');
-    try { const r = await (window.BSAUTH && window.BSAUTH.manageBooking ? window.BSAUTH.manageBooking('cancel', b.id) : {error:'No disponible'});
-      if(r && r.error){ setBkMsg(r.error); } else { setBkMsg(r && r.message ? r.message : 'Cita cancelada.'); await load(); }
-    } catch(e){ setBkMsg('No se pudo cancelar.'); }
+    try { const r = await (window.BSAUTH && window.BSAUTH.manageBooking ? window.BSAUTH.manageBooking('cancel', b.id) : {error:t(['No disponible','Not available'])});
+      if(r && r.error){ setBkMsg(r.error); } else { setBkMsg(r && r.message ? r.message : t(['Cita cancelada.','Appointment cancelled.'])); await load(); }
+    } catch(e){ setBkMsg(t(['No se pudo cancelar.','We couldn’t cancel.'])); }
     setBkBusy(null);
   };
   const payPlan = async (p) => {
     setPayBusy(p.id);
-    try { const r = await (window.BSAUTH && window.BSAUTH.payPlan ? window.BSAUTH.payPlan(p.id) : {error:'No disponible'});
+    try { const r = await (window.BSAUTH && window.BSAUTH.payPlan ? window.BSAUTH.payPlan(p.id) : {error:t(['No disponible','Not available'])});
       if(r && r.url){ window.location.href = r.url; return; }
-      setBkMsg((r && r.error) || 'No se pudo iniciar el pago.');
-    } catch(e){ setBkMsg('No se pudo iniciar el pago.'); }
+      setBkMsg((r && r.error) || t(['No se pudo iniciar el pago.','We couldn’t start the payment.']));
+    } catch(e){ setBkMsg(t(['No se pudo iniciar el pago.','We couldn’t start the payment.'])); }
     setPayBusy(null);
   };
 
   const TABS = [
-    { id:'mascotas',   label:'Mascotas',   n: pets.length },
-    { id:'grooming',   label:'Grooming',   n: 0 },
-    { id:'membresias', label:'Membresías', n: memberships.length },
-    { id:'pagos',      label:'Pagos',      n: plans.length },
+    { id:'mascotas',   label:t(['Mascotas','Pets']),       n: pets.length },
+    { id:'grooming',   label:t(['Grooming','Grooming']),   n: 0 },
+    { id:'membresias', label:t(['Membresías','Memberships']), n: memberships.length },
+    { id:'pagos',      label:t(['Pagos','Payments']),      n: plans.length },
   ];
   const card = { background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:16, padding:'14px 16px', marginBottom:12 };
   const row = (k,v,vc) => (<div style={{ display:'flex', justifyContent:'space-between', gap:12, padding:'4px 0', fontSize:13 }}><span style={{ color:BS.soft }}>{k}</span><span style={{ color:vc||BS.ink, fontWeight:600, textAlign:'right' }}>{v}</span></div>);
@@ -1386,25 +1439,25 @@ function AccountScreen({ setScreen }) {
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
         <div style={{ flex:1, minWidth:0 }}>
-          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:18, fontWeight:800, color:BS.ink }}>Mi Cuenta</div>
-          <div style={{ fontSize:11.5, color:BS.soft }}>Privado · solo tú ves esto</div>
+          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:18, fontWeight:800, color:BS.ink }}>{t(['Mi Cuenta','My Account'])}</div>
+          <div style={{ fontSize:11.5, color:BS.soft }}>{t(['Privado · solo tú ves esto','Private · only you see this'])}</div>
         </div>
-        <a href="/grooming.html" className="bs-btn" style={{ textDecoration:'none', background:BS.grad, color:'#fff', fontSize:12, fontWeight:700, padding:'8px 13px', borderRadius:10 }}>Agendar</a>
+        <a href="/grooming.html" className="bs-btn" style={{ textDecoration:'none', background:BS.grad, color:'#fff', fontSize:12, fontWeight:700, padding:'8px 13px', borderRadius:10 }}>{t(['Agendar','Book'])}</a>
       </div>
 
       <div style={{ display:'flex', alignItems:'center', gap:10, margin:'12px 14px 0', padding:'10px 14px', borderRadius:12, background:BS.surface2, border:`1px solid ${BS.border}` }}>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke={BS.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" style={{ flexShrink:0 }}><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg>
-        <span style={{ fontSize:11.5, color:BS.soft, lineHeight:1.4 }}>Tus mascotas, citas, pagos y membresías son privados — no aparecen en tu perfil público.</span>
+        <span style={{ fontSize:11.5, color:BS.soft, lineHeight:1.4 }}>{t(['Tus mascotas, citas, pagos y membresías son privados — no aparecen en tu perfil público.','Your pets, appointments, payments and memberships are private — they don’t appear on your public profile.'])}</span>
       </div>
 
-      {loading && <div style={{ padding:40, textAlign:'center', color:BS.soft, fontSize:13 }}>Cargando tu cuenta…</div>}
-      {!loading && err && <div style={{ margin:'16px 14px', background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:16, padding:'14px 16px', color:BS.rose, fontSize:13 }}>{err} <button onClick={load} style={{ marginLeft:8, color:BS.brand, background:'none', border:'none', cursor:'pointer', fontWeight:700 }}>Reintentar</button></div>}
+      {loading && <div style={{ padding:40, textAlign:'center', color:BS.soft, fontSize:13 }}>{t(['Cargando tu cuenta…','Loading your account…'])}</div>}
+      {!loading && err && <div style={{ margin:'16px 14px', background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:16, padding:'14px 16px', color:BS.rose, fontSize:13 }}>{err} <button onClick={load} style={{ marginLeft:8, color:BS.brand, background:'none', border:'none', cursor:'pointer', fontWeight:700 }}>{t(['Reintentar','Retry'])}</button></div>}
 
       {!loading && !err && (
       <React.Fragment>
         <div style={{ display:'flex', gap:8, padding:'12px 14px' }}>
-          {[{n:pets.length,l:'mascotas'},{n:baths,l:'baños disp.'},{n:memberships.length,l:'membresías'}].map(s=>(
-            <div key={s.l} style={{ flex:1, background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:14, padding:'10px', textAlign:'center' }}>
+          {[{n:pets.length,l:t(['mascotas','pets'])},{n:baths,l:t(['baños disp.','baths avail.'])},{n:memberships.length,l:t(['membresías','memberships'])}].map((s,si)=>(
+            <div key={si} style={{ flex:1, background:BS.surface, border:`1px solid ${BS.border}`, borderRadius:14, padding:'10px', textAlign:'center' }}>
               <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink }}>{s.n}</div>
               <div style={{ fontSize:10.5, color:BS.soft }}>{s.l}</div>
             </div>
@@ -1420,7 +1473,7 @@ function AccountScreen({ setScreen }) {
         <div style={{ padding:'14px' }}>
           {tab==='mascotas' && (
             <div>
-              {pets.length===0 && !addOpen && <div style={{ ...card, textAlign:'center', color:BS.soft, fontSize:13 }}>Aún no tienes mascotas registradas.</div>}
+              {pets.length===0 && !addOpen && <div style={{ ...card, textAlign:'center', color:BS.soft, fontSize:13 }}>{t(['Aún no tienes mascotas registradas.','You don’t have any pets registered yet.'])}</div>}
               {pets.map((p,i)=> editId===p.id ? (
                 <PetForm key={i} BS={BS} petId={p.id} initial={p} onDone={()=>{ setEditId(null); load(); }} onCancel={()=>setEditId(null)}/>
               ) : (
@@ -1429,25 +1482,25 @@ function AccountScreen({ setScreen }) {
                     {p.photo_url ? <img src={p.photo_url} alt="" style={{ width:'100%', height:'100%', objectFit:'cover' }}/> : <svg width="26" height="26" viewBox="0 0 24 24" fill={BS.brand}><circle cx="7" cy="9" r="1.7"/><circle cx="12" cy="7.4" r="1.7"/><circle cx="17" cy="9" r="1.7"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/></svg>}
                   </div>
                   <div style={{ flex:1, minWidth:0 }}>
-                    <div style={{ fontSize:15, fontWeight:800, color:BS.ink }}>{p.name||'Mi mascota'}</div>
+                    <div style={{ fontSize:15, fontWeight:800, color:BS.ink }}>{p.name||t(['Mi mascota','My pet'])}</div>
                     <div style={{ fontSize:12, color:BS.ink2 }}>{[p.breed, p.size, p.sex, p.weight_lbs?(p.weight_lbs+' lb'):''].filter(Boolean).join(' · ')||'—'}</div>
-                    {p.status==='pending' && <span style={{ display:'inline-block', marginTop:5, fontSize:10.5, fontWeight:700, color:'#E0A106', background:'rgba(224,161,6,0.12)', padding:'2px 8px', borderRadius:999 }}>Pendiente de confirmar</span>}
+                    {p.status==='pending' && <span style={{ display:'inline-block', marginTop:5, fontSize:10.5, fontWeight:700, color:'#E0A106', background:'rgba(224,161,6,0.12)', padding:'2px 8px', borderRadius:999 }}>{t(['Pendiente de confirmar','Pending confirmation'])}</span>}
                   </div>
                   <div style={{ display:'flex', flexDirection:'column', gap:6, flexShrink:0 }}>
-                    <button onClick={()=>{ setEditId(p.id); setAddOpen(false); }} className="bs-btn" style={{ fontSize:11.5, fontWeight:700, color:BS.ink2, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'7px 11px', background:'transparent', cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap' }}>Editar</button>
-                    {p.status!=='pending' && <a href="/grooming.html" className="bs-btn" style={{ textDecoration:'none', textAlign:'center', fontSize:11.5, fontWeight:700, color:BS.brand, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'7px 11px', whiteSpace:'nowrap' }}>Agendar</a>}
+                    <button onClick={()=>{ setEditId(p.id); setAddOpen(false); }} className="bs-btn" style={{ fontSize:11.5, fontWeight:700, color:BS.ink2, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'7px 11px', background:'transparent', cursor:'pointer', fontFamily:'inherit', whiteSpace:'nowrap' }}>{t(['Editar','Edit'])}</button>
+                    {p.status!=='pending' && <a href="/grooming.html" className="bs-btn" style={{ textDecoration:'none', textAlign:'center', fontSize:11.5, fontWeight:700, color:BS.brand, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'7px 11px', whiteSpace:'nowrap' }}>{t(['Agendar','Book'])}</a>}
                   </div>
                 </div>
               ))}
               {addOpen ? <PetForm BS={BS} onDone={()=>{ setAddOpen(false); load(); }} onCancel={()=>setAddOpen(false)}/> :
-                <button onClick={()=>{ setAddOpen(true); setEditId(null); }} className="bs-btn" style={{ width:'100%', padding:'13px', borderRadius:14, border:`1.5px dashed ${BS.border}`, background:'transparent', color:BS.brand, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>+ Agregar mascota</button>}
+                <button onClick={()=>{ setAddOpen(true); setEditId(null); }} className="bs-btn" style={{ width:'100%', padding:'13px', borderRadius:14, border:`1.5px dashed ${BS.border}`, background:'transparent', color:BS.brand, fontSize:13, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{t(['+ Agregar mascota','+ Add pet'])}</button>}
             </div>
           )}
 
           {tab==='grooming' && (
             <div>
               {bkMsg && <div style={{ ...card, fontSize:12.5, color:BS.ink2, lineHeight:1.5 }}>{bkMsg}</div>}
-              {bookings.length>0 && <div style={{ fontSize:11, fontWeight:700, color:BS.soft, textTransform:'uppercase', letterSpacing:'0.06em', margin:'0 2px 8px' }}>Tus citas</div>}
+              {bookings.length>0 && <div style={{ fontSize:11, fontWeight:700, color:BS.soft, textTransform:'uppercase', letterSpacing:'0.06em', margin:'0 2px 8px' }}>{t(['Tus citas','Your appointments'])}</div>}
               {bookings.map((b,i)=>{
                 const svc = Array.isArray(b.services) ? b.services.join(' + ') : (b.services||'Grooming');
                 const st = b.status || 'requested';
@@ -1455,16 +1508,16 @@ function AccountScreen({ setScreen }) {
                 return (
                   <div key={b.id||i} style={card}>
                     <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6 }}>
-                      <span style={{ fontSize:14, fontWeight:800, color:BS.ink }}>{b.pet_name||'Mascota'}</span>
+                      <span style={{ fontSize:14, fontWeight:800, color:BS.ink }}>{b.pet_name||t(['Mascota','Pet'])}</span>
                       <span style={{ fontSize:10.5, fontWeight:700, color:stColor, background:BS.surface2, padding:'3px 9px', borderRadius:999 }}>{st}</span>
                     </div>
-                    {row('Servicio', svc)}
-                    {row('Fecha', fmtD(b.appointment_date)+(b.appointment_time?(' · '+b.appointment_time):''))}
-                    {b.size ? row('Tamaño', b.size) : null}
+                    {row(t(['Servicio','Service']), svc)}
+                    {row(t(['Fecha','Date']), fmtD(b.appointment_date)+(b.appointment_time?(' · '+b.appointment_time):''))}
+                    {b.size ? row(t(['Tamaño','Size']), b.size) : null}
                     {st!=='completed' && (
                       <div style={{ display:'flex', gap:8, marginTop:10 }}>
-                        <a href={'/reserva.html?id='+encodeURIComponent(b.id)} className="bs-btn" style={{ flex:1, textAlign:'center', textDecoration:'none', fontSize:12, fontWeight:700, color:BS.ink2, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'9px' }}>Reprogramar</a>
-                        <button onClick={()=>cancelBooking(b)} disabled={bkBusy===b.id} className="bs-btn" style={{ flex:1, fontSize:12, fontWeight:700, color:BS.rose, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'9px', background:'transparent', cursor:bkBusy===b.id?'default':'pointer', fontFamily:'inherit' }}>{bkBusy===b.id?'…':'Cancelar'}</button>
+                        <a href={'/reserva.html?id='+encodeURIComponent(b.id)} className="bs-btn" style={{ flex:1, textAlign:'center', textDecoration:'none', fontSize:12, fontWeight:700, color:BS.ink2, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'9px' }}>{t(['Reprogramar','Reschedule'])}</a>
+                        <button onClick={()=>cancelBooking(b)} disabled={bkBusy===b.id} className="bs-btn" style={{ flex:1, fontSize:12, fontWeight:700, color:BS.rose, border:`1.5px solid ${BS.border}`, borderRadius:10, padding:'9px', background:'transparent', cursor:bkBusy===b.id?'default':'pointer', fontFamily:'inherit' }}>{bkBusy===b.id?'…':t(['Cancelar','Cancel'])}</button>
                       </div>
                     )}
                   </div>
@@ -1472,27 +1525,27 @@ function AccountScreen({ setScreen }) {
               })}
               <div style={{ ...card, textAlign:'center' }}>
                 <div style={{ color:BS.brand, display:'flex', justifyContent:'center', marginBottom:8 }}><svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4L8.12 15.88M14.47 14.48L20 20M8.12 8.12L12 12"/></svg></div>
-                <div style={{ fontSize:16, fontWeight:800, color:BS.ink, marginBottom:4 }}>{bookings.length?'Agenda otra cita':'Agenda tu próxima cita'}</div>
-                <div style={{ fontSize:12.5, color:BS.soft, lineHeight:1.5, marginBottom:14 }}>{memberships.length?'Tus baños de membresía se aplican automáticamente.':'Baño, corte o spa para tu mascota en segundos.'}</div>
-                <a href="/grooming.html" style={{ display:'inline-block', textDecoration:'none', background:BS.grad, color:'#fff', fontSize:13.5, fontWeight:700, padding:'11px 22px', borderRadius:12 }}>Agendar grooming →</a>
+                <div style={{ fontSize:16, fontWeight:800, color:BS.ink, marginBottom:4 }}>{bookings.length?t(['Agenda otra cita','Book another appointment']):t(['Agenda tu próxima cita','Book your next appointment'])}</div>
+                <div style={{ fontSize:12.5, color:BS.soft, lineHeight:1.5, marginBottom:14 }}>{memberships.length?t(['Tus baños de membresía se aplican automáticamente.','Your membership baths are applied automatically.']):t(['Baño, corte o spa para tu mascota en segundos.','Bath, haircut or spa for your pet in seconds.'])}</div>
+                <a href="/grooming.html" style={{ display:'inline-block', textDecoration:'none', background:BS.grad, color:'#fff', fontSize:13.5, fontWeight:700, padding:'11px 22px', borderRadius:12 }}>{t(['Agendar grooming →','Book grooming →'])}</a>
               </div>
-              {baths>0 && <div style={card}>{row('Baños de membresía disponibles', baths, BS.brand)}</div>}
+              {baths>0 && <div style={card}>{row(t(['Baños de membresía disponibles','Membership baths available']), baths, BS.brand)}</div>}
             </div>
           )}
 
           {tab==='membresias' && (
             <div>
-              {memberships.length===0 && <div style={{ ...card, textAlign:'center', color:BS.soft, fontSize:13 }}>Aún no tienes membresía de grooming. <a href="/grooming.html" style={{ color:BS.brand, fontWeight:700 }}>Ver planes →</a></div>}
+              {memberships.length===0 && <div style={{ ...card, textAlign:'center', color:BS.soft, fontSize:13 }}>{t(['Aún no tienes membresía de grooming.','You don’t have a grooming membership yet.'])} <a href="/grooming.html" style={{ color:BS.brand, fontWeight:700 }}>{t(['Ver planes →','View plans →'])}</a></div>}
               {memberships.map((m,i)=>(
                 <div key={i} style={card}>
                   <div style={{ display:'flex', justifyContent:'space-between', alignItems:'center', marginBottom:6 }}>
-                    <span style={{ fontSize:15, fontWeight:800, color:BS.ink }}>{m.plan||'Membresía'}</span>
+                    <span style={{ fontSize:15, fontWeight:800, color:BS.ink }}>{m.plan||t(['Membresía','Membership'])}</span>
                     <span style={{ fontSize:10.5, fontWeight:700, color: m.status==='active'?'#1EB87A':BS.soft, background: m.status==='active'?'rgba(30,184,122,0.12)':BS.surface2, padding:'3px 9px', borderRadius:999 }}>{m.status||'—'}</span>
                   </div>
-                  {row('Facturación', m.billing||'—')}
-                  {row('Mascota', (m.pet_name||'—')+(m.pet_size?(' · '+m.pet_size):''))}
-                  {row('Baños disponibles', m.credits_balance||0, BS.brand)}
-                  {row('Próxima renovación', fmtD(m.renew_date))}
+                  {row(t(['Facturación','Billing']), m.billing||'—')}
+                  {row(t(['Mascota','Pet']), (m.pet_name||'—')+(m.pet_size?(' · '+m.pet_size):''))}
+                  {row(t(['Baños disponibles','Baths available']), m.credits_balance||0, BS.brand)}
+                  {row(t(['Próxima renovación','Next renewal']), fmtD(m.renew_date))}
                 </div>
               ))}
             </div>
@@ -1500,7 +1553,7 @@ function AccountScreen({ setScreen }) {
 
           {tab==='pagos' && (
             <div>
-              {plans.length===0 && <div style={{ ...card, textAlign:'center', color:BS.soft, fontSize:13 }}>No tienes planes de pago activos. <a href="/plan" style={{ color:BS.brand, fontWeight:700 }}>Armar mi plan →</a></div>}
+              {plans.length===0 && <div style={{ ...card, textAlign:'center', color:BS.soft, fontSize:13 }}>{t(['No tienes planes de pago activos.','You don’t have any active payment plans.'])} <a href="/plan" style={{ color:BS.brand, fontWeight:700 }}>{t(['Armar mi plan →','Build my plan →'])}</a></div>}
               {plans.map((p,i)=>{
                 const est = p.est_price || p.total_amount || ((p.monthly_amount||0)*(p.months||0)) || 0;
                 const paid = (+p.paid_total||0) || payments.filter(x=>x.plan_id===p.id).reduce((a,x)=>a+(+x.amount||0),0);
@@ -1508,18 +1561,18 @@ function AccountScreen({ setScreen }) {
                 const pct = est? Math.min(100, Math.round(paid/est*100)) : 0;
                 return (
                   <div key={i} style={card}>
-                    <div style={{ fontSize:14, fontWeight:800, color:BS.ink, marginBottom:8 }}>{p.breed||p.pet_name||'Plan de pagos'}</div>
-                    {row('Plan', (p.months||'—')+' meses · '+money(p.monthly_amount)+'/mes')}
-                    {row('Total estimado', money(est))}
-                    {row('Abonado', money(paid), '#1EB87A')}
-                    {row('Restante', money(bal))}
-                    {row('Tu gran día', fmtD(p.target_date))}
+                    <div style={{ fontSize:14, fontWeight:800, color:BS.ink, marginBottom:8 }}>{p.breed||p.pet_name||t(['Plan de pagos','Payment plan'])}</div>
+                    {row(t(['Plan','Plan']), (p.months||'—')+' '+t(['meses · ','months · '])+money(p.monthly_amount)+t(['/mes','/mo']))}
+                    {row(t(['Total estimado','Estimated total']), money(est))}
+                    {row(t(['Abonado','Paid']), money(paid), '#1EB87A')}
+                    {row(t(['Restante','Remaining']), money(bal))}
+                    {row(t(['Tu gran día','Your big day']), fmtD(p.target_date))}
                     <div style={{ height:7, borderRadius:999, background:BS.surface2, overflow:'hidden', margin:'8px 0 4px' }}><div style={{ width:pct+'%', height:'100%', background:BS.grad }}/></div>
-                    <div style={{ fontSize:11, color:BS.soft, textAlign:'right' }}>{pct}% completado</div>
+                    <div style={{ fontSize:11, color:BS.soft, textAlign:'right' }}>{pct}% {t(['completado','complete'])}</div>
                     {bal>0 && p.status!=='cancelled' && (
                       <div>
-                        <button onClick={()=>payPlan(p)} disabled={payBusy===p.id} className="bs-btn" style={{ width:'100%', marginTop:12, padding:'11px', borderRadius:10, border:'none', background:BS.grad, color:'#fff', fontWeight:700, fontSize:13, cursor:payBusy===p.id?'default':'pointer', fontFamily:'inherit', opacity:payBusy===p.id?0.7:1 }}>{payBusy===p.id?'Redirigiendo…':('Hacer abono ('+money(p.monthly_amount)+')')}</button>
-                        <div style={{ fontSize:10.5, color:BS.soft, textAlign:'center', marginTop:6 }}>Pago seguro con Stripe · tarjeta, Klarna, Affirm</div>
+                        <button onClick={()=>payPlan(p)} disabled={payBusy===p.id} className="bs-btn" style={{ width:'100%', marginTop:12, padding:'11px', borderRadius:10, border:'none', background:BS.grad, color:'#fff', fontWeight:700, fontSize:13, cursor:payBusy===p.id?'default':'pointer', fontFamily:'inherit', opacity:payBusy===p.id?0.7:1 }}>{payBusy===p.id?t(['Redirigiendo…','Redirecting…']):(t(['Hacer abono (','Make a payment ('])+money(p.monthly_amount)+')')}</button>
+                        <div style={{ fontSize:10.5, color:BS.soft, textAlign:'center', marginTop:6 }}>{t(['Pago seguro con Stripe · tarjeta, Klarna, Affirm','Secure payment with Stripe · card, Klarna, Affirm'])}</div>
                       </div>
                     )}
                   </div>
@@ -1533,6 +1586,18 @@ function AccountScreen({ setScreen }) {
       )}
     </div>
   );
+}
+
+// Comparte el contexto de idioma con s-app.jsx (mismo objeto Context para que el Provider funcione).
+if (typeof window !== 'undefined') {
+  window.BSLangContext = BSLangContext;
+  if (!window.LangContext) window.LangContext = BSLangContext;
+  if (!window.useLang) window.useLang = useLang;
+  if (!window.useT) window.useT = useT;
+  if (!window.pick) window.pick = bsPick;
+  // Si i18n.js no está cargado en esta página (p.ej. social.html), expone bpGetLang
+  // para que la app siga el idioma del sitio guardado en localStorage ('bpuppy-lang').
+  if (!window.bpGetLang) window.bpGetLang = bsReadLang;
 }
 
 Object.assign(window, {

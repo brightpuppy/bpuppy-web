@@ -12,31 +12,32 @@ function PhoneMockup({ children }) {
   } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 14, left: "50%", transform: "translateX(-50%)", width: 120, height: 34, background: "#0A0A0A", borderRadius: 20, zIndex: 30, display: "flex", alignItems: "center", justifyContent: "center", gap: 9 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 11, height: 11, borderRadius: "50%", background: "#1c1c1c", border: "1px solid #2a2a2a" } }), /* @__PURE__ */ React.createElement("div", { style: { width: 5, height: 5, borderRadius: "50%", background: "#2a2a2a" } })), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", right: -3, top: 130, width: 4, height: 68, background: "#222", borderRadius: "0 2px 2px 0" } }), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", left: -3, top: 108, width: 4, height: 40, background: "#222", borderRadius: "2px 0 0 2px" } }), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", left: -3, top: 160, width: 4, height: 40, background: "#222", borderRadius: "2px 0 0 2px" } }), /* @__PURE__ */ React.createElement("div", { style: { width: "100%", height: "100%", borderRadius: 42, overflow: "hidden", position: "relative", isolation: "isolate" } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 0, left: 0, right: 0, height: 44, display: "flex", alignItems: "flex-end", justifyContent: "space-between", padding: "0 24px 7px", zIndex: 20, pointerEvents: "none" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, fontWeight: 700, color: "rgba(240,238,248,0.7)" } }, "9:41"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 5, alignItems: "center" } }, /* @__PURE__ */ React.createElement("svg", { width: "16", height: "11", viewBox: "0 0 16 12", fill: "rgba(240,238,248,0.6)" }, /* @__PURE__ */ React.createElement("rect", { x: "0", y: "3", width: "3", height: "9", rx: "1" }), /* @__PURE__ */ React.createElement("rect", { x: "4.5", y: "1.5", width: "3", height: "10.5", rx: "1" }), /* @__PURE__ */ React.createElement("rect", { x: "9", y: "0", width: "3", height: "12", rx: "1" }), /* @__PURE__ */ React.createElement("rect", { x: "13.5", y: "0", width: "2.5", height: "12", rx: "1", opacity: ".35" })), /* @__PURE__ */ React.createElement("svg", { width: "16", height: "12", viewBox: "0 0 20 14", fill: "rgba(240,238,248,0.6)" }, /* @__PURE__ */ React.createElement("rect", { width: "14", height: "14", rx: "2.5", opacity: ".3" }), /* @__PURE__ */ React.createElement("rect", { x: "1", y: "1", width: "12", height: "12", rx: "1.5" }), /* @__PURE__ */ React.createElement("rect", { x: "15", y: "4", width: "4", height: "6", rx: "2" })))), children));
 }
 function BottomNav({ screen, setScreen, bs }) {
+  const t = window.useT ? window.useT() : ((x) => Array.isArray(x) ? x[0] : x);
   const navBtns = [
     {
       id: "feed",
-      label: "Inicio",
+      label: t(["Inicio", "Home"]),
       icon: (a) => /* @__PURE__ */ React.createElement("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: a ? bs.brand : "none", stroke: a ? bs.brand : bs.soft, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z" }), /* @__PURE__ */ React.createElement("polyline", { points: "9 22 9 12 15 12 15 22" }))
     },
     {
       id: "discover",
-      label: "Explorar",
+      label: t(["Explorar", "Explore"]),
       icon: (a) => /* @__PURE__ */ React.createElement("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: "none", stroke: a ? bs.brand : bs.soft, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("circle", { cx: "11", cy: "11", r: "8" }), /* @__PURE__ */ React.createElement("path", { d: "m21 21-4.35-4.35" }))
     },
     { id: "__fab", label: "", icon: null },
     {
       id: "pack",
-      label: "Pack",
+      label: t(["Pack", "Pack"]),
       icon: (a) => /* @__PURE__ */ React.createElement("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: "none", stroke: a ? bs.brand : bs.soft, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2" }), /* @__PURE__ */ React.createElement("circle", { cx: "9", cy: "7", r: "4" }), /* @__PURE__ */ React.createElement("path", { d: "M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75" }))
     },
     {
       id: "account",
-      label: "Cuenta",
+      label: t(["Cuenta", "Account"]),
       icon: (a) => /* @__PURE__ */ React.createElement("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: "none", stroke: a ? bs.brand : bs.soft, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }), /* @__PURE__ */ React.createElement("path", { d: "M3 10h18M8 4v4" }))
     },
     {
       id: "profile",
-      label: "Perfil",
+      label: t(["Perfil", "Profile"]),
       icon: (a) => /* @__PURE__ */ React.createElement("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: a ? bs.brand : "none", stroke: a ? bs.brand : bs.soft, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2" }), /* @__PURE__ */ React.createElement("circle", { cx: "12", cy: "7", r: "4" }))
     }
   ];
@@ -82,19 +83,20 @@ function SIcon({ name, color, size = 19 }) {
   return /* @__PURE__ */ React.createElement("svg", { width: size, height: size, viewBox: "0 0 24 24", fill: "none", stroke: color, strokeWidth: "1.9", strokeLinecap: "round", strokeLinejoin: "round", dangerouslySetInnerHTML: { __html: p } });
 }
 function DesktopSidebar({ screen, setScreen, bs }) {
+  const t = window.useT ? window.useT() : ((x) => Array.isArray(x) ? x[0] : x);
   const navItems = [
-    { id: "feed", label: "Novedades", icon: "home" },
-    { id: "community", label: "Comunidad", icon: "community" },
-    { id: "discover", label: "Descubrir", icon: "discover" },
-    { id: "events", label: "Eventos", icon: "events" },
-    { id: "news", label: "Noticias", icon: "news" },
-    { id: "videos", label: "Videos", icon: "video" },
-    { id: "pack", label: "Mi Pack", icon: "pack" },
-    { id: "pets", label: "Mis Mascotas", icon: "pets" },
-    { id: "messages", label: "Mensajes", icon: "messages", badge: 2 },
-    { id: "profile", label: "Perfil", icon: "profile" }
+    { id: "feed", label: t(["Novedades", "Latest"]), icon: "home" },
+    { id: "community", label: t(["Comunidad", "Community"]), icon: "community" },
+    { id: "discover", label: t(["Descubrir", "Discover"]), icon: "discover" },
+    { id: "events", label: t(["Eventos", "Events"]), icon: "events" },
+    { id: "news", label: t(["Noticias", "News"]), icon: "news" },
+    { id: "videos", label: t(["Videos", "Videos"]), icon: "video" },
+    { id: "pack", label: t(["Mi Pack", "My Pack"]), icon: "pack" },
+    { id: "pets", label: t(["Mis Mascotas", "My Pets"]), icon: "pets" },
+    { id: "messages", label: t(["Mensajes", "Messages"]), icon: "messages", badge: 2 },
+    { id: "profile", label: t(["Perfil", "Profile"]), icon: "profile" }
   ];
-  return /* @__PURE__ */ React.createElement("div", { style: { width: 230, background: bs.surface, borderRight: `1px solid ${bs.border}`, display: "flex", flexDirection: "column", height: "100%", padding: "18px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, marginBottom: 28, paddingLeft: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 36, height: 36, borderRadius: 12, background: bs.grad, display: "grid", placeItems: "center", flexShrink: 0, boxShadow: bs.glow } }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 40 40", width: "20", height: "20", fill: "white" }, /* @__PURE__ */ React.createElement("ellipse", { cx: "20", cy: "26", rx: "10", ry: "8" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "9", cy: "16", rx: "4", ry: "5.5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "31", cy: "16", rx: "4", ry: "5.5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "14", cy: "8", rx: "3.5", ry: "5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "26", cy: "8", rx: "3.5", ry: "5" }))), /* @__PURE__ */ React.createElement("span", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, letterSpacing: "-0.04em", background: bs.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" } }, "B Social")), /* @__PURE__ */ React.createElement("a", { href: "/", style: { display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", marginBottom: 14, borderRadius: 10, border: `1px solid ${bs.border}`, textDecoration: "none", color: bs.ink2, fontSize: 12.5, fontWeight: 600 } }, /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 12H5" }), /* @__PURE__ */ React.createElement("path", { d: "M12 19l-7-7 7-7" })), "Volver a BPuppy"), /* @__PURE__ */ React.createElement("nav", { style: { flex: 1, display: "flex", flexDirection: "column", gap: 2 } }, navItems.map((item) => /* @__PURE__ */ React.createElement(
+  return /* @__PURE__ */ React.createElement("div", { style: { width: 230, background: bs.surface, borderRight: `1px solid ${bs.border}`, display: "flex", flexDirection: "column", height: "100%", padding: "18px 12px", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, marginBottom: 28, paddingLeft: 8 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 36, height: 36, borderRadius: 12, background: bs.grad, display: "grid", placeItems: "center", flexShrink: 0, boxShadow: bs.glow } }, /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 40 40", width: "20", height: "20", fill: "white" }, /* @__PURE__ */ React.createElement("ellipse", { cx: "20", cy: "26", rx: "10", ry: "8" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "9", cy: "16", rx: "4", ry: "5.5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "31", cy: "16", rx: "4", ry: "5.5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "14", cy: "8", rx: "3.5", ry: "5" }), /* @__PURE__ */ React.createElement("ellipse", { cx: "26", cy: "8", rx: "3.5", ry: "5" }))), /* @__PURE__ */ React.createElement("span", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, letterSpacing: "-0.04em", background: bs.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" } }, "B Social")), /* @__PURE__ */ React.createElement("a", { href: "/", style: { display: "flex", alignItems: "center", gap: 8, padding: "8px 12px", marginBottom: 14, borderRadius: 10, border: `1px solid ${bs.border}`, textDecoration: "none", color: bs.ink2, fontSize: 12.5, fontWeight: 600 } }, /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 12H5" }), /* @__PURE__ */ React.createElement("path", { d: "M12 19l-7-7 7-7" })), t(["Volver a BPuppy", "Back to BPuppy"])), /* @__PURE__ */ React.createElement("nav", { style: { flex: 1, display: "flex", flexDirection: "column", gap: 2 } }, navItems.map((item) => /* @__PURE__ */ React.createElement(
     "button",
     {
       key: item.id,
@@ -104,7 +106,7 @@ function DesktopSidebar({ screen, setScreen, bs }) {
     /* @__PURE__ */ React.createElement(SIcon, { name: item.icon, color: screen === item.id ? bs.brand : bs.ink2 }),
     item.label,
     item.badge && /* @__PURE__ */ React.createElement("span", { style: { marginLeft: "auto", background: bs.brand, color: "#fff", fontSize: 10, fontWeight: 700, borderRadius: 999, padding: "1px 7px" } }, item.badge)
-  ))), /* @__PURE__ */ React.createElement("button", { onClick: () => setScreen("account"), style: { display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", marginBottom: 10, borderRadius: 12, cursor: "pointer", width: "100%", textAlign: "left", fontFamily: "inherit", background: screen === "account" ? bs.surface2 : "transparent", border: `1px solid ${screen === "account" ? bs.brand : bs.border}`, color: screen === "account" ? bs.brand : bs.ink2, fontWeight: 600, fontSize: 13.5 } }, /* @__PURE__ */ React.createElement("svg", { width: "17", height: "17", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }), /* @__PURE__ */ React.createElement("path", { d: "M3 10h18M8 4v4" })), "Mi Cuenta \xB7 Reservas"), /* @__PURE__ */ React.createElement(
+  ))), /* @__PURE__ */ React.createElement("button", { onClick: () => setScreen("account"), style: { display: "flex", alignItems: "center", gap: 11, padding: "10px 12px", marginBottom: 10, borderRadius: 12, cursor: "pointer", width: "100%", textAlign: "left", fontFamily: "inherit", background: screen === "account" ? bs.surface2 : "transparent", border: `1px solid ${screen === "account" ? bs.brand : bs.border}`, color: screen === "account" ? bs.brand : bs.ink2, fontWeight: 600, fontSize: 13.5 } }, /* @__PURE__ */ React.createElement("svg", { width: "17", height: "17", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("rect", { x: "3", y: "4", width: "18", height: "16", rx: "2" }), /* @__PURE__ */ React.createElement("path", { d: "M3 10h18M8 4v4" })), t(["Mi Cuenta \xB7 Reservas", "My Account \xB7 Bookings"])), /* @__PURE__ */ React.createElement(
     "button",
     {
       onClick: () => setScreen("upload"),
@@ -113,23 +115,24 @@ function DesktopSidebar({ screen, setScreen, bs }) {
       onMouseLeave: (e) => e.currentTarget.style.opacity = "1"
     },
     /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "white", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("line", { x1: "12", y1: "5", x2: "12", y2: "19" }), /* @__PURE__ */ React.createElement("line", { x1: "5", y1: "12", x2: "19", y2: "12" })),
-    "Publicar"
+    t(["Publicar", "Post"])
   ), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, padding: "9px 10px", borderRadius: 12, cursor: "pointer" }, onClick: () => setScreen("profile") }, /* @__PURE__ */ React.createElement(BSAvatar, { user: BSDATA.me, size: 34 }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 700, color: bs.ink } }, BSDATA.me.username), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: bs.soft } }, BSDATA.me.city))));
 }
 function RightRail({ bs }) {
+  const t = window.useT ? window.useT() : ((x) => Array.isArray(x) ? x[0] : x);
   const [added, setAdded] = useState(/* @__PURE__ */ new Set());
   const toggle = (id) => setAdded((s) => {
     const n = new Set(s);
     n.has(id) ? n.delete(id) : n.add(id);
     return n;
   });
-  return /* @__PURE__ */ React.createElement("div", { style: { width: 264, padding: "18px 14px", display: "flex", flexDirection: "column", gap: 16, flexShrink: 0, overflowY: "auto" }, className: "bs-scr" }, /* @__PURE__ */ React.createElement("div", { style: { background: bs.surface2, borderRadius: 12, padding: "9px 13px", display: "flex", alignItems: "center", gap: 8, border: `1px solid ${bs.border}` } }, /* @__PURE__ */ React.createElement("svg", { width: "13", height: "13", viewBox: "0 0 24 24", fill: "none", stroke: bs.soft, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("circle", { cx: "11", cy: "11", r: "8" }), /* @__PURE__ */ React.createElement("path", { d: "m21 21-4.35-4.35" })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: bs.soft } }, "Buscar en B Social")), /* @__PURE__ */ React.createElement("div", { style: { background: bs.surface, borderRadius: 16, padding: "14px", border: `1px solid ${bs.border}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: bs.ink, marginBottom: 12, fontFamily: "Bricolage Grotesque,sans-serif" } }, "Sugerencias"), (BSDATA.suggestions || []).map((u) => /* @__PURE__ */ React.createElement("div", { key: u.id, style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 11 } }, /* @__PURE__ */ React.createElement(BSAvatar, { user: u, size: 34 }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, fontWeight: 700, color: bs.ink, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, u.name || u.username), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: bs.soft, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, u.pet || u.city)), /* @__PURE__ */ React.createElement("button", { onClick: () => {
+  return /* @__PURE__ */ React.createElement("div", { style: { width: 264, padding: "18px 14px", display: "flex", flexDirection: "column", gap: 16, flexShrink: 0, overflowY: "auto" }, className: "bs-scr" }, /* @__PURE__ */ React.createElement("div", { style: { background: bs.surface2, borderRadius: 12, padding: "9px 13px", display: "flex", alignItems: "center", gap: 8, border: `1px solid ${bs.border}` } }, /* @__PURE__ */ React.createElement("svg", { width: "13", height: "13", viewBox: "0 0 24 24", fill: "none", stroke: bs.soft, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("circle", { cx: "11", cy: "11", r: "8" }), /* @__PURE__ */ React.createElement("path", { d: "m21 21-4.35-4.35" })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: bs.soft } }, t(["Buscar en B Social", "Search B Social"]))), /* @__PURE__ */ React.createElement("div", { style: { background: bs.surface, borderRadius: 16, padding: "14px", border: `1px solid ${bs.border}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: bs.ink, marginBottom: 12, fontFamily: "Bricolage Grotesque,sans-serif" } }, t(["Sugerencias", "Suggestions"])), (BSDATA.suggestions || []).map((u) => /* @__PURE__ */ React.createElement("div", { key: u.id, style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 11 } }, /* @__PURE__ */ React.createElement(BSAvatar, { user: u, size: 34 }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, fontWeight: 700, color: bs.ink, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, u.name || u.username), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10.5, color: bs.soft, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, u.pet || u.city)), /* @__PURE__ */ React.createElement("button", { onClick: () => {
     toggle(u.id);
     if (window.BSAUTH && window.BSAUTH.follow) try {
       window.BSAUTH.follow(u.username, added.has(u.id));
     } catch (e) {
     }
-  }, style: { padding: "4px 11px", borderRadius: 999, border: `1.5px solid ${added.has(u.id) ? bs.border : bs.brand}`, background: "transparent", color: added.has(u.id) ? bs.soft : bs.brand, fontSize: 11.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", flexShrink: 0 } }, added.has(u.id) ? "Siguiendo" : "Seguir"))), !(BSDATA.suggestions || []).length && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: bs.soft } }, "Pronto ver\xE1s sugerencias.")), /* @__PURE__ */ React.createElement("div", { style: { background: bs.surface, borderRadius: 16, padding: "14px", border: `1px solid ${bs.border}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: bs.ink, marginBottom: 12, fontFamily: "Bricolage Grotesque,sans-serif" } }, "Trending"), ["#GoldenRetriever", "#PuppyLife", "#DogMom", "#CatLife", "#Frenchie"].map((tag, i) => /* @__PURE__ */ React.createElement("div", { key: tag, style: { display: "flex", justifyContent: "space-between", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, color: bs.brand, fontWeight: 600, cursor: "pointer" } }, tag), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: bs.soft } }, [12.4, 8.9, 6.2, 5.1, 4.8][i], "k")))));
+  }, style: { padding: "4px 11px", borderRadius: 999, border: `1.5px solid ${added.has(u.id) ? bs.border : bs.brand}`, background: "transparent", color: added.has(u.id) ? bs.soft : bs.brand, fontSize: 11.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", flexShrink: 0 } }, added.has(u.id) ? t(["Siguiendo", "Following"]) : t(["Seguir", "Follow"])))), !(BSDATA.suggestions || []).length && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: bs.soft } }, t(["Pronto ver\xE1s sugerencias.", "Suggestions coming soon."]))), /* @__PURE__ */ React.createElement("div", { style: { background: bs.surface, borderRadius: 16, padding: "14px", border: `1px solid ${bs.border}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 800, color: bs.ink, marginBottom: 12, fontFamily: "Bricolage Grotesque,sans-serif" } }, t(["Tendencias", "Trending"])), ["#GoldenRetriever", "#PuppyLife", "#DogMom", "#CatLife", "#Frenchie"].map((tag, i) => /* @__PURE__ */ React.createElement("div", { key: tag, style: { display: "flex", justifyContent: "space-between", marginBottom: 9 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, color: bs.brand, fontWeight: 600, cursor: "pointer" } }, tag), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, color: bs.soft } }, [12.4, 8.9, 6.2, 5.1, 4.8][i], "k")))));
 }
 function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave, onOpenPost }) {
   const p = { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost };
@@ -149,6 +152,7 @@ function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave, onOpenPo
   return /* @__PURE__ */ React.createElement(FeedScreen, { ...p });
 }
 function BSocialTweaks({ theme, setThemeFn }) {
+  const t = window.useT ? window.useT() : ((x) => Array.isArray(x) ? x[0] : x);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const handler = (e) => {
@@ -170,16 +174,16 @@ function BSocialTweaks({ theme, setThemeFn }) {
   return /* @__PURE__ */ React.createElement("div", { style: { position: "fixed", bottom: 20, right: 20, zIndex: 9999, background: "#18181e", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 16, padding: "16px 18px", boxShadow: "0 16px 48px rgba(0,0,0,0.6)", minWidth: 200, fontFamily: "Plus Jakarta Sans,sans-serif" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 13, color: "#fff" } }, "Tweaks"), /* @__PURE__ */ React.createElement("button", { onClick: () => {
     setVisible(false);
     window.parent.postMessage({ type: "__edit_mode_dismissed" }, "*");
-  }, style: { background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer", fontSize: 16, padding: 0 } }, "\xD7")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 } }, "Tema"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 6 } }, themes.map((t) => /* @__PURE__ */ React.createElement(
+  }, style: { background: "none", border: "none", color: "rgba(255,255,255,0.4)", cursor: "pointer", fontSize: 16, padding: 0 } }, "\xD7")), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: "rgba(255,255,255,0.4)", textTransform: "uppercase", letterSpacing: "0.06em", marginBottom: 8 } }, t(["Tema", "Theme"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 6 } }, themes.map((t2) => /* @__PURE__ */ React.createElement(
     "button",
     {
-      key: t.key,
-      onClick: () => setThemeFn(t.key),
-      style: { display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 10, border: `1.5px solid ${theme === t.key ? t.color : "rgba(255,255,255,0.08)"}`, background: theme === t.key ? `rgba(255,255,255,0.07)` : "transparent", cursor: "pointer", fontFamily: "inherit", color: "#fff", fontSize: 13, fontWeight: theme === t.key ? 700 : 500 }
+      key: t2.key,
+      onClick: () => setThemeFn(t2.key),
+      style: { display: "flex", alignItems: "center", gap: 10, padding: "8px 12px", borderRadius: 10, border: `1.5px solid ${theme === t2.key ? t2.color : "rgba(255,255,255,0.08)"}`, background: theme === t2.key ? `rgba(255,255,255,0.07)` : "transparent", cursor: "pointer", fontFamily: "inherit", color: "#fff", fontSize: 13, fontWeight: theme === t2.key ? 700 : 500 }
     },
-    /* @__PURE__ */ React.createElement("div", { style: { width: 14, height: 14, borderRadius: "50%", background: t.color, flexShrink: 0 } }),
-    t.label,
-    theme === t.key && /* @__PURE__ */ React.createElement("svg", { style: { marginLeft: "auto" }, width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: t.color, strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M20 6L9 17l-5-5" }))
+    /* @__PURE__ */ React.createElement("div", { style: { width: 14, height: 14, borderRadius: "50%", background: t2.color, flexShrink: 0 } }),
+    t2.label,
+    theme === t2.key && /* @__PURE__ */ React.createElement("svg", { style: { marginLeft: "auto" }, width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: t2.color, strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M20 6L9 17l-5-5" }))
   ))));
 }
 const SU = "https://oqqwmcplljirbreowrll.supabase.co";
@@ -194,6 +198,20 @@ function App() {
   const [following, setFollowing] = useState([]);
   const [, setTick] = useState(0);
   const bs = THEMES[themeName];
+  const [lang, setLang] = useState(() => window.bpGetLang && window.bpGetLang() || "es");
+  useEffect(() => {
+    const h = (e) => setLang(e && e.detail || window.bpGetLang && window.bpGetLang() || "es");
+    window.addEventListener("bpuppy:lang", h);
+    window.addEventListener("bpuppy-lang-change", h);
+    return () => {
+      window.removeEventListener("bpuppy:lang", h);
+      window.removeEventListener("bpuppy-lang-change", h);
+    };
+  }, []);
+  useEffect(() => {
+    document.documentElement.lang = lang;
+  }, [lang]);
+  const LangCtx = typeof window !== "undefined" && (window.BSLangContext || window.LangContext) || null;
   useEffect(() => {
     const onR = () => setIsWide(window.innerWidth >= 900);
     window.addEventListener("resize", onR);
@@ -386,11 +404,16 @@ function App() {
     }
   };
   const toggleSave = (id) => setPosts((prev) => prev.map((p) => p.id === id ? { ...p, saved: !p.saved } : p));
-  const MobileContent = () => /* @__PURE__ */ React.createElement("div", { style: { height: "100%", display: "flex", flexDirection: "column", overflow: "hidden", background: bs.bg } }, /* @__PURE__ */ React.createElement("a", { href: "/", style: { display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", background: bs.surface, borderBottom: `1px solid ${bs.border}`, textDecoration: "none", color: bs.ink2, fontSize: 12.5, fontWeight: 600, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 12H5" }), /* @__PURE__ */ React.createElement("path", { d: "M12 19l-7-7 7-7" })), "Volver a BPuppy"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto" }, className: "bs-scr" }, /* @__PURE__ */ React.createElement(ScreenView, { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost: setOpenPost })), screen !== "upload" && /* @__PURE__ */ React.createElement(BottomNav, { screen, setScreen, bs }));
+  const MobileContent = () => /* @__PURE__ */ React.createElement("div", { style: { height: "100%", display: "flex", flexDirection: "column", overflow: "hidden", background: bs.bg } }, /* @__PURE__ */ React.createElement("a", { href: "/", style: { display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", background: bs.surface, borderBottom: `1px solid ${bs.border}`, textDecoration: "none", color: bs.ink2, fontSize: 12.5, fontWeight: 600, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 12H5" }), /* @__PURE__ */ React.createElement("path", { d: "M12 19l-7-7 7-7" })), window.pick ? window.pick(["Volver a BPuppy", "Back to BPuppy"], lang) : "Volver a BPuppy"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto" }, className: "bs-scr" }, /* @__PURE__ */ React.createElement(ScreenView, { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost: setOpenPost })), screen !== "upload" && /* @__PURE__ */ React.createElement(BottomNav, { screen, setScreen, bs }));
+  const wrap = (children) => LangCtx ? /* @__PURE__ */ React.createElement(LangCtx.Provider, { value: { lang, setLang } }, children) : children;
   if (!loggedIn) {
-    return /* @__PURE__ */ React.createElement(BSCtx.Provider, { value: bs }, /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: bs.bg, display: "flex", alignItems: "center", justifyContent: "center", padding: isWide ? "24px" : 0 } }, /* @__PURE__ */ React.createElement("div", { style: { width: "100%", maxWidth: isWide ? 460 : "100%", height: isWide ? "min(840px,94vh)" : "100vh", background: bs.surface, borderRadius: isWide ? 28 : 0, overflow: "hidden", boxShadow: isWide ? "0 40px 120px rgba(0,0,0,0.55)" : "none", display: "flex", flexDirection: "column" } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto" }, className: "bs-scr" }, needsProfile ? /* @__PURE__ */ React.createElement(CreateProfileScreen, { me, onSave: window.BSAUTH.saveProfile, onLogout: logout }) : /* @__PURE__ */ React.createElement(WelcomeScreen, { onSendLink: sendLink })))), /* @__PURE__ */ React.createElement(BSocialTweaks, { theme: themeName, setThemeFn: setThemeName }));
+    return wrap(
+      /* @__PURE__ */ React.createElement(BSCtx.Provider, { value: bs }, /* @__PURE__ */ React.createElement("div", { style: { minHeight: "100vh", background: bs.bg, display: "flex", alignItems: "center", justifyContent: "center", padding: isWide ? "24px" : 0 } }, /* @__PURE__ */ React.createElement("div", { style: { width: "100%", maxWidth: isWide ? 460 : "100%", height: isWide ? "min(840px,94vh)" : "100vh", background: bs.surface, borderRadius: isWide ? 28 : 0, overflow: "hidden", boxShadow: isWide ? "0 40px 120px rgba(0,0,0,0.55)" : "none", display: "flex", flexDirection: "column" } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto" }, className: "bs-scr" }, needsProfile ? /* @__PURE__ */ React.createElement(CreateProfileScreen, { me, onSave: window.BSAUTH.saveProfile, onLogout: logout }) : /* @__PURE__ */ React.createElement(WelcomeScreen, { onSendLink: sendLink })))), /* @__PURE__ */ React.createElement(BSocialTweaks, { theme: themeName, setThemeFn: setThemeName }))
+    );
   }
-  return /* @__PURE__ */ React.createElement(BSCtx.Provider, { value: bs }, isWide ? /* @__PURE__ */ React.createElement("div", { style: { height: "100vh", display: "flex", background: bs.bg, overflow: "hidden" } }, /* @__PURE__ */ React.createElement(DesktopSidebar, { screen, setScreen, bs }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto", background: bs.bg }, className: "bs-scr" }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 660, margin: "0 auto", borderLeft: `1px solid ${bs.border}`, borderRight: `1px solid ${bs.border}`, minHeight: "100%" } }, /* @__PURE__ */ React.createElement(ScreenView, { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost: setOpenPost }))), (screen === "feed" || screen === "discover") && /* @__PURE__ */ React.createElement(RightRail, { bs })) : /* @__PURE__ */ React.createElement("div", { style: { height: "100vh", overflow: "hidden", background: bs.bg } }, /* @__PURE__ */ React.createElement(MobileContent, null)), openPost && /* @__PURE__ */ React.createElement(PostDetail, { post: openPost, onClose: () => setOpenPost(null) }), /* @__PURE__ */ React.createElement(BSocialTweaks, { theme: themeName, setThemeFn: setThemeName }));
+  return wrap(
+    /* @__PURE__ */ React.createElement(BSCtx.Provider, { value: bs }, isWide ? /* @__PURE__ */ React.createElement("div", { style: { height: "100vh", display: "flex", background: bs.bg, overflow: "hidden" } }, /* @__PURE__ */ React.createElement(DesktopSidebar, { screen, setScreen, bs }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto", background: bs.bg }, className: "bs-scr" }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 660, margin: "0 auto", borderLeft: `1px solid ${bs.border}`, borderRight: `1px solid ${bs.border}`, minHeight: "100%" } }, /* @__PURE__ */ React.createElement(ScreenView, { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost: setOpenPost }))), (screen === "feed" || screen === "discover") && /* @__PURE__ */ React.createElement(RightRail, { bs })) : /* @__PURE__ */ React.createElement("div", { style: { height: "100vh", overflow: "hidden", background: bs.bg } }, /* @__PURE__ */ React.createElement(MobileContent, null)), openPost && /* @__PURE__ */ React.createElement(PostDetail, { post: openPost, onClose: () => setOpenPost(null) }), /* @__PURE__ */ React.createElement(BSocialTweaks, { theme: themeName, setThemeFn: setThemeName }))
+  );
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(App, null));
 

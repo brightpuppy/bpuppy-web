@@ -4,6 +4,7 @@ const { useState, useMemo, useEffect, useRef } = React;
 
 // ── Product card ───────────────────────────────────────────────────────────────
 function ShopCard({ p, onOpen }) {
+  const t = useT();
   const [hov, setHov] = useState(false);
   const badge = p.badge ? BADGES[p.badge] : null;
   const stars = '★'.repeat(Math.round(p.rating)) + '☆'.repeat(5 - Math.round(p.rating));
@@ -20,7 +21,7 @@ function ShopCard({ p, onOpen }) {
         <span style={{ fontSize: 72, filter: 'drop-shadow(0 4px 12px rgba(0,0,0,0.12))' }}>{p.emoji}</span>
         {badge && (
           <span style={{ position: 'absolute', top: 10, left: 10, padding: '4px 10px', borderRadius: 999, background: badge.bg, color: badge.color, fontSize: 10.5, fontWeight: 800, letterSpacing: '0.02em' }}>
-            {badge.label}
+            {t(badge.label)}
           </span>
         )}
         {p.video && (
@@ -31,8 +32,8 @@ function ShopCard({ p, onOpen }) {
       </div>
       {/* Info */}
       <div style={{ padding: '14px 16px 16px', flex: 1, display: 'flex', flexDirection: 'column', gap: 6 }}>
-        <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', margin: 0, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{p.name}</p>
-        <p style={{ fontSize: 12, color: 'var(--ink-2)', margin: 0, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', flex: 1 }}>{p.desc}</p>
+        <p style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', margin: 0, lineHeight: 1.3, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{t(p.name)}</p>
+        <p style={{ fontSize: 12, color: 'var(--ink-2)', margin: 0, lineHeight: 1.5, display: '-webkit-box', WebkitLineClamp: 2, WebkitBoxOrient: 'vertical', overflow: 'hidden', flex: 1 }}>{t(p.desc)}</p>
         <div style={{ display: 'flex', alignItems: 'center', gap: 6 }}>
           <span style={{ color: '#FF9900', fontSize: 12, letterSpacing: '-0.5px' }}>{stars}</span>
           <span style={{ fontSize: 11, color: 'var(--ink-soft)' }}>({fmt(p.reviews)})</span>
@@ -40,7 +41,7 @@ function ShopCard({ p, onOpen }) {
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginTop: 4 }}>
           <span style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 20, fontWeight: 800, color: 'var(--ink)', letterSpacing: '-0.02em' }}>${p.price.toFixed(2)}</span>
           <span style={{ background: 'var(--orange)', color: '#fff', borderRadius: 10, padding: '6px 14px', fontSize: 12.5, fontWeight: 700 }}>
-            {p.source === 'amazon' ? 'Ver en Amazon' : 'Ver producto'}
+            {p.source === 'amazon' ? t(['Ver en Amazon', 'View on Amazon']) : t(['Ver producto', 'View product'])}
           </span>
         </div>
       </div>
@@ -50,6 +51,7 @@ function ShopCard({ p, onOpen }) {
 
 // ── Product modal ──────────────────────────────────────────────────────────────
 function ShopModal({ p, onClose, allProducts }) {
+  const t = useT();
   const badge = p.badge ? BADGES[p.badge] : null;
   const related = allProducts.filter(x => x.id !== p.id && (x.cat === p.cat || (x.tags || []).some(t => (p.tags || []).includes(t)))).slice(0, 3);
 
@@ -75,22 +77,22 @@ function ShopModal({ p, onClose, allProducts }) {
         {/* Product hero */}
         <div style={{ height: 200, background: 'linear-gradient(135deg, var(--bg), var(--bg-2))', display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative' }}>
           <span style={{ fontSize: 96, filter: 'drop-shadow(0 8px 20px rgba(0,0,0,0.15))' }}>{p.emoji}</span>
-          {badge && <span style={{ position: 'absolute', top: 12, left: 20, padding: '5px 12px', borderRadius: 999, background: badge.bg, color: badge.color, fontSize: 11, fontWeight: 800 }}>{badge.label}</span>}
+          {badge && <span style={{ position: 'absolute', top: 12, left: 20, padding: '5px 12px', borderRadius: 999, background: badge.bg, color: badge.color, fontSize: 11, fontWeight: 800 }}>{t(badge.label)}</span>}
         </div>
         <div style={{ padding: '20px 24px' }}>
           {/* Name + price */}
-          <h2 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 22, fontWeight: 800, color: 'var(--ink)', margin: '0 0 8px', letterSpacing: '-0.02em', lineHeight: 1.2 }}>{p.name}</h2>
+          <h2 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 22, fontWeight: 800, color: 'var(--ink)', margin: '0 0 8px', letterSpacing: '-0.02em', lineHeight: 1.2 }}>{t(p.name)}</h2>
           <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 16 }}>
             <span style={{ fontSize: 28, fontWeight: 800, color: 'var(--ink)', fontFamily: 'Bricolage Grotesque,sans-serif' }}>${p.price.toFixed(2)}</span>
             <span style={{ color: '#FF9900', fontSize: 14 }}>{'★'.repeat(Math.round(p.rating))}{'☆'.repeat(5-Math.round(p.rating))}</span>
-            <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{p.reviews.toLocaleString()} reseñas</span>
+            <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{p.reviews.toLocaleString()} {t(['reseñas', 'reviews'])}</span>
           </div>
-          <p style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--ink-2)', margin: '0 0 20px' }}>{p.desc}</p>
+          <p style={{ fontSize: 15, lineHeight: 1.7, color: 'var(--ink-2)', margin: '0 0 20px' }}>{t(p.desc)}</p>
 
           {/* Tags */}
           <div style={{ display: 'flex', flexWrap: 'wrap', gap: 6, marginBottom: 20 }}>
-            {(p.tags || []).map(t => (
-              <span key={t} style={{ padding: '3px 10px', borderRadius: 999, background: 'var(--bg)', fontSize: 11.5, color: 'var(--ink-2)', border: '1px solid var(--line)' }}>#{t}</span>
+            {(p.tags || []).map(tag => (
+              <span key={tag} style={{ padding: '3px 10px', borderRadius: 999, background: 'var(--bg)', fontSize: 11.5, color: 'var(--ink-2)', border: '1px solid var(--line)' }}>#{tag}</span>
             ))}
           </div>
 
@@ -98,7 +100,7 @@ function ShopModal({ p, onClose, allProducts }) {
           {p.video && (
             <div style={{ marginBottom: 20, borderRadius: 14, overflow: 'hidden' }}>
               <div style={{ background: '#000', padding: '10px 14px', display: 'flex', alignItems: 'center', gap: 8 }}>
-                <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', opacity: 0.7 }}>▶ VIDEO VIRAL</span>
+                <span style={{ fontSize: 11, fontWeight: 700, color: '#fff', opacity: 0.7 }}>▶ {t(['VIDEO VIRAL', 'VIRAL VIDEO'])}</span>
               </div>
               <iframe
                 width="100%" height="200"
@@ -113,9 +115,9 @@ function ShopModal({ p, onClose, allProducts }) {
           <a href={p.link} target="_blank" rel="noopener noreferrer" style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 10, padding: '15px', borderRadius: 14, background: p.source === 'amazon' ? '#FF9900' : 'var(--orange)', color: '#fff', fontSize: 15, fontWeight: 700, textDecoration: 'none', marginBottom: 12, fontFamily: 'inherit' }}>
             {p.source === 'amazon' ? (
               <><svg viewBox="0 0 24 24" width="20" height="20" fill="currentColor"><path d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.525.13.12.174.09.336-.12.48-.256.19-.6.41-1.006.654-1.244.73-2.55 1.278-3.912 1.648a17.38 17.38 0 01-4.928.717c-3.4 0-6.56-.688-9.484-2.063a19.1 19.1 0 01-2.81-1.658c-.23-.168-.264-.338-.14-.487zm16.38-5.456c-.168-.478-.297-.883-.39-1.213-.09-.33-.203-.607-.34-.83-.135-.224-.318-.336-.55-.336-.207 0-.43.09-.67.27-.24.18-.44.39-.6.63l.42.36c.12-.12.248-.22.38-.3.132-.078.258-.118.377-.118.19 0 .328.1.41.297.08.2.146.436.197.71.05.273.094.576.13.91.038.333.056.665.056.998 0 .434-.048.88-.143 1.34-.096.46-.248.89-.456 1.29-.208.4-.476.727-.805.982-.33.254-.722.382-1.18.382-.48 0-.882-.104-1.207-.313-.325-.21-.583-.503-.773-.88a4.607 4.607 0 01-.397-1.288 9.34 9.34 0 01-.118-1.505c0-.62.06-1.215.177-1.785.118-.57.3-1.075.545-1.518.247-.443.558-.793.934-1.05.376-.258.82-.386 1.33-.386.49 0 .91.11 1.26.33.35.22.63.5.83.84zm-1.847-6.69c-5.49 0-10.06 1.854-13.714 5.562-.32.318-.49.586-.51.803-.02.218.118.43.414.636.297.207.594.31.89.31.18 0 .374-.07.58-.21 1.34-.958 2.74-1.72 4.2-2.286 1.46-.566 3.002-.85 4.626-.85 2.5 0 4.71.62 6.63 1.86 1.92 1.24 3.37 2.95 4.35 5.13.09.19.19.33.3.42.11.09.23.14.36.14.28 0 .5-.1.66-.3.16-.2.22-.43.18-.69a13.337 13.337 0 00-1.3-3.4 13.08 13.08 0 00-2.38-2.93 11.254 11.254 0 00-3.21-1.99 9.828 9.828 0 00-3.87-.8z"/></svg>
-              Comprar en Amazon</>
+              {t(['Comprar en Amazon', 'Buy on Amazon'])}</>
             ) : (
-              <>🛒 Ver producto oficial</>
+              <>🛒 {t(['Ver producto oficial', 'View official product'])}</>
             )}
           </a>
 
@@ -124,7 +126,7 @@ function ShopModal({ p, onClose, allProducts }) {
             <a href="/blog" style={{ display: 'flex', alignItems: 'center', gap: 12, padding: '12px 16px', borderRadius: 12, background: 'var(--bg)', border: '1px solid var(--line)', textDecoration: 'none', marginBottom: 20 }}>
               <span style={{ fontSize: 28 }}>{blogArt.emoji}</span>
               <div>
-                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--orange)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>Artículo relacionado</div>
+                <div style={{ fontSize: 10, fontWeight: 700, color: 'var(--orange)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>{t(['Artículo relacionado', 'Related article'])}</div>
                 <div style={{ fontSize: 13, fontWeight: 600, color: 'var(--ink)', lineHeight: 1.3 }}>{blogArt.title}</div>
               </div>
               <svg style={{ marginLeft: 'auto', flexShrink: 0 }} width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
@@ -133,7 +135,7 @@ function ShopModal({ p, onClose, allProducts }) {
 
           {/* Affiliate disclaimer */}
           <p style={{ fontSize: 10.5, color: 'var(--ink-soft)', textAlign: 'center', margin: 0, lineHeight: 1.5 }}>
-            🔗 BPuppy participa en programas de afiliados. Al comprar a través de estos enlaces podemos recibir una comisión sin costo adicional para ti.
+            🔗 {t(['BPuppy participa en programas de afiliados. Al comprar a través de estos enlaces podemos recibir una comisión sin costo adicional para ti.', 'BPuppy participates in affiliate programs. When you buy through these links, we may earn a commission at no extra cost to you.'])}
           </p>
         </div>
       </div>
@@ -143,6 +145,8 @@ function ShopModal({ p, onClose, allProducts }) {
 
 // ── Store main component ───────────────────────────────────────────────────────
 function TiendaApp() {
+  const t = useT();
+  const { lang } = useLang();
   const [cat, setCat] = useState('todos');
   const [q, setQ] = useState('');
   const [selected, setSelected] = useState(null);
@@ -151,10 +155,10 @@ function TiendaApp() {
     let list = cat === 'todos' ? SHOP_PRODUCTS : SHOP_PRODUCTS.filter(p => p.cat === cat);
     if (q.trim()) {
       const lq = q.toLowerCase();
-      list = list.filter(p => p.name.toLowerCase().includes(lq) || p.desc.toLowerCase().includes(lq) || (p.tags || []).some(t => t.includes(lq)));
+      list = list.filter(p => t(p.name).toLowerCase().includes(lq) || t(p.desc).toLowerCase().includes(lq) || (p.tags || []).some(tag => tag.includes(lq)));
     }
     return list;
-  }, [cat, q]);
+  }, [cat, q, lang]);
 
   const trending = useMemo(() => SHOP_PRODUCTS.filter(p => p.badge === 'viral').slice(0, 4), []);
 
@@ -165,23 +169,23 @@ function TiendaApp() {
         <div className="container">
           <div style={{ display: 'flex', alignItems: 'flex-end', justifyContent: 'space-between', gap: 24, flexWrap: 'wrap', marginBottom: 24 }}>
             <div>
-              <div className="eyebrow" style={{ marginBottom: 8 }}>BPuppy · Tienda</div>
+              <div className="eyebrow" style={{ marginBottom: 8 }}>{t(['BPuppy · Tienda', 'BPuppy · Shop'])}</div>
               <h1 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 'clamp(32px,5.5vw,58px)', fontWeight: 800, letterSpacing: '-0.035em', color: 'var(--ink)', margin: 0, lineHeight: 0.95 }}>
-                Los mejores productos,<br /><em style={{ fontFamily: 'Instrument Serif,Georgia,serif', fontStyle: 'italic', fontWeight: 400, color: 'var(--orange)' }}>curados para ti</em>
+                {t(['Los mejores productos,', 'The best products,'])}<br /><em style={{ fontFamily: 'Instrument Serif,Georgia,serif', fontStyle: 'italic', fontWeight: 400, color: 'var(--orange)' }}>{t(['curados para ti', 'curated for you'])}</em>
               </h1>
             </div>
             <div style={{ maxWidth: 320 }}>
-              <p style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.65, margin: '0 0 10px' }}>Solo recomendamos lo que usamos y conocemos. Cada link a Amazon o TikTok nos da una pequeña comisión sin costo extra para ti.</p>
+              <p style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.65, margin: '0 0 10px' }}>{t(['Solo recomendamos lo que usamos y conocemos. Cada link a Amazon o TikTok nos da una pequeña comisión sin costo extra para ti.', 'We only recommend what we use and trust. Every Amazon or TikTok link earns us a small commission at no extra cost to you.'])}</p>
               <a href="https://www.amazon.com?tag=bpuppy-20" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 6, fontSize: 12, fontWeight: 700, color: '#FF9900', textDecoration: 'none' }}>
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor"><path d="M.045 18.02c.072-.116.187-.124.348-.022 3.636 2.11 7.594 3.166 11.87 3.166 2.852 0 5.668-.533 8.447-1.595l.315-.14c.138-.06.234-.1.293-.13.226-.088.39-.046.525.13.12.174.09.336-.12.48-.256.19-.6.41-1.006.654-1.244.73-2.55 1.278-3.912 1.648a17.38 17.38 0 01-4.928.717c-3.4 0-6.56-.688-9.484-2.063a19.1 19.1 0 01-2.81-1.658c-.23-.168-.264-.338-.14-.487z"/></svg>
-                Ver nuestra tienda en Amazon →
+                {t(['Ver nuestra tienda en Amazon', 'Visit our Amazon storefront'])} →
               </a>
             </div>
           </div>
           {/* Search */}
           <div style={{ position: 'relative', maxWidth: 440 }}>
             <svg style={{ position: 'absolute', left: 14, top: '50%', transform: 'translateY(-50%)', pointerEvents: 'none' }} width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="var(--ink-2)" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-            <input value={q} onChange={e => setQ(e.target.value)} placeholder="Buscar productos..." style={{ width: '100%', padding: '12px 14px 12px 42px', borderRadius: 12, border: '1.5px solid var(--line)', background: 'var(--bg)', fontFamily: 'inherit', fontSize: 14, color: 'var(--ink)', outline: 'none' }}
+            <input value={q} onChange={e => setQ(e.target.value)} placeholder={t(['Buscar productos...', 'Search products...'])} style={{ width: '100%', padding: '12px 14px 12px 42px', borderRadius: 12, border: '1.5px solid var(--line)', background: 'var(--bg)', fontFamily: 'inherit', fontSize: 14, color: 'var(--ink)', outline: 'none' }}
               onFocus={e => e.target.style.borderColor = 'var(--orange)'}
               onBlur={e => e.target.style.borderColor = 'var(--line)'} />
           </div>
@@ -193,7 +197,7 @@ function TiendaApp() {
               const active = cat === c.id;
               return (
                 <button key={c.id} onClick={() => setCat(c.id)} style={{ padding: '7px 16px', borderRadius: 999, border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, fontWeight: active ? 700 : 500, whiteSpace: 'nowrap', background: active ? 'var(--orange)' : 'transparent', color: active ? '#fff' : 'var(--ink-2)', transition: 'all .15s' }}>
-                  {c.emoji} {c.label}
+                  {c.emoji} {t(c.label)}
                 </button>
               );
             })}
@@ -207,14 +211,14 @@ function TiendaApp() {
           <div style={{ marginBottom: 48 }}>
             <div style={{ display: 'flex', alignItems: 'center', gap: 10, marginBottom: 20 }}>
               <span style={{ fontSize: 20 }}>🔥</span>
-              <h2 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 20, fontWeight: 800, color: 'var(--ink)', margin: 0, letterSpacing: '-0.02em' }}>Viral esta semana</h2>
-              <span style={{ fontSize: 11, color: 'var(--ink-soft)', marginLeft: 4 }}>los más vistos en TikTok + Amazon</span>
+              <h2 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 20, fontWeight: 800, color: 'var(--ink)', margin: 0, letterSpacing: '-0.02em' }}>{t(['Viral esta semana', 'Viral this week'])}</h2>
+              <span style={{ fontSize: 11, color: 'var(--ink-soft)', marginLeft: 4 }}>{t(['los más vistos en TikTok + Amazon', 'most viewed on TikTok + Amazon'])}</span>
             </div>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(220px,1fr))', gap: 20 }}>
               {trending.map(p => <ShopCard key={p.id} p={p} onOpen={setSelected} />)}
             </div>
             <div style={{ borderTop: '1px solid var(--line)', marginTop: 40, paddingTop: 12 }}>
-              <h2 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 20, fontWeight: 800, color: 'var(--ink)', margin: '0 0 20px', letterSpacing: '-0.02em' }}>Todos los productos</h2>
+              <h2 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 20, fontWeight: 800, color: 'var(--ink)', margin: '0 0 20px', letterSpacing: '-0.02em' }}>{t(['Todos los productos', 'All products'])}</h2>
             </div>
           </div>
         )}
@@ -222,7 +226,7 @@ function TiendaApp() {
         {filtered.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '60px 0' }}>
             <div style={{ fontSize: 48, marginBottom: 12 }}>🛍️</div>
-            <p style={{ fontSize: 16, color: 'var(--ink-2)' }}>No se encontraron productos para "<strong>{q}</strong>"</p>
+            <p style={{ fontSize: 16, color: 'var(--ink-2)' }}>{t(['No se encontraron productos para', 'No products found for'])} "<strong>{q}</strong>"</p>
           </div>
         ) : (
           <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(240px,1fr))', gap: 24 }}>
@@ -234,11 +238,11 @@ function TiendaApp() {
         <div style={{ marginTop: 60, padding: '28px 32px', borderRadius: 20, background: 'linear-gradient(135deg, var(--ink) 0%, #3D2E2A 100%)', color: '#fff', display: 'flex', alignItems: 'center', gap: 24, flexWrap: 'wrap' }}>
           <span style={{ fontSize: 36 }}>🔗</span>
           <div style={{ flex: 1 }}>
-            <div style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 18, fontWeight: 800, marginBottom: 4 }}>¿Quieres vender tus propios productos aquí?</div>
-            <p style={{ fontSize: 13.5, opacity: 0.75, margin: 0, lineHeight: 1.6 }}>Conecta tu inventario de <strong>Airtable</strong> o <strong>Shopify</strong> y tus productos aparecen automáticamente en esta tienda. Escríbenos para configurarlo.</p>
+            <div style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 18, fontWeight: 800, marginBottom: 4 }}>{t(['¿Quieres vender tus propios productos aquí?', 'Want to sell your own products here?'])}</div>
+            <p style={{ fontSize: 13.5, opacity: 0.75, margin: 0, lineHeight: 1.6 }}>{t(['Conecta tu inventario de', 'Connect your'])} <strong>Airtable</strong> {t(['o', 'or'])} <strong>Shopify</strong> {t(['y tus productos aparecen automáticamente en esta tienda. Escríbenos para configurarlo.', 'inventory and your products show up automatically in this store. Message us to set it up.'])}</p>
           </div>
           <a href="https://wa.me/18084928294" target="_blank" rel="noopener noreferrer" style={{ padding: '12px 22px', borderRadius: 12, background: '#25D366', color: '#fff', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
-            💬 Conectar inventario
+            💬 {t(['Conectar inventario', 'Connect inventory'])}
           </a>
         </div>
       </div>

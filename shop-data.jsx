@@ -5,29 +5,29 @@ const AMAZON_TAG = 'bpuppy-20';
 const amz = (asin) => `https://www.amazon.com/dp/${asin}?tag=${AMAZON_TAG}`;
 
 const SHOP_CATS = [
-  { id: 'todos',      label: 'Todo',          emoji: '🛍️' },
-  { id: 'perros',     label: 'Perros',        emoji: '🐕' },
-  { id: 'gatos',      label: 'Gatos',         emoji: '🐱' },
-  { id: 'trending',   label: '🔥 Viral',      emoji: '' },
-  { id: 'grooming',   label: 'Grooming',      emoji: '✂️' },
-  { id: 'salud',      label: 'Salud',         emoji: '💊' },
+  { id: 'todos',      label: ['Todo', 'All'],            emoji: '🛍️' },
+  { id: 'perros',     label: ['Perros', 'Dogs'],         emoji: '🐕' },
+  { id: 'gatos',      label: ['Gatos', 'Cats'],          emoji: '🐱' },
+  { id: 'trending',   label: ['🔥 Viral', '🔥 Viral'],   emoji: '' },
+  { id: 'grooming',   label: ['Grooming', 'Grooming'],   emoji: '✂️' },
+  { id: 'salud',      label: ['Salud', 'Health'],        emoji: '💊' },
 ];
 
 // Badges
 const BADGES = {
-  viral:   { label: '🔥 Viral TikTok',   bg: '#FF0050', color: '#fff' },
-  amazon:  { label: '⭐ Top Amazon',      bg: '#FF9900', color: '#fff' },
-  staff:   { label: '💎 Recomendado',     bg: '#7C3AED', color: '#fff' },
-  nuevo:   { label: '✨ Nuevo',           bg: '#1EB87A', color: '#fff' },
-  sale:    { label: '🏷️ Oferta',         bg: '#E85D75', color: '#fff' },
+  viral:   { label: ['🔥 Viral TikTok', '🔥 Viral on TikTok'], bg: '#FF0050', color: '#fff' },
+  amazon:  { label: ['⭐ Top Amazon', '⭐ Top on Amazon'],      bg: '#FF9900', color: '#fff' },
+  staff:   { label: ['💎 Recomendado', '💎 Staff Pick'],        bg: '#7C3AED', color: '#fff' },
+  nuevo:   { label: ['✨ Nuevo', '✨ New'],                     bg: '#1EB87A', color: '#fff' },
+  sale:    { label: ['🏷️ Oferta', '🏷️ Sale'],                 bg: '#E85D75', color: '#fff' },
 };
 
 const SHOP_PRODUCTS = [
   // ── PERROS ────────────────────────────────────────────────────────────────
   {
     id: 1, cat: 'perros',
-    name: 'KONG Classic — Juguete Rellenable',
-    desc: 'El juguete más recomendado por entrenadores del mundo. Rellena con mantequilla de maní congelada y ocupa a tu perro por horas. Esencial para crate training.',
+    name: ['KONG Classic — Juguete Rellenable', 'KONG Classic — Stuffable Toy'],
+    desc: ['El juguete más recomendado por entrenadores del mundo. Rellena con mantequilla de maní congelada y ocupa a tu perro por horas. Esencial para crate training.', 'The toy most recommended by trainers worldwide. Stuff it with frozen peanut butter to keep your dog busy for hours. Essential for crate training.'],
     price: 13.99, rating: 4.8, reviews: 89420,
     badge: 'staff',
     img: null, emoji: '🟠',
@@ -39,8 +39,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 2, cat: 'perros',
-    name: 'FURminator deShedding Tool — Tamaño L',
-    desc: 'Reduce el pelo suelto hasta un 90%. La herramienta favorita de groomers profesionales para razas de doble capa: Golden, Lab, Husky, German Shepherd.',
+    name: ['FURminator deShedding Tool — Tamaño L', 'FURminator deShedding Tool — Size L'],
+    desc: ['Reduce el pelo suelto hasta un 90%. La herramienta favorita de groomers profesionales para razas de doble capa: Golden, Lab, Husky, German Shepherd.', 'Reduces loose hair by up to 90%. The favorite tool of professional groomers for double-coated breeds: Golden, Lab, Husky, German Shepherd.'],
     price: 44.99, rating: 4.7, reviews: 127800,
     badge: 'amazon',
     img: null, emoji: '🪮',
@@ -52,7 +52,7 @@ const SHOP_PRODUCTS = [
   {
     id: 3, cat: 'perros',
     name: 'PetSafe Easy Walk Harness',
-    desc: 'El arnés anti-jale más recomendado por entrenadores. La argolla frontal redirige al perro hacia ti cuando jala. Sin presión en cuello ni tráquea.',
+    desc: ['El arnés anti-jale más recomendado por entrenadores. La argolla frontal redirige al perro hacia ti cuando jala. Sin presión en cuello ni tráquea.', 'The no-pull harness most recommended by trainers. The front ring steers your dog back toward you when they pull. No pressure on the neck or trachea.'],
     price: 29.95, rating: 4.5, reviews: 54300,
     badge: 'staff',
     img: null, emoji: '🦮',
@@ -64,7 +64,7 @@ const SHOP_PRODUCTS = [
   {
     id: 4, cat: 'perros',
     name: 'Ruffwear Front Range Harness',
-    desc: 'El arnés premium para perros activos. Reflectivo, con almohadillas en puntos de presión, clip frontal y dorsal. Perfecto para trail, playa y ciudad.',
+    desc: ['El arnés premium para perros activos. Reflectivo, con almohadillas en puntos de presión, clip frontal y dorsal. Perfecto para trail, playa y ciudad.', 'The premium harness for active dogs. Reflective, with padding at pressure points and both front and back clips. Perfect for the trail, the beach, and the city.'],
     price: 54.95, rating: 4.8, reviews: 31200,
     badge: 'staff',
     img: null, emoji: '🏔️',
@@ -74,8 +74,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 5, cat: 'perros',
-    name: 'Big Barker Cama Ortopédica 7"',
-    desc: 'La cama ortopédica más avalada por veterinarios. Espuma de memoria de 7 pulgadas diseñada específicamente para perros. Reduce dolores articulares en un 42%.',
+    name: ['Big Barker Cama Ortopédica 7"', 'Big Barker 7" Orthopedic Bed'],
+    desc: ['La cama ortopédica más avalada por veterinarios. Espuma de memoria de 7 pulgadas diseñada específicamente para perros. Reduce dolores articulares en un 42%.', 'The orthopedic bed most endorsed by veterinarians. Seven inches of memory foam engineered specifically for dogs. Reduces joint pain by 42%.'],
     price: 189.95, rating: 4.8, reviews: 12400,
     badge: 'staff',
     img: null, emoji: '🛏️',
@@ -85,8 +85,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 6, cat: 'perros',
-    name: 'ThunderShirt Chaleco Anti-Ansiedad',
-    desc: 'Funciona como un abrazo constante. Reduce la ansiedad en tormentas, fuegos artificiales y viajes en el 80% de los perros según estudios clínicos.',
+    name: ['ThunderShirt Chaleco Anti-Ansiedad', 'ThunderShirt Anti-Anxiety Vest'],
+    desc: ['Funciona como un abrazo constante. Reduce la ansiedad en tormentas, fuegos artificiales y viajes en el 80% de los perros según estudios clínicos.', 'Works like a constant hug. Reduces anxiety during storms, fireworks, and travel in 80% of dogs, according to clinical studies.'],
     price: 49.95, rating: 4.4, reviews: 43100,
     badge: 'amazon',
     img: null, emoji: '⛈️',
@@ -98,8 +98,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 7, cat: 'perros',
-    name: 'Comedero Slow Feeder Anti-Ansiedad',
-    desc: 'Laberintos que ralentizan la ingesta hasta 10x. Previene el bloat (torsión gástrica) en razas grandes y reduce la ansiedad alimentaria. Apto lavavajillas.',
+    name: ['Comedero Slow Feeder Anti-Ansiedad', 'Anti-Anxiety Slow Feeder Bowl'],
+    desc: ['Laberintos que ralentizan la ingesta hasta 10x. Previene el bloat (torsión gástrica) en razas grandes y reduce la ansiedad alimentaria. Apto lavavajillas.', 'Maze patterns slow down eating by up to 10x. Helps prevent bloat (gastric torsion) in large breeds and eases mealtime anxiety. Dishwasher safe.'],
     price: 15.99, rating: 4.6, reviews: 38700,
     badge: 'viral',
     img: null, emoji: '🍽️',
@@ -111,8 +111,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 8, cat: 'perros',
-    name: "Nature's Miracle Limpiador Enzimático",
-    desc: 'Elimina manchas Y olores de orina, heces y vómito en alfombras, madera y telas. Los limpiadores normales solo enmascaran el olor que el perro sigue detectando.',
+    name: ["Nature's Miracle Limpiador Enzimático", "Nature's Miracle Enzymatic Cleaner"],
+    desc: ['Elimina manchas Y olores de orina, heces y vómito en alfombras, madera y telas. Los limpiadores normales solo enmascaran el olor que el perro sigue detectando.', 'Removes both stains AND odors from urine, feces, and vomit on carpet, wood, and fabric. Ordinary cleaners only mask the smell, which your dog can still detect.'],
     price: 22.97, rating: 4.6, reviews: 71500,
     badge: 'amazon',
     img: null, emoji: '🧴',
@@ -123,8 +123,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 9, cat: 'perros',
-    name: 'KONG Wobbler Dispensador de Comida',
-    desc: 'Hace que tu perro trabaje por su comida. Estimulación mental y física mientras come. Reduce ansiedad y aburrimiento en perros que se quedan solos.',
+    name: ['KONG Wobbler Dispensador de Comida', 'KONG Wobbler Food Dispenser'],
+    desc: ['Hace que tu perro trabaje por su comida. Estimulación mental y física mientras come. Reduce ansiedad y aburrimiento en perros que se quedan solos.', 'Makes your dog work for their food. Mental and physical stimulation at mealtime. Eases anxiety and boredom in dogs who are left alone.'],
     price: 19.99, rating: 4.6, reviews: 29800,
     badge: 'staff',
     img: null, emoji: '🎯',
@@ -135,8 +135,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 10, cat: 'perros',
-    name: 'Kit de Primeros Auxilios para Mascotas',
-    desc: 'Todo lo que necesitas para emergencias: vendas, antiséptico, guantes, termómetro, guía de emergencias. El kit más completo para llevar al parque o viajes.',
+    name: ['Kit de Primeros Auxilios para Mascotas', 'Pet First Aid Kit'],
+    desc: ['Todo lo que necesitas para emergencias: vendas, antiséptico, guantes, termómetro, guía de emergencias. El kit más completo para llevar al parque o viajes.', 'Everything you need for emergencies: bandages, antiseptic, gloves, thermometer, and an emergency guide. The most complete kit to bring to the park or on trips.'],
     price: 32.99, rating: 4.7, reviews: 8900,
     badge: 'nuevo',
     img: null, emoji: '🩺',
@@ -147,8 +147,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 11, cat: 'perros',
-    name: 'Bolsa Entrenamiento + Premios Freeze-Dried',
-    desc: 'Combo perfecto para entrenamiento: bolsa de cintura con cierre magnético y premios de pollo liofilizado. Un ingrediente, sabor intenso, tamaño perfecto para sesiones.',
+    name: ['Bolsa Entrenamiento + Premios Freeze-Dried', 'Training Pouch + Freeze-Dried Treats'],
+    desc: ['Combo perfecto para entrenamiento: bolsa de cintura con cierre magnético y premios de pollo liofilizado. Un ingrediente, sabor intenso, tamaño perfecto para sesiones.', 'The perfect training combo: a waist pouch with a magnetic closure plus freeze-dried chicken treats. One ingredient, bold flavor, and the perfect size for training sessions.'],
     price: 27.99, rating: 4.8, reviews: 15600,
     badge: 'staff',
     img: null, emoji: '🏅',
@@ -159,8 +159,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 12, cat: 'perros',
-    name: 'Botella de Agua Portátil para Perros',
-    desc: 'Diseño 2-en-1: botella + bebedero. Aprieta para llenar el recipiente integrado, el perro bebe y el agua sobrante regresa a la botella. Perfecta para caminatas.',
+    name: ['Botella de Agua Portátil para Perros', 'Portable Dog Water Bottle'],
+    desc: ['Diseño 2-en-1: botella + bebedero. Aprieta para llenar el recipiente integrado, el perro bebe y el agua sobrante regresa a la botella. Perfecta para caminatas.', 'A 2-in-1 design: bottle plus bowl. Squeeze to fill the built-in tray, let your dog drink, and the leftover water flows back into the bottle. Perfect for walks.'],
     price: 14.99, rating: 4.5, reviews: 44200,
     badge: 'viral',
     img: null, emoji: '💧',
@@ -175,7 +175,7 @@ const SHOP_PRODUCTS = [
   {
     id: 13, cat: 'gatos',
     name: 'ScoopFree Self-Cleaning Litter Box',
-    desc: 'Arenero autolimpiante con detección de cristales. Rastrillea automáticamente 20 min después de cada uso. Elimina el mal olor por semanas. Compatible con app.',
+    desc: ['Arenero autolimpiante con detección de cristales. Rastrillea automáticamente 20 min después de cada uso. Elimina el mal olor por semanas. Compatible con app.', 'A self-cleaning litter box with crystal detection. It automatically rakes 20 minutes after each use and keeps odor away for weeks. App compatible.'],
     price: 199.95, rating: 4.3, reviews: 18700,
     badge: 'viral',
     img: null, emoji: '🚽',
@@ -187,8 +187,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 14, cat: 'gatos',
-    name: 'Drinkwell Fuente de Agua para Gatos',
-    desc: 'El agua en movimiento estimula la hidratación en gatos. Capacidad 60oz, con filtro de carbón activo. Reduce riesgo de enfermedad renal crónica, la principal causa de muerte en gatos mayores.',
+    name: ['Drinkwell Fuente de Agua para Gatos', 'Drinkwell Cat Water Fountain'],
+    desc: ['El agua en movimiento estimula la hidratación en gatos. Capacidad 60oz, con filtro de carbón activo. Reduce riesgo de enfermedad renal crónica, la principal causa de muerte en gatos mayores.', 'Moving water encourages cats to stay hydrated. Holds 60 oz and includes an activated-carbon filter. Lowers the risk of chronic kidney disease, the leading cause of death in senior cats.'],
     price: 38.95, rating: 4.4, reviews: 29400,
     badge: 'staff',
     img: null, emoji: '⛲',
@@ -199,8 +199,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 15, cat: 'gatos',
-    name: 'Árbol Rascador Go Pet Club 62"',
-    desc: 'Torre de 62 pulgadas con múltiples plataformas, hamaca, túnel y rascadores de sisal. Para gatos que necesitan escalar, observar y ejercitarse. Carga hasta 25 lbs por plataforma.',
+    name: ['Árbol Rascador Go Pet Club 62"', 'Go Pet Club 62" Cat Tree'],
+    desc: ['Torre de 62 pulgadas con múltiples plataformas, hamaca, túnel y rascadores de sisal. Para gatos que necesitan escalar, observar y ejercitarse. Carga hasta 25 lbs por plataforma.', 'A 62-inch tower with multiple platforms, a hammock, a tunnel, and sisal scratching posts. For cats who need to climb, watch, and exercise. Holds up to 25 lbs per platform.'],
     price: 89.99, rating: 4.3, reviews: 41200,
     badge: 'amazon',
     img: null, emoji: '🌳',
@@ -211,8 +211,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 16, cat: 'gatos',
-    name: 'Varita Interactiva Da Bird',
-    desc: 'La varita interactiva más recomendada por veterinarios conductistas. Las plumas simulan el movimiento de un pájaro real. 10-15 minutos diarios satisfacen el instinto predatorio del gato.',
+    name: ['Varita Interactiva Da Bird', 'Da Bird Interactive Wand'],
+    desc: ['La varita interactiva más recomendada por veterinarios conductistas. Las plumas simulan el movimiento de un pájaro real. 10-15 minutos diarios satisfacen el instinto predatorio del gato.', 'The interactive wand most recommended by behavioral veterinarians. The feathers mimic the movement of a real bird. Just 10 to 15 minutes a day satisfies your cat\'s predatory instinct.'],
     price: 12.99, rating: 4.7, reviews: 18900,
     badge: 'staff',
     img: null, emoji: '🪶',
@@ -224,8 +224,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 17, cat: 'gatos',
-    name: 'FURminator deShedding para Gatos',
-    desc: 'Elimina el pelo suelto antes de que llegue a sofás y alfombras. Reduce las bolas de pelo hasta un 90%. Para pelo largo y corto con cuchillas diferentes.',
+    name: ['FURminator deShedding para Gatos', 'FURminator deShedding for Cats'],
+    desc: ['Elimina el pelo suelto antes de que llegue a sofás y alfombras. Reduce las bolas de pelo hasta un 90%. Para pelo largo y corto con cuchillas diferentes.', 'Removes loose hair before it reaches your couch and carpets. Reduces hairballs by up to 90%. Available with different blades for long and short coats.'],
     price: 34.99, rating: 4.7, reviews: 33100,
     badge: 'amazon',
     img: null, emoji: '🪮',
@@ -236,8 +236,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 18, cat: 'gatos',
-    name: 'Mochila Transportadora Space Capsule',
-    desc: 'Mochila con burbuja transparente que se hace viral en TikTok constantemente. El gato puede asomarse mientras viaja. Ventilación superior, fácil de limpiar. La favorita del aeropuerto.',
+    name: ['Mochila Transportadora Space Capsule', 'Space Capsule Carrier Backpack'],
+    desc: ['Mochila con burbuja transparente que se hace viral en TikTok constantemente. El gato puede asomarse mientras viaja. Ventilación superior, fácil de limpiar. La favorita del aeropuerto.', 'A backpack with a clear bubble window that goes viral on TikTok again and again. Your cat can peek out while traveling. Top ventilation, easy to clean, and an airport favorite.'],
     price: 49.99, rating: 4.5, reviews: 22400,
     badge: 'viral',
     img: null, emoji: '🚀',
@@ -249,8 +249,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 19, cat: 'gatos',
-    name: 'Feliway Classic Difusor de Feromonas',
-    desc: 'Las feromonas sintéticas de "hogar feliz" reducen marcaje, arañazos inapropiados y conflictos entre gatos. Recomendado por el 90% de veterinarios conductuales.',
+    name: ['Feliway Classic Difusor de Feromonas', 'Feliway Classic Pheromone Diffuser'],
+    desc: ['Las feromonas sintéticas de "hogar feliz" reducen marcaje, arañazos inapropiados y conflictos entre gatos. Recomendado por el 90% de veterinarios conductuales.', 'Synthetic "happy home" pheromones reduce marking, inappropriate scratching, and conflicts between cats. Recommended by 90% of behavioral veterinarians.'],
     price: 39.99, rating: 4.2, reviews: 14800,
     badge: 'staff',
     img: null, emoji: '😌',
@@ -261,8 +261,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 20, cat: 'gatos',
-    name: 'Kit de Hierba Gatera (Cat Grass)',
-    desc: 'Trigo, avena y cebada para que tu gato mastique hierba fresca en casa. Ayuda a la digestión y a expulsar bolas de pelo. Crece en 7-10 días, kit con semillas y tierra.',
+    name: ['Kit de Hierba Gatera (Cat Grass)', 'Cat Grass Growing Kit'],
+    desc: ['Trigo, avena y cebada para que tu gato mastique hierba fresca en casa. Ayuda a la digestión y a expulsar bolas de pelo. Crece en 7-10 días, kit con semillas y tierra.', 'Wheat, oat, and barley so your cat can chew on fresh grass at home. Aids digestion and helps pass hairballs. Grows in 7 to 10 days; kit includes seeds and soil.'],
     price: 11.99, rating: 4.5, reviews: 19200,
     badge: 'viral',
     img: null, emoji: '🌱',
@@ -276,8 +276,8 @@ const SHOP_PRODUCTS = [
   // ── TRENDING VIRAL ────────────────────────────────────────────────────────
   {
     id: 21, cat: 'trending',
-    name: 'Furbo 360° Dog Camera con Treat Toss',
-    desc: 'Cámara 360° con seguimiento de movimiento, visión nocturna, audio bidireccional y lanzador de premios controlado por app. Habla con tu perro mientras estás en el trabajo.',
+    name: ['Furbo 360° Dog Camera con Treat Toss', 'Furbo 360° Dog Camera with Treat Toss'],
+    desc: ['Cámara 360° con seguimiento de movimiento, visión nocturna, audio bidireccional y lanzador de premios controlado por app. Habla con tu perro mientras estás en el trabajo.', 'A 360° camera with motion tracking, night vision, two-way audio, and an app-controlled treat launcher. Talk to your dog while you are at work.'],
     price: 169.00, rating: 4.4, reviews: 28700,
     badge: 'viral',
     img: null, emoji: '📷',
@@ -289,8 +289,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 22, cat: 'trending',
-    name: 'Embark Dog DNA Test — Salud + Razas',
-    desc: 'El test de ADN más completo del mercado: más de 350 razas, 230+ condiciones de salud genéticas, parentesco y rastreo de ancestros. Avalado por la Universidad Cornell.',
+    name: ['Embark Dog DNA Test — Salud + Razas', 'Embark Dog DNA Test — Health + Breeds'],
+    desc: ['El test de ADN más completo del mercado: más de 350 razas, 230+ condiciones de salud genéticas, parentesco y rastreo de ancestros. Avalado por la Universidad Cornell.', 'The most complete DNA test on the market: over 350 breeds, 230+ genetic health conditions, relative finder, and ancestry tracing. Backed by Cornell University.'],
     price: 159.00, rating: 4.7, reviews: 31400,
     badge: 'staff',
     img: null, emoji: '🧬',
@@ -303,7 +303,7 @@ const SHOP_PRODUCTS = [
   {
     id: 23, cat: 'trending',
     name: 'Fi Series 3 GPS Smart Collar',
-    desc: 'Rastreo GPS en tiempo real, cuenta pasos, monitorea sueño y actividad. Batería de 3 meses. El Apple Watch de los perros. Funciona en USA, Canadá y Europa.',
+    desc: ['Rastreo GPS en tiempo real, cuenta pasos, monitorea sueño y actividad. Batería de 3 meses. El Apple Watch de los perros. Funciona en USA, Canadá y Europa.', 'Real-time GPS tracking, step counting, and sleep and activity monitoring. Three-month battery life. The Apple Watch for dogs. Works in the US, Canada, and Europe.'],
     price: 149.00, rating: 4.6, reviews: 12300,
     badge: 'viral',
     img: null, emoji: '📍',
@@ -315,8 +315,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 24, cat: 'trending',
-    name: 'Tractive GPS Tracker — Perros y Gatos',
-    desc: 'GPS en tiempo real con historial de actividad. Funciona en más de 150 países. Sin contrato, plan mensual $7.99. La opción más económica y confiable del mercado.',
+    name: ['Tractive GPS Tracker — Perros y Gatos', 'Tractive GPS Tracker — Dogs & Cats'],
+    desc: ['GPS en tiempo real con historial de actividad. Funciona en más de 150 países. Sin contrato, plan mensual $7.99. La opción más económica y confiable del mercado.', 'Real-time GPS with activity history. Works in more than 150 countries. No contract, $7.99 a month. The most affordable and reliable option on the market.'],
     price: 49.99, rating: 4.3, reviews: 41600,
     badge: 'amazon',
     img: null, emoji: '🛰️',
@@ -328,8 +328,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 25, cat: 'trending',
-    name: 'Alfombra de Lamer (Lick Mat) — Pack 2',
-    desc: 'Las almohadillas con texturas distribuyen mantequilla de maní, yogurt o comida húmeda en capas finas. Calman la ansiedad, alivian el aburrimiento y pueden usarse en el baño.',
+    name: ['Alfombra de Lamer (Lick Mat) — Pack 2', 'Lick Mat — 2-Pack'],
+    desc: ['Las almohadillas con texturas distribuyen mantequilla de maní, yogurt o comida húmeda en capas finas. Calman la ansiedad, alivian el aburrimiento y pueden usarse en el baño.', 'Textured mats spread peanut butter, yogurt, or wet food into thin layers. They calm anxiety, ease boredom, and can be used at bath time.'],
     price: 16.99, rating: 4.7, reviews: 52100,
     badge: 'viral',
     img: null, emoji: '👅',
@@ -341,8 +341,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 26, cat: 'trending',
-    name: 'Pet Stroller — 3 Ruedas All-Terrain',
-    desc: 'Para perros que no pueden caminar largas distancias (senior, post-cirugía, pequeños). Ruedas todo terreno, fácil plegado, con cubierta de mosquito y lluvia.',
+    name: ['Pet Stroller — 3 Ruedas All-Terrain', 'Pet Stroller — 3-Wheel All-Terrain'],
+    desc: ['Para perros que no pueden caminar largas distancias (senior, post-cirugía, pequeños). Ruedas todo terreno, fácil plegado, con cubierta de mosquito y lluvia.', 'For dogs who can\'t walk long distances (senior, post-surgery, or small). All-terrain wheels, easy folding, and a mosquito and rain cover.'],
     price: 89.99, rating: 4.4, reviews: 17300,
     badge: 'viral',
     img: null, emoji: '🛺',
@@ -354,8 +354,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 27, cat: 'trending',
-    name: 'Colchoneta Refrescante de Gel',
-    desc: 'Activa con el peso del perro sin refrigeración. Reduce la temperatura corporal hasta 10°F. Esencial para razas braquicéfalas (Bulldog, Pug) en verano y climas calurosos.',
+    name: ['Colchoneta Refrescante de Gel', 'Cooling Gel Mat'],
+    desc: ['Activa con el peso del perro sin refrigeración. Reduce la temperatura corporal hasta 10°F. Esencial para razas braquicéfalas (Bulldog, Pug) en verano y climas calurosos.', 'Activates with your dog\'s weight, no refrigeration needed. Lowers body temperature by up to 10°F. Essential for brachycephalic breeds (Bulldog, Pug) in summer and hot climates.'],
     price: 28.99, rating: 4.3, reviews: 36800,
     badge: 'viral',
     img: null, emoji: '❄️',
@@ -367,8 +367,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 28, cat: 'trending',
-    name: 'Rampa para Mascotas — Anti-deslizante',
-    desc: 'Para perros que no deben saltar: senior, razas condrodistróficas (Dachshund, Basset), post-operados. Extensible 38"-72", carga hasta 120 lbs.',
+    name: ['Rampa para Mascotas — Anti-deslizante', 'Pet Ramp — Non-Slip'],
+    desc: ['Para perros que no deben saltar: senior, razas condrodistróficas (Dachshund, Basset), post-operados. Extensible 38"-72", carga hasta 120 lbs.', 'For dogs who shouldn\'t jump: senior, chondrodystrophic breeds (Dachshund, Basset), and post-surgery. Extends from 38" to 72" and holds up to 120 lbs.'],
     price: 49.99, rating: 4.5, reviews: 11200,
     badge: 'staff',
     img: null, emoji: '🛝',
@@ -381,8 +381,8 @@ const SHOP_PRODUCTS = [
   // ── GROOMING ─────────────────────────────────────────────────────────────
   {
     id: 29, cat: 'grooming',
-    name: 'Chris Christensen Ice on Ice — Spray Detangle',
-    desc: 'El spray deslanador y brillante favorito de groomers de concurso. Facilita el cepillado, previene nudos, da brillo y acondiciona el pelaje sin grasarlo.',
+    name: ['Chris Christensen Ice on Ice — Spray Detangle', 'Chris Christensen Ice on Ice — Detangling Spray'],
+    desc: ['El spray deslanador y brillante favorito de groomers de concurso. Facilita el cepillado, previene nudos, da brillo y acondiciona el pelaje sin grasarlo.', 'The detangling, shine-boosting spray favored by show groomers. Makes brushing easier, prevents knots, adds shine, and conditions the coat without making it greasy.'],
     price: 24.99, rating: 4.8, reviews: 7400,
     badge: 'staff',
     img: null, emoji: '✨',
@@ -393,8 +393,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 30, cat: 'grooming',
-    name: 'Andis AGC2 2-Speed Clipper — Profesional',
-    desc: 'La maquinilla de grooming profesional más vendida en USA. Motor quieto, 2 velocidades, genera menos calor que la competencia. Compatible con todas las hojas Andis.',
+    name: ['Andis AGC2 2-Speed Clipper — Profesional', 'Andis AGC2 2-Speed Clipper — Professional'],
+    desc: ['La maquinilla de grooming profesional más vendida en USA. Motor quieto, 2 velocidades, genera menos calor que la competencia. Compatible con todas las hojas Andis.', 'The best-selling professional grooming clipper in the US. Quiet motor, two speeds, and runs cooler than the competition. Compatible with all Andis blades.'],
     price: 119.99, rating: 4.7, reviews: 15800,
     badge: 'amazon',
     img: null, emoji: '⚡',
@@ -406,7 +406,7 @@ const SHOP_PRODUCTS = [
   {
     id: 31, cat: 'grooming',
     name: 'Wahl 4-in-1 Pet Grooming Shampoo — Natural',
-    desc: 'Shampoo 4-en-1 sin alcohol, parabenos ni colorantes artificiales. pH balanceado para perros. Disponible en lavanda, avena y eucalipto. Concentrado: rinde 32oz de producto.',
+    desc: ['Shampoo 4-en-1 sin alcohol, parabenos ni colorantes artificiales. pH balanceado para perros. Disponible en lavanda, avena y eucalipto. Concentrado: rinde 32oz de producto.', 'A 4-in-1 shampoo with no alcohol, parabens, or artificial dyes. pH balanced for dogs. Available in lavender, oatmeal, and eucalyptus. Concentrated: makes 32 oz of product.'],
     price: 9.99, rating: 4.6, reviews: 42300,
     badge: 'staff',
     img: null, emoji: '🧴',
@@ -417,8 +417,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 32, cat: 'grooming',
-    name: 'Cortauñas Safari Professional + Lima',
-    desc: 'Cortauñas de acero inoxidable con guarda de seguridad para evitar cortar demasiado. Incluye lima para suavizar el borde. El más recomendado en grupos de entrenadores.',
+    name: ['Cortauñas Safari Professional + Lima', 'Safari Professional Nail Clippers + File'],
+    desc: ['Cortauñas de acero inoxidable con guarda de seguridad para evitar cortar demasiado. Incluye lima para suavizar el borde. El más recomendado en grupos de entrenadores.', 'Stainless-steel nail clippers with a safety guard so you don\'t cut too far. Includes a file to smooth the edge. The top pick in trainer communities.'],
     price: 16.99, rating: 4.5, reviews: 28100,
     badge: 'staff',
     img: null, emoji: '💅',
@@ -431,8 +431,8 @@ const SHOP_PRODUCTS = [
   // ── SALUD ─────────────────────────────────────────────────────────────────
   {
     id: 33, cat: 'salud',
-    name: 'Zesty Paws Omega 3 Bites para Perros',
-    desc: 'Suplemento de omega-3 con aceite de salmón de Alaska. Mejora pelaje, articulaciones y sistema inmune. Forma de masticable — los perros los comen como premio.',
+    name: ['Zesty Paws Omega 3 Bites para Perros', 'Zesty Paws Omega 3 Bites for Dogs'],
+    desc: ['Suplemento de omega-3 con aceite de salmón de Alaska. Mejora pelaje, articulaciones y sistema inmune. Forma de masticable — los perros los comen como premio.', 'An omega-3 supplement with Alaskan salmon oil. Improves coat, joints, and immune system. In chewable form, so dogs eat them like a treat.'],
     price: 29.99, rating: 4.7, reviews: 93400,
     badge: 'amazon',
     img: null, emoji: '🐟',
@@ -443,8 +443,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 34, cat: 'salud',
-    name: 'Vetri-Science Glyco-Flex III — Cadera y Articulaciones',
-    desc: 'El suplemento articular más recomendado por veterinarios para razas grandes. Glucosamina, condroitina y MSM en concentración terapéutica. Para prevención y tratamiento.',
+    name: ['Vetri-Science Glyco-Flex III — Cadera y Articulaciones', 'Vetri-Science Glyco-Flex III — Hip & Joint'],
+    desc: ['El suplemento articular más recomendado por veterinarios para razas grandes. Glucosamina, condroitina y MSM en concentración terapéutica. Para prevención y tratamiento.', 'The joint supplement most recommended by veterinarians for large breeds. Glucosamine, chondroitin, and MSM at therapeutic strength. For both prevention and treatment.'],
     price: 44.99, rating: 4.8, reviews: 21700,
     badge: 'staff',
     img: null, emoji: '🦴',
@@ -455,8 +455,8 @@ const SHOP_PRODUCTS = [
   },
   {
     id: 35, cat: 'salud',
-    name: 'Tropiclean Fresh Breath Gel Dental',
-    desc: 'Aplicar con el dedo o con cepillo. Elimina placa y sarro sin necesidad de enjuague. El método más fácil de cuidado dental diario para perros que no toleran el cepillado.',
+    name: ['Tropiclean Fresh Breath Gel Dental', 'Tropiclean Fresh Breath Dental Gel'],
+    desc: ['Aplicar con el dedo o con cepillo. Elimina placa y sarro sin necesidad de enjuague. El método más fácil de cuidado dental diario para perros que no toleran el cepillado.', 'Apply with your finger or a brush. Removes plaque and tartar with no rinsing needed. The easiest daily dental-care method for dogs who won\'t tolerate brushing.'],
     price: 17.99, rating: 4.5, reviews: 35600,
     badge: 'viral',
     img: null, emoji: '🦷',

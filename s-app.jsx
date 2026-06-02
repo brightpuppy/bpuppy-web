@@ -35,17 +35,18 @@ function PhoneMockup({ children }) {
 
 // ── Floating Bottom Nav ────────────────────────────────────────────────────────
 function BottomNav({ screen, setScreen, bs }) {
+  const t = window.useT ? window.useT() : (x => Array.isArray(x) ? x[0] : x);
   const navBtns = [
-    { id:'feed',     label:'Inicio',
+    { id:'feed',     label:t(['Inicio','Home']),
       icon: a => <svg width="22" height="22" viewBox="0 0 24 24" fill={a?bs.brand:'none'} stroke={a?bs.brand:bs.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg> },
-    { id:'discover', label:'Explorar',
+    { id:'discover', label:t(['Explorar','Explore']),
       icon: a => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a?bs.brand:bs.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg> },
     { id:'__fab', label:'', icon: null },
-    { id:'pack',     label:'Pack',
+    { id:'pack',     label:t(['Pack','Pack']),
       icon: a => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a?bs.brand:bs.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/></svg> },
-    { id:'account',  label:'Cuenta',
+    { id:'account',  label:t(['Cuenta','Account']),
       icon: a => <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke={a?bs.brand:bs.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v4"/></svg> },
-    { id:'profile',  label:'Perfil',
+    { id:'profile',  label:t(['Perfil','Profile']),
       icon: a => <svg width="22" height="22" viewBox="0 0 24 24" fill={a?bs.brand:'none'} stroke={a?bs.brand:bs.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M20 21v-2a4 4 0 00-4-4H8a4 4 0 00-4 4v2"/><circle cx="12" cy="7" r="4"/></svg> },
   ];
 
@@ -94,17 +95,18 @@ function SIcon({ name, color, size=19 }) {
   return <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke={color} strokeWidth="1.9" strokeLinecap="round" strokeLinejoin="round" dangerouslySetInnerHTML={{ __html:p }}/>;
 }
 function DesktopSidebar({ screen, setScreen, bs }) {
+  const t = window.useT ? window.useT() : (x => Array.isArray(x) ? x[0] : x);
   const navItems = [
-    { id:'feed',      label:'Novedades',    icon:'home' },
-    { id:'community', label:'Comunidad',    icon:'community' },
-    { id:'discover',  label:'Descubrir',    icon:'discover' },
-    { id:'events',    label:'Eventos',      icon:'events' },
-    { id:'news',      label:'Noticias',     icon:'news' },
-    { id:'videos',    label:'Videos',       icon:'video' },
-    { id:'pack',      label:'Mi Pack',      icon:'pack' },
-    { id:'pets',      label:'Mis Mascotas', icon:'pets' },
-    { id:'messages',  label:'Mensajes',     icon:'messages', badge:2 },
-    { id:'profile',   label:'Perfil',       icon:'profile' },
+    { id:'feed',      label:t(['Novedades','Latest']),       icon:'home' },
+    { id:'community', label:t(['Comunidad','Community']),     icon:'community' },
+    { id:'discover',  label:t(['Descubrir','Discover']),      icon:'discover' },
+    { id:'events',    label:t(['Eventos','Events']),          icon:'events' },
+    { id:'news',      label:t(['Noticias','News']),           icon:'news' },
+    { id:'videos',    label:t(['Videos','Videos']),           icon:'video' },
+    { id:'pack',      label:t(['Mi Pack','My Pack']),         icon:'pack' },
+    { id:'pets',      label:t(['Mis Mascotas','My Pets']),    icon:'pets' },
+    { id:'messages',  label:t(['Mensajes','Messages']),       icon:'messages', badge:2 },
+    { id:'profile',   label:t(['Perfil','Profile']),          icon:'profile' },
   ];
   return (
     <div style={{ width:230, background:bs.surface, borderRight:`1px solid ${bs.border}`, display:'flex', flexDirection:'column', height:'100%', padding:'18px 12px', flexShrink:0 }}>
@@ -116,7 +118,7 @@ function DesktopSidebar({ screen, setScreen, bs }) {
       </div>
       <a href="/" style={{ display:'flex', alignItems:'center', gap:8, padding:'8px 12px', marginBottom:14, borderRadius:10, border:`1px solid ${bs.border}`, textDecoration:'none', color:bs.ink2, fontSize:12.5, fontWeight:600 }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-        Volver a BPuppy
+        {t(['Volver a BPuppy','Back to BPuppy'])}
       </a>
       <nav style={{ flex:1, display:'flex', flexDirection:'column', gap:2 }}>
         {navItems.map(item => (
@@ -130,12 +132,12 @@ function DesktopSidebar({ screen, setScreen, bs }) {
       </nav>
       <button onClick={() => setScreen('account')} style={{ display:'flex', alignItems:'center', gap:11, padding:'10px 12px', marginBottom:10, borderRadius:12, cursor:'pointer', width:'100%', textAlign:'left', fontFamily:'inherit', background: screen==='account'?bs.surface2:'transparent', border:`1px solid ${screen==='account'?bs.brand:bs.border}`, color: screen==='account'?bs.brand:bs.ink2, fontWeight:600, fontSize:13.5 }}>
         <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v4"/></svg>
-        Mi Cuenta · Reservas
+        {t(['Mi Cuenta · Reservas','My Account · Bookings'])}
       </button>
       <button onClick={() => setScreen('upload')} style={{ display:'flex', alignItems:'center', justifyContent:'center', gap:8, padding:'12px', borderRadius:14, border:'none', background:bs.grad, color:'#fff', fontSize:13.5, fontWeight:700, cursor:'pointer', fontFamily:'inherit', marginBottom:14, boxShadow:bs.glow, transition:'opacity .15s' }}
         onMouseEnter={e=>e.currentTarget.style.opacity='.85'} onMouseLeave={e=>e.currentTarget.style.opacity='1'}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="white" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-        Publicar
+        {t(['Publicar','Post'])}
       </button>
       <div style={{ display:'flex', alignItems:'center', gap:9, padding:'9px 10px', borderRadius:12, cursor:'pointer' }} onClick={()=>setScreen('profile')}>
         <BSAvatar user={BSDATA.me} size={34}/>
@@ -147,16 +149,17 @@ function DesktopSidebar({ screen, setScreen, bs }) {
 
 // ── Right Rail ─────────────────────────────────────────────────────────────────
 function RightRail({ bs }) {
+  const t = window.useT ? window.useT() : (x => Array.isArray(x) ? x[0] : x);
   const [added, setAdded] = useState(new Set());
   const toggle = id => setAdded(s => { const n=new Set(s); n.has(id)?n.delete(id):n.add(id); return n; });
   return (
     <div style={{ width:264, padding:'18px 14px', display:'flex', flexDirection:'column', gap:16, flexShrink:0, overflowY:'auto' }} className="bs-scr">
       <div style={{ background:bs.surface2, borderRadius:12, padding:'9px 13px', display:'flex', alignItems:'center', gap:8, border:`1px solid ${bs.border}` }}>
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke={bs.soft} strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
-        <span style={{ fontSize:13, color:bs.soft }}>Buscar en B Social</span>
+        <span style={{ fontSize:13, color:bs.soft }}>{t(['Buscar en B Social','Search B Social'])}</span>
       </div>
       <div style={{ background:bs.surface, borderRadius:16, padding:'14px', border:`1px solid ${bs.border}` }}>
-        <div style={{ fontSize:13, fontWeight:800, color:bs.ink, marginBottom:12, fontFamily:'Bricolage Grotesque,sans-serif' }}>Sugerencias</div>
+        <div style={{ fontSize:13, fontWeight:800, color:bs.ink, marginBottom:12, fontFamily:'Bricolage Grotesque,sans-serif' }}>{t(['Sugerencias','Suggestions'])}</div>
         {(BSDATA.suggestions||[]).map(u => (
           <div key={u.id} style={{ display:'flex', alignItems:'center', gap:10, marginBottom:11 }}>
             <BSAvatar user={u} size={34}/>
@@ -165,14 +168,14 @@ function RightRail({ bs }) {
               <div style={{ fontSize:10.5, color:bs.soft, overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{u.pet || u.city}</div>
             </div>
             <button onClick={()=>{ toggle(u.id); if(window.BSAUTH && window.BSAUTH.follow) try{ window.BSAUTH.follow(u.username, added.has(u.id)); }catch(e){} }} style={{ padding:'4px 11px', borderRadius:999, border:`1.5px solid ${added.has(u.id)?bs.border:bs.brand}`, background:'transparent', color:added.has(u.id)?bs.soft:bs.brand, fontSize:11.5, fontWeight:700, cursor:'pointer', fontFamily:'inherit', flexShrink:0 }}>
-              {added.has(u.id)?'Siguiendo':'Seguir'}
+              {added.has(u.id)?t(['Siguiendo','Following']):t(['Seguir','Follow'])}
             </button>
           </div>
         ))}
-        {!(BSDATA.suggestions||[]).length && <div style={{ fontSize:12, color:bs.soft }}>Pronto verás sugerencias.</div>}
+        {!(BSDATA.suggestions||[]).length && <div style={{ fontSize:12, color:bs.soft }}>{t(['Pronto verás sugerencias.','Suggestions coming soon.'])}</div>}
       </div>
       <div style={{ background:bs.surface, borderRadius:16, padding:'14px', border:`1px solid ${bs.border}` }}>
-        <div style={{ fontSize:13, fontWeight:800, color:bs.ink, marginBottom:12, fontFamily:'Bricolage Grotesque,sans-serif' }}>Trending</div>
+        <div style={{ fontSize:13, fontWeight:800, color:bs.ink, marginBottom:12, fontFamily:'Bricolage Grotesque,sans-serif' }}>{t(['Tendencias','Trending'])}</div>
         {['#GoldenRetriever','#PuppyLife','#DogMom','#CatLife','#Frenchie'].map((tag,i) => (
           <div key={tag} style={{ display:'flex', justifyContent:'space-between', marginBottom:9 }}>
             <span style={{ fontSize:12.5, color:bs.brand, fontWeight:600, cursor:'pointer' }}>{tag}</span>
@@ -205,6 +208,7 @@ function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave, onOpenPo
 
 // ── Tweaks Panel ───────────────────────────────────────────────────────────────
 function BSocialTweaks({ theme, setThemeFn }) {
+  const t = window.useT ? window.useT() : (x => Array.isArray(x) ? x[0] : x);
   const [visible, setVisible] = useState(false);
   useEffect(() => {
     const handler = e => {
@@ -229,7 +233,7 @@ function BSocialTweaks({ theme, setThemeFn }) {
         <span style={{ fontWeight:700, fontSize:13, color:'#fff' }}>Tweaks</span>
         <button onClick={() => { setVisible(false); window.parent.postMessage({type:'__edit_mode_dismissed'},'*'); }} style={{ background:'none', border:'none', color:'rgba(255,255,255,0.4)', cursor:'pointer', fontSize:16, padding:0 }}>×</button>
       </div>
-      <div style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.4)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:8 }}>Tema</div>
+      <div style={{ fontSize:11, fontWeight:700, color:'rgba(255,255,255,0.4)', textTransform:'uppercase', letterSpacing:'0.06em', marginBottom:8 }}>{t(['Tema','Theme'])}</div>
       <div style={{ display:'flex', flexDirection:'column', gap:6 }}>
         {themes.map(t => (
           <button key={t.key} onClick={() => setThemeFn(t.key)}
@@ -257,6 +261,17 @@ function App() {
   const [following, setFollowing] = useState([]);
   const [, setTick] = useState(0);
   const bs = THEMES[themeName];
+
+  // Idioma del sitio (bilingüe): se sincroniza con la preferencia global 'bpuppy-lang'.
+  const [lang, setLang] = useState(() => (window.bpGetLang && window.bpGetLang()) || 'es');
+  useEffect(() => {
+    const h = (e) => setLang((e && e.detail) || (window.bpGetLang && window.bpGetLang()) || 'es');
+    window.addEventListener('bpuppy:lang', h);
+    window.addEventListener('bpuppy-lang-change', h);
+    return () => { window.removeEventListener('bpuppy:lang', h); window.removeEventListener('bpuppy-lang-change', h); };
+  }, []);
+  useEffect(() => { document.documentElement.lang = lang; }, [lang]);
+  const LangCtx = (typeof window !== 'undefined' && (window.BSLangContext || window.LangContext)) || null;
 
   useEffect(() => { const onR=()=>setIsWide(window.innerWidth>=900); window.addEventListener('resize',onR); return ()=>window.removeEventListener('resize',onR); }, []);
 
@@ -334,7 +349,7 @@ function App() {
     <div style={{ height:'100%', display:'flex', flexDirection:'column', overflow:'hidden', background:bs.bg }}>
       <a href="/" style={{ display:'flex', alignItems:'center', gap:6, padding:'9px 16px', background:bs.surface, borderBottom:`1px solid ${bs.border}`, textDecoration:'none', color:bs.ink2, fontSize:12.5, fontWeight:600, flexShrink:0 }}>
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5"/><path d="M12 19l-7-7 7-7"/></svg>
-        Volver a BPuppy
+        {(window.pick ? window.pick(['Volver a BPuppy','Back to BPuppy'], lang) : 'Volver a BPuppy')}
       </a>
       <div style={{ flex:1, overflowY:'auto' }} className="bs-scr">
         <ScreenView screen={screen} setScreen={setScreen} posts={posts} toggleLike={toggleLike} toggleSave={toggleSave} onOpenPost={setOpenPost}/>
@@ -343,9 +358,16 @@ function App() {
     </div>
   );
 
+  // Envuelve el árbol con el contexto de idioma para que TODAS las pantallas cambien de idioma.
+  // Envuelve el árbol con el contexto de idioma para que TODAS las pantallas cambien de idioma.
+  // (función, no componente, para no remontar el árbol en cada render)
+  const wrap = (children) => LangCtx
+    ? <LangCtx.Provider value={{ lang, setLang }}>{children}</LangCtx.Provider>
+    : children;
+
   // Login real / crear perfil — tarjeta centrada a pantalla completa
   if (!loggedIn) {
-    return (
+    return wrap(
       <BSCtx.Provider value={bs}>
         <div style={{ minHeight:'100vh', background:bs.bg, display:'flex', alignItems:'center', justifyContent:'center', padding: isWide ? '24px' : 0 }}>
           <div style={{ width:'100%', maxWidth: isWide ? 460 : '100%', height: isWide ? 'min(840px,94vh)' : '100vh', background:bs.surface, borderRadius: isWide ? 28 : 0, overflow:'hidden', boxShadow: isWide ? '0 40px 120px rgba(0,0,0,0.55)' : 'none', display:'flex', flexDirection:'column' }}>
@@ -362,7 +384,7 @@ function App() {
   }
 
   // App real, a pantalla completa
-  return (
+  return wrap(
     <BSCtx.Provider value={bs}>
       {isWide ? (
         <div style={{ height:'100vh', display:'flex', background:bs.bg, overflow:'hidden' }}>
