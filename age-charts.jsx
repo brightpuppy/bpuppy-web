@@ -67,6 +67,8 @@
   // ── Línea de tiempo de crecimiento ──────────────────────────────────────────
   // props: { photo, name, weight, height, lifespan, size, lang, onGenerateAI }
   function GrowthTimeline(props) {
+    // Desactivada por ahora: las "fotos por etapa" eran la misma imagen escalada, no una linea de tiempo real. Oculta en perros y gatos.
+    return null;
     const lang = props.lang || 'es';
     const size = props.size || 'medium';
     const adultW = avgNum(props.weight);

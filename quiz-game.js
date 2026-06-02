@@ -687,6 +687,37 @@ const sndWohoo = () => {
   o.start(t0);
   o.stop(t0 + 0.6);
 };
+const sndSwoosh = () => {
+  const c = ac();
+  if (!c || window._quizMuted) return;
+  try {
+    if (c.state === "suspended") c.resume();
+  } catch (e) {
+  }
+  const dur = 0.9, n = Math.floor(c.sampleRate * dur);
+  const buf = c.createBuffer(1, n, c.sampleRate), data = buf.getChannelData(0);
+  for (let i = 0; i < n; i++) {
+    data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / n, 1.4);
+  }
+  const src = c.createBufferSource();
+  src.buffer = buf;
+  const bp = c.createBiquadFilter();
+  bp.type = "bandpass";
+  bp.Q.value = 0.7;
+  const t0 = c.currentTime;
+  bp.frequency.setValueAtTime(280, t0);
+  bp.frequency.exponentialRampToValueAtTime(1500, t0 + 0.4);
+  bp.frequency.exponentialRampToValueAtTime(420, t0 + dur);
+  const g = c.createGain();
+  g.gain.setValueAtTime(1e-4, t0);
+  g.gain.linearRampToValueAtTime(0.05, t0 + 0.12);
+  g.gain.exponentialRampToValueAtTime(1e-4, t0 + dur);
+  src.connect(bp);
+  bp.connect(g);
+  g.connect(c.destination);
+  src.start(t0);
+  src.stop(t0 + dur + 0.02);
+};
 let _bpMusic = { on: false, timer: null, step: 0 };
 function startMusic() {
   if (_bpMusic.on) return;
@@ -919,8 +950,9 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   const [flyWide, setFlyWide] = useState(false);
   const [paused, setPaused] = useState(false);
   const wrapRef = useRef(null);
+  const lastTouchRef = useRef(0);
   const W = 360, H = 200, GY = H - 24;
-  const MAXLIVES = 4, GRAV = 0.4, JUMPV = 8.2;
+  const MAXLIVES = 4, GRAV = 0.42, JUMPV = 6.9;
   const loadBoard = () => {
     const s = gameSupa();
     if (!s) return;
@@ -963,7 +995,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     airObst: [],
     cats: [],
     projs: [],
-    nextCat: 220,
+    nextCat: 420,
     vW: W,
     wantWide: false,
     widening: false,
@@ -1012,6 +1044,10 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     if (!st) return;
     st.mode = "fly";
     st.flyTarget = st.py;
+    if (st.wantWide && !st.widening && (st.wideT || 0) < 1) {
+      st.widening = true;
+      setFlyWide(true);
+    }
     setFlyIntro(false);
     startMusic();
   };
@@ -1154,11 +1190,6 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
       if (st.mode === "transform") {
         st.transT++;
         st.py += (110 - st.py) * 0.06;
-        if (st.transT === 55) sndWohoo();
-        if (st.transT === 30 && st.wantWide) {
-          st.widening = true;
-          setFlyWide(true);
-        }
         const gx = dogX + 11, gy = GY - st.py - 10, gr = 14 + st.transT * 0.55 + Math.sin(st.transT * 0.4) * 3;
         const gl = ctx.createRadialGradient(gx, gy, 2, gx, gy, Math.max(6, gr));
         gl.addColorStop(0, "rgba(255,236,150,0.95)");
@@ -1185,7 +1216,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
         ctx.textAlign = "center";
         ctx.fillText("\xA1WOHOOO!", dogX + 44, GY - st.py - 30);
         ctx.textAlign = "left";
-        if (st.transT >= 110) {
+        if (st.transT >= 145) {
           st.mode = "flyintro";
           setFlyIntro(true);
         }
@@ -1234,7 +1265,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
       st.nextCat -= st.speed;
       if (st.nextCat <= 0) {
         st.cats.push({ x: VW - 10, y: GY - 2, t: 0 });
-        st.nextCat = 240 + Math.random() * 220;
+        st.nextCat = 420 + Math.random() * 320;
       }
       st.cats.forEach((cat) => {
         cat.x -= st.speed * 0.7;
@@ -1345,8 +1376,10 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
         st.transT = 0;
         st.flyTarget = H - 110;
         st.wantWide = typeof window !== "undefined" && window.innerWidth >= 820;
-        sndPlane();
-        setTimeout(() => sndHero(), 420);
+        st.py = 0;
+        st.vy = 0;
+        st.speed = 0;
+        sndSwoosh();
         flyLoop(st);
         rafRef.current = requestAnimationFrame(loop);
         return;
@@ -1641,7 +1674,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     const r = el.getBoundingClientRect();
     if (!r.height) return;
     const ly = (clientY - r.top) * (H / r.height);
-    st.flyTarget = Math.max(6, Math.min(H - 30, GY - ly));
+    st.flyTarget = Math.max(0, Math.min(GY - 22, GY - ly));
   };
   const tap = () => {
     const st = stRef.current;
@@ -1655,7 +1688,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
       return;
     }
     if (st && st.mode === "fly") {
-      st.flyTarget = Math.min(H - 30, (st.flyTarget == null ? st.py : st.flyTarget) + 22);
+      st.flyTarget = Math.max(0, Math.min(GY - 22, (st.flyTarget == null ? st.py : st.flyTarget) + 22));
       return;
     }
     jump();
@@ -1704,9 +1737,11 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   const firstName = breed.name.split(" (")[0];
   return /* @__PURE__ */ React.createElement("div", { ref: wrapRef, className: "qg-wrap", style: { margin: "0 auto", padding: "18px 16px 80px" } }, /* @__PURE__ */ React.createElement("div", { className: "qg-pop", style: { ...cardSt, transition: "box-shadow 0.7s ease", boxShadow: flyWide ? "0 0 0 3px rgba(255,170,50,0.55), 0 26px 80px rgba(245,130,32,0.45)" : cardSt.boxShadow } }, /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#F58220,#E85D75)", padding: "14px 18px", color: "#fff", display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontWeight: 800, fontSize: 17, flex: "1 1 auto", minWidth: 0, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, t(["Corre con tu", "Run with your"]), " ", firstName), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 12, alignItems: "center", fontSize: 13, fontWeight: 800, flexShrink: 0, whiteSpace: "nowrap", fontVariantNumeric: "tabular-nums" } }, /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", alignItems: "center", gap: 4 }, title: "Treats" }, /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 48 48", fill: "#fff" }, /* @__PURE__ */ React.createElement("rect", { x: "14", y: "20", width: "20", height: "8", rx: "4" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "14", cy: "29", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "19", r: "5" }), /* @__PURE__ */ React.createElement("circle", { cx: "34", cy: "29", r: "5" })), treats), /* @__PURE__ */ React.createElement("span", null, t(["Puntos", "Score"]), ": ", score), /* @__PURE__ */ React.createElement("span", { style: { opacity: 0.85 } }, t(["Mejor", "Best"]), ": ", best))), /* @__PURE__ */ React.createElement("div", { style: { position: "relative", background: "#EAF6FB", lineHeight: 0, userSelect: "none", WebkitUserSelect: "none", touchAction: "none", overflow: "hidden" }, onMouseDown: (e) => {
     e.preventDefault();
+    if (Date.now() - lastTouchRef.current < 700) return;
     tap();
   }, onTouchStart: (e) => {
     e.preventDefault();
+    lastTouchRef.current = Date.now();
     tap();
   }, onMouseMove: (e) => flyAim(e.clientY, e.currentTarget), onTouchMove: (e) => {
     const st = stRef.current;

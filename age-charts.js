@@ -59,6 +59,7 @@
   }
   const tl = (lang, es, en) => lang === "en" ? en : es;
   function GrowthTimeline(props) {
+    return null;
     const lang = props.lang || "es";
     const size = props.size || "medium";
     const adultW = avgNum(props.weight);
