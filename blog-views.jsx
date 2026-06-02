@@ -24,12 +24,14 @@ function ReadingBar() {
 
 // ── Article image / gradient header ───────────────────────────────────────────
 function ArticleHero({ art, compact = false }) {
+  const { lang } = useLang();
+  const tr = (es, en) => (lang === 'en' ? (en || es) : es);
   const h = compact ? 200 : 420;
   const cat = CAT_META[art.cat] || {};
   if (art.img) {
     return (
       <div style={{ position: 'relative', height: h, overflow: 'hidden', borderRadius: compact ? '16px 16px 0 0' : 0 }}>
-        <img src={art.img} alt={art.title} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', display: 'block' }} />
+        <img src={art.img} alt={tr(art.title, art.titleEn)} style={{ width: '100%', height: '100%', objectFit: 'cover', objectPosition: 'center 20%', display: 'block' }} />
         <div style={{ position: 'absolute', inset: 0, background: compact ? 'linear-gradient(to bottom,rgba(0,0,0,0.02),rgba(0,0,0,0.44))' : 'linear-gradient(to bottom,rgba(0,0,0,0.04),rgba(0,0,0,0.55))' }} />
         {compact && (
           <div style={{ position: 'absolute', top: 12, left: 12 }}>
@@ -44,7 +46,7 @@ function ArticleHero({ art, compact = false }) {
     <div style={{ position: 'relative', height: h, borderRadius: compact ? '16px 16px 0 0' : 0, overflow: 'hidden', background: `linear-gradient(135deg, ${art.color}22 0%, ${art.color}44 100%)` }}>
       <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', flexDirection: 'column', gap: 8 }}>
         <div style={{ fontSize: compact ? 56 : 96, lineHeight: 1, filter: 'drop-shadow(0 4px 16px rgba(0,0,0,0.12))' }}>{art.emoji}</div>
-        {!compact && <div style={{ fontSize: 13, fontWeight: 700, color: art.color, letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.8 }}>{CAT_META[art.cat]?.label}</div>}
+        {!compact && <div style={{ fontSize: 13, fontWeight: 700, color: art.color, letterSpacing: '0.08em', textTransform: 'uppercase', opacity: 0.8 }}>{tr(CAT_META[art.cat]?.label, CAT_META[art.cat]?.labelEn)}</div>}
       </div>
       {compact && (
         <div style={{ position: 'absolute', top: 12, left: 12 }}>
@@ -62,16 +64,20 @@ function ArticleHero({ art, compact = false }) {
 
 // ── Category pill ──────────────────────────────────────────────────────────────
 function CatPill({ cat, small }) {
+  const { lang } = useLang();
+  const tr = (es, en) => (lang === 'en' ? (en || es) : es);
   const m = CAT_META[cat] || { label: cat, color: '#888', bg: '#eee' };
   return (
     <span style={{ display: 'inline-block', padding: small ? '2px 8px' : '4px 12px', borderRadius: 999, background: m.bg, color: m.color, fontSize: small ? 10 : 11, fontWeight: 700, letterSpacing: '0.04em', textTransform: 'uppercase', whiteSpace: 'nowrap' }}>
-      {m.label}
+      {tr(m.label, m.labelEn)}
     </span>
   );
 }
 
 // ── Article card ───────────────────────────────────────────────────────────────
 function ArticleCard({ art, onClick, featured }) {
+  const { lang } = useLang();
+  const tr = (es, en) => (lang === 'en' ? (en || es) : es);
   const [hov, setHov] = useState(false);
   return (
     <article
@@ -85,18 +91,18 @@ function ArticleCard({ art, onClick, featured }) {
       <div style={{ padding: featured ? '20px 24px 24px' : '16px 18px 20px', display: 'flex', flexDirection: 'column', flex: 1 }}>
         <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 10 }}>
           {!art.img && <CatPill cat={art.cat} />}
-          <span style={{ fontSize: 11, color: 'var(--ink-2,#6B5A4E)', marginLeft: 'auto' }}>⏱ {art.read} min</span>
+          <span style={{ fontSize: 11, color: 'var(--ink-2,#6B5A4E)', marginLeft: 'auto' }}>⏱ {art.read} {tr('min', 'min')}</span>
         </div>
         <h3 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: featured ? 22 : 17, fontWeight: 700, color: 'var(--ink,#2D2421)', lineHeight: 1.25, letterSpacing: '-0.02em', margin: '0 0 8px', textWrap: 'pretty' }}>
-          {art.title}
+          {tr(art.title, art.titleEn)}
         </h3>
         <p style={{ fontSize: 13.5, color: 'var(--ink-2,#6B5A4E)', lineHeight: 1.6, margin: '0 0 14px', flex: 1, display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>
-          {art.lead}
+          {tr(art.lead, art.leadEn)}
         </p>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-          <span style={{ fontSize: 11.5, color: 'var(--ink-soft)', fontWeight: 500 }}>{art.date}</span>
+          <span style={{ fontSize: 11.5, color: 'var(--ink-soft)', fontWeight: 500 }}>{tr(art.date, art.dateEn)}</span>
           <span style={{ fontSize: 12, fontWeight: 700, color: 'var(--orange,#F58220)', display: 'flex', alignItems: 'center', gap: 4 }}>
-            Leer
+            {tr('Leer', 'Read')}
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
           </span>
         </div>
@@ -107,6 +113,8 @@ function ArticleCard({ art, onClick, featured }) {
 
 // ── Blog listing ───────────────────────────────────────────────────────────────
 function BlogListing({ onSelect }) {
+  const { lang } = useLang();
+  const tr = (es, en) => (lang === 'en' ? (en || es) : es);
   const [cat, setCat] = useState('todos');
   const [q, setQ] = useState('');
   const inputRef = useRef();
@@ -116,13 +124,11 @@ function BlogListing({ onSelect }) {
     if (q.trim()) {
       const lq = q.toLowerCase();
       list = list.filter(a =>
-        a.title.toLowerCase().includes(lq) ||
-        a.lead.toLowerCase().includes(lq) ||
-        (a.tags || []).some(t => t.toLowerCase().includes(lq))
+        ((a.title || '') + ' ' + (a.titleEn || '') + ' ' + (a.lead || '') + ' ' + (a.leadEn || '') + ' ' + (a.tags || []).join(' ')).toLowerCase().includes(lq)
       );
     }
     return list;
-  }, [cat, q]);
+  }, [cat, q, lang]);
 
   const featured = filtered[0];
   const rest = filtered.slice(1);
@@ -136,11 +142,13 @@ function BlogListing({ onSelect }) {
             <div>
               <div className="eyebrow" style={{ marginBottom: 8 }}>BPuppy · Blog</div>
               <h1 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 'clamp(36px,6vw,64px)', fontWeight: 800, letterSpacing: '-0.035em', color: 'var(--ink)', margin: 0, lineHeight: 0.95 }}>
-                Todo sobre <em style={{ fontFamily: 'Instrument Serif, Georgia, serif', fontStyle: 'italic', fontWeight: 400, color: 'var(--orange)' }}>perros</em><br />que vale la pena leer
+                {lang === 'en'
+                  ? <>Everything about <em style={{ fontFamily: 'Instrument Serif, Georgia, serif', fontStyle: 'italic', fontWeight: 400, color: 'var(--orange)' }}>dogs</em><br />worth reading</>
+                  : <>Todo sobre <em style={{ fontFamily: 'Instrument Serif, Georgia, serif', fontStyle: 'italic', fontWeight: 400, color: 'var(--orange)' }}>perros</em><br />que vale la pena leer</>}
               </h1>
             </div>
             <p style={{ fontSize: 15, color: 'var(--ink-2)', maxWidth: 340, lineHeight: 1.65, margin: 0 }}>
-              Guías prácticas, historias inspiradoras y todo lo que necesitas saber para vivir bien con tu perro.
+              {tr('Guías prácticas, historias inspiradoras y todo lo que necesitas saber para vivir bien con tu perro.', 'Practical guides, inspiring stories, and everything you need to know to live well with your dog.')}
             </p>
           </div>
           {/* Search */}
@@ -150,7 +158,7 @@ function BlogListing({ onSelect }) {
               ref={inputRef}
               value={q}
               onChange={e => setQ(e.target.value)}
-              placeholder="Buscar artículos..."
+              placeholder={tr('Buscar artículos...', 'Search articles...')}
               style={{ width: '100%', padding: '13px 16px 13px 44px', borderRadius: 14, border: '1.5px solid var(--line)', background: 'var(--bg)', fontFamily: 'inherit', fontSize: 15, color: 'var(--ink)', outline: 'none', transition: 'border-color .15s' }}
               onFocus={e => e.target.style.borderColor = 'var(--orange)'}
               onBlur={e => e.target.style.borderColor = 'var(--line)'}
@@ -164,11 +172,11 @@ function BlogListing({ onSelect }) {
         <div style={{ borderTop: '1px solid var(--line)', overflowX: 'auto', scrollbarWidth: 'none' }}>
           <div className="container" style={{ display: 'flex', gap: 4, padding: '10px 0' }}>
             {BLOG_CATS.map(c => {
-              const m = c === 'todos' ? { label: 'Todos', color: 'var(--orange)', bg: 'rgba(245,130,32,0.1)' } : CAT_META[c];
+              const m = c === 'todos' ? { label: 'Todos', labelEn: 'All', color: 'var(--orange)', bg: 'rgba(245,130,32,0.1)' } : CAT_META[c];
               const active = cat === c;
               return (
                 <button key={c} onClick={() => setCat(c)} style={{ padding: '7px 16px', borderRadius: 999, border: 'none', cursor: 'pointer', fontFamily: 'inherit', fontSize: 13, fontWeight: active ? 700 : 500, whiteSpace: 'nowrap', background: active ? m.color : 'transparent', color: active ? '#fff' : 'var(--ink-2)', transition: 'all .15s' }}>
-                  {m.label}
+                  {tr(m.label, m.labelEn)}
                 </button>
               );
             })}
@@ -180,26 +188,26 @@ function BlogListing({ onSelect }) {
         {filtered.length === 0 && (
           <div style={{ textAlign: 'center', padding: '60px 0', color: 'var(--ink-2)' }}>
             <div style={{ fontSize: 48, marginBottom: 12 }}>🐾</div>
-            <p style={{ fontSize: 16 }}>No se encontraron artículos para "<strong>{q}</strong>"</p>
+            <p style={{ fontSize: 16 }}>{tr('No se encontraron artículos para', 'No articles found for')} "<strong>{q}</strong>"</p>
           </div>
         )}
 
         {/* Featured */}
         {featured && (
           <div style={{ marginBottom: 40 }}>
-            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-2)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 14 }}>Destacado</div>
+            <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink-2)', letterSpacing: '0.08em', textTransform: 'uppercase', marginBottom: 14 }}>{tr('Destacado', 'Featured')}</div>
             <div style={{ display: 'grid', gridTemplateColumns: 'minmax(0,1.4fr) minmax(0,1fr)', gap: 0, background: 'var(--paper)', borderRadius: 24, overflow: 'hidden', boxShadow: '0 4px 32px -8px rgba(45,36,33,0.14)', cursor: 'pointer' }} onClick={() => onSelect(featured)}>
               <div style={{ minHeight: 320 }}>
                 <ArticleHero art={featured} compact={false} />
               </div>
               <div style={{ padding: '36px 36px 36px 32px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <CatPill cat={featured.cat} />
-                <h2 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 'clamp(20px,2.4vw,28px)', fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--ink)', margin: '16px 0 12px', lineHeight: 1.18, textWrap: 'pretty' }}>{featured.title}</h2>
-                <p style={{ fontSize: 14.5, color: 'var(--ink-2)', lineHeight: 1.65, margin: '0 0 24px', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{featured.lead}</p>
+                <h2 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 'clamp(20px,2.4vw,28px)', fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--ink)', margin: '16px 0 12px', lineHeight: 1.18, textWrap: 'pretty' }}>{tr(featured.title, featured.titleEn)}</h2>
+                <p style={{ fontSize: 14.5, color: 'var(--ink-2)', lineHeight: 1.65, margin: '0 0 24px', display: '-webkit-box', WebkitLineClamp: 4, WebkitBoxOrient: 'vertical', overflow: 'hidden' }}>{tr(featured.lead, featured.leadEn)}</p>
                 <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
-                  <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{featured.date} · {featured.read} min</span>
+                  <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{tr(featured.date, featured.dateEn)} · {featured.read} {tr('min', 'min')}</span>
                   <span style={{ display: 'inline-flex', alignItems: 'center', gap: 6, padding: '8px 18px', borderRadius: 999, background: 'var(--orange)', color: '#fff', fontSize: 13, fontWeight: 700, marginLeft: 'auto' }}>
-                    Leer artículo
+                    {tr('Leer artículo', 'Read article')}
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7"/></svg>
                   </span>
                 </div>
@@ -229,18 +237,19 @@ function ArticleReader({ art, onBack }) {
 
   const cat = CAT_META[art.cat] || {};
 
-  const lang = ((typeof LangContext !== 'undefined' && React.useContext(LangContext)) || {}).lang || 'es';
+  const { lang } = useLang();
+  const tr = (es, en) => (lang === 'en' ? (en || es) : es);
   const [ageSel, setAgeSel] = useState('dog-medium');
 
   // ── Compartir ──────────────────────────────────────────────────────────────
   const [shareMsg, setShareMsg] = useState('');
   const shareUrl = 'https://bpuppy.us/blog?art=' + art.id;
-  const shareText = art.title;
+  const shareText = tr(art.title, art.titleEn);
   const flash = (m) => { setShareMsg(m); setTimeout(() => setShareMsg(''), 4000); };
   const doShare = async (net) => {
     if (net === 'whatsapp') { window.open('https://wa.me/?text=' + encodeURIComponent(shareText + ' ' + shareUrl), '_blank'); return; }
     if (net === 'facebook') { window.open('https://www.facebook.com/sharer/sharer.php?u=' + encodeURIComponent(shareUrl), '_blank'); return; }
-    if (net === 'copy') { try { await navigator.clipboard.writeText(shareUrl); flash('Link copiado.'); } catch (e) { flash(shareUrl); } return; }
+    if (net === 'copy') { try { await navigator.clipboard.writeText(shareUrl); flash(tr('Link copiado.', 'Link copied.')); } catch (e) { flash(shareUrl); } return; }
     // Instagram / TikTok: no tienen enlace web directo. Abrimos la hoja nativa (móvil)
     // donde sí se puede publicar en la historia con el preview; en escritorio copiamos el link.
     if (net === 'instagram' || net === 'tiktok') {
@@ -250,7 +259,7 @@ function ArticleReader({ art, onBack }) {
       }
       try { await navigator.clipboard.writeText(shareUrl); } catch (e) {}
       const app = net === 'instagram' ? 'Instagram' : 'TikTok';
-      flash('Link copiado. Ábre ' + app + ' y pégalo en tu historia — saldrá con la foto del artículo.');
+      flash(tr('Link copiado. Abre ' + app + ' y pégalo en tu historia — saldrá con la foto del artículo.', 'Link copied. Open ' + app + ' and paste it into your story — it will show the article photo.'));
       window.open(net === 'instagram' ? 'https://www.instagram.com/' : 'https://www.tiktok.com/', '_blank');
       return;
     }
@@ -288,16 +297,16 @@ function ArticleReader({ art, onBack }) {
         {/* Meta */}
         <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 20, flexWrap: 'wrap' }}>
           <CatPill cat={art.cat} />
-          <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{art.date}</span>
+          <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>{tr(art.date, art.dateEn)}</span>
           <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>·</span>
-          <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>⏱ {art.read} min de lectura</span>
+          <span style={{ fontSize: 12, color: 'var(--ink-soft)' }}>⏱ {art.read} {tr('min de lectura', 'min read')}</span>
         </div>
 
         {/* Title */}
         <h1 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 'clamp(28px,5vw,46px)', fontWeight: 800, letterSpacing: '-0.03em', color: 'var(--ink)', margin: '0 0 12px', lineHeight: 1.1, textWrap: 'pretty' }}>
-          {art.title}
+          {tr(art.title, art.titleEn)}
         </h1>
-        <p style={{ fontSize: 16, color: 'var(--ink-2)', margin: '0 0 36px', fontWeight: 500 }}>{art.sub}</p>
+        <p style={{ fontSize: 16, color: 'var(--ink-2)', margin: '0 0 36px', fontWeight: 500 }}>{tr(art.sub, art.subEn)}</p>
 
         {/* Tags */}
         {art.tags?.length > 0 && (
@@ -310,27 +319,27 @@ function ArticleReader({ art, onBack }) {
 
         {/* Lead */}
         <p style={{ fontSize: 19, lineHeight: 1.7, color: 'var(--ink)', margin: '0 0 40px', fontWeight: 500, borderLeft: `3px solid ${art.color || 'var(--orange)'}`, paddingLeft: 20 }}>
-          {art.lead}
+          {tr(art.lead, art.leadEn)}
         </p>
 
         {/* Sections */}
         {(art.body || []).map((s, i) => (
           <div key={i} style={{ marginBottom: 32 }}>
             <h2 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 22, fontWeight: 700, letterSpacing: '-0.02em', color: 'var(--ink)', margin: '0 0 10px' }}>
-              {s.h}
+              {tr(s.h, s.hEn)}
             </h2>
-            <p style={{ fontSize: 16, lineHeight: 1.8, color: 'var(--ink-2)', margin: 0 }}>{s.p}</p>
+            <p style={{ fontSize: 16, lineHeight: 1.8, color: 'var(--ink-2)', margin: 0 }}>{tr(s.p, s.pEn)}</p>
           </div>
         ))}
 
         {/* Widget interactivo: edad en años humanos */}
         {art.widget === 'ageChart' && typeof window.AgeHumanChart === 'function' && (() => {
           const opts = [
-            { id: 'dog-small', label: 'Perro pequeño', species: 'dog', size: 'small', lifespan: '14–16 años' },
-            { id: 'dog-medium', label: 'Perro mediano', species: 'dog', size: 'medium', lifespan: '11–13 años' },
-            { id: 'dog-large', label: 'Perro grande', species: 'dog', size: 'large', lifespan: '9–12 años' },
-            { id: 'dog-giant', label: 'Perro gigante', species: 'dog', size: 'giant', lifespan: '7–10 años' },
-            { id: 'cat', label: 'Gato', species: 'cat', size: 'small', lifespan: '14–16 años' },
+            { id: 'dog-small', label: tr('Perro pequeño', 'Small dog'), species: 'dog', size: 'small', lifespan: '14–16 años' },
+            { id: 'dog-medium', label: tr('Perro mediano', 'Medium dog'), species: 'dog', size: 'medium', lifespan: '11–13 años' },
+            { id: 'dog-large', label: tr('Perro grande', 'Large dog'), species: 'dog', size: 'large', lifespan: '9–12 años' },
+            { id: 'dog-giant', label: tr('Perro gigante', 'Giant dog'), species: 'dog', size: 'giant', lifespan: '7–10 años' },
+            { id: 'cat', label: tr('Gato', 'Cat'), species: 'cat', size: 'small', lifespan: '14–16 años' },
           ];
           const sel = opts.find(o => o.id === ageSel) || opts[1];
           return (
@@ -351,17 +360,17 @@ function ArticleReader({ art, onBack }) {
         {/* Stat callout */}
         {art.stat && (
           <div style={{ margin: '40px 0', padding: '24px 28px', borderRadius: 18, background: `${art.color || 'var(--orange)'}12`, borderLeft: `4px solid ${art.color || 'var(--orange)'}` }}>
-            <div style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: art.color || 'var(--orange)', marginBottom: 8 }}>Dato importante</div>
-            <p style={{ fontSize: 15.5, lineHeight: 1.65, color: 'var(--ink)', margin: 0, fontWeight: 500 }}>{art.stat}</p>
+            <div style={{ fontSize: 12, fontWeight: 800, textTransform: 'uppercase', letterSpacing: '0.08em', color: art.color || 'var(--orange)', marginBottom: 8 }}>{tr('Dato importante', 'Key fact')}</div>
+            <p style={{ fontSize: 15.5, lineHeight: 1.65, color: 'var(--ink)', margin: 0, fontWeight: 500 }}>{tr(art.stat, art.statEn)}</p>
           </div>
         )}
 
         {/* Tips */}
         {art.tips?.length > 0 && (
           <div style={{ margin: '36px 0', padding: '24px 28px', borderRadius: 18, background: 'var(--paper)', boxShadow: '0 2px 16px rgba(45,36,33,0.07)' }}>
-            <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', marginBottom: 14 }}>💡 Consejos prácticos</div>
+            <div style={{ fontSize: 14, fontWeight: 800, color: 'var(--ink)', marginBottom: 14 }}>💡 {tr('Consejos prácticos', 'Practical tips')}</div>
             <ul style={{ margin: 0, padding: 0, listStyle: 'none', display: 'flex', flexDirection: 'column', gap: 10 }}>
-              {art.tips.map((tip, i) => (
+              {(lang === 'en' && Array.isArray(art.tipsEn) ? art.tipsEn : art.tips).map((tip, i) => (
                 <li key={i} style={{ display: 'flex', gap: 10, fontSize: 14.5, lineHeight: 1.6, color: 'var(--ink-2)' }}>
                   <span style={{ color: art.color || 'var(--orange)', fontWeight: 700, flexShrink: 0 }}>→</span>
                   {tip}
@@ -374,20 +383,20 @@ function ArticleReader({ art, onBack }) {
         {/* Closing */}
         {art.close && (
           <p style={{ fontSize: 16.5, lineHeight: 1.75, color: 'var(--ink)', margin: '32px 0 0', fontStyle: 'italic', fontFamily: 'Instrument Serif, Georgia, serif' }}>
-            {art.close}
+            {tr(art.close, art.closeEn)}
           </p>
         )}
 
         {/* Share */}
         <div style={{ margin: '48px 0 0', padding: '24px', borderRadius: 16, background: 'var(--paper)', boxShadow: '0 1px 8px rgba(45,36,33,0.06)' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 12, flexWrap: 'wrap' }}>
-            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginRight: 'auto' }}>¿Te fue útil? Compártelo</span>
+            <span style={{ fontSize: 14, fontWeight: 700, color: 'var(--ink)', marginRight: 'auto' }}>{tr('¿Te fue útil? Compártelo', 'Found this helpful? Share it')}</span>
             {[
               { id: 'whatsapp', label: 'WhatsApp', color: '#25D366' },
               { id: 'facebook', label: 'Facebook', color: '#1877F2' },
               { id: 'instagram', label: 'Instagram', color: '#E1306C' },
               { id: 'tiktok', label: 'TikTok', color: 'var(--ink)' },
-              { id: 'copy', label: 'Copiar link', color: 'var(--ink-2)' },
+              { id: 'copy', label: tr('Copiar link', 'Copy link'), color: 'var(--ink-2)' },
             ].map(s => (
               <button key={s.id} onClick={() => doShare(s.id)} aria-label={s.label}
                 style={{ padding: '8px 14px', borderRadius: 10, border: 'none', background: 'var(--bg)', color: s.color, fontFamily: 'inherit', fontSize: 13, fontWeight: 600, cursor: 'pointer', display: 'flex', alignItems: 'center', gap: 7 }}>
@@ -405,7 +414,7 @@ function ArticleReader({ art, onBack }) {
       {related.length > 0 && (
         <div style={{ background: 'var(--paper)', borderTop: '1px solid var(--line)', padding: '48px 0 64px' }}>
           <div className="container">
-            <h3 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--ink)', margin: '0 0 24px' }}>Artículos relacionados</h3>
+            <h3 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--ink)', margin: '0 0 24px' }}>{tr('Artículos relacionados', 'Related articles')}</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 20 }}>
               {related.map(a => <ArticleCard key={a.id} art={a} onClick={onBack.constructor === Function ? () => {} : onBack} featured={false} />)}
             </div>

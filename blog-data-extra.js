@@ -1,5 +1,5 @@
 (function(){
-CAT_META["grooming"] = { label: "Grooming", color: "#9C27B0", bg: "#F3E5F5" };
+CAT_META["grooming"] = { label: "Grooming", labelEn: "Grooming", color: "#9C27B0", bg: "#F3E5F5" };
 const BLOG_EXTRA = [
   // ── ACCESORIOS ───────────────────────────────────────────────────────────
   {
@@ -8,31 +8,43 @@ const BLOG_EXTRA = [
     emoji: "\u{1F392}",
     color: "#F58220",
     title: "Los 15 accesorios esenciales para el nuevo due\xF1o de perro",
+    titleEn: "The 15 Essential Accessories for the New Dog Owner",
     sub: "Lo que realmente necesitas desde el d\xEDa uno \u2014 sin gastar de m\xE1s",
+    subEn: "What you actually need from day one \u2014 without overspending",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 7,
     tags: ["accesorios", "cachorro", "nuevo due\xF1o", "compras"],
     lead: "Adoptar un perro por primera vez es emocionante y abrumador a la vez. El mercado tiene miles de productos, la mayor\xEDa innecesarios. Esta es la lista real de lo que s\xED necesitas desde el primer d\xEDa \u2014 con criterios para elegir bien.",
+    leadEn: "Adopting a dog for the first time is exciting and overwhelming all at once. The market has thousands of products, most of them unnecessary. This is the real list of what you truly need from day one \u2014 with the criteria to choose well.",
     body: [
-      { h: "1. Arn\xE9s (no collar) desde el inicio", p: "El arn\xE9s distribuye la presi\xF3n en el pecho en lugar del cuello, esencial para cachorros y razas con cuello delicado. El PetSafe Easy Walk o Ruffwear Front Range son los m\xE1s recomendados por entrenadores. Nunca empieces con collar hasta que el perro camine sin jalar." },
-      { h: "2. Crate o jaula de entrenamiento", p: "El crate no es una c\xE1rcel: es el hogar del perro dentro de tu hogar. Fundamental para el entrenamiento de ba\xF1o, la gesti\xF3n de ansiedad y viajes. Talla correcta: el perro debe poder ponerse de pie, girar y acostarse. Ni grande ni peque\xF1o." },
-      { h: "3. Cama ortop\xE9dica", p: "Las camas de espuma de memoria previenen problemas articulares en el largo plazo. Razas grandes especialmente se benefician. Big Barker y Orvis son las marcas m\xE1s respaldadas por veterinarios. Invertir aqu\xED desde cachorro es prevenci\xF3n, no lujo." },
-      { h: "4. Dispensador interactivo de comida (KONG)", p: "El KONG Classic es probablemente el mejor accesorio que existe. Rell\xE9nalo con comida h\xFAmeda o mantequilla de man\xED y congelado ocupa al cachorro 20-40 minutos. Imprescindible para crate training, horas solas y estimulaci\xF3n mental diaria." },
-      { h: "5. Slow feeder o comedero antiansiedad", p: "Perros que comen demasiado r\xE1pido pueden desarrollar problemas digestivos serios (incluyendo GDV en razas grandes). Un comedero con laberintos ralentiza la ingesta al menos un 50%. Inversi\xF3n de $15 que puede evitar emergencias veterinarias." },
-      { h: "6. Limpiador enzim\xE1tico para accidentes", p: "Nature's Miracle o Rocco & Roxie son los est\xE1ndares del mercado. Los limpiadores normales no eliminan los marcadores de olor que llevan al perro a repetir en el mismo spot. El limpiador enzim\xE1tico s\xED los descompone completamente." },
-      { h: "7. Kit de aseo b\xE1sico", p: "M\xEDnimo: cepillo apropiado para el tipo de pelaje (slicker para pelo largo, goma para pelo corto), cortau\xF1as canino o lima el\xE9ctrica, y champ\xFA neutro. La frecuencia de ba\xF1o depende de la raza: de semanal a mensual. El cepillado de dientes desde cachorro es crucial." },
-      { h: "8. Correa de 6 pies + correa retr\xE1ctil para parque", p: "Una correa fija de 1.5-2m para caminatas de entrenamiento (control y seguridad vial). Una retr\xE1ctil de 5m solo para parques y espacios abiertos \u2014 nunca en calle con tr\xE1fico. Las retr\xE1ctiles en ciudad son accidentes esperando ocurrir." },
-      { h: "9. Juguetes de diferentes texturas", p: "El juego es necesidad cognitiva, no opcional. Necesitas al menos 3 tipos: un juguete de masticaci\xF3n resistente, uno interactivo de buscar/jalar, y uno de puzzle. Rota los juguetes semanalmente para mantener la novedad sin comprar nuevos." },
-      { h: "10. Bolsa de entrenamiento + premios peque\xF1os", p: "Una bolsa de treats que se use en la cintura te libera las manos durante el entrenamiento. Los premios deben ser del tama\xF1o de un garbanzo m\xE1ximo. Pollo cocido, queso bajo en grasa o premios liofilizados son m\xE1s atractivos que galletas secas para mantener atenci\xF3n." }
+      { h: "1. Arn\xE9s (no collar) desde el inicio", hEn: "1. A harness (not a collar) from the start", p: "El arn\xE9s distribuye la presi\xF3n en el pecho en lugar del cuello, esencial para cachorros y razas con cuello delicado. El PetSafe Easy Walk o Ruffwear Front Range son los m\xE1s recomendados por entrenadores. Nunca empieces con collar hasta que el perro camine sin jalar.", pEn: "A harness distributes pressure across the chest instead of the neck \u2014 essential for puppies and breeds with delicate necks. The PetSafe Easy Walk and Ruffwear Front Range are the ones most recommended by trainers. Never start with a collar until your dog walks without pulling." },
+      { h: "2. Crate o jaula de entrenamiento", hEn: "2. A crate or training kennel", p: "El crate no es una c\xE1rcel: es el hogar del perro dentro de tu hogar. Fundamental para el entrenamiento de ba\xF1o, la gesti\xF3n de ansiedad y viajes. Talla correcta: el perro debe poder ponerse de pie, girar y acostarse. Ni grande ni peque\xF1o.", pEn: "A crate is not a prison: it is the dog's home within your home. It is fundamental for potty training, managing anxiety, and travel. The right size lets the dog stand up, turn around, and lie down \u2014 neither too big nor too small." },
+      { h: "3. Cama ortop\xE9dica", hEn: "3. An orthopedic bed", p: "Las camas de espuma de memoria previenen problemas articulares en el largo plazo. Razas grandes especialmente se benefician. Big Barker y Orvis son las marcas m\xE1s respaldadas por veterinarios. Invertir aqu\xED desde cachorro es prevenci\xF3n, no lujo.", pEn: "Memory-foam beds prevent joint problems over the long term. Large breeds especially benefit. Big Barker and Orvis are the brands most endorsed by veterinarians. Investing here from puppyhood is prevention, not luxury." },
+      { h: "4. Dispensador interactivo de comida (KONG)", hEn: "4. An interactive food dispenser (KONG)", p: "El KONG Classic es probablemente el mejor accesorio que existe. Rell\xE9nalo con comida h\xFAmeda o mantequilla de man\xED y congelado ocupa al cachorro 20-40 minutos. Imprescindible para crate training, horas solas y estimulaci\xF3n mental diaria.", pEn: "The KONG Classic is probably the best accessory there is. Fill it with wet food or peanut butter and, frozen, it keeps a puppy busy for 20-40 minutes. Indispensable for crate training, hours alone, and daily mental stimulation." },
+      { h: "5. Slow feeder o comedero antiansiedad", hEn: "5. A slow feeder or anti-gulping bowl", p: "Perros que comen demasiado r\xE1pido pueden desarrollar problemas digestivos serios (incluyendo GDV en razas grandes). Un comedero con laberintos ralentiza la ingesta al menos un 50%. Inversi\xF3n de $15 que puede evitar emergencias veterinarias.", pEn: "Dogs that eat too fast can develop serious digestive problems (including GDV in large breeds). A maze-style bowl slows intake by at least 50%. A $15 investment that can prevent veterinary emergencies." },
+      { h: "6. Limpiador enzim\xE1tico para accidentes", hEn: "6. An enzymatic cleaner for accidents", p: "Nature's Miracle o Rocco & Roxie son los est\xE1ndares del mercado. Los limpiadores normales no eliminan los marcadores de olor que llevan al perro a repetir en el mismo spot. El limpiador enzim\xE1tico s\xED los descompone completamente.", pEn: "Nature's Miracle and Rocco & Roxie are the market standards. Regular cleaners do not remove the scent markers that lead a dog to go again in the same spot. An enzymatic cleaner breaks them down completely." },
+      { h: "7. Kit de aseo b\xE1sico", hEn: "7. A basic grooming kit", p: "M\xEDnimo: cepillo apropiado para el tipo de pelaje (slicker para pelo largo, goma para pelo corto), cortau\xF1as canino o lima el\xE9ctrica, y champ\xFA neutro. La frecuencia de ba\xF1o depende de la raza: de semanal a mensual. El cepillado de dientes desde cachorro es crucial.", pEn: "At minimum: a brush suited to the coat type (a slicker for long hair, a rubber one for short hair), canine nail clippers or an electric grinder, and a pH-neutral shampoo. Bathing frequency depends on the breed, from weekly to monthly. Brushing the teeth from puppyhood is crucial." },
+      { h: "8. Correa de 6 pies + correa retr\xE1ctil para parque", hEn: "8. A 6-foot leash + a retractable leash for the park", p: "Una correa fija de 1.5-2m para caminatas de entrenamiento (control y seguridad vial). Una retr\xE1ctil de 5m solo para parques y espacios abiertos \u2014 nunca en calle con tr\xE1fico. Las retr\xE1ctiles en ciudad son accidentes esperando ocurrir.", pEn: "A fixed 5-6 ft leash for training walks (control and traffic safety). A 16 ft retractable one only for parks and open spaces \u2014 never on streets with traffic. Retractable leashes in the city are accidents waiting to happen." },
+      { h: "9. Juguetes de diferentes texturas", hEn: "9. Toys with different textures", p: "El juego es necesidad cognitiva, no opcional. Necesitas al menos 3 tipos: un juguete de masticaci\xF3n resistente, uno interactivo de buscar/jalar, y uno de puzzle. Rota los juguetes semanalmente para mantener la novedad sin comprar nuevos.", pEn: "Play is a cognitive need, not an option. You need at least 3 kinds: a durable chew toy, an interactive fetch/tug toy, and a puzzle toy. Rotate the toys weekly to keep them feeling new without buying more." },
+      { h: "10. Bolsa de entrenamiento + premios peque\xF1os", hEn: "10. A training pouch + small treats", p: "Una bolsa de treats que se use en la cintura te libera las manos durante el entrenamiento. Los premios deben ser del tama\xF1o de un garbanzo m\xE1ximo. Pollo cocido, queso bajo en grasa o premios liofilizados son m\xE1s atractivos que galletas secas para mantener atenci\xF3n.", pEn: "A treat pouch worn at the waist frees up your hands during training. Treats should be the size of a chickpea at most. Cooked chicken, low-fat cheese, or freeze-dried treats are more enticing than dry biscuits for holding attention." }
     ],
     stat: "El due\xF1o promedio de perro nuevo gasta $1,200-$2,500 en el primer a\xF1o en accesorios. El 40% de ese gasto es en productos que no usan despu\xE9s del primer mes, seg\xFAn la APPA.",
+    statEn: "The average new dog owner spends $1,200-$2,500 on accessories in the first year. According to the APPA, 40% of that spending goes to products they stop using after the first month.",
     tips: [
       "Compra el crate antes de que llegue el perro: que tenga tiempo de familiarizarse",
       "Amazon Subscribe & Save da 15% de descuento en consumibles (shampoo, treats, pads)",
       "No compres ropa hasta saber si tu perro la tolera: muchos la odian",
       "La tienda de BPuppy tiene los productos que recomendamos con links verificados"
     ],
-    close: "La clave no es tener todo desde el d\xEDa uno: es tener las cosas correctas. Arn\xE9s, crate, KONG y limpiador enzim\xE1tico ya te ponen muy por delante del due\xF1o promedio. El resto lo vas agregando seg\xFAn las necesidades reales de tu perro."
+    tipsEn: [
+      "Buy the crate before the dog arrives, so it has time to get familiar with it",
+      "Amazon Subscribe & Save gives 15% off consumables (shampoo, treats, pads)",
+      "Don't buy clothing until you know your dog tolerates it \u2014 many dogs hate it",
+      "The BPuppy store carries the products we recommend, with verified links"
+    ],
+    close: "La clave no es tener todo desde el d\xEDa uno: es tener las cosas correctas. Arn\xE9s, crate, KONG y limpiador enzim\xE1tico ya te ponen muy por delante del due\xF1o promedio. El resto lo vas agregando seg\xFAn las necesidades reales de tu perro.",
+    closeEn: "The key isn't having everything from day one: it's having the right things. A harness, a crate, a KONG, and an enzymatic cleaner already put you well ahead of the average owner. You add the rest as your dog's real needs emerge."
   },
   {
     id: 36,
@@ -40,29 +52,41 @@ const BLOG_EXTRA = [
     emoji: "\u{1F431}",
     color: "#E85D75",
     title: "Los 12 accesorios que todo due\xF1o de gato necesita desde el d\xEDa uno",
+    titleEn: "The 12 Accessories Every Cat Owner Needs from Day One",
     sub: "La gu\xEDa honesta para empezar sin errores ni gastos innecesarios",
+    subEn: "The honest guide to starting out without mistakes or wasted spending",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 6,
     tags: ["accesorios", "gato", "nuevo due\xF1o", "compras"],
     lead: "Los gatos son independientes pero sus necesidades de espacio, estimulaci\xF3n y sanidad son muy espec\xEDficas. Un entorno mal equipado genera estr\xE9s felino, y el estr\xE9s en gatos aparece como comportamientos destructivos, problemas de salud y mal uso del arenero. Esta lista previene todo eso.",
+    leadEn: "Cats are independent, but their needs for space, stimulation, and hygiene are very specific. A poorly equipped environment creates feline stress, and stress in cats shows up as destructive behavior, health problems, and litter-box trouble. This list prevents all of that.",
     body: [
-      { h: "1. Arenero: uno m\xE1s que el n\xFAmero de gatos", p: "La regla es n+1: si tienes un gato, necesitas 2 areneros. Si tienes dos, necesitas 3. Los gatos son extraordinariamente limpios y rechazan areneros sucios o con olor. Caja destapada en zona tranquila, limpieza diaria, cambio completo de arena cada 2 semanas." },
-      { h: "2. Arena de calidad: marca la diferencia", p: "Las arenas aglomerantes sin polvo son el est\xE1ndar actual. Dr. Elsey's Cat Ultra y Ever Clean son las mejor evaluadas por veterinarios. Evitar arenas perfumadas: el olfato felino es 14 veces m\xE1s sensible que el humano y los perfumes artificiales son rechazados activamente." },
-      { h: "3. \xC1rbol rascador y cat tree", p: "Los gatos necesitan rascar: es marcaje territorial, estiramiento y mantenimiento de u\xF1as. Si no les das superficie apropiada, eligen tus muebles. Un \xE1rbol con plataformas altas tambi\xE9n satisface la necesidad felina de observar su territorio desde altura." },
-      { h: "4. Fuente de agua", p: "Los gatos dom\xE9sticos beben muy poca agua por instinto (sus ancestros obten\xEDan hidrataci\xF3n de las presas). Una fuente con agua en movimiento estimula el consumo y reduce el riesgo de enfermedad renal, la principal causa de muerte en gatos dom\xE9sticos mayores. Drinkwell y Catit son las marcas m\xE1s usadas." },
-      { h: "5. Juguetes de estimulaci\xF3n activa", p: 'Los gatos necesitan "caza simulada" diaria: 2 sesiones de 10-15 minutos con varita interactiva satisfacen su instinto predatorio. Sin eso, dirigen esa energ\xEDa hacia comportamientos problem\xE1ticos. Los juguetes de bater\xEDa (pelotas motorizadas, peces que se mueven) extienden el juego cuando no est\xE1s.' },
-      { h: "6. Transportadora c\xF3moda", p: "La transportadora que usar\xE1s para el vet, viajes y emergencias debe introducirse como espacio positivo desde el primer d\xEDa, no solo cuando van al veterinario. D\xE9jala abierta en casa con una manta suave adentro. Un gato familiarizado con su transportadora viaja con mucho menos estr\xE9s." },
-      { h: "7. Rascador horizontal y vertical", p: "Algunos gatos prefieren rascar horizontal (cart\xF3n corrugado), otros vertical (sisal). Ofrece ambas opciones al inicio para descubrir la preferencia de tu gato. Los rascadores de cart\xF3n son econ\xF3micos y la mayor\xEDa de gatos los adoran." },
-      { h: "8. Dispensador autom\xE1tico o comedero elevado", p: "Los gatos se benefician de alimentaci\xF3n en porciones controladas (especialmente razas propensas a obesidad como Maine Coon o gatos castrados). Un comedero elevado reduce la presi\xF3n cervical. Si trabajas fuera, un dispensador autom\xE1tico con programaci\xF3n hace el trabajo." }
+      { h: "1. Arenero: uno m\xE1s que el n\xFAmero de gatos", hEn: "1. Litter boxes: one more than the number of cats", p: "La regla es n+1: si tienes un gato, necesitas 2 areneros. Si tienes dos, necesitas 3. Los gatos son extraordinariamente limpios y rechazan areneros sucios o con olor. Caja destapada en zona tranquila, limpieza diaria, cambio completo de arena cada 2 semanas.", pEn: "The rule is n+1: if you have one cat, you need 2 litter boxes. If you have two, you need 3. Cats are extraordinarily clean and refuse dirty or smelly boxes. Use an uncovered box in a quiet area, scoop daily, and do a full litter change every 2 weeks." },
+      { h: "2. Arena de calidad: marca la diferencia", hEn: "2. Quality litter: it makes the difference", p: "Las arenas aglomerantes sin polvo son el est\xE1ndar actual. Dr. Elsey's Cat Ultra y Ever Clean son las mejor evaluadas por veterinarios. Evitar arenas perfumadas: el olfato felino es 14 veces m\xE1s sensible que el humano y los perfumes artificiales son rechazados activamente.", pEn: "Dust-free clumping litters are the current standard. Dr. Elsey's Cat Ultra and Ever Clean rate highest with veterinarians. Avoid scented litters: a cat's sense of smell is 14 times more sensitive than a human's, and artificial fragrances are actively rejected." },
+      { h: "3. \xC1rbol rascador y cat tree", hEn: "3. A scratching post and cat tree", p: "Los gatos necesitan rascar: es marcaje territorial, estiramiento y mantenimiento de u\xF1as. Si no les das superficie apropiada, eligen tus muebles. Un \xE1rbol con plataformas altas tambi\xE9n satisface la necesidad felina de observar su territorio desde altura.", pEn: "Cats need to scratch: it is territorial marking, stretching, and nail maintenance. If you don't give them an appropriate surface, they'll pick your furniture. A tree with high platforms also satisfies the feline need to survey their territory from above." },
+      { h: "4. Fuente de agua", hEn: "4. A water fountain", p: "Los gatos dom\xE9sticos beben muy poca agua por instinto (sus ancestros obten\xEDan hidrataci\xF3n de las presas). Una fuente con agua en movimiento estimula el consumo y reduce el riesgo de enfermedad renal, la principal causa de muerte en gatos dom\xE9sticos mayores. Drinkwell y Catit son las marcas m\xE1s usadas.", pEn: "Domestic cats instinctively drink very little water (their ancestors got their hydration from prey). A fountain with moving water encourages drinking and lowers the risk of kidney disease, the leading cause of death in older house cats. Drinkwell and Catit are the most widely used brands." },
+      { h: "5. Juguetes de estimulaci\xF3n activa", hEn: "5. Active-stimulation toys", p: 'Los gatos necesitan "caza simulada" diaria: 2 sesiones de 10-15 minutos con varita interactiva satisfacen su instinto predatorio. Sin eso, dirigen esa energ\xEDa hacia comportamientos problem\xE1ticos. Los juguetes de bater\xEDa (pelotas motorizadas, peces que se mueven) extienden el juego cuando no est\xE1s.', pEn: `Cats need daily "simulated hunting": 2 sessions of 10-15 minutes with an interactive wand satisfy their predatory instinct. Without it, they channel that energy into problem behaviors. Battery-powered toys (motorized balls, wriggling fish) extend playtime when you're away.` },
+      { h: "6. Transportadora c\xF3moda", hEn: "6. A comfortable carrier", p: "La transportadora que usar\xE1s para el vet, viajes y emergencias debe introducirse como espacio positivo desde el primer d\xEDa, no solo cuando van al veterinario. D\xE9jala abierta en casa con una manta suave adentro. Un gato familiarizado con su transportadora viaja con mucho menos estr\xE9s.", pEn: "The carrier you'll use for the vet, travel, and emergencies should be introduced as a positive space from day one, not only when it's time for the vet. Leave it open at home with a soft blanket inside. A cat that's familiar with its carrier travels with far less stress." },
+      { h: "7. Rascador horizontal y vertical", hEn: "7. A horizontal and a vertical scratcher", p: "Algunos gatos prefieren rascar horizontal (cart\xF3n corrugado), otros vertical (sisal). Ofrece ambas opciones al inicio para descubrir la preferencia de tu gato. Los rascadores de cart\xF3n son econ\xF3micos y la mayor\xEDa de gatos los adoran.", pEn: "Some cats prefer to scratch horizontally (corrugated cardboard), others vertically (sisal). Offer both options at first to discover your cat's preference. Cardboard scratchers are inexpensive and most cats adore them." },
+      { h: "8. Dispensador autom\xE1tico o comedero elevado", hEn: "8. An automatic feeder or raised bowl", p: "Los gatos se benefician de alimentaci\xF3n en porciones controladas (especialmente razas propensas a obesidad como Maine Coon o gatos castrados). Un comedero elevado reduce la presi\xF3n cervical. Si trabajas fuera, un dispensador autom\xE1tico con programaci\xF3n hace el trabajo.", pEn: "Cats benefit from portion-controlled feeding (especially obesity-prone breeds like the Maine Coon, or neutered cats). A raised bowl reduces strain on the neck. If you work away from home, a programmable automatic feeder does the job." }
     ],
     stat: "El 58% de los gatos en USA tienen sobrepeso u obesidad, seg\xFAn la APOP (Association for Pet Obesity Prevention). La causa principal: libre acceso a comida y falta de estimulaci\xF3n f\xEDsica activa.",
+    statEn: "According to the APOP (Association for Pet Obesity Prevention), 58% of cats in the US are overweight or obese. The main cause: free access to food and a lack of active physical stimulation.",
     tips: [
       "Introduce al gato nuevo en un cuarto solo por los primeros 3-7 d\xEDas: facilita la adaptaci\xF3n",
       "Feliway difusor de feromonas: reduce el estr\xE9s del primer mes significativamente",
       "Chips de identificaci\xF3n: obligatorio aunque sea gato de interior (se escapan)",
       "Revisa nuestra tienda para los productos recomendados con mejores precios"
     ],
-    close: 'Un gato en un entorno bien equipado es un gato tranquilo, saludable y con buen car\xE1cter. La mayor\xEDa de "problemas de comportamiento felino" son respuestas l\xF3gicas a un entorno que no cubre sus necesidades. Cubre las necesidades, desaparecen los problemas.'
+    tipsEn: [
+      "Introduce the new cat in a room of its own for the first 3-7 days \u2014 it eases the adjustment",
+      "A Feliway pheromone diffuser significantly reduces stress during the first month",
+      "Microchip ID: a must even for an indoor cat (they do get out)",
+      "Check our store for the recommended products at the best prices"
+    ],
+    close: 'Un gato en un entorno bien equipado es un gato tranquilo, saludable y con buen car\xE1cter. La mayor\xEDa de "problemas de comportamiento felino" son respuestas l\xF3gicas a un entorno que no cubre sus necesidades. Cubre las necesidades, desaparecen los problemas.',
+    closeEn: `A cat in a well-equipped environment is a calm, healthy, good-natured cat. Most "feline behavior problems" are logical responses to an environment that doesn't meet their needs. Meet the needs, and the problems disappear.`
   },
   // ── GROOMING ─────────────────────────────────────────────────────────────
   {
@@ -71,25 +95,37 @@ const BLOG_EXTRA = [
     emoji: "\u2702\uFE0F",
     color: "#9C27B0",
     title: "Las tendencias de grooming que arrasan en 2025",
+    titleEn: "The Grooming Trends Taking Over in 2025",
     sub: "De los cortes creativos asi\xE1ticos al grooming ecol\xF3gico: lo que est\xE1 de moda",
+    subEn: "From creative Asian cuts to eco-friendly grooming: what's in style",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 5,
     tags: ["grooming", "tendencias", "2025", "cortes"],
     lead: 'El grooming canino se convirti\xF3 en una forma de expresi\xF3n art\xEDstica. Lo que antes era solo "ba\xF1o y corte" hoy incluye tintes seguros, cortes arquitect\xF3nicos y estilos que hacen que las fotos de los perros sean m\xE1s virales que las de sus due\xF1os.',
+    leadEn: 'Dog grooming has become a form of artistic expression. What used to be just "bath and trim" now includes safe dyes, architectural cuts, and styles that make photos of the dogs go more viral than the ones of their owners.',
     body: [
-      { h: "El grooming asi\xE1tico: la tendencia m\xE1s popular", p: 'Originado en Jap\xF3n y Taiwan, el "Asian Fusion grooming" exagera las proporciones del perro de forma adorable: cabeza redonda tipo burbuja, patas cil\xEDndricas, cara con volumen esf\xE9rico. Las razas con pelo continuo (Poodle, Bich\xF3n, Malt\xE9s, Shih Tzu) son las m\xE1s adaptables. El resultado son fotos que se viralizan inevitablemente.' },
-      { h: "Tintes seguros para mascotas: arte canino", p: 'Los tintes para mascotas formulados sin peroxide, ammonia ni PPD son seguros para el pelaje. El "creative grooming" incluye mechas, puntas de color, patrones geom\xE9tricos y hasta degradados. El negocio en USA genera millones anuales. En Miami, la demanda de grooming creativo creci\xF3 60% en 2023.' },
-      { h: "Grooming ecol\xF3gico: la tendencia de valores", p: "Shampoos biodegradables, envases recargables, toallas de microfibra en lugar de secadoras de alto consumo energ\xE9tico, y productos sin sulfatos ni parabenos. Los due\xF1os millennials preguntan espec\xEDficamente por opciones eco-friendly y muchos salones est\xE1n respondiendo con certificaciones cruelty-free." },
-      { h: "El grooming de spa: experiencia premium", p: "M\xE1s all\xE1 del ba\xF1o y corte: aromaterapia con aceites esenciales seguros, masajes de relajaci\xF3n, tratamientos de hidrataci\xF3n profunda del pelaje, y barro desintoxicante. Los salones premium ofrecen paquetes de spa que incluyen tiempo de relajaci\xF3n post-tratamiento antes de la recogida." }
+      { h: "El grooming asi\xE1tico: la tendencia m\xE1s popular", hEn: "Asian grooming: the most popular trend", p: 'Originado en Jap\xF3n y Taiwan, el "Asian Fusion grooming" exagera las proporciones del perro de forma adorable: cabeza redonda tipo burbuja, patas cil\xEDndricas, cara con volumen esf\xE9rico. Las razas con pelo continuo (Poodle, Bich\xF3n, Malt\xE9s, Shih Tzu) son las m\xE1s adaptables. El resultado son fotos que se viralizan inevitablemente.', pEn: `Originating in Japan and Taiwan, "Asian Fusion grooming" exaggerates a dog's proportions in an adorable way: a round, bubble-like head, cylindrical legs, a face with spherical volume. Breeds with continuously growing hair (Poodle, Bichon, Maltese, Shih Tzu) are the most adaptable. The result is photos that inevitably go viral.` },
+      { h: "Tintes seguros para mascotas: arte canino", hEn: "Pet-safe dyes: canine art", p: 'Los tintes para mascotas formulados sin peroxide, ammonia ni PPD son seguros para el pelaje. El "creative grooming" incluye mechas, puntas de color, patrones geom\xE9tricos y hasta degradados. El negocio en USA genera millones anuales. En Miami, la demanda de grooming creativo creci\xF3 60% en 2023.', pEn: 'Pet dyes formulated without peroxide, ammonia, or PPD are safe for the coat. "Creative grooming" includes highlights, colored tips, geometric patterns, and even ombr\xE9 fades. The business generates millions a year in the US. In Miami, demand for creative grooming grew 60% in 2023.' },
+      { h: "Grooming ecol\xF3gico: la tendencia de valores", hEn: "Eco-friendly grooming: the values-driven trend", p: "Shampoos biodegradables, envases recargables, toallas de microfibra en lugar de secadoras de alto consumo energ\xE9tico, y productos sin sulfatos ni parabenos. Los due\xF1os millennials preguntan espec\xEDficamente por opciones eco-friendly y muchos salones est\xE1n respondiendo con certificaciones cruelty-free.", pEn: "Biodegradable shampoos, refillable containers, microfiber towels instead of energy-hungry dryers, and products free of sulfates and parabens. Millennial owners specifically ask for eco-friendly options, and many salons are responding with cruelty-free certifications." },
+      { h: "El grooming de spa: experiencia premium", hEn: "Spa grooming: the premium experience", p: "M\xE1s all\xE1 del ba\xF1o y corte: aromaterapia con aceites esenciales seguros, masajes de relajaci\xF3n, tratamientos de hidrataci\xF3n profunda del pelaje, y barro desintoxicante. Los salones premium ofrecen paquetes de spa que incluyen tiempo de relajaci\xF3n post-tratamiento antes de la recogida.", pEn: "Beyond the bath and trim: aromatherapy with safe essential oils, relaxation massages, deep coat-hydration treatments, and detoxifying mud. Premium salons offer spa packages that include post-treatment relaxation time before pickup." }
     ],
     stat: "La industria global de grooming de mascotas super\xF3 los $11 billones USD en 2024 y se proyecta a $19 billones para 2030. El crecimiento est\xE1 impulsado por el segmento premium y creative grooming.",
+    statEn: "The global pet grooming industry surpassed $11 billion USD in 2024 and is projected to reach $19 billion by 2030. The growth is driven by the premium segment and creative grooming.",
     tips: [
       "Para grooming asi\xE1tico: necesitas al menos 3 meses de crecimiento de pelo previo",
       "Los tintes seguros duran 4-8 semanas dependiendo del pelaje y frecuencia de ba\xF1o",
       "El grooming creativo aumenta el costo del servicio entre 40-80% sobre el precio base",
       "Pregunta siempre si los productos son testados en mascotas y libres de PPD"
     ],
-    close: "El grooming ya no es mantenimiento: es identidad. Y si tu perro termina siendo m\xE1s seguido en Instagram que t\xFA, eso es completamente aceptable."
+    tipsEn: [
+      "For Asian grooming, you need at least 3 months of prior hair growth",
+      "Safe dyes last 4-8 weeks depending on the coat and how often you bathe",
+      "Creative grooming raises the cost of the service by 40-80% over the base price",
+      "Always ask whether the products are pet-tested and PPD-free"
+    ],
+    close: "El grooming ya no es mantenimiento: es identidad. Y si tu perro termina siendo m\xE1s seguido en Instagram que t\xFA, eso es completamente aceptable.",
+    closeEn: "Grooming is no longer maintenance: it's identity. And if your dog ends up with more Instagram followers than you, that's completely acceptable."
   },
   {
     id: 38,
@@ -97,26 +133,38 @@ const BLOG_EXTRA = [
     emoji: "\u{1F415}",
     color: "#7C3AED",
     title: "El corte perfecto para cada raza: gu\xEDa visual para due\xF1os",
+    titleEn: "The Perfect Cut for Every Breed: A Visual Guide for Owners",
     sub: "Qu\xE9 pedirle al groomer y qu\xE9 esperar seg\xFAn la raza de tu perro",
+    subEn: "What to ask your groomer for and what to expect based on your dog's breed",
     date: "Abril 2025",
+    dateEn: "April 2025",
     read: 6,
     tags: ["grooming", "razas", "cortes", "pelaje"],
     lead: 'Llegas al groomer y dices "c\xF3rtale el pelo". El resultado no es lo que imaginabas. Esto pasa cuando no conoces los nombres correctos de los cortes para tu raza. Esta gu\xEDa te da el vocabulario y los criterios para comunicarte bien y obtener lo que quieres.',
+    leadEn: `You get to the groomer and say "cut his hair." The result isn't what you pictured. This happens when you don't know the correct names of the cuts for your breed. This guide gives you the vocabulary and the criteria to communicate well and get what you want.`,
     body: [
-      { h: "Poodle: el rey del grooming art\xEDstico", p: "Los cortes est\xE1ndar de Poodle tienen nombre propio: Continental Clip (concurso), Sporting Clip (funcional y elegante), Puppy Clip (pelo uniformemente corto en todo el cuerpo) y el Teddy Bear Cut (cara redondeada, pelo corto uniforme). Para la mayor\xEDa de due\xF1os, el Teddy Bear o Puppy Clip son los m\xE1s pr\xE1cticos." },
-      { h: "Golden Retriever y Labrador: lo menos es m\xE1s", p: "Estas razas NO deben rasurarse nunca: su doble capa regula temperatura tanto en calor como en fr\xEDo. El grooming correcto es: ba\xF1o con shampoo deslanador, secado profesional con soplador de alta velocidad, y despelote (deslanado) con Furminator. Un Golden bien deslanado pierde la mitad del pelo flotante." },
-      { h: "Schnauzer: el corte que define la raza", p: "El Schnauzer tiene un corte tradicional muy espec\xEDfico: cuerpo rapado corto con tijera en lomo, falda larga en la barriga y patas, y bigote y cejas pronunciados. Hay variaciones modernas (cuerpo m\xE1s largo, cara m\xE1s redondeada) pero el corte cl\xE1sico es el que mejor respeta la morfolog\xEDa de la raza." },
-      { h: "Yorkshire y Malt\xE9s: pelo largo vs. puppy cut", p: "El pelo largo (floor-length) requiere cepillado diario sin excepci\xF3n. El Puppy Cut (pelo uniformemente corto a 2-4cm) es id\xE9ntico en est\xE9tica pero de mantenimiento radicalmente m\xE1s f\xE1cil. Para due\xF1os que no tienen tiempo de cepillar diariamente, el Puppy Cut es la opci\xF3n responsable." },
-      { h: "Cocker Spaniel y Shih Tzu: el equilibrio dif\xEDcil", p: "Ambas razas tienen pelaje que requiere grooming profesional cada 6-8 semanas. El Cocker tiene un corte de concurso elaborado pero la mayor\xEDa de groomers ofrece una versi\xF3n pr\xE1ctica que mantiene la forma caracter\xEDstica sin el extremo mantenimiento del corte de show." }
+      { h: "Poodle: el rey del grooming art\xEDstico", hEn: "Poodle: the king of artistic grooming", p: "Los cortes est\xE1ndar de Poodle tienen nombre propio: Continental Clip (concurso), Sporting Clip (funcional y elegante), Puppy Clip (pelo uniformemente corto en todo el cuerpo) y el Teddy Bear Cut (cara redondeada, pelo corto uniforme). Para la mayor\xEDa de due\xF1os, el Teddy Bear o Puppy Clip son los m\xE1s pr\xE1cticos.", pEn: "The standard Poodle cuts have names of their own: the Continental Clip (show), the Sporting Clip (functional and elegant), the Puppy Clip (uniformly short hair over the whole body), and the Teddy Bear Cut (rounded face, uniformly short hair). For most owners, the Teddy Bear or Puppy Clip are the most practical." },
+      { h: "Golden Retriever y Labrador: lo menos es m\xE1s", hEn: "Golden Retriever and Labrador: less is more", p: "Estas razas NO deben rasurarse nunca: su doble capa regula temperatura tanto en calor como en fr\xEDo. El grooming correcto es: ba\xF1o con shampoo deslanador, secado profesional con soplador de alta velocidad, y despelote (deslanado) con Furminator. Un Golden bien deslanado pierde la mitad del pelo flotante.", pEn: "These breeds should NEVER be shaved: their double coat regulates temperature in both heat and cold. The right grooming is a bath with a de-shedding shampoo, professional drying with a high-velocity blower, and de-shedding with a Furminator. A well de-shed Golden loses half of its loose hair." },
+      { h: "Schnauzer: el corte que define la raza", hEn: "Schnauzer: the cut that defines the breed", p: "El Schnauzer tiene un corte tradicional muy espec\xEDfico: cuerpo rapado corto con tijera en lomo, falda larga en la barriga y patas, y bigote y cejas pronunciados. Hay variaciones modernas (cuerpo m\xE1s largo, cara m\xE1s redondeada) pero el corte cl\xE1sico es el que mejor respeta la morfolog\xEDa de la raza.", pEn: "The Schnauzer has a very specific traditional cut: a closely clipped body scissored along the back, a long skirt on the belly and legs, and a pronounced beard and eyebrows. There are modern variations (a longer body, a rounder face), but the classic cut is the one that best respects the breed's build." },
+      { h: "Yorkshire y Malt\xE9s: pelo largo vs. puppy cut", hEn: "Yorkshire and Maltese: long coat vs. puppy cut", p: "El pelo largo (floor-length) requiere cepillado diario sin excepci\xF3n. El Puppy Cut (pelo uniformemente corto a 2-4cm) es id\xE9ntico en est\xE9tica pero de mantenimiento radicalmente m\xE1s f\xE1cil. Para due\xF1os que no tienen tiempo de cepillar diariamente, el Puppy Cut es la opci\xF3n responsable.", pEn: "A long, floor-length coat requires daily brushing without exception. The Puppy Cut (hair kept uniformly short at about 1-1.5 inches) is just as cute but radically easier to maintain. For owners who don't have time to brush daily, the Puppy Cut is the responsible choice." },
+      { h: "Cocker Spaniel y Shih Tzu: el equilibrio dif\xEDcil", hEn: "Cocker Spaniel and Shih Tzu: the difficult balance", p: "Ambas razas tienen pelaje que requiere grooming profesional cada 6-8 semanas. El Cocker tiene un corte de concurso elaborado pero la mayor\xEDa de groomers ofrece una versi\xF3n pr\xE1ctica que mantiene la forma caracter\xEDstica sin el extremo mantenimiento del corte de show.", pEn: "Both breeds have coats that require professional grooming every 6-8 weeks. The Cocker has an elaborate show cut, but most groomers offer a practical version that keeps the characteristic shape without the extreme upkeep of the show cut." }
     ],
     stat: "El 67% de los due\xF1os de razas con pelo continuo no saben el nombre del corte correcto para su raza, seg\xFAn una encuesta de la National Dog Groomers Association of America. Esto genera frustraci\xF3n recurrente en las visitas de grooming.",
+    statEn: "According to a survey by the National Dog Groomers Association of America, 67% of owners of continuous-coat breeds don't know the name of the correct cut for their breed. This leads to recurring frustration at grooming appointments.",
     tips: [
       'Lleva una foto de referencia: "quiero esto" elimina el 90% de las malas comunicaciones',
       "Nunca rasures un Golden, Husky, Akita, Samoyedo o cualquier raza de doble capa",
       'El "Teddy Bear Cut" puede aplicarse a casi cualquier raza de pelo continuo',
       "Pide siempre que incluyan limpieza de o\xEDdos y expresi\xF3n de gl\xE1ndulas anales en el servicio"
     ],
-    close: "La comunicaci\xF3n con tu groomer es una habilidad que se aprende. Una foto, el nombre del corte y una descripci\xF3n de cu\xE1nto mantenimiento puedes dar en casa es toda la informaci\xF3n que necesita para darte el resultado perfecto."
+    tipsEn: [
+      'Bring a reference photo: "I want this" eliminates 90% of miscommunications',
+      "Never shave a Golden, Husky, Akita, Samoyed, or any double-coated breed",
+      'The "Teddy Bear Cut" can be applied to almost any continuous-coat breed',
+      "Always ask that ear cleaning and anal-gland expression be included in the service"
+    ],
+    close: "La comunicaci\xF3n con tu groomer es una habilidad que se aprende. Una foto, el nombre del corte y una descripci\xF3n de cu\xE1nto mantenimiento puedes dar en casa es toda la informaci\xF3n que necesita para darte el resultado perfecto.",
+    closeEn: "Communicating with your groomer is a skill you learn. A photo, the name of the cut, and a description of how much upkeep you can manage at home is all the information they need to give you the perfect result."
   },
   {
     id: 39,
@@ -124,25 +172,37 @@ const BLOG_EXTRA = [
     emoji: "\u{1F6C1}",
     color: "#1EB87A",
     title: "C\xF3mo ba\xF1ar a tu perro en casa sin traumatizarlo",
+    titleEn: "How to Bathe Your Dog at Home Without Traumatizing Him",
     sub: "T\xE9cnica, productos y frecuencia para cada tipo de pelaje",
+    subEn: "Technique, products, and frequency for every coat type",
     date: "Abril 2025",
+    dateEn: "April 2025",
     read: 5,
     tags: ["grooming", "ba\xF1o", "casa", "pelaje"],
     lead: "Ba\xF1ar a un perro en casa parece simple hasta que lo intentas. El perro se sacude, el agua va por todas partes, el pelo tapa el desag\xFCe y tu ba\xF1o queda peor que el perro. Con la t\xE9cnica correcta y los productos adecuados, el ba\xF1o en casa puede ser una experiencia tranquila para ambos.",
+    leadEn: "Bathing a dog at home seems simple until you try it. The dog shakes, water goes everywhere, hair clogs the drain, and your bathroom ends up worse off than the dog. With the right technique and the right products, the home bath can be a calm experience for you both.",
     body: [
-      { h: "La preparaci\xF3n que lo cambia todo", p: "Antes del agua: cepilla completamente el pelaje para deshacer nudos (el pelo mojado los vuelve imposibles de deshacer), junta todos los productos necesarios al alcance, y coloca una toalla antideslizante en el fondo de la ba\xF1era. Un perro que resbala en el ba\xF1o aprende a tenerle miedo." },
-      { h: "La temperatura y la presi\xF3n correcta", p: "El agua debe estar tibia, no caliente: la piel canina es m\xE1s sensible a la temperatura que la humana. Usa una alcachofita o recipiente para mojar progressivamente en lugar del chorro directo. La presi\xF3n alta del chorro asusta a muchos perros. Moja primero el cuerpo y deja la cara para el final." },
-      { h: "Champ\xFA: nunca el de humanos", p: "El pH de la piel canina (6.2-7.4) es diferente al humano (4.5-5.5). Los champ\xFAs humanos alteran el manto \xE1cido del pelaje del perro y pueden causar sequedad, irritaci\xF3n y mayor susceptibilidad a bacterias e hongos. Usa siempre champ\xFA formulado para perros o sin sulfatos si quieres algo suave." },
-      { h: "Secado: el paso m\xE1s importante", p: "No dejes al perro h\xFAmedo: la humedad en la piel genera dermatitis por humedad (hot spots) especialmente en razas con pelaje denso. Usa secadora en temperatura media, a 30cm del pelo m\xEDnimo. Los sopladores de alta velocidad (force dryer) son la herramienta profesional que separa el pelo y seca mucho m\xE1s eficientemente." }
+      { h: "La preparaci\xF3n que lo cambia todo", hEn: "The prep that changes everything", p: "Antes del agua: cepilla completamente el pelaje para deshacer nudos (el pelo mojado los vuelve imposibles de deshacer), junta todos los productos necesarios al alcance, y coloca una toalla antideslizante en el fondo de la ba\xF1era. Un perro que resbala en el ba\xF1o aprende a tenerle miedo.", pEn: "Before the water: brush the coat thoroughly to work out tangles (wet hair makes them impossible to undo), gather all the products you'll need within reach, and place a non-slip towel on the bottom of the tub. A dog that slips in the bath learns to fear it." },
+      { h: "La temperatura y la presi\xF3n correcta", hEn: "The right temperature and pressure", p: "El agua debe estar tibia, no caliente: la piel canina es m\xE1s sensible a la temperatura que la humana. Usa una alcachofita o recipiente para mojar progressivamente en lugar del chorro directo. La presi\xF3n alta del chorro asusta a muchos perros. Moja primero el cuerpo y deja la cara para el final.", pEn: "The water should be lukewarm, not hot: canine skin is more sensitive to temperature than human skin. Use a handheld sprayer or a cup to wet the dog gradually instead of a direct stream. High water pressure frightens many dogs. Wet the body first and save the face for last." },
+      { h: "Champ\xFA: nunca el de humanos", hEn: "Shampoo: never the human kind", p: "El pH de la piel canina (6.2-7.4) es diferente al humano (4.5-5.5). Los champ\xFAs humanos alteran el manto \xE1cido del pelaje del perro y pueden causar sequedad, irritaci\xF3n y mayor susceptibilidad a bacterias e hongos. Usa siempre champ\xFA formulado para perros o sin sulfatos si quieres algo suave.", pEn: "The pH of canine skin (6.2-7.4) is different from human skin (4.5-5.5). Human shampoos disrupt the acid mantle of a dog's coat and can cause dryness, irritation, and greater susceptibility to bacteria and fungi. Always use a shampoo formulated for dogs, or a sulfate-free one if you want something gentle." },
+      { h: "Secado: el paso m\xE1s importante", hEn: "Drying: the most important step", p: "No dejes al perro h\xFAmedo: la humedad en la piel genera dermatitis por humedad (hot spots) especialmente en razas con pelaje denso. Usa secadora en temperatura media, a 30cm del pelo m\xEDnimo. Los sopladores de alta velocidad (force dryer) son la herramienta profesional que separa el pelo y seca mucho m\xE1s eficientemente.", pEn: "Don't leave the dog damp: moisture on the skin causes moist dermatitis (hot spots), especially in dense-coated breeds. Use a dryer on medium heat, at least a foot away from the coat. High-velocity force dryers are the professional tool that separates the hair and dries far more efficiently." }
     ],
     stat: 'Seg\xFAn estudios del grooming profesional, el 73% de los perros que "odian el ba\xF1o" lo hacen por experiencias negativas previas (agua en ojos, resbalones, temperatura incorrecta) no por aversi\xF3n innata al agua.',
+    statEn: 'According to professional grooming studies, 73% of dogs that "hate the bath" do so because of past negative experiences (water in the eyes, slips, the wrong temperature), not because of an innate aversion to water.',
     tips: [
       "Algod\xF3n en los o\xEDdos durante el ba\xF1o previene otitis por humedad",
       "Premio durante y despu\xE9s del ba\xF1o: asociaci\xF3n positiva consistente",
       "Lava el champ\xFA completamente: el residuo es la principal causa de irritaci\xF3n de piel",
       "Groomer profesional cada 8-12 semanas + ba\xF1o en casa cuando necesario: la combinaci\xF3n ideal"
     ],
-    close: "El ba\xF1o en casa es viable y econ\xF3mico. Pero un groomer profesional con soplador de alta velocidad hace en 2 horas lo que te tomar\xEDa 4 a ti, con mejor resultado final y sin el desastre del ba\xF1o. Los dos tienen su lugar."
+    tipsEn: [
+      "Cotton in the ears during the bath prevents moisture-related ear infections",
+      "A treat during and after the bath builds a consistent positive association",
+      "Rinse the shampoo out completely: residue is the leading cause of skin irritation",
+      "A professional groomer every 8-12 weeks plus a home bath when needed is the ideal combination"
+    ],
+    close: "El ba\xF1o en casa es viable y econ\xF3mico. Pero un groomer profesional con soplador de alta velocidad hace en 2 horas lo que te tomar\xEDa 4 a ti, con mejor resultado final y sin el desastre del ba\xF1o. Los dos tienen su lugar.",
+    closeEn: "The home bath is doable and economical. But a professional groomer with a high-velocity dryer does in 2 hours what would take you 4, with a better final result and none of the bathroom mess. Both have their place."
   },
   {
     id: 40,
@@ -150,25 +210,37 @@ const BLOG_EXTRA = [
     emoji: "\u{1F63A}",
     color: "#E86535",
     title: "Grooming para gatos: lo que la mayor\xEDa de due\xF1os no sabe",
+    titleEn: "Cat Grooming: What Most Owners Don't Know",
     sub: "Por qu\xE9 los gatos tambi\xE9n necesitan groomer profesional",
+    subEn: "Why cats need a professional groomer too",
     date: "Marzo 2025",
+    dateEn: "March 2025",
     read: 5,
     tags: ["grooming", "gatos", "pelaje", "mantenimiento"],
     lead: "Los gatos se limpian solos, s\xED. Pero eso no significa que no necesiten grooming. Gatos de pelo largo, obesos o con artritis no pueden acicalarse correctamente. El resultado: nudos, bolas de pelo problem\xE1ticas, infecciones de piel y un gato inc\xF3modo que no puede decirte que algo le duele.",
+    leadEn: "Cats clean themselves, yes. But that doesn't mean they don't need grooming. Long-haired, overweight, or arthritic cats can't groom themselves properly. The result: mats, problematic hairballs, skin infections, and an uncomfortable cat that can't tell you something hurts.",
     body: [
-      { h: "\xBFCu\xE1ndo necesita un gato groomer profesional?", p: "Razas de pelo largo (Persa, Maine Coon, Ragdoll, Noruego del Bosque) necesitan grooming profesional cada 6-8 semanas sin excepci\xF3n. Cualquier gato con nudos que no se pueden deshacer con cepillo necesita groomer. Gatos mayores o con artritis que ya no pueden alcanzarse ciertos puntos tambi\xE9n." },
-      { h: 'El "lion cut": cu\xE1ndo tiene sentido', p: "El corte de le\xF3n (rapar el cuerpo dejando melena, patas y punta de cola) es la soluci\xF3n m\xE1s pr\xE1ctica para gatos con matones severos o para el verano en climas calurosos. Es reversible, el pelo crece en 3-4 meses. Contrario a lo que se cree, los gatos rapados en verano est\xE1n m\xE1s c\xF3modos, no m\xE1s vulnerables." },
-      { h: "Ba\xF1o de gato: s\xED, es posible", p: "Los groomers especializados ba\xF1an gatos con t\xE9cnicas espec\xEDficas: agua tibia en entorno cerrado y silencioso, movimientos lentos y seguros, secado con soplador de baja velocidad. Un gato bien acostumbrado al groomer desde joven lo tolera bien. Nunca intentes ba\xF1ar un gato adulto no habituado sin ayuda." },
-      { h: "Cepillado en casa: la rutina que previene todo", p: "Para pelo largo: cepillado diario de 5 minutos. Para pelo corto: semanal. El guante desmallador de goma (Zoom Groom) es el favorito de la mayor\xEDa de gatos porque imita la sensaci\xF3n del lamido. El FURminator para gatos reduce el 90% del pelo suelto que termina en alfombras y en las bolas de pelo." }
+      { h: "\xBFCu\xE1ndo necesita un gato groomer profesional?", hEn: "When does a cat need a professional groomer?", p: "Razas de pelo largo (Persa, Maine Coon, Ragdoll, Noruego del Bosque) necesitan grooming profesional cada 6-8 semanas sin excepci\xF3n. Cualquier gato con nudos que no se pueden deshacer con cepillo necesita groomer. Gatos mayores o con artritis que ya no pueden alcanzarse ciertos puntos tambi\xE9n.", pEn: "Long-haired breeds (Persian, Maine Coon, Ragdoll, Norwegian Forest Cat) need professional grooming every 6-8 weeks without exception. Any cat with mats that can't be worked out with a brush needs a groomer. So do older or arthritic cats that can no longer reach certain spots." },
+      { h: 'El "lion cut": cu\xE1ndo tiene sentido', hEn: 'The "lion cut": when it makes sense', p: "El corte de le\xF3n (rapar el cuerpo dejando melena, patas y punta de cola) es la soluci\xF3n m\xE1s pr\xE1ctica para gatos con matones severos o para el verano en climas calurosos. Es reversible, el pelo crece en 3-4 meses. Contrario a lo que se cree, los gatos rapados en verano est\xE1n m\xE1s c\xF3modos, no m\xE1s vulnerables.", pEn: "The lion cut (shaving the body while leaving the mane, legs, and tail tip) is the most practical solution for cats with severe matting or for summer in hot climates. It's reversible \u2014 the coat grows back in 3-4 months. Contrary to popular belief, cats shaved for summer are more comfortable, not more vulnerable." },
+      { h: "Ba\xF1o de gato: s\xED, es posible", hEn: "Bathing a cat: yes, it's possible", p: "Los groomers especializados ba\xF1an gatos con t\xE9cnicas espec\xEDficas: agua tibia en entorno cerrado y silencioso, movimientos lentos y seguros, secado con soplador de baja velocidad. Un gato bien acostumbrado al groomer desde joven lo tolera bien. Nunca intentes ba\xF1ar un gato adulto no habituado sin ayuda.", pEn: "Specialized groomers bathe cats with specific techniques: lukewarm water in an enclosed, quiet space, slow and reassuring movements, and drying with a low-velocity blower. A cat that's been accustomed to the groomer from a young age tolerates it well. Never try to bathe an unaccustomed adult cat without help." },
+      { h: "Cepillado en casa: la rutina que previene todo", hEn: "At-home brushing: the routine that prevents everything", p: "Para pelo largo: cepillado diario de 5 minutos. Para pelo corto: semanal. El guante desmallador de goma (Zoom Groom) es el favorito de la mayor\xEDa de gatos porque imita la sensaci\xF3n del lamido. El FURminator para gatos reduce el 90% del pelo suelto que termina en alfombras y en las bolas de pelo.", pEn: "For long hair: 5 minutes of daily brushing. For short hair: weekly. The rubber de-shedding glove (Zoom Groom) is most cats' favorite because it mimics the feel of being licked. The FURminator for cats removes 90% of the loose hair that ends up on carpets and in hairballs." }
     ],
     stat: "Las bolas de pelo (hairballs) que requieren intervenci\xF3n veterinaria cuestan en promedio $800-$1,500 de tratamiento en USA. El cepillado regular y el grooming profesional reduce el riesgo en m\xE1s del 80%.",
+    statEn: "Hairballs that require veterinary intervention cost an average of $800-$1,500 to treat in the US. Regular brushing and professional grooming reduce the risk by more than 80%.",
     tips: [
       "Empieza el grooming desde cachorro: la habituaci\xF3n temprana lo cambia todo",
       "Nunca uses tijeras en casa para deshacer nudos: riesgo de corte en piel bajo el nudo",
       "Pastillas para bolas de pelo (Laxatone): preventivo econ\xF3mico para pelo largo",
       "Limpieza de u\xF1as mensual: evita que se claven en pads o que da\xF1en muebles"
     ],
-    close: "Tu gato se lame para estar limpio, no para estar bien cuidado. El grooming profesional completa lo que el leng\xFCetazo no puede. Un gato bien cuidado se ve diferente: pelo brillante, sin nudos, sin olor, sin molestias. Es la diferencia entre sobrevivir y florecer."
+    tipsEn: [
+      "Start grooming from kittenhood: early acclimation changes everything",
+      "Never use scissors at home to cut out mats: you risk cutting the skin beneath the mat",
+      "Hairball paste (Laxatone): an inexpensive preventive for long hair",
+      "Monthly nail trims: keeps claws from snagging on paw pads or damaging furniture"
+    ],
+    close: "Tu gato se lame para estar limpio, no para estar bien cuidado. El grooming profesional completa lo que el leng\xFCetazo no puede. Un gato bien cuidado se ve diferente: pelo brillante, sin nudos, sin olor, sin molestias. Es la diferencia entre sobrevivir y florecer.",
+    closeEn: "Your cat licks itself to be clean, not to be well cared for. Professional grooming completes what the tongue can't. A well-cared-for cat looks different: a glossy coat, no mats, no odor, no discomfort. It's the difference between surviving and thriving."
   },
   {
     id: 41,
@@ -176,25 +248,37 @@ const BLOG_EXTRA = [
     emoji: "\u{1F31F}",
     color: "#1E90FF",
     title: "Grooming creativo: las transformaciones que se volvieron virales",
+    titleEn: "Creative Grooming: The Transformations That Went Viral",
     sub: "El arte canino que conquista TikTok e Instagram globalmente",
+    subEn: "The canine art taking over TikTok and Instagram worldwide",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 4,
     tags: ["grooming creativo", "viral", "TikTok", "arte canino"],
     lead: "El grooming creativo existe desde los 90s en competencias de concurso. Pero TikTok lo democratiz\xF3: ahora cualquier due\xF1o puede llegar al groomer con una idea y convertir a su perro en tendencia global. Estos son los estilos que m\xE1s se viralizan y qu\xE9 requieren.",
+    leadEn: "Creative grooming has existed since the 90s in show competitions. But TikTok democratized it: now any owner can walk into the groomer with an idea and turn their dog into a global trend. These are the styles that go viral most, and what they require.",
     body: [
-      { h: "El Samoyedo Panda: el original viral", p: "Groomers en China y Jap\xF3n comenzaron a dar a Samoyedos y Chow Chow el patr\xF3n de oso panda: manchas negras (con tinte seguro) alrededor de los ojos y orejas sobre el pelaje blanco. Las fotos generaron millones de interacciones. La tendencia lleg\xF3 a USA en 2022 y sigue siendo una de las m\xE1s solicitadas." },
-      { h: "Cortes arquitect\xF3nicos asi\xE1ticos", p: "Los groomers de Taiwan y Corea del Sur llevan el Asian Fusion a otro nivel: perros que parecen esculpidos, con perfectas esferas de pelo en lugar de cabeza, rect\xE1ngulos perfectos como cuerpo y cilindros uniformes como patas. Requieren meses de crecimiento, tijeras profesionales y horas de trabajo." },
-      { h: "Tintes tem\xE1ticos: de Halloween a Pride", p: "Tintes seguros para mascotas (sin peroxide, amonio ni PPD) permiten decorar el pelaje para eventos especiales. Los m\xE1s virales: patrones de llamas para Halloween, degradados de arco\xEDris para Pride, y tonos pastel para primavera. Los tintes duran 4-8 ba\xF1os y son completamente reversibles." },
-      { h: "El grooming competitivo: un deporte serio", p: "Las competencias de grooming creativo (Intergroom en New Jersey, Groom Expo en Hershey) son eventos con jueces certificados, puntuaciones t\xE9cnicas y premios importantes. Los ganadores son artistas que trabajan durante semanas el dise\xF1o de cada perro. Los videos de competencias son de lo m\xE1s viral en la comunidad pet." }
+      { h: "El Samoyedo Panda: el original viral", hEn: "The Panda Samoyed: the original viral hit", p: "Groomers en China y Jap\xF3n comenzaron a dar a Samoyedos y Chow Chow el patr\xF3n de oso panda: manchas negras (con tinte seguro) alrededor de los ojos y orejas sobre el pelaje blanco. Las fotos generaron millones de interacciones. La tendencia lleg\xF3 a USA en 2022 y sigue siendo una de las m\xE1s solicitadas.", pEn: "Groomers in China and Japan began giving Samoyeds and Chow Chows the panda-bear pattern: black markings (with safe dye) around the eyes and ears over the white coat. The photos generated millions of interactions. The trend reached the US in 2022 and remains one of the most requested." },
+      { h: "Cortes arquitect\xF3nicos asi\xE1ticos", hEn: "Asian architectural cuts", p: "Los groomers de Taiwan y Corea del Sur llevan el Asian Fusion a otro nivel: perros que parecen esculpidos, con perfectas esferas de pelo en lugar de cabeza, rect\xE1ngulos perfectos como cuerpo y cilindros uniformes como patas. Requieren meses de crecimiento, tijeras profesionales y horas de trabajo.", pEn: "Groomers in Taiwan and South Korea take Asian Fusion to another level: dogs that look sculpted, with perfect spheres of hair for a head, perfect rectangles for a body, and uniform cylinders for legs. They require months of growth, professional shears, and hours of work." },
+      { h: "Tintes tem\xE1ticos: de Halloween a Pride", hEn: "Themed dyes: from Halloween to Pride", p: "Tintes seguros para mascotas (sin peroxide, amonio ni PPD) permiten decorar el pelaje para eventos especiales. Los m\xE1s virales: patrones de llamas para Halloween, degradados de arco\xEDris para Pride, y tonos pastel para primavera. Los tintes duran 4-8 ba\xF1os y son completamente reversibles.", pEn: "Pet-safe dyes (free of peroxide, ammonia, and PPD) let you decorate the coat for special events. The most viral: flame patterns for Halloween, rainbow ombr\xE9 for Pride, and pastel tones for spring. The dyes last 4-8 baths and are completely reversible." },
+      { h: "El grooming competitivo: un deporte serio", hEn: "Competitive grooming: a serious sport", p: "Las competencias de grooming creativo (Intergroom en New Jersey, Groom Expo en Hershey) son eventos con jueces certificados, puntuaciones t\xE9cnicas y premios importantes. Los ganadores son artistas que trabajan durante semanas el dise\xF1o de cada perro. Los videos de competencias son de lo m\xE1s viral en la comunidad pet.", pEn: "Creative grooming competitions (Intergroom in New Jersey, Groom Expo in Hershey) are events with certified judges, technical scoring, and significant prizes. The winners are artists who spend weeks designing each dog. Competition videos are some of the most viral content in the pet community." }
     ],
     stat: "Los videos de grooming creativo son el segundo tipo de contenido de mascotas con m\xE1s engagement en TikTok (despu\xE9s de cachorros nuevos), con un promedio de 3.2M de visualizaciones en los top 100 videos del g\xE9nero.",
+    statEn: "Creative grooming videos are the second-most engaging type of pet content on TikTok (after new puppies), averaging 3.2M views across the top 100 videos in the genre.",
     tips: [
       "Verifica que el tinte sea espec\xEDfico para mascotas y PPD-free antes de aplicar",
       "El grooming creativo requiere perros con pelo en buen estado: nada de hacerlo sobre pelo da\xF1ado",
       "Los cortes arquitect\xF3nicos asi\xE1ticos cuestan $150-$400+ seg\xFAn el salon",
       'Documenta el proceso: el "before y after" es el formato m\xE1s compartible'
     ],
-    close: "El grooming creativo no es para todos los perros ni para todos los due\xF1os. Pero cuando el perro lo tolera bien y el groomer es un artista, el resultado es genuinamente espectacular. Y si se vuelve viral, el costo del grooming se paga solo."
+    tipsEn: [
+      "Confirm the dye is pet-specific and PPD-free before applying it",
+      "Creative grooming requires dogs with a healthy coat \u2014 never do it over damaged hair",
+      "Asian architectural cuts cost $150-$400+ depending on the salon",
+      'Document the process: the "before and after" is the most shareable format'
+    ],
+    close: "El grooming creativo no es para todos los perros ni para todos los due\xF1os. Pero cuando el perro lo tolera bien y el groomer es un artista, el resultado es genuinamente espectacular. Y si se vuelve viral, el costo del grooming se paga solo.",
+    closeEn: "Creative grooming isn't for every dog or every owner. But when the dog tolerates it well and the groomer is an artist, the result is genuinely spectacular. And if it goes viral, the cost of the grooming pays for itself."
   },
   {
     id: 42,
@@ -203,20 +287,27 @@ const BLOG_EXTRA = [
     color: "#2D6A4F",
     img: "fotos-razas-sm/German Shepherd.webp",
     title: "Pastor Alem\xE1n: inteligencia, lealtad y mucha responsabilidad",
+    titleEn: "German Shepherd: Intelligence, Loyalty, and a Lot of Responsibility",
     sub: "Todo lo que necesitas saber antes de adoptar uno",
+    subEn: "Everything you need to know before adopting one",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 5,
     tags: ["pastor alem\xE1n", "german shepherd"],
     lead: "El Pastor Alem\xE1n es uno de los perros m\xE1s vers\xE1tiles del mundo. Pero esa inteligencia viene con un precio: necesita trabajo mental y f\xEDsico todos los d\xEDas.",
+    leadEn: "The German Shepherd is one of the most versatile dogs in the world. But that intelligence comes at a price: it needs mental and physical work every single day.",
     body: [
-      { h: "Ejercicio diario m\xEDnimo 2 horas", p: "Un Pastor Alem\xE1n sin ejercicio se vuelve destructivo. No es un perro para quien trabaja largas jornadas sin apoyo." },
-      { h: "Entrenamiento desde el primer d\xEDa", p: "Son extremadamente entrenables pero necesitan l\xEDmites claros desde cachorros. El refuerzo positivo funciona muy bien." },
-      { h: "Muda de pelo: prepararse", p: "Mudan considerablemente dos veces al a\xF1o. Cepillado frecuente y aspiradora de alta potencia son indispensables." },
-      { h: "Salud: displasia de cadera", p: "Son propensos a displasia de cadera. Compra solo de criadores que certifiquen salud de los padres." }
+      { h: "Ejercicio diario m\xEDnimo 2 horas", hEn: "A minimum of 2 hours of daily exercise", p: "Un Pastor Alem\xE1n sin ejercicio se vuelve destructivo. No es un perro para quien trabaja largas jornadas sin apoyo.", pEn: "A German Shepherd without exercise becomes destructive. It is not a dog for someone who works long days without help." },
+      { h: "Entrenamiento desde el primer d\xEDa", hEn: "Training from day one", p: "Son extremadamente entrenables pero necesitan l\xEDmites claros desde cachorros. El refuerzo positivo funciona muy bien.", pEn: "They are extremely trainable but need clear boundaries from puppyhood. Positive reinforcement works very well." },
+      { h: "Muda de pelo: prepararse", hEn: "Shedding: be prepared", p: "Mudan considerablemente dos veces al a\xF1o. Cepillado frecuente y aspiradora de alta potencia son indispensables.", pEn: "They shed considerably twice a year. Frequent brushing and a high-powered vacuum are indispensable." },
+      { h: "Salud: displasia de cadera", hEn: "Health: hip dysplasia", p: "Son propensos a displasia de cadera. Compra solo de criadores que certifiquen salud de los padres.", pEn: "They are prone to hip dysplasia. Buy only from breeders who certify the parents' health." }
     ],
     stat: "El Pastor Alem\xE1n es la segunda raza m\xE1s registrada en USA y la m\xE1s utilizada por fuerzas policiales y militares en el mundo.",
+    statEn: "The German Shepherd is the second-most registered breed in the US and the most widely used by police and military forces around the world.",
     tips: ["Socializaci\xF3n temprana con personas y animales", "Agility y nose work para canalizar energ\xEDa", "Chequeos de cadera anuales desde los 2 a\xF1os"],
-    close: "Un Pastor Alem\xE1n bien trabajado es uno de los compa\xF1eros m\xE1s extraordinarios. Pero requiere compromiso real, no solo buenas intenciones."
+    tipsEn: ["Early socialization with people and animals", "Agility and nose work to channel their energy", "Annual hip checkups starting at age 2"],
+    close: "Un Pastor Alem\xE1n bien trabajado es uno de los compa\xF1eros m\xE1s extraordinarios. Pero requiere compromiso real, no solo buenas intenciones.",
+    closeEn: "A well-worked German Shepherd is one of the most extraordinary companions there is. But it requires real commitment, not just good intentions."
   },
   {
     id: 43,
@@ -225,20 +316,27 @@ const BLOG_EXTRA = [
     color: "#D4830A",
     img: "fotos-razas-sm/Pembroke Welsh Corgi.webp",
     title: "Corgi: el perro de la reina que conquista las redes sociales",
+    titleEn: "Corgi: The Queen's Dog That's Conquering Social Media",
     sub: "Temperamento, energ\xEDa y cuidados del perro m\xE1s adorable de internet",
+    subEn: "Temperament, energy, and care for the most adorable dog on the internet",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 4,
     tags: ["corgi", "pembroke", "familia"],
     lead: "El Corgi tiene personalidad enorme en cuerpo peque\xF1o. Pero detr\xE1s de los videos simp\xE1ticos hay un perro de pastoreo con energ\xEDa real que pide movimiento diario.",
+    leadEn: "The Corgi has an enormous personality in a small body. But behind the cute videos is a herding dog with real energy that demands daily movement.",
     body: [
-      { h: "Herencia de pastoreo activa", p: "Fue criado para pastorear ganado. Tiene instinto de morder talones, energ\xEDa alta y necesidad de trabajo mental." },
-      { h: "Inteligencia notable", p: "Son el puesto #11 en el ranking de inteligencia de Coren. Aprenden r\xE1pido pero tambi\xE9n aprenden a manipular sin l\xEDmites claros." },
-      { h: "Columna: punto cr\xEDtico", p: "Su espalda larga y patas cortas los hacen propensos a problemas de columna. Evita escaleras en cachorros y controla el peso." },
-      { h: "Muda de pelo considerable", p: "Doble capa con muda estacional. Cepillado semanal y deslanado profundo dos veces al a\xF1o." }
+      { h: "Herencia de pastoreo activa", hEn: "An active herding heritage", p: "Fue criado para pastorear ganado. Tiene instinto de morder talones, energ\xEDa alta y necesidad de trabajo mental.", pEn: "It was bred to herd livestock. It has a heel-nipping instinct, high energy, and a need for mental work." },
+      { h: "Inteligencia notable", hEn: "Remarkable intelligence", p: "Son el puesto #11 en el ranking de inteligencia de Coren. Aprenden r\xE1pido pero tambi\xE9n aprenden a manipular sin l\xEDmites claros.", pEn: "They rank #11 on Coren's intelligence list. They learn fast \u2014 but they also learn to manipulate without clear boundaries." },
+      { h: "Columna: punto cr\xEDtico", hEn: "The spine: a critical point", p: "Su espalda larga y patas cortas los hacen propensos a problemas de columna. Evita escaleras en cachorros y controla el peso.", pEn: "Their long back and short legs make them prone to spinal problems. Avoid stairs while they're puppies and keep their weight in check." },
+      { h: "Muda de pelo considerable", hEn: "Considerable shedding", p: "Doble capa con muda estacional. Cepillado semanal y deslanado profundo dos veces al a\xF1o.", pEn: "A double coat with seasonal shedding. Weekly brushing and a deep de-shed twice a year." }
     ],
     stat: "La Reina Isabel II tuvo m\xE1s de 30 Corgis durante su reinado, convirtiendo a la raza en s\xEDmbolo de la monarqu\xEDa brit\xE1nica.",
+    statEn: "Queen Elizabeth II owned more than 30 Corgis during her reign, making the breed a symbol of the British monarchy.",
     tips: ["Excelente para familias activas", "Agility es su deporte ideal", "Controla las porciones: propenso al sobrepeso"],
-    close: "El Corgi es mucho m\xE1s que un perro viral. Es un compa\xF1ero activo, inteligente y leal que pide ejercicio, estimulaci\xF3n y tiempo de calidad contigo."
+    tipsEn: ["Excellent for active families", "Agility is their ideal sport", "Watch the portions: prone to being overweight"],
+    close: "El Corgi es mucho m\xE1s que un perro viral. Es un compa\xF1ero activo, inteligente y leal que pide ejercicio, estimulaci\xF3n y tiempo de calidad contigo.",
+    closeEn: "The Corgi is much more than a viral dog. It's an active, intelligent, loyal companion that asks for exercise, stimulation, and quality time with you."
   },
   {
     id: 44,
@@ -247,20 +345,27 @@ const BLOG_EXTRA = [
     color: "#8B4513",
     img: "fotos-razas-sm/Dachshund.webp",
     title: "Dachshund (Salchicha): el cazador m\xE1s valiente en el cuerpo m\xE1s peque\xF1o",
+    titleEn: "Dachshund (Wiener Dog): The Bravest Hunter in the Smallest Body",
     sub: "Gu\xEDa completa para vivir con el perro m\xE1s terco y adorable del mundo",
+    subEn: "A complete guide to living with the most stubborn and adorable dog in the world",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 4,
     tags: ["dachshund", "salchicha", "teckel"],
     lead: "El Dachshund fue criado para meterse en madrigueras a cazar tejones. Valiente, terco, independiente. Es uno de los perros m\xE1s encantadores y dif\xEDciles a la vez.",
+    leadEn: "The Dachshund was bred to burrow into dens and hunt badgers. Brave, stubborn, independent. It's one of the most charming and most challenging dogs all at once.",
     body: [
-      { h: "Columna vertebral: su tal\xF3n de Aquiles", p: "La IVDD es la condici\xF3n m\xE1s com\xFAn. Evita saltos, escaleras frecuentes y sobrepeso. Una rampa para el sof\xE1 puede salvarle la vida." },
-      { h: "Car\xE1cter terco por dise\xF1o", p: "Criados para trabajar solos en madrigueras, sin instrucciones. Eso se traduce en terquedad. El entrenamiento requiere m\xE1s paciencia." },
-      { h: "Instinto de caza activo", p: "Ladran ante cualquier movimiento y perseguir\xE1n todo. Correa siempre, patio cercado." },
-      { h: "Variedades de pelaje", p: "Pelo corto, largo y duro. Los de pelo largo requieren cepillado regular. Los miniatura pesan hasta 5kg." }
+      { h: "Columna vertebral: su tal\xF3n de Aquiles", hEn: "The spine: its Achilles heel", p: "La IVDD es la condici\xF3n m\xE1s com\xFAn. Evita saltos, escaleras frecuentes y sobrepeso. Una rampa para el sof\xE1 puede salvarle la vida.", pEn: "IVDD is the most common condition. Avoid jumping, frequent stairs, and excess weight. A ramp to the couch can save its life." },
+      { h: "Car\xE1cter terco por dise\xF1o", hEn: "Stubborn by design", p: "Criados para trabajar solos en madrigueras, sin instrucciones. Eso se traduce en terquedad. El entrenamiento requiere m\xE1s paciencia.", pEn: "Bred to work alone in burrows, without instructions. That translates into stubbornness. Training takes more patience." },
+      { h: "Instinto de caza activo", hEn: "An active hunting instinct", p: "Ladran ante cualquier movimiento y perseguir\xE1n todo. Correa siempre, patio cercado.", pEn: "They bark at any movement and will chase anything. Always on leash, with a fenced yard." },
+      { h: "Variedades de pelaje", hEn: "Coat varieties", p: "Pelo corto, largo y duro. Los de pelo largo requieren cepillado regular. Los miniatura pesan hasta 5kg.", pEn: "Smooth, long, and wirehaired. The long-haired ones require regular brushing. The miniatures weigh up to 11 lbs." }
     ],
     stat: "El Dachshund fue la mascota de los Juegos Ol\xEDmpicos de Munich 1972, el primer perro ol\xEDmpico oficial de la historia.",
+    statEn: "The Dachshund was the mascot of the 1972 Munich Olympics \u2014 the first official Olympic dog in history.",
     tips: ["Rampa para saltos: obligatorio", "Control de peso estricto toda la vida", "Socializaci\xF3n temprana", "Ideal en apartamentos con paseos diarios"],
-    close: "Vivir con un Dachshund es una negociaci\xF3n constante con uno de los personajes m\xE1s entra\xF1ables. Si lo entiendes, es un compa\xF1ero para toda la vida."
+    tipsEn: ["A ramp to prevent jumping: a must", "Strict weight control for life", "Early socialization", "Ideal in apartments with daily walks"],
+    close: "Vivir con un Dachshund es una negociaci\xF3n constante con uno de los personajes m\xE1s entra\xF1ables. Si lo entiendes, es un compa\xF1ero para toda la vida.",
+    closeEn: "Living with a Dachshund is a constant negotiation with one of the most endearing characters around. If you understand it, it's a companion for life."
   },
   {
     id: 45,
@@ -269,20 +374,27 @@ const BLOG_EXTRA = [
     color: "#A0522D",
     img: "uploads/Page 8.webp",
     title: "Bulldog Ingl\xE9s: el rey del sof\xE1 con coraz\xF3n de campe\xF3n",
+    titleEn: "English Bulldog: The King of the Couch with the Heart of a Champion",
     sub: "C\xF3mo cuidar bien a una raza que requiere atenci\xF3n especial",
+    subEn: "How to properly care for a breed that needs special attention",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 5,
     tags: ["bulldog ingl\xE9s", "english bulldog", "braquic\xE9falo"],
     lead: "El Bulldog Ingl\xE9s es s\xEDmbolo de tenacidad. Tambi\xE9n es una de las razas con m\xE1s necesidades de salud espec\xEDficas. Cuidarlos bien requiere informaci\xF3n, no solo amor.",
+    leadEn: "The English Bulldog is a symbol of tenacity. It's also one of the breeds with the most specific health needs. Caring for them well takes knowledge, not just love.",
     body: [
-      { h: "Braquicefalia: el tema m\xE1s importante", p: "Su hocico aplastado causa dificultades respiratorias. Evita calor extremo, ejercicio intenso y estr\xE9s. El sobrecalentamiento puede ser mortal." },
-      { h: "Pliegues de piel: limpieza obligatoria", p: "Las arrugas faciales acumulan humedad y causan infecciones. Limpiar con toallitas 2-3 veces por semana, especialmente el pliegue nasal." },
-      { h: "Ejercicio moderado y supervisado", p: "Caminatas cortas en horarios frescos. Nunca en el calor del mediod\xEDa." },
-      { h: "Peso: control estricto", p: "El sobrepeso agrava todos sus problemas. Las porciones deben ser precisas." }
+      { h: "Braquicefalia: el tema m\xE1s importante", hEn: "Brachycephaly: the most important issue", p: "Su hocico aplastado causa dificultades respiratorias. Evita calor extremo, ejercicio intenso y estr\xE9s. El sobrecalentamiento puede ser mortal.", pEn: "Their flat muzzle causes breathing difficulties. Avoid extreme heat, intense exercise, and stress. Overheating can be fatal." },
+      { h: "Pliegues de piel: limpieza obligatoria", hEn: "Skin folds: cleaning is mandatory", p: "Las arrugas faciales acumulan humedad y causan infecciones. Limpiar con toallitas 2-3 veces por semana, especialmente el pliegue nasal.", pEn: "The facial wrinkles trap moisture and cause infections. Clean them with wipes 2-3 times a week, especially the nose rope." },
+      { h: "Ejercicio moderado y supervisado", hEn: "Moderate, supervised exercise", p: "Caminatas cortas en horarios frescos. Nunca en el calor del mediod\xEDa.", pEn: "Short walks during the cooler hours. Never in the midday heat." },
+      { h: "Peso: control estricto", hEn: "Weight: strict control", p: "El sobrepeso agrava todos sus problemas. Las porciones deben ser precisas.", pEn: "Excess weight worsens all of their problems. Portions must be precise." }
     ],
     stat: "El Bulldog Ingl\xE9s es la mascota oficial de m\xE1s de 40 universidades en USA, incluyendo Yale.",
+    statEn: "The English Bulldog is the official mascot of more than 40 universities in the US, including Yale.",
     tips: ["AC siempre disponible en verano", "Limpieza de pliegues 2-3 veces por semana", "Seguro veterinario recomendado"],
-    close: "El Bulldog Ingl\xE9s es un compa\xF1ero excepcional para quien entiende sus necesidades espec\xEDficas. Su amor es incondicional; sus cuidados, tambi\xE9n deben serlo."
+    tipsEn: ["Air conditioning always available in summer", "Fold cleaning 2-3 times a week", "Pet insurance recommended"],
+    close: "El Bulldog Ingl\xE9s es un compa\xF1ero excepcional para quien entiende sus necesidades espec\xEDficas. Su amor es incondicional; sus cuidados, tambi\xE9n deben serlo.",
+    closeEn: "The English Bulldog is an exceptional companion for those who understand its specific needs. Its love is unconditional; its care should be too."
   },
   {
     id: 46,
@@ -291,20 +403,27 @@ const BLOG_EXTRA = [
     color: "#4169E1",
     img: "fotos-razas-sm/Siberian Husky.webp",
     title: "Husky Siberiano: belleza glacial que necesita kil\xF3metros de espacio",
+    titleEn: "Siberian Husky: Glacial Beauty That Needs Miles of Space",
     sub: "La verdad sobre vivir con uno de los perros m\xE1s espectaculares del mundo",
+    subEn: "The truth about living with one of the most spectacular dogs in the world",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 5,
     tags: ["husky siberiano", "siberian husky"],
     lead: "El Husky es el perro m\xE1s fotografiado de Instagram y uno de los m\xE1s abandonados. Esta gu\xEDa es para los que quieren entender antes de enamorarse.",
+    leadEn: "The Husky is the most photographed dog on Instagram and one of the most surrendered. This guide is for those who want to understand before falling in love.",
     body: [
-      { h: "Energ\xEDa extrema", p: "Criados para correr 150km diarios tirando trineos. Necesitan al menos 2 horas de ejercicio intenso cada d\xEDa." },
-      { h: "Escapistas de nivel experto", p: "Saltan vallas de 2 metros, excavan bajo cercas. El patio debe ser a prueba de Husky antes de traer uno." },
-      { h: "Muda \xE9pica dos veces al a\xF1o", p: "Cepillado diario en \xE9pocas de muda. Soplador de pelo de alta velocidad recomendado." },
-      { h: "No son perros guardianes", p: "Son sociables con toda la familia y amigables con extra\xF1os. Si buscas protecci\xF3n, no es tu raza." }
+      { h: "Energ\xEDa extrema", hEn: "Extreme energy", p: "Criados para correr 150km diarios tirando trineos. Necesitan al menos 2 horas de ejercicio intenso cada d\xEDa.", pEn: "Bred to run 90+ miles a day pulling sleds. They need at least 2 hours of intense exercise every day." },
+      { h: "Escapistas de nivel experto", hEn: "Expert-level escape artists", p: "Saltan vallas de 2 metros, excavan bajo cercas. El patio debe ser a prueba de Husky antes de traer uno.", pEn: "They leap 6-foot fences and dig under them. The yard must be Husky-proof before you bring one home." },
+      { h: "Muda \xE9pica dos veces al a\xF1o", hEn: "Epic shedding twice a year", p: "Cepillado diario en \xE9pocas de muda. Soplador de pelo de alta velocidad recomendado.", pEn: "Daily brushing during shedding season. A high-velocity coat blower is recommended." },
+      { h: "No son perros guardianes", hEn: "They are not guard dogs", p: "Son sociables con toda la familia y amigables con extra\xF1os. Si buscas protecci\xF3n, no es tu raza.", pEn: "They are sociable with the whole family and friendly with strangers. If you're looking for protection, this isn't your breed." }
     ],
     stat: "El equipo de Huskies de Leonhard Seppala recorri\xF3 674 km en menos de 6 d\xEDas en 1925 para llevar suero antidift\xE9rico a Nome, Alaska.",
+    statEn: "Leonhard Seppala's Husky team covered 674 km (419 miles) in less than 6 days in 1925 to deliver diphtheria antitoxin to Nome, Alaska.",
     tips: ["Patio completamente cercado y seguro", "Nunca sin correa en espacios abiertos", "2 horas de ejercicio m\xEDnimo diario"],
-    close: "Un Husky bien ejercitado y estimulado es uno de los compa\xF1eros m\xE1s extraordinarios. Pero te lo dan todo solo si t\xFA das todo lo que necesitan."
+    tipsEn: ["A fully fenced, secure yard", "Never off leash in open spaces", "A minimum of 2 hours of exercise daily"],
+    close: "Un Husky bien ejercitado y estimulado es uno de los compa\xF1eros m\xE1s extraordinarios. Pero te lo dan todo solo si t\xFA das todo lo que necesitan.",
+    closeEn: "A well-exercised, well-stimulated Husky is one of the most extraordinary companions there is. But it gives you everything only if you give it everything it needs."
   },
   {
     id: 47,
@@ -313,20 +432,27 @@ const BLOG_EXTRA = [
     color: "#FFB6C1",
     img: "fotos-razas-sm/Bichon Frise.webp",
     title: "Bich\xF3n Fris\xE9: el eterno cachorro que nunca falla",
+    titleEn: "Bichon Frise: The Forever Puppy That Never Disappoints",
     sub: "El perro ideal para apartamentos, alergias y corazones f\xE1ciles de conquistar",
+    subEn: "The ideal dog for apartments, allergies, and easily won hearts",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 4,
     tags: ["bich\xF3n fris\xE9", "hipoalerg\xE9nico", "apartamento"],
     lead: "El Bich\xF3n Fris\xE9 parece un peluche animado y su personalidad lo confirma: alegre, afectuoso y completamente enfocado en hacerte feliz.",
+    leadEn: "The Bichon Frise looks like a living plush toy, and its personality confirms it: cheerful, affectionate, and completely focused on making you happy.",
     body: [
-      { h: "Bajo derramamiento: ventaja real", p: "Su pelo rizado crece continuamente sin soltar casi nada. Ideal para alergias moderadas. Requiere corte cada 6-8 semanas y cepillado diario." },
-      { h: "Car\xE1cter: alegr\xEDa pura", p: "Extremadamente sociables, raramente agresivos. Se adaptan a energ\xEDa alta o tranquila. Excelente con ni\xF1os y personas mayores." },
-      { h: "Separaci\xF3n: punto d\xE9bil", p: "Detestan la soledad. Un Bich\xF3n solo muchas horas puede desarrollar ansiedad. Son perros de compa\xF1\xEDa en el sentido m\xE1s literal." },
-      { h: "Salud dental: atenci\xF3n especial", p: "Acumulan sarro r\xE1pidamente. Cepillado dental 3 veces por semana desde cachorros." }
+      { h: "Bajo derramamiento: ventaja real", hEn: "Low shedding: a real advantage", p: "Su pelo rizado crece continuamente sin soltar casi nada. Ideal para alergias moderadas. Requiere corte cada 6-8 semanas y cepillado diario.", pEn: "Its curly coat grows continuously and sheds almost nothing. Ideal for moderate allergies. It requires a trim every 6-8 weeks and daily brushing." },
+      { h: "Car\xE1cter: alegr\xEDa pura", hEn: "Temperament: pure joy", p: "Extremadamente sociables, raramente agresivos. Se adaptan a energ\xEDa alta o tranquila. Excelente con ni\xF1os y personas mayores.", pEn: "Extremely sociable, rarely aggressive. They adapt to high energy or calm. Excellent with children and older adults." },
+      { h: "Separaci\xF3n: punto d\xE9bil", hEn: "Separation: a weak spot", p: "Detestan la soledad. Un Bich\xF3n solo muchas horas puede desarrollar ansiedad. Son perros de compa\xF1\xEDa en el sentido m\xE1s literal.", pEn: "They hate being alone. A Bichon left alone for many hours can develop anxiety. They are companion dogs in the most literal sense." },
+      { h: "Salud dental: atenci\xF3n especial", hEn: "Dental health: special attention", p: "Acumulan sarro r\xE1pidamente. Cepillado dental 3 veces por semana desde cachorros.", pEn: "They build up tartar quickly. Brush their teeth 3 times a week from puppyhood." }
     ],
     stat: "El Bich\xF3n Fris\xE9 fue el perro favorito de los nobles europeos del siglo XVI y aparece en pinturas de Francisco de Goya.",
+    statEn: "The Bichon Frise was the favorite dog of 16th-century European nobles and appears in paintings by Francisco de Goya.",
     tips: ["Corte profesional cada 6-8 semanas", "Ideal para apartamentos y personas mayores", "Primer perro excelente"],
-    close: "El Bich\xF3n Fris\xE9 es uno de los perros de compa\xF1\xEDa m\xE1s equilibrados. Si buscas alegr\xEDa concentrada en un paquete peque\xF1o, esta raza rara vez decepciona."
+    tipsEn: ["Professional trim every 6-8 weeks", "Ideal for apartments and older adults", "An excellent first dog"],
+    close: "El Bich\xF3n Fris\xE9 es uno de los perros de compa\xF1\xEDa m\xE1s equilibrados. Si buscas alegr\xEDa concentrada en un paquete peque\xF1o, esta raza rara vez decepciona.",
+    closeEn: "The Bichon Frise is one of the most well-balanced companion dogs. If you're looking for joy concentrated in a small package, this breed rarely disappoints."
   },
   {
     id: 48,
@@ -335,20 +461,27 @@ const BLOG_EXTRA = [
     color: "#708090",
     img: "fotos-razas-sm/Bull Terrier.webp",
     title: "American Bully: el gigante gentil que el mundo malentendi\xF3",
+    titleEn: "American Bully: The Gentle Giant the World Misunderstood",
     sub: "La verdad sobre una de las razas m\xE1s incomprendidas y m\xE1s leales",
+    subEn: "The truth about one of the most misunderstood and most loyal breeds",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 5,
     tags: ["american bully", "bully", "familia"],
     lead: "El American Bully fue criado espec\xEDficamente para ser perro de familia. Es uno de los compa\xF1eros m\xE1s cari\xF1osos y pacientes, pero necesita socializaci\xF3n y estructura.",
+    leadEn: "The American Bully was bred specifically to be a family dog. It's one of the most affectionate and patient companions, but it needs socialization and structure.",
     body: [
-      { h: "Criado para la familia", p: "Desarrollado en los 90s combinando razas para crear un perro gentil, estable y tolerante. No de pelea." },
-      { h: "Temperamento: amor en tama\xF1o XXL", p: "Extremadamente afectuosos con su familia. Notable tolerancia con ni\xF1os. Con extra\xF1os, reservados si bien socializados." },
-      { h: "Socializaci\xF3n temprana: no negociable", p: "Un Bully bien socializado es embajador de la raza. Uno mal criado refuerza estereotipos injustos." },
-      { h: "Legislaci\xF3n BSL", p: "Algunas ciudades tienen restricciones sobre razas tipo bully. Inf\xF3rmate antes de adoptar." }
+      { h: "Criado para la familia", hEn: "Bred for the family", p: "Desarrollado en los 90s combinando razas para crear un perro gentil, estable y tolerante. No de pelea.", pEn: "Developed in the 90s by combining breeds to create a gentle, stable, tolerant dog. Not a fighting dog." },
+      { h: "Temperamento: amor en tama\xF1o XXL", hEn: "Temperament: love in XXL size", p: "Extremadamente afectuosos con su familia. Notable tolerancia con ni\xF1os. Con extra\xF1os, reservados si bien socializados.", pEn: "Extremely affectionate with their family. Notable tolerance with children. Reserved with strangers when well socialized." },
+      { h: "Socializaci\xF3n temprana: no negociable", hEn: "Early socialization: non-negotiable", p: "Un Bully bien socializado es embajador de la raza. Uno mal criado refuerza estereotipos injustos.", pEn: "A well-socialized Bully is an ambassador for the breed. A poorly raised one reinforces unfair stereotypes." },
+      { h: "Legislaci\xF3n BSL", hEn: "BSL legislation", p: "Algunas ciudades tienen restricciones sobre razas tipo bully. Inf\xF3rmate antes de adoptar.", pEn: "Some cities have restrictions on bully-type breeds. Do your research before adopting." }
     ],
     stat: "El American Bully fue reconocido por el United Kennel Club en 2013 y en menos de una d\xE9cada se convirti\xF3 en una de las razas m\xE1s populares en USA.",
+    statEn: "The American Bully was recognized by the United Kennel Club in 2013 and, in less than a decade, became one of the most popular breeds in the US.",
     tips: ["Socializaci\xF3n desde las 8 semanas", "Entrenamiento b\xE1sico de obediencia fundamental", "Chequea regulaciones locales"],
-    close: "Dar una oportunidad a un American Bully es entender que una raza no define al perro. El car\xE1cter lo construye el criador, el due\xF1o y el entorno."
+    tipsEn: ["Socialization from 8 weeks of age", "Basic obedience training is essential", "Check local regulations"],
+    close: "Dar una oportunidad a un American Bully es entender que una raza no define al perro. El car\xE1cter lo construye el criador, el due\xF1o y el entorno.",
+    closeEn: "Giving an American Bully a chance means understanding that a breed doesn't define the dog. Character is built by the breeder, the owner, and the environment."
   },
   {
     id: 49,
@@ -357,20 +490,27 @@ const BLOG_EXTRA = [
     color: "#DAA520",
     img: "fotos-razas-sm/Cavapoo.webp",
     title: "Cavapoo: el h\xEDbrido perfecto que s\xED existe",
+    titleEn: "Cavapoo: The Perfect Hybrid That Actually Exists",
     sub: "Por qu\xE9 esta mezcla de Cavalier y Poodle arrasa en todo el mundo",
+    subEn: "Why this Cavalier and Poodle mix is taking the world by storm",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 4,
     tags: ["cavapoo", "h\xEDbrido", "apoyo emocional"],
     lead: "El Cavapoo combina la gentileza del Cavalier King Charles con la inteligencia y bajo derramamiento del Poodle. Uno de los perros de compa\xF1\xEDa m\xE1s equilibrados del mercado.",
+    leadEn: "The Cavapoo combines the gentleness of the Cavalier King Charles with the intelligence and low shedding of the Poodle. One of the most well-balanced companion dogs out there.",
     body: [
-      { h: "Temperamento heredado de ambos", p: "Del Cavalier: paciencia, gentileza, tolerancia. Del Poodle: inteligencia, entrenabilidad, bajo derramamiento." },
-      { h: "Ideal para apoyo emocional", p: "Sensibilidad al estado de \xE1nimo humano m\xE1s inteligencia adaptable los hace excelentes perros ESA certificados." },
-      { h: "Salud: ventaja del h\xEDbrido", p: "H\xEDbridos F1 suelen tener menos problemas gen\xE9ticos. Pide certificados de salud card\xEDaca de los padres Cavalier." },
-      { h: "Tama\xF1o variable", p: "Dependiendo del Poodle padre (toy o miniatura), puede pesar entre 5-12kg." }
+      { h: "Temperamento heredado de ambos", hEn: "A temperament inherited from both", p: "Del Cavalier: paciencia, gentileza, tolerancia. Del Poodle: inteligencia, entrenabilidad, bajo derramamiento.", pEn: "From the Cavalier: patience, gentleness, tolerance. From the Poodle: intelligence, trainability, low shedding." },
+      { h: "Ideal para apoyo emocional", hEn: "Ideal for emotional support", p: "Sensibilidad al estado de \xE1nimo humano m\xE1s inteligencia adaptable los hace excelentes perros ESA certificados.", pEn: "Sensitivity to human moods plus adaptable intelligence makes them excellent certified ESA dogs." },
+      { h: "Salud: ventaja del h\xEDbrido", hEn: "Health: the hybrid advantage", p: "H\xEDbridos F1 suelen tener menos problemas gen\xE9ticos. Pide certificados de salud card\xEDaca de los padres Cavalier.", pEn: "F1 hybrids tend to have fewer genetic problems. Ask for cardiac health certificates from the Cavalier parents." },
+      { h: "Tama\xF1o variable", hEn: "Variable size", p: "Dependiendo del Poodle padre (toy o miniatura), puede pesar entre 5-12kg.", pEn: "Depending on the Poodle parent (toy or miniature), it can weigh between 11 and 26 lbs." }
     ],
     stat: "El Cavapoo fue desarrollado en Australia en los a\xF1os 90 y hoy es una de las cinco razas de dise\xF1o m\xE1s demandadas en USA, UK y Australia.",
+    statEn: "The Cavapoo was developed in Australia in the 1990s and is now one of the five most in-demand designer breeds in the US, UK, and Australia.",
     tips: ["Certifica salud card\xEDaca de los padres", "Excelente con ni\xF1os, mayores y otras mascotas", "Corte profesional cada 8 semanas"],
-    close: "El Cavapoo no es un perro de moda: es una combinaci\xF3n intencional que funciona. En manos de criador responsable, rara vez decepciona."
+    tipsEn: ["Verify the parents' cardiac health", "Excellent with children, older adults, and other pets", "Professional trim every 8 weeks"],
+    close: "El Cavapoo no es un perro de moda: es una combinaci\xF3n intencional que funciona. En manos de criador responsable, rara vez decepciona.",
+    closeEn: "The Cavapoo isn't a fad dog: it's an intentional combination that works. In the hands of a responsible breeder, it rarely disappoints."
   },
   {
     id: 50,
@@ -379,20 +519,27 @@ const BLOG_EXTRA = [
     color: "#C0C0C0",
     img: "fotos-razas-sm/Maltese.webp",
     title: "Malt\xE9s: nieve en movimiento con car\xE1cter de gigante",
+    titleEn: "Maltese: Snow in Motion with the Spirit of a Giant",
     sub: "Todo sobre el perro blanco m\xE1s elegante del mundo",
+    subEn: "Everything about the most elegant white dog in the world",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 4,
     tags: ["malt\xE9s", "maltese", "peque\xF1o"],
     lead: "El Malt\xE9s lleva m\xE1s de 2,000 a\xF1os siendo perro de la aristocracia. Su pelaje blanco, car\xE1cter afectuoso y adaptabilidad los hacen perfectos para apartamento.",
+    leadEn: "The Maltese has been a dog of the aristocracy for more than 2,000 years. Its white coat, affectionate nature, and adaptability make it perfect for apartment living.",
     body: [
-      { h: "Pelaje blanco: belleza exigente", p: "No muda casi, pero requiere cepillado diario. Muchos optan por puppy cut para reducir el mantenimiento significativamente." },
-      { h: "Energ\xEDa en cuerpo peque\xF1o", p: "Son juguetones y activos, no los perritos fr\xE1giles que parecen. Sensibles al trato brusco y ruido excesivo." },
-      { h: "Salud dental: prioridad", p: "Acumulan sarro aceleradamente. Cepillado dental frecuente y chequeo veterinario anual de boca." },
-      { h: "Manchas en la cara", p: "Su pelo blanco puede manchar alrededor de los ojos. Limpieza con toallitas dos veces al d\xEDa y buena nutrici\xF3n ayudan." }
+      { h: "Pelaje blanco: belleza exigente", hEn: "A white coat: demanding beauty", p: "No muda casi, pero requiere cepillado diario. Muchos optan por puppy cut para reducir el mantenimiento significativamente.", pEn: "It barely sheds, but it requires daily brushing. Many owners opt for a puppy cut to reduce upkeep significantly." },
+      { h: "Energ\xEDa en cuerpo peque\xF1o", hEn: "Energy in a small body", p: "Son juguetones y activos, no los perritos fr\xE1giles que parecen. Sensibles al trato brusco y ruido excesivo.", pEn: "They are playful and active, not the fragile little dogs they appear to be. Sensitive to rough handling and excessive noise." },
+      { h: "Salud dental: prioridad", hEn: "Dental health: a priority", p: "Acumulan sarro aceleradamente. Cepillado dental frecuente y chequeo veterinario anual de boca.", pEn: "They build up tartar rapidly. Frequent tooth brushing and an annual veterinary dental check." },
+      { h: "Manchas en la cara", hEn: "Tear staining on the face", p: "Su pelo blanco puede manchar alrededor de los ojos. Limpieza con toallitas dos veces al d\xEDa y buena nutrici\xF3n ayudan.", pEn: "Their white hair can stain around the eyes. Cleaning with wipes twice a day and good nutrition help." }
     ],
     stat: "El Malt\xE9s aparece en vasijas griegas del a\xF1o 500 a.C. y fue el perro favorito de Arist\xF3teles, que lo mencion\xF3 en sus escritos.",
+    statEn: "The Maltese appears on Greek vases from 500 B.C. and was the favorite dog of Aristotle, who mentioned it in his writings.",
     tips: ["Cepillado diario o puppy cut", "Ideal para apartamentos y personas mayores", "Limpieza de zona ocular diaria"],
-    close: "El Malt\xE9s es uno de los grandes cl\xE1sicos. Milenios de compa\xF1\xEDa humana no son accidente: esta raza tiene algo genuinamente especial."
+    tipsEn: ["Daily brushing or a puppy cut", "Ideal for apartments and older adults", "Daily cleaning of the eye area"],
+    close: "El Malt\xE9s es uno de los grandes cl\xE1sicos. Milenios de compa\xF1\xEDa humana no son accidente: esta raza tiene algo genuinamente especial.",
+    closeEn: "The Maltese is one of the great classics. Millennia of human companionship are no accident: this breed has something genuinely special."
   },
   {
     id: 51,
@@ -401,20 +548,27 @@ const BLOG_EXTRA = [
     color: "#FF8C00",
     img: "fotos-razas-sm/Pomeranian.webp",
     title: "Pomerania: el bola de pelo que no sabe que es peque\xF1o",
+    titleEn: "Pomeranian: The Ball of Fluff That Doesn't Know It's Small",
     sub: "Todo sobre el perro m\xE1s fotog\xE9nico del mundo y sus cuidados reales",
+    subEn: "Everything about the most photogenic dog in the world and its real care needs",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 4,
     tags: ["pomerania", "pomeranian", "peque\xF1o"],
     lead: "El Pomerania es la prueba de que el tama\xF1o no define la personalidad. Valiente, vocal, curioso y completamente convencido de poder competir con perros 10 veces m\xE1s grandes.",
+    leadEn: "The Pomeranian is proof that size doesn't define personality. Brave, vocal, curious, and completely convinced it can take on dogs 10 times its size.",
     body: [
-      { h: "Personalidad sin filtro", p: "Curiosos, alertas y vocales. Ladran ante cualquier est\xEDmulo. El entrenamiento de control de ladrido es prioritario desde cachorro." },
-      { h: "La doble capa", p: "Cepillado 3-4 veces por semana. Dos veces al a\xF1o, muda profusamente durante 2-3 semanas." },
-      { h: "Dientes peque\xF1os, problemas grandes", p: "Acumulan sarro muy r\xE1pido. Cepillado dental frecuente obligatorio." },
-      { h: "Colapso traqueal", p: "Propensos a colapso traqueal. Usa arn\xE9s en lugar de collar siempre." }
+      { h: "Personalidad sin filtro", hEn: "An unfiltered personality", p: "Curiosos, alertas y vocales. Ladran ante cualquier est\xEDmulo. El entrenamiento de control de ladrido es prioritario desde cachorro.", pEn: "Curious, alert, and vocal. They bark at any stimulus. Bark-control training is a priority from puppyhood." },
+      { h: "La doble capa", hEn: "The double coat", p: "Cepillado 3-4 veces por semana. Dos veces al a\xF1o, muda profusamente durante 2-3 semanas.", pEn: "Brushing 3-4 times a week. Twice a year, they shed profusely for 2-3 weeks." },
+      { h: "Dientes peque\xF1os, problemas grandes", hEn: "Small teeth, big problems", p: "Acumulan sarro muy r\xE1pido. Cepillado dental frecuente obligatorio.", pEn: "They build up tartar very fast. Frequent tooth brushing is a must." },
+      { h: "Colapso traqueal", hEn: "Tracheal collapse", p: "Propensos a colapso traqueal. Usa arn\xE9s en lugar de collar siempre.", pEn: "Prone to tracheal collapse. Always use a harness instead of a collar." }
     ],
     stat: "La Reina Victoria populariz\xF3 el Pomerania en el siglo XIX, reduci\xE9ndolo de 14kg a los 2-3kg actuales a trav\xE9s de la cr\xEDa selectiva.",
+    statEn: "Queen Victoria popularized the Pomeranian in the 19th century, shrinking it from 30 lbs to today's 4-7 lbs through selective breeding.",
     tips: ["Arn\xE9s siempre, nunca collar", "Entrenamiento de ladrido desde el primer mes", "Corte profesional cada 8-10 semanas"],
-    close: "El Pomerania es pura vida concentrada. Si tienes paciencia para el ladrido y los cuidados del pelaje, tendr\xE1s un compa\xF1ero con m\xE1s personalidad que muchos perros grandes."
+    tipsEn: ["Always a harness, never a collar", "Bark training from the first month", "Professional trim every 8-10 weeks"],
+    close: "El Pomerania es pura vida concentrada. Si tienes paciencia para el ladrido y los cuidados del pelaje, tendr\xE1s un compa\xF1ero con m\xE1s personalidad que muchos perros grandes.",
+    closeEn: "The Pomeranian is pure life, concentrated. If you have patience for the barking and the coat care, you'll have a companion with more personality than many large dogs."
   },
   {
     id: 52,
@@ -423,20 +577,27 @@ const BLOG_EXTRA = [
     color: "#D2691E",
     img: "fotos-razas-sm/Pug.webp",
     title: "Pug (Carlino): el payaso de la familia que necesita cuidados especiales",
+    titleEn: "Pug: The Family Clown That Needs Special Care",
     sub: "Todo lo que debes saber sobre salud braquic\xE9fala y vida feliz",
+    subEn: "Everything you need to know about brachycephalic health and a happy life",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 4,
     tags: ["pug", "carlino", "braquic\xE9falo"],
     lead: "El Pug es uno de los perros m\xE1s expresivos y carism\xE1ticos del mundo. Su cara arrugada y personalidad juguetona lo convierten en un im\xE1n de afecto, pero su anatom\xEDa requiere atenci\xF3n especial.",
+    leadEn: "The Pug is one of the most expressive and charismatic dogs in the world. Its wrinkled face and playful personality make it a magnet for affection, but its anatomy requires special attention.",
     body: [
-      { h: "Respiraci\xF3n: el tema central", p: "Son braquic\xE9falos. El calor, ejercicio intenso y estr\xE9s pueden ser peligrosos. En verano, siempre en interiores con clima." },
-      { h: "Pliegues faciales: limpieza diaria", p: "Las arrugas acumulan humedad y pueden desarrollar infecciones. Limpieza con toallitas suaves a diario." },
-      { h: "Ojos: protecci\xF3n extra", p: "Sus ojos prominentes son vulnerables a lesiones. Gotas lubricantes veterinarias y supervisi\xF3n en ambientes con polvo." },
-      { h: "Peso: control estricto", p: "El sobrepeso agrava todos sus problemas respiratorios. Las porciones deben medirse." }
+      { h: "Respiraci\xF3n: el tema central", hEn: "Breathing: the central issue", p: "Son braquic\xE9falos. El calor, ejercicio intenso y estr\xE9s pueden ser peligrosos. En verano, siempre en interiores con clima.", pEn: "They are brachycephalic. Heat, intense exercise, and stress can be dangerous. In summer, always indoors with climate control." },
+      { h: "Pliegues faciales: limpieza diaria", hEn: "Facial folds: daily cleaning", p: "Las arrugas acumulan humedad y pueden desarrollar infecciones. Limpieza con toallitas suaves a diario.", pEn: "The wrinkles trap moisture and can develop infections. Clean them with gentle wipes daily." },
+      { h: "Ojos: protecci\xF3n extra", hEn: "Eyes: extra protection", p: "Sus ojos prominentes son vulnerables a lesiones. Gotas lubricantes veterinarias y supervisi\xF3n en ambientes con polvo.", pEn: "Their prominent eyes are vulnerable to injury. Veterinary lubricating drops and supervision in dusty environments." },
+      { h: "Peso: control estricto", hEn: "Weight: strict control", p: "El sobrepeso agrava todos sus problemas respiratorios. Las porciones deben medirse.", pEn: "Excess weight worsens all of their breathing problems. Portions must be measured." }
     ],
     stat: "El Pug fue el perro oficial de la Casa de Orange en el siglo XVII y acompa\xF1\xF3 a Guillermo III en su invasi\xF3n de Inglaterra en 1688.",
+    statEn: "The Pug was the official dog of the House of Orange in the 17th century and accompanied William III in his invasion of England in 1688.",
     tips: ["Nunca en calor extremo", "Seguro veterinario recomendado", "Limpieza de pliegues diaria", "Arn\xE9s respiratorio especializado"],
-    close: "Vivir con un Pug es re\xEDrse todos los d\xEDas. Solo necesitas entender su anatom\xEDa para que esa vida sea larga y feliz."
+    tipsEn: ["Never in extreme heat", "Pet insurance recommended", "Daily fold cleaning", "A specialized no-pull harness"],
+    close: "Vivir con un Pug es re\xEDrse todos los d\xEDas. Solo necesitas entender su anatom\xEDa para que esa vida sea larga y feliz.",
+    closeEn: "Living with a Pug means laughing every day. You just need to understand its anatomy so that life is long and happy."
   },
   {
     id: 53,
@@ -445,20 +606,27 @@ const BLOG_EXTRA = [
     color: "#333333",
     img: "fotos-razas-sm/Rottweiler.webp",
     title: "Rottweiler: el guardi\xE1n leal que necesita un l\xEDder claro",
+    titleEn: "Rottweiler: The Loyal Guardian That Needs a Clear Leader",
     sub: "C\xF3mo criar uno de los perros m\xE1s poderosos del mundo de forma responsable",
+    subEn: "How to responsibly raise one of the most powerful dogs in the world",
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 5,
     tags: ["rottweiler", "guardi\xE1n", "familia"],
     lead: "El Rottweiler es uno de los perros m\xE1s poderosos y leales del mundo. En manos responsables, un guardi\xE1n excepcional y compa\xF1ero profundamente afectuoso. Sin estructura, puede ser un problema.",
+    leadEn: "The Rottweiler is one of the most powerful and loyal dogs in the world. In responsible hands, an exceptional guardian and a deeply affectionate companion. Without structure, it can be a problem.",
     body: [
-      { h: "L\xEDder claro: no negociable", p: "Necesitan consistencia desde el primer d\xEDa. Sin estructura, toman decisiones por su cuenta, y a 50kg eso puede ser problem\xE1tico." },
-      { h: "Entrenamiento desde cachorro", p: "Obediencia b\xE1sica, socializaci\xF3n con personas y animales, y exposici\xF3n a diferentes entornos desde las 8 semanas." },
-      { h: "Afecto real con la familia", p: "Son extremadamente afectuosos con su familia nuclear. Reservados con extra\xF1os pero amorosos en casa." },
-      { h: "Salud: displasia y coraz\xF3n", p: "Propensos a displasia de cadera y cardiomiopat\xEDa. Chequeos anuales y peso saludable son esenciales." }
+      { h: "L\xEDder claro: no negociable", hEn: "A clear leader: non-negotiable", p: "Necesitan consistencia desde el primer d\xEDa. Sin estructura, toman decisiones por su cuenta, y a 50kg eso puede ser problem\xE1tico.", pEn: "They need consistency from day one. Without structure, they make decisions on their own \u2014 and at 110 lbs, that can be a problem." },
+      { h: "Entrenamiento desde cachorro", hEn: "Training from puppyhood", p: "Obediencia b\xE1sica, socializaci\xF3n con personas y animales, y exposici\xF3n a diferentes entornos desde las 8 semanas.", pEn: "Basic obedience, socialization with people and animals, and exposure to different environments from 8 weeks of age." },
+      { h: "Afecto real con la familia", hEn: "Real affection with the family", p: "Son extremadamente afectuosos con su familia nuclear. Reservados con extra\xF1os pero amorosos en casa.", pEn: "They are extremely affectionate with their immediate family. Reserved with strangers but loving at home." },
+      { h: "Salud: displasia y coraz\xF3n", hEn: "Health: dysplasia and the heart", p: "Propensos a displasia de cadera y cardiomiopat\xEDa. Chequeos anuales y peso saludable son esenciales.", pEn: "Prone to hip dysplasia and cardiomyopathy. Annual checkups and a healthy weight are essential." }
     ],
     stat: "El Rottweiler desciende de los perros romanos que acompa\xF1aban a las legiones. Su nombre viene de Rottweil, ciudad alemana medieval.",
+    statEn: "The Rottweiler descends from the Roman dogs that accompanied the legions. Its name comes from Rottweil, a medieval German town.",
     tips: ["Entrenamiento profesional recomendado para primerizos", "Socializaci\xF3n desde las 8 semanas", "Legislaci\xF3n BSL en algunas ciudades: inf\xF3rmate"],
-    close: "Un Rottweiler bien criado es uno de los perros m\xE1s completos: guardi\xE1n, compa\xF1ero y amigo. La responsabilidad es proporcional a su tama\xF1o y capacidad."
+    tipsEn: ["Professional training recommended for first-time owners", "Socialization from 8 weeks of age", "BSL legislation in some cities: do your research"],
+    close: "Un Rottweiler bien criado es uno de los perros m\xE1s completos: guardi\xE1n, compa\xF1ero y amigo. La responsabilidad es proporcional a su tama\xF1o y capacidad.",
+    closeEn: "A well-raised Rottweiler is one of the most complete dogs there is: guardian, companion, and friend. The responsibility is proportional to its size and capability."
   },
   // ── EDAD: PERROS Y GATOS EN AÑOS HUMANOS ──────────────────────────────────
   {
@@ -469,21 +637,28 @@ const BLOG_EXTRA = [
     img: "fotos-razas/Beagle.webp",
     widget: "ageChart",
     title: "\xBFCu\xE1ntos a\xF1os tiene tu perro (o gato) en a\xF1os humanos?",
+    titleEn: "How Old Is Your Dog (or Cat) in Human Years?",
     sub: 'Olvida la regla del "x7": la edad real depende del tama\xF1o y la especie',
+    subEn: 'Forget the "times 7" rule: real age depends on size and species',
     date: "Mayo 2025",
+    dateEn: "May 2025",
     read: 6,
     tags: ["edad", "salud", "perros", "gatos"],
     lead: 'Durante d\xE9cadas repetimos que "1 a\xF1o de perro = 7 a\xF1os humanos". Es una simplificaci\xF3n que se queda corta. Los perros maduran much\xEDsimo en su primer a\xF1o, y luego el ritmo cambia seg\xFAn su tama\xF1o. Los gatos siguen otra tabla. Aqu\xED est\xE1 c\xF3mo calcularlo bien, y por qu\xE9 importa para su cuidado.',
+    leadEn: `For decades we've repeated that "1 dog year = 7 human years." It's a simplification that falls short. Dogs mature enormously in their first year, and then the pace changes according to their size. Cats follow a different table. Here's how to calculate it correctly, and why it matters for their care.`,
     body: [
-      { h: "El primer a\xF1o vale por quince", p: 'Al cumplir 1 a\xF1o, un perro ya es pr\xE1cticamente un adolescente: equivale a unos 15 a\xF1os humanos. Al segundo a\xF1o suma unos 9 m\xE1s (\u224824 humanos). Por eso un cachorro de 8 meses ya tiene energ\xEDa, dientes y hormonas de "adolescente".' },
-      { h: "Despu\xE9s del segundo a\xF1o, el tama\xF1o manda", p: 'A partir del tercer a\xF1o, cada a\xF1o de perro suma distinto seg\xFAn su tama\xF1o: razas peque\xF1as ~4 a\xF1os humanos por a\xF1o, medianas ~5, grandes ~6 y gigantes ~7. Por eso un Gran Dan\xE9s es "senior" a los 6 y un Chihuahua sigue joven a esa edad. Las razas peque\xF1as viven m\xE1s.' },
-      { h: "Los gatos tienen su propia tabla", p: "El gato llega a ~15 a\xF1os humanos en su primer a\xF1o y ~24 en el segundo. Desde ah\xED, suma unos 4 a\xF1os humanos por cada a\xF1o felino. Un gato de 10 a\xF1os equivale a unos 56 humanos: oficialmente senior, aunque no lo parezca." },
-      { h: "Por qu\xE9 importa para su cuidado", p: 'Saber la edad "real" cambia decisiones: cu\xE1ndo pasar de comida de cachorro a adulto, cu\xE1ndo empezar chequeos de senior (articulaciones, ri\xF1\xF3n, dientes), y qu\xE9 nivel de ejercicio es seguro. Un perro grande de 7 a\xF1os necesita los mismos cuidados que una persona de 50+, aunque siga jugando.' },
-      { h: "Etapas de vida en una mirada", p: "Cachorro/gatito (0\u20131 a\xF1o): crecimiento y socializaci\xF3n. Joven (1\u20132 a\xF1os): energ\xEDa m\xE1xima. Adulto (2 a\xF1os hasta ~75% de su vida): rutina estable. Senior (\xFAltimo ~25%): chequeos m\xE1s frecuentes, comida espec\xEDfica y m\xE1s descanso. Usa la calculadora de abajo con el tama\xF1o de tu mascota." }
+      { h: "El primer a\xF1o vale por quince", hEn: "The first year counts for fifteen", p: 'Al cumplir 1 a\xF1o, un perro ya es pr\xE1cticamente un adolescente: equivale a unos 15 a\xF1os humanos. Al segundo a\xF1o suma unos 9 m\xE1s (\u224824 humanos). Por eso un cachorro de 8 meses ya tiene energ\xEDa, dientes y hormonas de "adolescente".', pEn: `By the time it turns 1, a dog is practically a teenager: roughly the equivalent of 15 human years. By the second year it adds about 9 more (\u224824 human). That's why an 8-month-old puppy already has the energy, teeth, and hormones of a "teenager."` },
+      { h: "Despu\xE9s del segundo a\xF1o, el tama\xF1o manda", hEn: "After the second year, size rules", p: 'A partir del tercer a\xF1o, cada a\xF1o de perro suma distinto seg\xFAn su tama\xF1o: razas peque\xF1as ~4 a\xF1os humanos por a\xF1o, medianas ~5, grandes ~6 y gigantes ~7. Por eso un Gran Dan\xE9s es "senior" a los 6 y un Chihuahua sigue joven a esa edad. Las razas peque\xF1as viven m\xE1s.', pEn: `From the third year on, each dog year adds differently depending on size: small breeds ~4 human years per year, medium ~5, large ~6, and giant ~7. That's why a Great Dane is a "senior" at 6 while a Chihuahua is still young at that age. Small breeds live longer.` },
+      { h: "Los gatos tienen su propia tabla", hEn: "Cats have their own table", p: "El gato llega a ~15 a\xF1os humanos en su primer a\xF1o y ~24 en el segundo. Desde ah\xED, suma unos 4 a\xF1os humanos por cada a\xF1o felino. Un gato de 10 a\xF1os equivale a unos 56 humanos: oficialmente senior, aunque no lo parezca.", pEn: "A cat reaches ~15 human years in its first year and ~24 in the second. From there, it adds about 4 human years for every feline year. A 10-year-old cat is the equivalent of about 56 human years: officially a senior, even if it doesn't look it." },
+      { h: "Por qu\xE9 importa para su cuidado", hEn: "Why it matters for their care", p: 'Saber la edad "real" cambia decisiones: cu\xE1ndo pasar de comida de cachorro a adulto, cu\xE1ndo empezar chequeos de senior (articulaciones, ri\xF1\xF3n, dientes), y qu\xE9 nivel de ejercicio es seguro. Un perro grande de 7 a\xF1os necesita los mismos cuidados que una persona de 50+, aunque siga jugando.', pEn: `Knowing the "real" age changes decisions: when to switch from puppy food to adult, when to start senior checkups (joints, kidneys, teeth), and what level of exercise is safe. A large 7-year-old dog needs the same care as a person of 50+, even if it's still playing.` },
+      { h: "Etapas de vida en una mirada", hEn: "Life stages at a glance", p: "Cachorro/gatito (0\u20131 a\xF1o): crecimiento y socializaci\xF3n. Joven (1\u20132 a\xF1os): energ\xEDa m\xE1xima. Adulto (2 a\xF1os hasta ~75% de su vida): rutina estable. Senior (\xFAltimo ~25%): chequeos m\xE1s frecuentes, comida espec\xEDfica y m\xE1s descanso. Usa la calculadora de abajo con el tama\xF1o de tu mascota.", pEn: "Puppy/kitten (0\u20131 year): growth and socialization. Young (1\u20132 years): peak energy. Adult (from 2 years until ~75% of their life): a stable routine. Senior (the last ~25%): more frequent checkups, specialized food, and more rest. Use the calculator below with your pet's size." }
     ],
     stat: "Un perro peque\xF1o puede vivir 15\u201316 a\xF1os; uno gigante, 7\u201310. A mayor tama\xF1o, m\xE1s r\xE1pido envejecen: la gen\xE9tica del crecimiento acelera tambi\xE9n el reloj biol\xF3gico.",
+    statEn: "A small dog can live 15\u201316 years; a giant one, 7\u201310. The larger the size, the faster they age: the genetics of growth also speed up the biological clock.",
     tips: ["Cambia de comida cachorro\u2192adulto cuando alcanza ~el 90% de su peso adulto", 'Inicia chequeos "senior" a los 7 a\xF1os en razas grandes, a los 9\u201310 en peque\xF1as y gatos', "El peso saludable es el factor #1 para alargar la vida", "Cuida los dientes: la salud dental impacta coraz\xF3n y ri\xF1ones"],
-    close: "No hay una f\xF3rmula m\xE1gica \xFAnica, pero entender que tu mascota envejece distinto seg\xFAn su especie y tama\xF1o te ayuda a darle el cuidado correcto en cada etapa. Mira la tabla interactiva aqu\xED abajo."
+    tipsEn: ["Switch from puppy food to adult when they reach ~90% of their adult weight", 'Start "senior" checkups at age 7 in large breeds, at 9\u201310 in small breeds and cats', "A healthy weight is the #1 factor for a longer life", "Take care of the teeth: dental health affects the heart and kidneys"],
+    close: "No hay una f\xF3rmula m\xE1gica \xFAnica, pero entender que tu mascota envejece distinto seg\xFAn su especie y tama\xF1o te ayuda a darle el cuidado correcto en cada etapa. Mira la tabla interactiva aqu\xED abajo.",
+    closeEn: "There's no single magic formula, but understanding that your pet ages differently depending on its species and size helps you give it the right care at every stage. Take a look at the interactive table below."
   }
 ];
 BLOG.push(...BLOG_EXTRA);
