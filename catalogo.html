@@ -146,8 +146,36 @@
   var clockIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
   var pawIcon='<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="10.5" r="2.2"/><circle cx="9.5" cy="6.5" r="2.2"/><circle cx="14.5" cy="6.5" r="2.2"/><circle cx="18.5" cy="10.5" r="2.2"/><path d="M12 12c-3 0-5.5 2.2-5.5 4.6 0 1.7 1.4 2.4 3 2.4 1.2 0 1.8-.5 2.5-.5s1.3.5 2.5.5c1.6 0 3-.7 3-2.4C17.5 14.2 15 12 12 12z"/></svg>';
 
+  var LANG=(function(){try{return (localStorage.getItem('bpuppy-lang')||'es');}catch(e){return 'es';}})();
+  function T(es,en){ return LANG==='en'? en : es; }
+  function money2(n){ return '$'+Number(Math.round(n)).toLocaleString('en-US'); }
+  function interes(i){
+    var p=(window._PUPS||[])[i]; if(!p) return;
+    var price=(p.price!=null&&!isNaN(p.price))?Number(p.price):null;
+    var wa='https://wa.me/'+WA+'?text='+encodeURIComponent('Hola! Me interesa '+(p.name?p.name+' ':'')+'('+(p.breed||'cachorro')+') de mi catalogo. Quiero ver opciones de pago/financiamiento.');
+    var planH='';
+    if(price){ planH='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 6px">'
+      + '<div style="border:1px solid var(--line);border-radius:12px;padding:10px"><div style="font-size:11px;color:var(--ink-soft);font-weight:700">Klarna / Afterpay</div><div style="font-family:var(--display);font-weight:800;font-size:18px">'+money2(price/4)+'</div><div style="font-size:11px;color:var(--ink-soft)">'+T('x4 pagos · 0% interés','x4 payments · 0% interest')+'</div></div>'
+      + '<div style="border:1px solid var(--line);border-radius:12px;padding:10px"><div style="font-size:11px;color:var(--ink-soft);font-weight:700">Affirm</div><div style="font-family:var(--display);font-weight:800;font-size:18px">'+money2(price*1.15/12)+'<span style="font-size:11px">/'+T('mes','mo')+'</span></div><div style="font-size:11px;color:var(--ink-soft)">'+T('~12 meses','~12 months')+'</div></div>'
+      + '</div>'; }
+    var ov=document.getElementById('intOv'); if(ov) ov.remove();
+    ov=document.createElement('div'); ov.id='intOv';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(20,15,12,.6);z-index:200;display:flex;align-items:center;justify-content:center;padding:18px';
+    ov.innerHTML='<div style="background:var(--card);border-radius:20px;max-width:440px;width:100%;padding:22px;max-height:92vh;overflow:auto;box-shadow:var(--shadow)">'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><div style="font-family:var(--display);font-weight:800;font-size:20px">'+esc(p.name||p.breed||'Cachorro')+'</div><div style="color:var(--orange);font-weight:700;font-size:13px">'+esc(p.breed||'')+'</div></div><button onclick="document.getElementById(\'intOv\').remove()" style="background:none;border:none;font-size:26px;cursor:pointer;color:var(--ink-soft);line-height:1">&times;</button></div>'
+      + (price? '<div style="font-family:var(--display);font-weight:800;font-size:24px;margin-top:8px">'+money2(price)+' <span style="font-size:13px;color:var(--ink-soft);font-weight:600">USD</span></div>':'')
+      + '<div style="font-size:13px;color:var(--ink-2);margin-top:8px">'+T('Puedes financiarlo en cómodos pagos o pagar como prefieras. Estimaciones:','You can finance it in easy payments or pay however you prefer. Estimates:')+'</div>'
+      + planH
+      + '<div style="font-size:12px;color:var(--ink-soft);margin:8px 0 14px">'+T('También aceptamos Zelle, Cash App, tarjeta y transferencia.','We also accept Zelle, Cash App, card and bank transfer.')+'</div>'
+      + '<a href="'+wa+'" target="_blank" rel="noopener" class="btn-wa" style="display:flex;justify-content:center;width:100%;margin-bottom:10px"><svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg> '+T('Me interesa — WhatsApp','I am interested — WhatsApp')+'</a>'
+      + '<a href="/financiamiento" target="_blank" style="display:block;text-align:center;font-size:13px;color:var(--orange);font-weight:700">'+T('Ver opciones de financiamiento →','See financing options →')+'</a>'
+      + '</div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
+  }
+  window.interes=interes;
   function render(d){
-    var pups = d.puppies||[];
+    var pups = d.puppies||[]; window._PUPS = pups;
     if(!pups.length){ app.innerHTML = stateBox(pawIcon,'Catálogo vacío','Tu asesor todavía está preparando tu selección. Escríbenos y te lo enviamos enseguida.', true); return; }
     var crop = d.crop_logos !== false;
     var hello = d.client_name ? ('<div class="hello">Hola, '+esc(d.client_name)+'</div>') : '<div class="hello">Selección personalizada</div>';
@@ -166,13 +194,18 @@
       var g = genderEs(p.gender); if(g) meta.push(g);
       if(p.color) meta.push(esc(p.color));
       var a = p.age_text ? esc(p.age_text) : ageEs(p.age_weeks); if(a) meta.push(a);
+      var det=[];
+      if(p.pedigree) det.push([T('Pedigrí','Pedigree'),(p.pedigree==='Sí'?T('Sí','Yes'):(p.pedigree==='No'?T('No','No'):esc(p.pedigree)))]);
+      if(p.microchip) det.push([T('Microchip','Microchip'),(p.microchip==='Sí'?T('Sí','Yes'):(p.microchip==='No'?T('No','No'):esc(p.microchip)))]);
+      if(p.born) det.push([T('Nacimiento','Born'),esc(p.born)]);
+      var detH = det.length? '<div style="margin-top:8px;display:flex;flex-direction:column;gap:3px">'+det.map(function(x){return '<div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--ink-soft)">'+x[0]+'</span><span style="font-weight:600;color:var(--ink-2)">'+x[1]+'</span></div>';}).join('')+'</div>':'';
       var waText = 'Hola! Me interesa '+(p.name? p.name+' ' : '')+'('+(p.breed||'cachorro')+') que vi en mi catálogo. ¿Sigue disponible?';
       var thumbs = photos.length>1 ? '<div class="thumbs">'+photos.slice(0,10).map(function(u,idx){ return '<img src="'+esc(u)+'" class="'+(idx===0?'on':'')+'" referrerpolicy="no-referrer" onerror="this.remove()" onclick="gswap('+i+','+idx+',this)">'; }).join('')+'</div>' : '';
       return '<div class="card">'
         + '<div class="photo'+cropCls+'">'
           + (ph? '<img id="gm-'+i+'" data-idx="0" src="'+esc(ph)+'" alt="'+esc(p.breed||'Cachorro')+'" loading="lazy" referrerpolicy="no-referrer" style="cursor:zoom-in" onclick="lbxOpen('+i+')" onerror="this.style.display=\'none\'">' : '<div class="ph-empty">'+pawIcon+'</div>')
           + brand + count
-          + '<span class="badge '+(reserved?'reserved':'available')+'">'+(reserved?'Reservado':'Disponible')+'</span>'
+          + '<span class="badge '+(reserved?'reserved':'available')+'">'+(reserved?T('Reservado','Reserved'):T('Disponible','Available'))+'</span>'
         + '</div>'
         + thumbs
         + '<div class="body">'
@@ -180,7 +213,8 @@
           + (p.name? '<h3>'+esc(p.name)+'</h3>':'')
           + (meta.length? '<div class="meta">'+meta.map(function(m){return '<span class="chip">'+m+'</span>';}).join('')+'</div>':'')
           + '<div class="price">'+money(p.price)+(p.price!=null&&!isNaN(p.price)?' <small>USD</small>':'')+'</div>'
-          + '<a class="cta" href="https://wa.me/'+WA+'?text='+encodeURIComponent(waText)+'" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.488-.927z"/></svg> Me interesa</a>'
+          + detH
+          + '<button class="cta" onclick="interes('+i+')" style="border:none;cursor:pointer;width:100%;font-family:inherit">'+T('Me interesa','I am interested')+'</button>'
         + '</div>'
       + '</div>';
     }).join('');
