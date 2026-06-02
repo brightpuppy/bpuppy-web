@@ -748,7 +748,7 @@ function ProfileScreen({ posts, setScreen }) {
   };
   return (
     <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
-      <div style={{ height:170, background: (r&&r.cover_url) ? `url(${r.cover_url}) center/cover` : BS.grad, position:'relative' }}>
+      <div style={{ height:210, background: (r&&r.cover_url) ? `url(${r.cover_url}) center ${(r&&r.cover_pos!=null)?r.cover_pos:50}%/cover` : BS.grad, position:'relative' }}>
         <button onClick={() => setScreen('feed')} style={{ position:'absolute', top:44, left:14, background:'rgba(0,0,0,0.32)', border:'none', borderRadius:'50%', width:32, height:32, cursor:'pointer', display:'grid', placeItems:'center', color:'#fff' }}>
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
         </button>
@@ -762,8 +762,8 @@ function ProfileScreen({ posts, setScreen }) {
         </button>
       </div>
       <div style={{ padding:'0 16px 16px', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
-        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginTop:-40, marginBottom:12 }}>
-          <div style={{ width:88, height:88, borderRadius:'50%', background:me.color, display:'grid', placeItems:'center', fontSize:30, fontWeight:800, color:'#fff', border:`4px solid ${BS.surface}`, fontFamily:'Plus Jakarta Sans,sans-serif', overflow:'hidden', flexShrink:0, boxShadow:'0 6px 20px rgba(0,0,0,0.20)' }}>
+        <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-end', marginTop:-58, marginBottom:12 }}>
+          <div style={{ width:108, height:108, borderRadius:'50%', background:me.color, display:'grid', placeItems:'center', fontSize:38, fontWeight:800, color:'#fff', border:`4px solid ${BS.surface}`, fontFamily:'Plus Jakarta Sans,sans-serif', overflow:'hidden', flexShrink:0, position:'relative', zIndex:5, boxShadow:'0 6px 20px rgba(0,0,0,0.20)' }}>
             {me.avatar ? <img src={me.avatar} alt={me.username} style={{ width:'100%', height:'100%', objectFit:'cover', display:'block' }}/> : me.initials}
           </div>
           <div style={{ display:'flex', gap:8 }}>
