@@ -397,4 +397,12 @@
     <priority>0.5</priority>
   </url>
 
+  <url>
+    <loc>https://bpuppy.us/financiamiento</loc>
+    <changefreq>weekly</changefreq>
+  </url>
+  <url>
+    <loc>https://bpuppy.us/tienda</loc>
+    <changefreq>weekly</changefreq>
+  </url>
 </urlset>

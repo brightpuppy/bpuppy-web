@@ -1,4 +1,11 @@
 User-agent: *
 Allow: /
+Disallow: /catalogo
+Disallow: /portal
+Disallow: /social
+Disallow: /stock
+Disallow: /reserva
+Disallow: /solicitud
+Disallow: /firmar
 
 Sitemap: https://bpuppy.us/sitemap.xml
