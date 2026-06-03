@@ -140,7 +140,8 @@ function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave, onOpenPo
   if (screen === "account") return /* @__PURE__ */ React.createElement(AccountScreen, { setScreen });
   if (screen === "profile") return /* @__PURE__ */ React.createElement(ProfileScreen, { posts, setScreen });
   if (screen === "pack") return /* @__PURE__ */ React.createElement(PackScreen, { setScreen });
-  if (screen === "discover") return /* @__PURE__ */ React.createElement(DiscoverScreen, null);
+  if (screen === "discover") return /* @__PURE__ */ React.createElement(DiscoverScreen, { setScreen });
+  if (screen === "mapa") return /* @__PURE__ */ React.createElement(MapScreen, { setScreen });
   if (screen === "upload") return /* @__PURE__ */ React.createElement(UploadScreen, { setScreen });
   if (screen === "pets") return /* @__PURE__ */ React.createElement(PetsScreen, null);
   if (screen === "messages") return /* @__PURE__ */ React.createElement(MessagesScreen, { setScreen });

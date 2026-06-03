@@ -194,7 +194,8 @@ function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave, onOpenPo
   if (screen==='account')  return <AccountScreen  setScreen={setScreen}/>;
   if (screen==='profile')  return <ProfileScreen  posts={posts} setScreen={setScreen}/>;
   if (screen==='pack')     return <PackScreen     setScreen={setScreen}/>;
-  if (screen==='discover') return <DiscoverScreen/>;
+  if (screen==='discover') return <DiscoverScreen setScreen={setScreen}/>;
+  if (screen==='mapa') return <MapScreen setScreen={setScreen}/>;
   if (screen==='upload')   return <UploadScreen   setScreen={setScreen}/>;
   if (screen==='pets')     return <PetsScreen/>;
   if (screen==='messages') return <MessagesScreen setScreen={setScreen}/>;

@@ -892,7 +892,7 @@ function PackScreen({ setScreen }) {
   );
 }
 
-function DiscoverScreen() {
+function DiscoverScreen({ setScreen }) {
   const BS = useBS();
   const t = useT();
   const SUPA = 'https://oqqwmcplljirbreowrll.supabase.co';
@@ -931,6 +931,7 @@ function DiscoverScreen() {
       <div style={{ padding:'14px 16px 12px', background:BS.surface, borderBottom:`1px solid ${BS.border}`, position:'sticky', top:0, zIndex:10 }}>
         <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:20, fontWeight:800, color:BS.ink, marginBottom:4 }}>{t(['Descubrir','Discover'])}</div>
         <div style={{ fontSize:12.5, color:BS.soft, marginBottom:10 }}>{t(['Lugares dog-friendly por estado y ciudad','Dog-friendly places by state and city'])}</div>
+        <button onClick={()=> setScreen && setScreen('mapa')} className="bs-btn" style={{ width:'100%', padding:'9px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontSize:12.5, fontWeight:700, cursor:'pointer', fontFamily:'inherit', marginBottom:10 }}>{t(['Mapa comunitario (bebederos, comida, vacunación)','Community map (fountains, food, vaccination)'])}</button>
         <div style={{ display:'flex', gap:8, marginBottom:10 }}>
           <input list="bs-discover-states" value={stt} onChange={e=>setStt(e.target.value)} placeholder={t(['Estado','State'])} style={{ flex:1, minWidth:0, padding:'9px 12px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontSize:13, fontFamily:'inherit' }}/>
           <input value={city} onChange={e=>setCity(e.target.value)} placeholder={t(['Ciudad (opcional)','City (optional)'])} style={{ flex:1, minWidth:0, padding:'9px 12px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontSize:13, fontFamily:'inherit' }}/>
@@ -1633,8 +1634,114 @@ if (typeof window !== 'undefined') {
   if (!window.bpGetLang) window.bpGetLang = bsReadLang;
 }
 
+function MapScreen({ setScreen }) {
+  const BS = useBS(); const t = useT();
+  const wrapRef = useRef(null); const mapRef = useRef(null); const layerRef = useRef(null);
+  const [points, setPoints] = useState([]);
+  const [sel, setSel] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [adding, setAdding] = useState(false);
+  const [pending, setPending] = useState(null);
+  const [form, setForm] = useState({ type:'bebedero', name:'', description:'', address:'' });
+  const [rv, setRv] = useState({ rating:5, body:'' });
+  const [msg, setMsg] = useState('');
+  const sb = (typeof window!=='undefined') ? window._bsSb : null;
+  const me = (typeof window!=='undefined' && window.BSAUTH && window.BSAUTH.me) || null;
+  const TYPES = [
+    { id:'bebedero', label:t(['Bebedero de agua','Water fountain']), color:'#0EA5E9' },
+    { id:'comida', label:t(['Comida gratis','Free dog food']), color:'#1EB87A' },
+    { id:'vacunacion', label:t(['Vacunación','Vaccination']), color:'#E85D75' },
+    { id:'bolsas', label:t(['Estación de bolsas','Poop-bag station']), color:'#7C5CBF' },
+    { id:'parque', label:t(['Parque para perros','Dog park']), color:'#F58220' },
+    { id:'otro', label:t(['Otro','Other']), color:'#6B5A4E' },
+  ];
+  const tm = (id)=> TYPES.find(x=>x.id===id) || TYPES[5];
+  const adRef = useRef(false); useEffect(()=>{ adRef.current = adding; }, [adding]);
+  const load = async ()=>{ if(!sb) return; try{ const res = await sb.from('community_points').select('id,type,name,description,address,lat,lng,created_by,created_at').eq('status','active').limit(800); setPoints(res.data||[]); }catch(e){} };
+  useEffect(()=>{ load(); }, []);
+  useEffect(()=>{
+    if(!window.L || mapRef.current || !wrapRef.current) return;
+    try{
+      const m = window.L.map(wrapRef.current, { zoomControl:true }).setView([39.5,-98.35], 4);
+      window.L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { attribution:'(c) OpenStreetMap', maxZoom:19 }).addTo(m);
+      layerRef.current = window.L.layerGroup().addTo(m);
+      m.on('click', (e)=>{ if(adRef.current){ setPending({ lat:e.latlng.lat, lng:e.latlng.lng }); } });
+      mapRef.current = m;
+      if(navigator.geolocation){ navigator.geolocation.getCurrentPosition((pos)=>{ try{ m.setView([pos.coords.latitude,pos.coords.longitude],13); window.L.circleMarker([pos.coords.latitude,pos.coords.longitude],{radius:7,color:'#fff',weight:2,fillColor:'#2563EB',fillOpacity:1}).addTo(m); }catch(_){} }, ()=>{}, {timeout:8000}); }
+      setTimeout(()=>{ try{ m.invalidateSize(); }catch(_){} }, 280);
+    }catch(e){}
+  }, []);
+  useEffect(()=>{
+    const m = mapRef.current, lg = layerRef.current; if(!m||!lg||!window.L) return;
+    lg.clearLayers();
+    points.forEach(p=>{ const meta=tm(p.type); const mk=window.L.circleMarker([p.lat,p.lng],{radius:9,color:'#fff',weight:2,fillColor:meta.color,fillOpacity:1}); mk.on('click', ()=> openPoint(p)); mk.addTo(lg); });
+    if(pending){ window.L.circleMarker([pending.lat,pending.lng],{radius:8,color:'#fff',weight:2,fillColor:'#F58220',fillOpacity:0.9}).addTo(lg); }
+  }, [points, pending]);
+  const openPoint = async (p)=>{ setSel(p); setReviews([]); if(sb){ try{ const res = await sb.from('point_reviews').select('id,point_id,author,rating,body,created_at').eq('point_id',p.id).order('created_at',{ascending:false}); setReviews(res.data||[]); }catch(e){} } };
+  const savePoint = async ()=>{ if(!sb||!pending) return; if(!me){ setMsg(t(['Inicia sesión para agregar un punto.','Sign in to add a point.'])); return; } if(!form.name.trim()){ setMsg(t(['Ponle un nombre.','Add a name.'])); return; } try{ await sb.from('community_points').insert({ type:form.type, name:form.name.trim(), description:(form.description.trim()||null), address:(form.address.trim()||null), lat:pending.lat, lng:pending.lng, created_by:(me.username||me.name||'') }); setMsg(''); setAdding(false); setPending(null); setForm({ type:'bebedero', name:'', description:'', address:'' }); load(); }catch(e){ setMsg(t(['No se pudo guardar.','Could not save.'])); } };
+  const saveReview = async ()=>{ if(!sb||!sel) return; if(!me){ setMsg(t(['Inicia sesión para reseñar.','Sign in to review.'])); return; } try{ await sb.from('point_reviews').insert({ point_id:sel.id, author:(me.username||me.name||''), rating:rv.rating, body:(rv.body.trim()||null) }); setRv({ rating:5, body:'' }); openPoint(sel); }catch(e){} };
+  const avg = reviews.length ? (reviews.reduce((a,r)=>a+(r.rating||0),0)/reviews.length).toFixed(1) : null;
+  return (
+    <div className="bs-fade" style={{ background:BS.bg, minHeight:'100%' }}>
+      <div style={{ padding:'12px 14px', background:BS.surface, borderBottom:`1px solid ${BS.border}`, display:'flex', alignItems:'center', gap:10 }}>
+        <button onClick={()=> setScreen && setScreen('discover')} className="bs-btn" style={{ background:'transparent', border:'none', color:BS.ink2, cursor:'pointer', fontSize:20 }}>{'‹'}</button>
+        <div style={{ flex:1 }}>
+          <div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:17, fontWeight:800, color:BS.ink }}>{t(['Mapa comunitario','Community map'])}</div>
+          <div style={{ fontSize:11, color:BS.soft }}>{t(['Bebederos, comida, vacunación y más, de la comunidad','Fountains, food, vaccination and more, from the community'])}</div>
+        </div>
+        <button onClick={()=>{ setAdding(a=>!a); setPending(null); setMsg(''); }} className="bs-btn" style={{ padding:'8px 12px', borderRadius:10, border:'none', background: adding?BS.rose:BS.grad, color:'#fff', fontSize:12, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{adding ? t(['Cancelar','Cancel']) : t(['+ Agregar','+ Add'])}</button>
+      </div>
+      {adding && <div style={{ padding:'8px 14px', background:'rgba(245,130,32,0.1)', color:BS.ink2, fontSize:12.5, fontWeight:600 }}>{pending ? t(['Punto elegido. Completa los datos abajo.','Point chosen. Fill in the details below.']) : t(['Toca el mapa donde está el lugar.','Tap the map where the spot is.'])}</div>}
+      <div ref={wrapRef} style={{ height:420, width:'100%', background:BS.surface2 }}/>
+      <div className="bs-hscr" style={{ display:'flex', gap:10, padding:'8px 14px', background:BS.surface, borderBottom:`1px solid ${BS.border}` }}>
+        {TYPES.map(x=> <span key={x.id} style={{ display:'inline-flex', alignItems:'center', gap:5, fontSize:11, color:BS.ink2, whiteSpace:'nowrap' }}><span style={{ width:10, height:10, borderRadius:'50%', background:x.color }}/>{x.label}</span>)}
+      </div>
+      {msg && <div style={{ padding:'8px 14px', color:BS.rose, fontSize:12.5 }}>{msg}</div>}
+      {adding && pending && (
+        <div style={{ padding:'12px 14px', background:BS.surface }}>
+          <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr', gap:8, marginBottom:8 }}>
+            <select value={form.type} onChange={e=>setForm({...form,type:e.target.value})} style={{ padding:'9px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontSize:13, fontFamily:'inherit' }}>{TYPES.map(x=><option key={x.id} value={x.id}>{x.label}</option>)}</select>
+            <input value={form.name} onChange={e=>setForm({...form,name:e.target.value})} placeholder={t(['Nombre del lugar','Place name'])} style={{ padding:'9px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontSize:13, fontFamily:'inherit' }}/>
+          </div>
+          <input value={form.address} onChange={e=>setForm({...form,address:e.target.value})} placeholder={t(['Dirección o referencia (opcional)','Address or hint (optional)'])} style={{ width:'100%', padding:'9px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontSize:13, fontFamily:'inherit', marginBottom:8, boxSizing:'border-box' }}/>
+          <textarea value={form.description} onChange={e=>setForm({...form,description:e.target.value})} placeholder={t(['Detalles (agua limpia, horario, gratis...)','Details (clean water, hours, free...)'])} rows={2} style={{ width:'100%', padding:'9px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontSize:13, fontFamily:'inherit', marginBottom:8, boxSizing:'border-box', resize:'vertical' }}/>
+          <button onClick={savePoint} className="bs-btn" style={{ width:'100%', padding:'11px', borderRadius:11, border:'none', background:BS.grad, color:'#fff', fontSize:14, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{t(['Guardar punto','Save point'])}</button>
+        </div>
+      )}
+      {sel && (
+        <div onClick={()=>setSel(null)} style={{ position:'fixed', inset:0, background:'rgba(0,0,0,0.4)', zIndex:60, display:'flex', alignItems:'flex-end', justifyContent:'center' }}>
+          <div onClick={e=>e.stopPropagation()} style={{ background:BS.surface, borderRadius:'18px 18px 0 0', width:'100%', maxWidth:480, maxHeight:'80%', overflow:'auto', padding:'16px 16px 24px' }}>
+            <div style={{ display:'flex', justifyContent:'space-between', alignItems:'flex-start', gap:10 }}>
+              <div><div style={{ fontFamily:'Bricolage Grotesque,sans-serif', fontSize:18, fontWeight:800, color:BS.ink }}>{sel.name}</div><div style={{ display:'inline-flex', alignItems:'center', gap:6, fontSize:12, color:BS.ink2, marginTop:2 }}><span style={{ width:9, height:9, borderRadius:'50%', background:tm(sel.type).color }}/>{tm(sel.type).label}</div></div>
+              <button onClick={()=>setSel(null)} style={{ background:'none', border:'none', fontSize:24, color:BS.soft, cursor:'pointer', lineHeight:1 }}>{'×'}</button>
+            </div>
+            {sel.address && <div style={{ fontSize:12.5, color:BS.soft, marginTop:6 }}>{sel.address}</div>}
+            {sel.description && <div style={{ fontSize:13.5, color:BS.ink, marginTop:8, lineHeight:1.5 }}>{sel.description}</div>}
+            <div style={{ display:'flex', alignItems:'center', gap:8, margin:'12px 0' }}>
+              {avg && <span style={{ fontSize:14, fontWeight:800, color:BS.ink }}>{'★'} {avg}</span>}
+              <span style={{ fontSize:12, color:BS.soft }}>{reviews.length} {t(['reseña(s)','review(s)'])}</span>
+              <a href={'https://www.google.com/maps/search/?api=1&query='+sel.lat+','+sel.lng} target="_blank" rel="noopener noreferrer" style={{ marginLeft:'auto', fontSize:12.5, fontWeight:700, color:BS.brand }}>{t(['Cómo llegar','Directions'])} {'→'}</a>
+            </div>
+            {reviews.map(r=> (
+              <div key={r.id} style={{ borderTop:`1px solid ${BS.border}`, padding:'8px 0' }}>
+                <div style={{ fontSize:12.5, fontWeight:700, color:BS.ink }}>{r.author||t(['Anónimo','Anonymous'])} <span style={{ color:BS.brand }}>{'★'.repeat(r.rating||0)}</span></div>
+                {r.body && <div style={{ fontSize:13, color:BS.ink2, marginTop:2 }}>{r.body}</div>}
+              </div>
+            ))}
+            <div style={{ borderTop:`1px solid ${BS.border}`, marginTop:8, paddingTop:10 }}>
+              <div style={{ display:'flex', gap:4, marginBottom:8 }}>{[1,2,3,4,5].map(n=> <button key={n} onClick={()=>setRv({...rv,rating:n})} style={{ background:'none', border:'none', cursor:'pointer', fontSize:22, color: n<=rv.rating?BS.brand:BS.border, padding:0, lineHeight:1 }}>{'★'}</button>)}</div>
+              <textarea value={rv.body} onChange={e=>setRv({...rv,body:e.target.value})} placeholder={t(['Escribe tu reseña...','Write your review...'])} rows={2} style={{ width:'100%', padding:'9px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontSize:13, fontFamily:'inherit', boxSizing:'border-box', resize:'vertical', marginBottom:8 }}/>
+              <button onClick={saveReview} className="bs-btn" style={{ width:'100%', padding:'10px', borderRadius:10, border:'none', background:BS.grad, color:'#fff', fontSize:13.5, fontWeight:700, cursor:'pointer', fontFamily:'inherit' }}>{t(['Publicar reseña','Post review'])}</button>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 Object.assign(window, {
-  AccountScreen,
+  AccountScreen, MapScreen,
   BSCtx, useBS, THEMES,
   BSAvatar, BSVerified, BSocialLogo,
   WelcomeScreen, OnboardingScreen, StoriesBar,

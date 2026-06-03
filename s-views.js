@@ -620,7 +620,7 @@ function PackScreen({ setScreen }) {
   });
   return /* @__PURE__ */ React.createElement("div", { className: "bs-fade", style: { background: BS.bg, minHeight: "100%" } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 10px", display: "flex", alignItems: "center", background: BS.surface, borderBottom: `1px solid ${BS.border}`, position: "sticky", top: 0, zIndex: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, color: BS.ink, flex: 1 } }, t(["Mi Pack", "My Pack"])), /* @__PURE__ */ React.createElement("div", { style: { background: BS.grad, color: "#fff", borderRadius: 999, padding: "2px 10px", fontSize: 12, fontWeight: 700 } }, BSDATA.pack.length)), /* @__PURE__ */ React.createElement("div", { style: { padding: "10px 14px", background: BS.surface, borderBottom: `1px solid ${BS.border}` } }, /* @__PURE__ */ React.createElement("div", { style: { background: BS.surface2, borderRadius: 12, padding: "10px 14px", display: "flex", alignItems: "center", gap: 9 } }, /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: BS.soft, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("circle", { cx: "11", cy: "11", r: "8" }), /* @__PURE__ */ React.createElement("path", { d: "m21 21-4.35-4.35" })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13.5, color: BS.soft } }, t(["Buscar en tu Pack...", "Search your Pack..."])))), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 6px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: BS.soft, marginBottom: 10, textTransform: "uppercase", letterSpacing: "0.06em" } }, t(["Sugerencias", "Suggestions"])), /* @__PURE__ */ React.createElement("div", { className: "bs-hscr", style: { display: "flex", gap: 10 } }, BSDATA.suggestions.map((u) => /* @__PURE__ */ React.createElement("div", { key: u.id, style: { flexShrink: 0, background: BS.surface, borderRadius: 18, padding: "14px 12px", width: 120, textAlign: "center", border: `1px solid ${BS.border}` } }, /* @__PURE__ */ React.createElement(BSAvatar, { user: u, size: 44 }), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 8, fontSize: 11.5, fontWeight: 700, color: BS.ink, marginBottom: 1 } }, u.username), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: BS.soft, marginBottom: 8 } }, u.pet), /* @__PURE__ */ React.createElement("button", { onClick: () => toggle(u.id), className: "bs-btn", style: { width: "100%", padding: "6px", borderRadius: 8, border: "none", background: added.has(u.id) ? BS.surface2 : BS.grad, color: added.has(u.id) ? BS.ink2 : "#fff", fontSize: 11, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" } }, added.has(u.id) ? t(["En Pack", "In Pack"]) : t(["+ Pack", "+ Pack"])))))), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 0 0" } }, BSDATA.pack.map((u, i) => /* @__PURE__ */ React.createElement("div", { key: u.id, style: { display: "flex", alignItems: "center", gap: 12, padding: "11px 16px", background: BS.surface, borderBottom: `1px solid ${BS.border}` } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative" } }, /* @__PURE__ */ React.createElement(BSAvatar, { user: u, size: 44 }), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", bottom: 1, right: 1, width: 10, height: 10, borderRadius: "50%", background: i < 2 ? BS.online : BS.border, border: `2px solid ${BS.bg}` } })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, fontWeight: 700, color: BS.ink } }, u.username), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: BS.soft } }, u.city, " \xB7 ", u.pet)), /* @__PURE__ */ React.createElement("button", { className: "bs-btn", style: { padding: "7px 14px", borderRadius: 9, border: `1.5px solid ${BS.borderStrong}`, background: "none", fontSize: 12, fontWeight: 600, color: BS.ink2, cursor: "pointer", fontFamily: "inherit" } }, t(["Mensaje", "Message"]))))));
 }
-function DiscoverScreen() {
+function DiscoverScreen({ setScreen }) {
   const BS = useBS();
   const t = useT();
   const SUPA = "https://oqqwmcplljirbreowrll.supabase.co";
@@ -667,7 +667,7 @@ function DiscoverScreen() {
     }
     setLoading(false);
   };
-  return /* @__PURE__ */ React.createElement("div", { className: "bs-fade", style: { background: BS.bg, minHeight: "100%" } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 12px", background: BS.surface, borderBottom: `1px solid ${BS.border}`, position: "sticky", top: 0, zIndex: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, color: BS.ink, marginBottom: 4 } }, t(["Descubrir", "Discover"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: BS.soft, marginBottom: 10 } }, t(["Lugares dog-friendly por estado y ciudad", "Dog-friendly places by state and city"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 10 } }, /* @__PURE__ */ React.createElement("input", { list: "bs-discover-states", value: stt, onChange: (e) => setStt(e.target.value), placeholder: t(["Estado", "State"]), style: { flex: 1, minWidth: 0, padding: "9px 12px", borderRadius: 10, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 13, fontFamily: "inherit" } }), /* @__PURE__ */ React.createElement("input", { value: city, onChange: (e) => setCity(e.target.value), placeholder: t(["Ciudad (opcional)", "City (optional)"]), style: { flex: 1, minWidth: 0, padding: "9px 12px", borderRadius: 10, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 13, fontFamily: "inherit" } })), /* @__PURE__ */ React.createElement("datalist", { id: "bs-discover-states" }, ST.map((s) => /* @__PURE__ */ React.createElement("option", { key: s, value: s }))), /* @__PURE__ */ React.createElement("div", { className: "bs-hscr", style: { display: "flex", gap: 7, marginBottom: 10 } }, CATS.map((c) => /* @__PURE__ */ React.createElement("button", { key: c.id, onClick: () => setCat(c.id), className: "bs-btn", style: { padding: "6px 13px", borderRadius: 999, border: `1.5px solid ${cat === c.id ? BS.brand : BS.border}`, background: cat === c.id ? BS.brand : "transparent", color: cat === c.id ? "#fff" : BS.ink2, fontSize: 12, fontWeight: cat === c.id ? 700 : 600, cursor: "pointer", whiteSpace: "nowrap", fontFamily: "inherit" } }, c.label))), /* @__PURE__ */ React.createElement("button", { onClick: search, disabled: loading, className: "bs-btn", style: { width: "100%", padding: "11px", borderRadius: 12, border: "none", background: BS.grad, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", opacity: loading ? 0.7 : 1 } }, loading ? t(["Buscando\u2026", "Searching\u2026"]) : t(["Buscar lugares", "Search places"]))), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 24px" } }, err && /* @__PURE__ */ React.createElement("div", { style: { color: BS.rose, fontSize: 13, marginBottom: 10 } }, err), loading && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: BS.soft, padding: "30px", fontSize: 13 } }, t(["Buscando lugares\u2026", "Searching places\u2026"])), !loading && results === null && !err && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: BS.soft, padding: "40px 20px", fontSize: 13.5, lineHeight: 1.6 } }, t(["Elige una categor\xEDa y tu zona, y toca Buscar lugares.", "Pick a category and your area, then tap Search places."])), !loading && results && results.length === 0 && !err && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: BS.soft, padding: "40px 20px", fontSize: 13.5 } }, t(["Sin resultados en esa zona. Prueba otra ciudad o categor\xEDa.", "No results in that area. Try another city or category."])), !loading && results && results.map((pl) => /* @__PURE__ */ React.createElement("a", { key: pl.place_id, href: pl.maps_url, target: "_blank", rel: "noopener noreferrer", style: { display: "flex", alignItems: "flex-start", gap: 12, background: BS.surface, borderRadius: 14, padding: "12px 14px", marginBottom: 8, border: `1px solid ${BS.border}`, textDecoration: "none" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 40, height: 40, borderRadius: 11, background: BS.surface2, display: "grid", placeItems: "center", flexShrink: 0, color: BS.brand } }, /* @__PURE__ */ React.createElement("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: BS.brand, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" }), /* @__PURE__ */ React.createElement("circle", { cx: "12", cy: "10", r: "3" }))), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, fontWeight: 700, color: BS.ink } }, pl.name), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: BS.soft, marginTop: 1 } }, pl.address), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginTop: 5, flexWrap: "wrap" } }, pl.rating != null && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, fontWeight: 700, color: BS.ink2 } }, "\u2605 ", pl.rating, " ", /* @__PURE__ */ React.createElement("span", { style: { color: BS.soft, fontWeight: 500 } }, "(", pl.reviews, ")")), pl.open_now === true && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: "#1EB87A" } }, t(["Abierto", "Open"])), pl.open_now === false && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: BS.rose } }, t(["Cerrado", "Closed"])), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, fontWeight: 700, color: BS.brand, marginLeft: "auto" } }, t(["Ver en mapa \u2192", "View on map \u2192"]))))))));
+  return /* @__PURE__ */ React.createElement("div", { className: "bs-fade", style: { background: BS.bg, minHeight: "100%" } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 12px", background: BS.surface, borderBottom: `1px solid ${BS.border}`, position: "sticky", top: 0, zIndex: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, color: BS.ink, marginBottom: 4 } }, t(["Descubrir", "Discover"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: BS.soft, marginBottom: 10 } }, t(["Lugares dog-friendly por estado y ciudad", "Dog-friendly places by state and city"])), /* @__PURE__ */ React.createElement("button", { onClick: () => setScreen && setScreen("mapa"), className: "bs-btn", style: { width: "100%", padding: "9px", borderRadius: 10, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 12.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", marginBottom: 10 } }, t(["Mapa comunitario (bebederos, comida, vacunaci\xF3n)", "Community map (fountains, food, vaccination)"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginBottom: 10 } }, /* @__PURE__ */ React.createElement("input", { list: "bs-discover-states", value: stt, onChange: (e) => setStt(e.target.value), placeholder: t(["Estado", "State"]), style: { flex: 1, minWidth: 0, padding: "9px 12px", borderRadius: 10, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 13, fontFamily: "inherit" } }), /* @__PURE__ */ React.createElement("input", { value: city, onChange: (e) => setCity(e.target.value), placeholder: t(["Ciudad (opcional)", "City (optional)"]), style: { flex: 1, minWidth: 0, padding: "9px 12px", borderRadius: 10, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 13, fontFamily: "inherit" } })), /* @__PURE__ */ React.createElement("datalist", { id: "bs-discover-states" }, ST.map((s) => /* @__PURE__ */ React.createElement("option", { key: s, value: s }))), /* @__PURE__ */ React.createElement("div", { className: "bs-hscr", style: { display: "flex", gap: 7, marginBottom: 10 } }, CATS.map((c) => /* @__PURE__ */ React.createElement("button", { key: c.id, onClick: () => setCat(c.id), className: "bs-btn", style: { padding: "6px 13px", borderRadius: 999, border: `1.5px solid ${cat === c.id ? BS.brand : BS.border}`, background: cat === c.id ? BS.brand : "transparent", color: cat === c.id ? "#fff" : BS.ink2, fontSize: 12, fontWeight: cat === c.id ? 700 : 600, cursor: "pointer", whiteSpace: "nowrap", fontFamily: "inherit" } }, c.label))), /* @__PURE__ */ React.createElement("button", { onClick: search, disabled: loading, className: "bs-btn", style: { width: "100%", padding: "11px", borderRadius: 12, border: "none", background: BS.grad, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", opacity: loading ? 0.7 : 1 } }, loading ? t(["Buscando\u2026", "Searching\u2026"]) : t(["Buscar lugares", "Search places"]))), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 24px" } }, err && /* @__PURE__ */ React.createElement("div", { style: { color: BS.rose, fontSize: 13, marginBottom: 10 } }, err), loading && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: BS.soft, padding: "30px", fontSize: 13 } }, t(["Buscando lugares\u2026", "Searching places\u2026"])), !loading && results === null && !err && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: BS.soft, padding: "40px 20px", fontSize: 13.5, lineHeight: 1.6 } }, t(["Elige una categor\xEDa y tu zona, y toca Buscar lugares.", "Pick a category and your area, then tap Search places."])), !loading && results && results.length === 0 && !err && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: BS.soft, padding: "40px 20px", fontSize: 13.5 } }, t(["Sin resultados en esa zona. Prueba otra ciudad o categor\xEDa.", "No results in that area. Try another city or category."])), !loading && results && results.map((pl) => /* @__PURE__ */ React.createElement("a", { key: pl.place_id, href: pl.maps_url, target: "_blank", rel: "noopener noreferrer", style: { display: "flex", alignItems: "flex-start", gap: 12, background: BS.surface, borderRadius: 14, padding: "12px 14px", marginBottom: 8, border: `1px solid ${BS.border}`, textDecoration: "none" } }, /* @__PURE__ */ React.createElement("div", { style: { width: 40, height: 40, borderRadius: 11, background: BS.surface2, display: "grid", placeItems: "center", flexShrink: 0, color: BS.brand } }, /* @__PURE__ */ React.createElement("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: BS.brand, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z" }), /* @__PURE__ */ React.createElement("circle", { cx: "12", cy: "10", r: "3" }))), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, fontWeight: 700, color: BS.ink } }, pl.name), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: BS.soft, marginTop: 1 } }, pl.address), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10, marginTop: 5, flexWrap: "wrap" } }, pl.rating != null && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, fontWeight: 700, color: BS.ink2 } }, "\u2605 ", pl.rating, " ", /* @__PURE__ */ React.createElement("span", { style: { color: BS.soft, fontWeight: 500 } }, "(", pl.reviews, ")")), pl.open_now === true && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: "#1EB87A" } }, t(["Abierto", "Open"])), pl.open_now === false && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11, fontWeight: 700, color: BS.rose } }, t(["Cerrado", "Closed"])), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, fontWeight: 700, color: BS.brand, marginLeft: "auto" } }, t(["Ver en mapa \u2192", "View on map \u2192"]))))))));
 }
 function UploadScreen({ setScreen }) {
   const BS = useBS();
@@ -971,8 +971,146 @@ if (typeof window !== "undefined") {
   if (!window.pick) window.pick = bsPick;
   if (!window.bpGetLang) window.bpGetLang = bsReadLang;
 }
+function MapScreen({ setScreen }) {
+  const BS = useBS();
+  const t = useT();
+  const wrapRef = useRef(null);
+  const mapRef = useRef(null);
+  const layerRef = useRef(null);
+  const [points, setPoints] = useState([]);
+  const [sel, setSel] = useState(null);
+  const [reviews, setReviews] = useState([]);
+  const [adding, setAdding] = useState(false);
+  const [pending, setPending] = useState(null);
+  const [form, setForm] = useState({ type: "bebedero", name: "", description: "", address: "" });
+  const [rv, setRv] = useState({ rating: 5, body: "" });
+  const [msg, setMsg] = useState("");
+  const sb = typeof window !== "undefined" ? window._bsSb : null;
+  const me = typeof window !== "undefined" && window.BSAUTH && window.BSAUTH.me || null;
+  const TYPES = [
+    { id: "bebedero", label: t(["Bebedero de agua", "Water fountain"]), color: "#0EA5E9" },
+    { id: "comida", label: t(["Comida gratis", "Free dog food"]), color: "#1EB87A" },
+    { id: "vacunacion", label: t(["Vacunaci\xF3n", "Vaccination"]), color: "#E85D75" },
+    { id: "bolsas", label: t(["Estaci\xF3n de bolsas", "Poop-bag station"]), color: "#7C5CBF" },
+    { id: "parque", label: t(["Parque para perros", "Dog park"]), color: "#F58220" },
+    { id: "otro", label: t(["Otro", "Other"]), color: "#6B5A4E" }
+  ];
+  const tm = (id) => TYPES.find((x) => x.id === id) || TYPES[5];
+  const adRef = useRef(false);
+  useEffect(() => {
+    adRef.current = adding;
+  }, [adding]);
+  const load = async () => {
+    if (!sb) return;
+    try {
+      const res = await sb.from("community_points").select("id,type,name,description,address,lat,lng,created_by,created_at").eq("status", "active").limit(800);
+      setPoints(res.data || []);
+    } catch (e) {
+    }
+  };
+  useEffect(() => {
+    load();
+  }, []);
+  useEffect(() => {
+    if (!window.L || mapRef.current || !wrapRef.current) return;
+    try {
+      const m = window.L.map(wrapRef.current, { zoomControl: true }).setView([39.5, -98.35], 4);
+      window.L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", { attribution: "(c) OpenStreetMap", maxZoom: 19 }).addTo(m);
+      layerRef.current = window.L.layerGroup().addTo(m);
+      m.on("click", (e) => {
+        if (adRef.current) {
+          setPending({ lat: e.latlng.lat, lng: e.latlng.lng });
+        }
+      });
+      mapRef.current = m;
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition((pos) => {
+          try {
+            m.setView([pos.coords.latitude, pos.coords.longitude], 13);
+            window.L.circleMarker([pos.coords.latitude, pos.coords.longitude], { radius: 7, color: "#fff", weight: 2, fillColor: "#2563EB", fillOpacity: 1 }).addTo(m);
+          } catch (_) {
+          }
+        }, () => {
+        }, { timeout: 8e3 });
+      }
+      setTimeout(() => {
+        try {
+          m.invalidateSize();
+        } catch (_) {
+        }
+      }, 280);
+    } catch (e) {
+    }
+  }, []);
+  useEffect(() => {
+    const m = mapRef.current, lg = layerRef.current;
+    if (!m || !lg || !window.L) return;
+    lg.clearLayers();
+    points.forEach((p) => {
+      const meta = tm(p.type);
+      const mk = window.L.circleMarker([p.lat, p.lng], { radius: 9, color: "#fff", weight: 2, fillColor: meta.color, fillOpacity: 1 });
+      mk.on("click", () => openPoint(p));
+      mk.addTo(lg);
+    });
+    if (pending) {
+      window.L.circleMarker([pending.lat, pending.lng], { radius: 8, color: "#fff", weight: 2, fillColor: "#F58220", fillOpacity: 0.9 }).addTo(lg);
+    }
+  }, [points, pending]);
+  const openPoint = async (p) => {
+    setSel(p);
+    setReviews([]);
+    if (sb) {
+      try {
+        const res = await sb.from("point_reviews").select("id,point_id,author,rating,body,created_at").eq("point_id", p.id).order("created_at", { ascending: false });
+        setReviews(res.data || []);
+      } catch (e) {
+      }
+    }
+  };
+  const savePoint = async () => {
+    if (!sb || !pending) return;
+    if (!me) {
+      setMsg(t(["Inicia sesi\xF3n para agregar un punto.", "Sign in to add a point."]));
+      return;
+    }
+    if (!form.name.trim()) {
+      setMsg(t(["Ponle un nombre.", "Add a name."]));
+      return;
+    }
+    try {
+      await sb.from("community_points").insert({ type: form.type, name: form.name.trim(), description: form.description.trim() || null, address: form.address.trim() || null, lat: pending.lat, lng: pending.lng, created_by: me.username || me.name || "" });
+      setMsg("");
+      setAdding(false);
+      setPending(null);
+      setForm({ type: "bebedero", name: "", description: "", address: "" });
+      load();
+    } catch (e) {
+      setMsg(t(["No se pudo guardar.", "Could not save."]));
+    }
+  };
+  const saveReview = async () => {
+    if (!sb || !sel) return;
+    if (!me) {
+      setMsg(t(["Inicia sesi\xF3n para rese\xF1ar.", "Sign in to review."]));
+      return;
+    }
+    try {
+      await sb.from("point_reviews").insert({ point_id: sel.id, author: me.username || me.name || "", rating: rv.rating, body: rv.body.trim() || null });
+      setRv({ rating: 5, body: "" });
+      openPoint(sel);
+    } catch (e) {
+    }
+  };
+  const avg = reviews.length ? (reviews.reduce((a, r) => a + (r.rating || 0), 0) / reviews.length).toFixed(1) : null;
+  return /* @__PURE__ */ React.createElement("div", { className: "bs-fade", style: { background: BS.bg, minHeight: "100%" } }, /* @__PURE__ */ React.createElement("div", { style: { padding: "12px 14px", background: BS.surface, borderBottom: `1px solid ${BS.border}`, display: "flex", alignItems: "center", gap: 10 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setScreen && setScreen("discover"), className: "bs-btn", style: { background: "transparent", border: "none", color: BS.ink2, cursor: "pointer", fontSize: 20 } }, "\u2039"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 17, fontWeight: 800, color: BS.ink } }, t(["Mapa comunitario", "Community map"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: BS.soft } }, t(["Bebederos, comida, vacunaci\xF3n y m\xE1s, de la comunidad", "Fountains, food, vaccination and more, from the community"]))), /* @__PURE__ */ React.createElement("button", { onClick: () => {
+    setAdding((a) => !a);
+    setPending(null);
+    setMsg("");
+  }, className: "bs-btn", style: { padding: "8px 12px", borderRadius: 10, border: "none", background: adding ? BS.rose : BS.grad, color: "#fff", fontSize: 12, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" } }, adding ? t(["Cancelar", "Cancel"]) : t(["+ Agregar", "+ Add"]))), adding && /* @__PURE__ */ React.createElement("div", { style: { padding: "8px 14px", background: "rgba(245,130,32,0.1)", color: BS.ink2, fontSize: 12.5, fontWeight: 600 } }, pending ? t(["Punto elegido. Completa los datos abajo.", "Point chosen. Fill in the details below."]) : t(["Toca el mapa donde est\xE1 el lugar.", "Tap the map where the spot is."])), /* @__PURE__ */ React.createElement("div", { ref: wrapRef, style: { height: 420, width: "100%", background: BS.surface2 } }), /* @__PURE__ */ React.createElement("div", { className: "bs-hscr", style: { display: "flex", gap: 10, padding: "8px 14px", background: BS.surface, borderBottom: `1px solid ${BS.border}` } }, TYPES.map((x) => /* @__PURE__ */ React.createElement("span", { key: x.id, style: { display: "inline-flex", alignItems: "center", gap: 5, fontSize: 11, color: BS.ink2, whiteSpace: "nowrap" } }, /* @__PURE__ */ React.createElement("span", { style: { width: 10, height: 10, borderRadius: "50%", background: x.color } }), x.label))), msg && /* @__PURE__ */ React.createElement("div", { style: { padding: "8px 14px", color: BS.rose, fontSize: 12.5 } }, msg), adding && pending && /* @__PURE__ */ React.createElement("div", { style: { padding: "12px 14px", background: BS.surface } }, /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8, marginBottom: 8 } }, /* @__PURE__ */ React.createElement("select", { value: form.type, onChange: (e) => setForm({ ...form, type: e.target.value }), style: { padding: "9px", borderRadius: 10, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 13, fontFamily: "inherit" } }, TYPES.map((x) => /* @__PURE__ */ React.createElement("option", { key: x.id, value: x.id }, x.label))), /* @__PURE__ */ React.createElement("input", { value: form.name, onChange: (e) => setForm({ ...form, name: e.target.value }), placeholder: t(["Nombre del lugar", "Place name"]), style: { padding: "9px", borderRadius: 10, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 13, fontFamily: "inherit" } })), /* @__PURE__ */ React.createElement("input", { value: form.address, onChange: (e) => setForm({ ...form, address: e.target.value }), placeholder: t(["Direcci\xF3n o referencia (opcional)", "Address or hint (optional)"]), style: { width: "100%", padding: "9px", borderRadius: 10, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 13, fontFamily: "inherit", marginBottom: 8, boxSizing: "border-box" } }), /* @__PURE__ */ React.createElement("textarea", { value: form.description, onChange: (e) => setForm({ ...form, description: e.target.value }), placeholder: t(["Detalles (agua limpia, horario, gratis...)", "Details (clean water, hours, free...)"]), rows: 2, style: { width: "100%", padding: "9px", borderRadius: 10, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 13, fontFamily: "inherit", marginBottom: 8, boxSizing: "border-box", resize: "vertical" } }), /* @__PURE__ */ React.createElement("button", { onClick: savePoint, className: "bs-btn", style: { width: "100%", padding: "11px", borderRadius: 11, border: "none", background: BS.grad, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" } }, t(["Guardar punto", "Save point"]))), sel && /* @__PURE__ */ React.createElement("div", { onClick: () => setSel(null), style: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.4)", zIndex: 60, display: "flex", alignItems: "flex-end", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { onClick: (e) => e.stopPropagation(), style: { background: BS.surface, borderRadius: "18px 18px 0 0", width: "100%", maxWidth: 480, maxHeight: "80%", overflow: "auto", padding: "16px 16px 24px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 18, fontWeight: 800, color: BS.ink } }, sel.name), /* @__PURE__ */ React.createElement("div", { style: { display: "inline-flex", alignItems: "center", gap: 6, fontSize: 12, color: BS.ink2, marginTop: 2 } }, /* @__PURE__ */ React.createElement("span", { style: { width: 9, height: 9, borderRadius: "50%", background: tm(sel.type).color } }), tm(sel.type).label)), /* @__PURE__ */ React.createElement("button", { onClick: () => setSel(null), style: { background: "none", border: "none", fontSize: 24, color: BS.soft, cursor: "pointer", lineHeight: 1 } }, "\xD7")), sel.address && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: BS.soft, marginTop: 6 } }, sel.address), sel.description && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: BS.ink, marginTop: 8, lineHeight: 1.5 } }, sel.description), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, margin: "12px 0" } }, avg && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, fontWeight: 800, color: BS.ink } }, "\u2605", " ", avg), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: BS.soft } }, reviews.length, " ", t(["rese\xF1a(s)", "review(s)"])), /* @__PURE__ */ React.createElement("a", { href: "https://www.google.com/maps/search/?api=1&query=" + sel.lat + "," + sel.lng, target: "_blank", rel: "noopener noreferrer", style: { marginLeft: "auto", fontSize: 12.5, fontWeight: 700, color: BS.brand } }, t(["C\xF3mo llegar", "Directions"]), " ", "\u2192")), reviews.map((r) => /* @__PURE__ */ React.createElement("div", { key: r.id, style: { borderTop: `1px solid ${BS.border}`, padding: "8px 0" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, fontWeight: 700, color: BS.ink } }, r.author || t(["An\xF3nimo", "Anonymous"]), " ", /* @__PURE__ */ React.createElement("span", { style: { color: BS.brand } }, "\u2605".repeat(r.rating || 0))), r.body && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: BS.ink2, marginTop: 2 } }, r.body))), /* @__PURE__ */ React.createElement("div", { style: { borderTop: `1px solid ${BS.border}`, marginTop: 8, paddingTop: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 4, marginBottom: 8 } }, [1, 2, 3, 4, 5].map((n) => /* @__PURE__ */ React.createElement("button", { key: n, onClick: () => setRv({ ...rv, rating: n }), style: { background: "none", border: "none", cursor: "pointer", fontSize: 22, color: n <= rv.rating ? BS.brand : BS.border, padding: 0, lineHeight: 1 } }, "\u2605"))), /* @__PURE__ */ React.createElement("textarea", { value: rv.body, onChange: (e) => setRv({ ...rv, body: e.target.value }), placeholder: t(["Escribe tu rese\xF1a...", "Write your review..."]), rows: 2, style: { width: "100%", padding: "9px", borderRadius: 10, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 13, fontFamily: "inherit", boxSizing: "border-box", resize: "vertical", marginBottom: 8 } }), /* @__PURE__ */ React.createElement("button", { onClick: saveReview, className: "bs-btn", style: { width: "100%", padding: "10px", borderRadius: 10, border: "none", background: BS.grad, color: "#fff", fontSize: 13.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" } }, t(["Publicar rese\xF1a", "Post review"]))))));
+}
 Object.assign(window, {
   AccountScreen,
+  MapScreen,
   BSCtx,
   useBS,
   THEMES,
