@@ -298,6 +298,7 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
   const [avatarPrev, setAvatarPrev] = useState(m.avatar_url||'');
   const [petPrev, setPetPrev]       = useState(m.pet_photo_url || (pend && pend.photo_url) || '');
   const [coverPrev, setCoverPrev]   = useState(m.cover_url||'');
+  const [coverPos, setCoverPos]     = useState(m.cover_pos!=null ? m.cover_pos : 50);
   const [busy, setBusy] = useState(false);
   const [err, setErr]   = useState('');
 
@@ -322,7 +323,7 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
         first_name:firstName.trim(), last_name:lastName.trim(), bio:bio.trim(), birthdate:birthdate||null,
         pet_species:petSpecies, pet_name:petName.trim(), pet_breed:petBreed.trim(), pet_color:petColor.trim(), pet_age:petAge.trim(),
         address:address.trim(), city:city.trim(), state:stateV.trim(), zip:zip.trim(),
-        avatar_url, pet_photo_url, cover_url, is_public:isPublic,
+        avatar_url, pet_photo_url, cover_url, cover_pos:coverPos, is_public:isPublic,
       });
       if (!(d && d.ok)) { setErr((d && d.error) || t(['No se pudo guardar','We couldn’t save'])); setBusy(false); }
       else if (onDone) onDone();
@@ -341,11 +342,17 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
       {/* Portada */}
       <div style={{ marginBottom:12 }}>
         <div style={lbl}>{t(['Foto de portada','Cover photo'])}</div>
-        <label style={{ display:'block', height:120, borderRadius:14, border:`1.5px dashed ${BS.borderStrong}`, background: coverPrev ? `url(${coverPrev}) center/cover` : BS.surface2, cursor:'pointer', position:'relative', overflow:'hidden' }}>
+        <label style={{ display:'block', height:120, borderRadius:14, border:`1.5px dashed ${BS.borderStrong}`, background: coverPrev ? `url(${coverPrev}) center ${coverPos}%/cover` : BS.surface2, cursor:'pointer', position:'relative', overflow:'hidden' }}>
           <input type="file" accept="image/*" onChange={e=>{ const f=e.target.files&&e.target.files[0]; if(f) pickCover(f); }} style={{ display:'none' }}/>
           {!coverPrev && <div style={{ position:'absolute', inset:0, display:'grid', placeItems:'center', color:BS.soft, fontSize:12.5, fontWeight:700 }}>{t(['+ Sube o elige una portada','+ Upload or choose a cover'])}</div>}
           {coverPrev && <div style={{ position:'absolute', bottom:6, right:8, background:'rgba(0,0,0,0.45)', color:'#fff', fontSize:11, fontWeight:700, padding:'3px 9px', borderRadius:999 }}>{t(['Cambiar','Change'])}</div>}
         </label>
+        {coverPrev && (
+          <div style={{ marginTop:8 }}>
+            <div style={{ fontSize:11, color:BS.soft, marginBottom:4 }}>{t(['Ajusta la posición de la portada','Adjust cover position'])}</div>
+            <input type="range" min={0} max={100} value={coverPos} onChange={e=>setCoverPos(Number(e.target.value))} style={{ width:'100%', accentColor:BS.brand }}/>
+          </div>
+        )}
       </div>
 
       {/* Fotos */}
@@ -1302,11 +1309,11 @@ function EventsScreen() {
   const TYPES = [ {id:'comunidad',label:t(['Comunidad','Community'])},{id:'adopcion',label:t(['Adopción','Adoption'])},{id:'grooming',label:t(['Grooming','Grooming'])},{id:'vacunacion',label:t(['Vacunación','Vaccination'])},{id:'otro',label:t(['Otro','Other'])} ];
   const typeLabel = (id)=> (TYPES.find(x=>x.id===id)||{}).label || id;
   const toggle = id => setGoing(s => { const n=new Set(s); n.has(id)?n.delete(id):n.add(id); return n; });
-  const load = async ()=>{ if(!sb) return; try{ const r = await sb.from('events').select('id,title,description,type,event_date,starts_at,location,address,lat,lng,image_url,link,created_by,created_at').eq('status','active').order('created_at',{ascending:false}).limit(200); setEvents(r.data||[]); }catch(e){} };
+  const load = async ()=>{ if(!sb) return; try{ const r = await sb.from('bpuppy_events').select('id,title,description,type,event_date,date_label,place,address,lat,lng,cover_url,link,attendees,created_at').eq('is_published',true).order('created_at',{ascending:false}).limit(200); const rows=(r.data||[]).map(e=>({ id:e.id, title:e.title, description:e.description, type:e.type||'comunidad', event_date: e.date_label || (e.event_date ? (function(){ try{ return new Date(e.event_date).toLocaleString(); }catch(_){ return ''; } })() : ''), location:e.place||'', address:e.address||'', lat:e.lat, lng:e.lng, image_url:e.cover_url||'', link:e.link||'' })); setEvents(rows); }catch(e){} };
   useEffect(()=>{ load(); }, []);
   useEffect(()=>{ (async()=>{ if(sb && me && me.username){ try{ const r=await sb.from('bs_permissions').select('can_events,can_news').eq('username',me.username).maybeSingle(); setPerm(r.data||{}); }catch(e){ setPerm({}); } } })(); }, [me && me.username]);
   const canCreate = isAdmin || (perm && perm.can_events);
-  const saveEvent = async ()=>{ if(!sb) return; if(!me){ setMsg(t(['Inicia sesión.','Sign in.'])); return; } if(!form.title.trim()){ setMsg(t(['Ponle un título.','Add a title.'])); return; } try{ await sb.from('events').insert({ title:form.title.trim(), type:form.type, event_date:(form.event_date.trim()||null), location:(form.location.trim()||null), address:(form.address.trim()||null), description:(form.description.trim()||null), link:(form.link.trim()||null), image_url:(form.image_url.trim()||null), created_by:(me.username||me.name||'') }); setMsg(''); setCreating(false); setForm({ title:'', type:'comunidad', event_date:'', location:'', address:'', description:'', link:'', image_url:'' }); load(); }catch(e){ setMsg(t(['No se pudo guardar.','Could not save.'])); } };
+  const saveEvent = async ()=>{ if(!sb) return; if(!me){ setMsg(t(['Inicia sesión.','Sign in.'])); return; } if(!form.title.trim()){ setMsg(t(['Ponle un título.','Add a title.'])); return; } try{ await sb.from('bpuppy_events').insert({ title:form.title.trim(), type:form.type, date_label:(form.event_date.trim()||null), place:(form.location.trim()||null), address:(form.address.trim()||null), description:(form.description.trim()||null), link:(form.link.trim()||null), cover_url:(form.image_url.trim()||null), created_by:(me.username||me.name||''), is_published:true, attendees:0 }); setMsg(''); setCreating(false); setForm({ title:'', type:'comunidad', event_date:'', location:'', address:'', description:'', link:'', image_url:'' }); load(); }catch(e){ setMsg(t(['No se pudo guardar.','Could not save.'])); } };
   const grant = async ()=>{ if(!sb||!pf.username.trim()) return; try{ await sb.from('bs_permissions').upsert({ username:pf.username.trim(), can_events:pf.can_events, can_news:pf.can_news, granted_by:(me&&me.username)||'' }, { onConflict:'username' }); setMsg(t(['Permiso guardado.','Permission saved.'])); setPf({ username:'', can_events:true, can_news:false }); }catch(e){ setMsg(t(['No se pudo guardar el permiso.','Could not save permission.'])); } };
   const fld = { width:'100%', padding:'9px', borderRadius:10, border:`1.5px solid ${BS.border}`, background:BS.surface2, color:BS.ink, fontSize:13, fontFamily:'inherit', boxSizing:'border-box', marginBottom:8 };
   return (
