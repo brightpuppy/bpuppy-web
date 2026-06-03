@@ -796,16 +796,92 @@ function CommunityScreen() {
 function EventsScreen() {
   const BS = useBS();
   const t = useT();
+  const sb = typeof window !== "undefined" ? window._bsSb : null;
+  const me = typeof window !== "undefined" && window.BSAUTH && window.BSAUTH.me || null;
+  const isAdmin = !!(me && (me.username === "brightpuppy" || me.verified));
+  const [events, setEvents] = useState([]);
+  const [perm, setPerm] = useState(null);
+  const [sel, setSel] = useState(null);
   const [going, setGoing] = useState(/* @__PURE__ */ new Set());
+  const [creating, setCreating] = useState(false);
+  const [permPanel, setPermPanel] = useState(false);
+  const [form, setForm] = useState({ title: "", type: "comunidad", event_date: "", location: "", address: "", description: "", link: "", image_url: "" });
+  const [pf, setPf] = useState({ username: "", can_events: true, can_news: false });
+  const [msg, setMsg] = useState("");
+  const TYPES = [{ id: "comunidad", label: t(["Comunidad", "Community"]) }, { id: "adopcion", label: t(["Adopci\xF3n", "Adoption"]) }, { id: "grooming", label: t(["Grooming", "Grooming"]) }, { id: "vacunacion", label: t(["Vacunaci\xF3n", "Vaccination"]) }, { id: "otro", label: t(["Otro", "Other"]) }];
+  const typeLabel = (id) => (TYPES.find((x) => x.id === id) || {}).label || id;
   const toggle = (id) => setGoing((s) => {
     const n = new Set(s);
     n.has(id) ? n.delete(id) : n.add(id);
     return n;
   });
-  return /* @__PURE__ */ React.createElement("div", { className: "bs-fade", style: { background: BS.bg, minHeight: "100%" } }, /* @__PURE__ */ React.createElement(ScreenHeader, { title: t(["Eventos BPuppy", "BPuppy Events"]), sub: t(["Reuniones y actividades de la comunidad", "Community meetups and activities"]) }), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 22px", display: "flex", flexDirection: "column", gap: 14 } }, BSDATA.bpuppyEvents.map((ev) => {
+  const load = async () => {
+    if (!sb) return;
+    try {
+      const r = await sb.from("events").select("id,title,description,type,event_date,starts_at,location,address,lat,lng,image_url,link,created_by,created_at").eq("status", "active").order("created_at", { ascending: false }).limit(200);
+      setEvents(r.data || []);
+    } catch (e) {
+    }
+  };
+  useEffect(() => {
+    load();
+  }, []);
+  useEffect(() => {
+    (async () => {
+      if (sb && me && me.username) {
+        try {
+          const r = await sb.from("bs_permissions").select("can_events,can_news").eq("username", me.username).maybeSingle();
+          setPerm(r.data || {});
+        } catch (e) {
+          setPerm({});
+        }
+      }
+    })();
+  }, [me && me.username]);
+  const canCreate = isAdmin || perm && perm.can_events;
+  const saveEvent = async () => {
+    if (!sb) return;
+    if (!me) {
+      setMsg(t(["Inicia sesi\xF3n.", "Sign in."]));
+      return;
+    }
+    if (!form.title.trim()) {
+      setMsg(t(["Ponle un t\xEDtulo.", "Add a title."]));
+      return;
+    }
+    try {
+      await sb.from("events").insert({ title: form.title.trim(), type: form.type, event_date: form.event_date.trim() || null, location: form.location.trim() || null, address: form.address.trim() || null, description: form.description.trim() || null, link: form.link.trim() || null, image_url: form.image_url.trim() || null, created_by: me.username || me.name || "" });
+      setMsg("");
+      setCreating(false);
+      setForm({ title: "", type: "comunidad", event_date: "", location: "", address: "", description: "", link: "", image_url: "" });
+      load();
+    } catch (e) {
+      setMsg(t(["No se pudo guardar.", "Could not save."]));
+    }
+  };
+  const grant = async () => {
+    if (!sb || !pf.username.trim()) return;
+    try {
+      await sb.from("bs_permissions").upsert({ username: pf.username.trim(), can_events: pf.can_events, can_news: pf.can_news, granted_by: me && me.username || "" }, { onConflict: "username" });
+      setMsg(t(["Permiso guardado.", "Permission saved."]));
+      setPf({ username: "", can_events: true, can_news: false });
+    } catch (e) {
+      setMsg(t(["No se pudo guardar el permiso.", "Could not save permission."]));
+    }
+  };
+  const fld = { width: "100%", padding: "9px", borderRadius: 10, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 13, fontFamily: "inherit", boxSizing: "border-box", marginBottom: 8 };
+  return /* @__PURE__ */ React.createElement("div", { className: "bs-fade", style: { background: BS.bg, minHeight: "100%" } }, /* @__PURE__ */ React.createElement(ScreenHeader, { title: t(["Eventos BPuppy", "BPuppy Events"]), sub: t(["Reuniones y actividades de la comunidad", "Community meetups and activities"]) }), /* @__PURE__ */ React.createElement("div", { style: { padding: "12px 16px 0", display: "flex", gap: 8, flexWrap: "wrap" } }, canCreate && /* @__PURE__ */ React.createElement("button", { onClick: () => {
+    setCreating((c) => !c);
+    setPermPanel(false);
+    setMsg("");
+  }, className: "bs-btn", style: { padding: "9px 14px", borderRadius: 11, border: "none", background: BS.grad, color: "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" } }, creating ? t(["Cancelar", "Cancel"]) : t(["+ Crear evento", "+ Create event"])), isAdmin && /* @__PURE__ */ React.createElement("button", { onClick: () => {
+    setPermPanel((p) => !p);
+    setCreating(false);
+    setMsg("");
+  }, className: "bs-btn", style: { padding: "9px 14px", borderRadius: 11, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" } }, t(["Permisos", "Permissions"]))), msg && /* @__PURE__ */ React.createElement("div", { style: { padding: "8px 16px 0", color: BS.brand, fontSize: 12.5, fontWeight: 600 } }, msg), creating && /* @__PURE__ */ React.createElement("div", { style: { margin: "12px 16px 0", padding: "14px", background: BS.surface, borderRadius: 14, border: `1px solid ${BS.border}` } }, /* @__PURE__ */ React.createElement("input", { value: form.title, onChange: (e) => setForm({ ...form, title: e.target.value }), placeholder: t(["T\xEDtulo del evento", "Event title"]), style: fld }), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 } }, /* @__PURE__ */ React.createElement("select", { value: form.type, onChange: (e) => setForm({ ...form, type: e.target.value }), style: { ...fld, marginBottom: 8 } }, TYPES.map((x) => /* @__PURE__ */ React.createElement("option", { key: x.id, value: x.id }, x.label))), /* @__PURE__ */ React.createElement("input", { value: form.event_date, onChange: (e) => setForm({ ...form, event_date: e.target.value }), placeholder: t(["Fecha (ej. 15 Mar, 3pm)", "Date (e.g. Mar 15, 3pm)"]), style: fld })), /* @__PURE__ */ React.createElement("input", { value: form.location, onChange: (e) => setForm({ ...form, location: e.target.value }), placeholder: t(["Lugar / ciudad", "Place / city"]), style: fld }), /* @__PURE__ */ React.createElement("input", { value: form.address, onChange: (e) => setForm({ ...form, address: e.target.value }), placeholder: t(["Direcci\xF3n (opcional)", "Address (optional)"]), style: fld }), /* @__PURE__ */ React.createElement("textarea", { value: form.description, onChange: (e) => setForm({ ...form, description: e.target.value }), placeholder: t(["Descripci\xF3n", "Description"]), rows: 3, style: { ...fld, resize: "vertical" } }), /* @__PURE__ */ React.createElement("input", { value: form.link, onChange: (e) => setForm({ ...form, link: e.target.value }), placeholder: t(["Link (registro/info, opcional)", "Link (signup/info, optional)"]), style: fld }), /* @__PURE__ */ React.createElement("input", { value: form.image_url, onChange: (e) => setForm({ ...form, image_url: e.target.value }), placeholder: t(["URL de imagen (opcional)", "Image URL (optional)"]), style: fld }), /* @__PURE__ */ React.createElement("button", { onClick: saveEvent, className: "bs-btn", style: { width: "100%", padding: "11px", borderRadius: 11, border: "none", background: BS.grad, color: "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" } }, t(["Publicar evento", "Publish event"]))), permPanel && isAdmin && /* @__PURE__ */ React.createElement("div", { style: { margin: "12px 16px 0", padding: "14px", background: BS.surface, borderRadius: 14, border: `1px solid ${BS.border}` } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 700, color: BS.ink, marginBottom: 8 } }, t(["Dar permiso para crear", "Grant creation permission"])), /* @__PURE__ */ React.createElement("input", { value: pf.username, onChange: (e) => setPf({ ...pf, username: e.target.value }), placeholder: t(["Usuario (@username)", "Username (@username)"]), style: fld }), /* @__PURE__ */ React.createElement("label", { style: { display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: BS.ink2, marginBottom: 6 } }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: pf.can_events, onChange: (e) => setPf({ ...pf, can_events: e.target.checked }) }), " ", t(["Puede crear eventos", "Can create events"])), /* @__PURE__ */ React.createElement("label", { style: { display: "flex", alignItems: "center", gap: 8, fontSize: 13, color: BS.ink2, marginBottom: 10 } }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: pf.can_news, onChange: (e) => setPf({ ...pf, can_news: e.target.checked }) }), " ", t(["Puede crear noticias", "Can create news"])), /* @__PURE__ */ React.createElement("button", { onClick: grant, className: "bs-btn", style: { width: "100%", padding: "10px", borderRadius: 11, border: "none", background: BS.grad, color: "#fff", fontSize: 13.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" } }, t(["Guardar permiso", "Save permission"]))), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 22px", display: "flex", flexDirection: "column", gap: 14 } }, !events.length && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: BS.soft, padding: "40px 20px", fontSize: 13.5, lineHeight: 1.6 } }, t(["A\xFAn no hay eventos. Vuelve pronto o, si tienes permiso, crea el primero.", "No events yet. Check back soon, or create the first one if you have permission."])), events.map((ev) => {
     const on = going.has(ev.id);
-    return /* @__PURE__ */ React.createElement("div", { key: ev.id, className: "bs-pop", style: { background: BS.surface, borderRadius: 18, overflow: "hidden", border: `1px solid ${BS.border}` } }, /* @__PURE__ */ React.createElement("img", { src: ev.img, alt: "", style: { width: "100%", height: 150, objectFit: "cover", display: "block" }, loading: "lazy" }), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 16.5, fontWeight: 800, color: BS.ink, lineHeight: 1.25, marginBottom: 5 } }, ev.title), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: BS.brand, fontWeight: 700, marginBottom: 2 } }, ev.date), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: BS.soft, marginBottom: 12 } }, ev.place), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => toggle(ev.id), className: "bs-btn", style: { padding: "9px 20px", borderRadius: 11, border: "none", background: on ? BS.surface2 : BS.grad, color: on ? BS.ink : "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", boxShadow: on ? "none" : BS.glow } }, on ? t(["Asistir\xE1s \u2713", "Going \u2713"]) : t(["Asistir", "Attend"])), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: BS.soft } }, ev.attendees + (on ? 1 : 0), " ", t(["asistentes", "attending"])))));
-  })));
+    return /* @__PURE__ */ React.createElement("div", { key: ev.id, className: "bs-pop", style: { background: BS.surface, borderRadius: 18, overflow: "hidden", border: `1px solid ${BS.border}` } }, ev.image_url ? /* @__PURE__ */ React.createElement("img", { src: ev.image_url, alt: "", onClick: () => setSel(ev), style: { width: "100%", height: 150, objectFit: "cover", display: "block", cursor: "pointer" }, loading: "lazy" }) : /* @__PURE__ */ React.createElement("div", { onClick: () => setSel(ev), style: { height: 90, background: BS.grad, cursor: "pointer" } }), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "inline-block", fontSize: 10.5, fontWeight: 700, color: BS.brand, background: "rgba(245,130,32,0.1)", borderRadius: 999, padding: "2px 9px", marginBottom: 6 } }, typeLabel(ev.type)), /* @__PURE__ */ React.createElement("div", { onClick: () => setSel(ev), style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 16.5, fontWeight: 800, color: BS.ink, lineHeight: 1.25, marginBottom: 5, cursor: "pointer" } }, ev.title), ev.event_date && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: BS.brand, fontWeight: 700, marginBottom: 2 } }, ev.event_date), ev.location && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: BS.soft, marginBottom: 12 } }, ev.location), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 12 } }, /* @__PURE__ */ React.createElement("button", { onClick: () => toggle(ev.id), className: "bs-btn", style: { padding: "9px 18px", borderRadius: 11, border: "none", background: on ? BS.surface2 : BS.grad, color: on ? BS.ink : "#fff", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" } }, on ? t(["Asistir\xE1s \u2713", "Going \u2713"]) : t(["Asistir", "Attend"])), /* @__PURE__ */ React.createElement("button", { onClick: () => setSel(ev), className: "bs-btn", style: { background: "none", border: "none", color: BS.brand, fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" } }, t(["Ver detalle \u2192", "View details \u2192"])))));
+  })), sel && /* @__PURE__ */ React.createElement("div", { onClick: () => setSel(null), style: { position: "fixed", inset: 0, background: "rgba(0,0,0,0.45)", zIndex: 60, display: "flex", alignItems: "flex-end", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("div", { onClick: (e) => e.stopPropagation(), style: { background: BS.surface, borderRadius: "18px 18px 0 0", width: "100%", maxWidth: 480, maxHeight: "85%", overflow: "auto" } }, sel.image_url && /* @__PURE__ */ React.createElement("img", { src: sel.image_url, alt: "", style: { width: "100%", height: 180, objectFit: "cover", display: "block" } }), /* @__PURE__ */ React.createElement("div", { style: { padding: "16px 16px 24px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start", gap: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, color: BS.ink } }, sel.title), /* @__PURE__ */ React.createElement("button", { onClick: () => setSel(null), style: { background: "none", border: "none", fontSize: 24, color: BS.soft, cursor: "pointer", lineHeight: 1 } }, "\xD7")), /* @__PURE__ */ React.createElement("div", { style: { display: "inline-block", fontSize: 10.5, fontWeight: 700, color: BS.brand, background: "rgba(245,130,32,0.1)", borderRadius: 999, padding: "2px 9px", margin: "6px 0" } }, typeLabel(sel.type)), sel.event_date && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: BS.brand, fontWeight: 700 } }, sel.event_date), sel.location && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: BS.soft, marginTop: 2 } }, sel.location, sel.address ? " \xB7 " + sel.address : ""), sel.description && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, color: BS.ink, marginTop: 10, lineHeight: 1.6, whiteSpace: "pre-wrap" } }, sel.description), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, marginTop: 16, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => toggle(sel.id), className: "bs-btn", style: { flex: 1, padding: "11px", borderRadius: 11, border: "none", background: going.has(sel.id) ? BS.surface2 : BS.grad, color: going.has(sel.id) ? BS.ink : "#fff", fontSize: 14, fontWeight: 700, cursor: "pointer", fontFamily: "inherit" } }, going.has(sel.id) ? t(["Asistir\xE1s \u2713", "Going \u2713"]) : t(["Asistir", "Attend"])), sel.link && /* @__PURE__ */ React.createElement("a", { href: sel.link, target: "_blank", rel: "noopener noreferrer", className: "bs-btn", style: { flex: 1, textAlign: "center", padding: "11px", borderRadius: 11, border: `1.5px solid ${BS.border}`, background: BS.surface2, color: BS.ink, fontSize: 14, fontWeight: 700, textDecoration: "none", fontFamily: "inherit" } }, t(["M\xE1s info \u2192", "More info \u2192"]))), sel.lat != null && sel.lng != null && /* @__PURE__ */ React.createElement("a", { href: "https://www.google.com/maps/search/?api=1&query=" + sel.lat + "," + sel.lng, target: "_blank", rel: "noopener noreferrer", style: { display: "block", textAlign: "center", marginTop: 10, fontSize: 12.5, fontWeight: 700, color: BS.brand } }, t(["C\xF3mo llegar", "Directions"]), " ", "\u2192")))));
 }
 function NewsScreen() {
   const BS = useBS();
