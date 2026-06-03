@@ -111,6 +111,8 @@
     <a class="wa" href="https://wa.me/18084928294" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.488-.927z"/></svg> Escríbenos por WhatsApp</a>
   </div></footer>
 
+<script src="breed-data.js?v=1780457419507"></script>
+<script src="cat-breed-data.js?v=1780457419507"></script>
 <script>
 (function(){
   var SUPA = 'https://oqqwmcplljirbreowrll.supabase.co';
@@ -149,6 +151,28 @@
   var LANG=(function(){try{return (localStorage.getItem('bpuppy-lang')||'es');}catch(e){return 'es';}})();
   function T(es,en){ return LANG==='en'? en : es; }
   function money2(n){ return '$'+Number(Math.round(n)).toLocaleString('en-US'); }
+
+  // ── Auto-merge de datos generales de la raza (enciclopedia local) ──
+  function _norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim(); }
+  var COAT_LBL={ short:['Corto','Short'], long:['Largo','Long'], curly:['Rizado','Curly'], smooth:['Liso','Smooth'], wiry:['Áspero','Wiry'], hairless:['Sin pelo','Hairless'], soft:['Suave','Soft'], medium:['Medio','Medium'], double:['Doble capa','Double coat'] };
+  function _allBreeds(){ return [].concat(window.DOG_BREEDS||[], window.DESIGNER_BREEDS||[], window.CAT_BREEDS||[]); }
+  function breedInfo(breedStr){
+    var nb=_norm(breedStr); if(!nb) return null;
+    var all=_allBreeds(), best=null, bestLen=0;
+    for(var k=0;k<all.length;k++){ var e=all[k];
+      [_norm(e.name),_norm(e.es)].forEach(function(nm){ if(!nm) return;
+        if(nb===nm){ if(nm.length+100>bestLen){ best=e; bestLen=nm.length+100; } }
+        else if((' '+nb+' ').indexOf(' '+nm+' ')>=0 || (' '+nm+' ').indexOf(' '+nb+' ')>=0){ if(nm.length>bestLen){ best=e; bestLen=nm.length; } }
+      });
+    }
+    if(!best) return null;
+    var temp=(LANG==='en'?(best.temperamentEn||best.temperament):(best.temperament||best.temperamentEn))||[];
+    var care=(LANG==='en'?(best.careEn||best.care):(best.care||best.careEn))||'';
+    var desc=(LANG==='en'?(best.descEn||best.desc):(best.desc||best.descEn))||'';
+    var coats=(best.coat||[]).map(function(c){ var l=COAT_LBL[c]; return l?T(l[0],l[1]):c; });
+    return { temperament:temp, coats:coats, care:care, desc:desc };
+  }
+
   function interes(i){
     var p=(window._PUPS||[])[i]; if(!p) return;
     var price=(p.price!=null&&!isNaN(p.price))?Number(p.price):null;
@@ -199,6 +223,15 @@
       if(p.microchip) det.push([T('Microchip','Microchip'),(p.microchip==='Sí'?T('Sí','Yes'):(p.microchip==='No'?T('No','No'):esc(p.microchip)))]);
       if(p.born) det.push([T('Nacimiento','Born'),esc(p.born)]);
       var detH = det.length? '<div style="margin-top:8px;display:flex;flex-direction:column;gap:3px">'+det.map(function(x){return '<div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--ink-soft)">'+x[0]+'</span><span style="font-weight:600;color:var(--ink-2)">'+x[1]+'</span></div>';}).join('')+'</div>':'';
+      var bi = breedInfo(p.breed); var biH='';
+      if(bi && (bi.temperament.length||bi.care||bi.coats.length||bi.desc)){
+        var rows='';
+        if(bi.temperament.length) rows += '<div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:8px">'+bi.temperament.map(function(tp){return '<span class="chip">'+esc(tp)+'</span>';}).join('')+'</div>';
+        if(bi.coats.length) rows += '<div style="font-size:12.5px;margin-bottom:5px"><b>'+T('Pelaje','Coat')+':</b> '+esc(bi.coats.join(', '))+'</div>';
+        if(bi.care) rows += '<div style="font-size:12.5px;margin-bottom:5px"><b>'+T('Cuidado','Care')+':</b> '+esc(bi.care)+'</div>';
+        if(bi.desc) rows += '<div style="font-size:12.5px;color:var(--ink-2);line-height:1.55">'+esc(bi.desc)+'</div>';
+        biH = '<details style="margin-top:10px;border-top:1px solid var(--line);padding-top:9px"><summary style="cursor:pointer;font-size:12.5px;font-weight:700;color:var(--orange)">'+T('Sobre la raza','About the breed')+'</summary><div style="margin-top:9px">'+rows+'</div></details>';
+      }
       var waText = 'Hola! Me interesa '+(p.name? p.name+' ' : '')+'('+(p.breed||'cachorro')+') que vi en mi catálogo. ¿Sigue disponible?';
       var thumbs = photos.length>1 ? '<div class="thumbs">'+photos.slice(0,10).map(function(u,idx){ return '<img src="'+esc(u)+'" class="'+(idx===0?'on':'')+'" referrerpolicy="no-referrer" onerror="this.remove()" onclick="gswap('+i+','+idx+',this)">'; }).join('')+'</div>' : '';
       return '<div class="card">'
@@ -214,6 +247,7 @@
           + (meta.length? '<div class="meta">'+meta.map(function(m){return '<span class="chip">'+m+'</span>';}).join('')+'</div>':'')
           + '<div class="price">'+money(p.price)+(p.price!=null&&!isNaN(p.price)?' <small>USD</small>':'')+'</div>'
           + detH
+          + biH
           + '<button class="cta" onclick="interes('+i+')" style="border:none;cursor:pointer;width:100%;font-family:inherit">'+T('Me interesa','I am interested')+'</button>'
         + '</div>'
       + '</div>';
