@@ -91,19 +91,33 @@
     }, true);
   } catch (e) {}
 
-  // ── Contador propio de visitas (gratis, va directo al CRM via track_visit) ──
+  // ── Contador de visitas (primera-parte, va al CRM via track_visit) ──
   try {
     var TRACK = 'https://oqqwmcplljirbreowrll.supabase.co/functions/v1/track_visit';
-    var newUser = false, newSession = false;
-    try { if (!localStorage.getItem('bp_seen')) { newUser = true; localStorage.setItem('bp_seen', '1'); } } catch (e) {}
-    try { if (!sessionStorage.getItem('bp_sess')) { newSession = true; sessionStorage.setItem('bp_sess', '1'); } } catch (e) {}
-    var sendVisit = function () {
-      try {
-        fetch(TRACK, { method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': ANON }, body: JSON.stringify({ path: w.location.pathname, ref: document.referrer || '', new_session: newSession, new_user: newUser }), keepalive: true }).catch(function () {});
-      } catch (e) {}
-    };
-    if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(sendVisit, 800);
-    else w.addEventListener('load', function () { setTimeout(sendVisit, 800); });
+    var consent = ''; try { consent = localStorage.getItem('bp-cookie-consent') || ''; } catch (e) {}
+    var already = false; try { already = !!sessionStorage.getItem('bp-visit-logged'); } catch (e) {}
+    // Si el usuario rechazó analítica en el banner (consent==='essential') no contamos.
+    // Sin elección previa: contamos como esencial de primera-parte. Si aceptó todo: 'all'.
+    if (consent !== 'essential' && !already) {
+      try { sessionStorage.setItem('bp-visit-logged', '1'); } catch (e) {}
+      var sendVisit = function () {
+        try {
+          fetch(TRACK, {
+            method: 'POST', keepalive: true,
+            headers: { 'Content-Type': 'application/json', 'apikey': ANON },
+            body: JSON.stringify({
+              page: w.location.pathname, landing_path: w.location.pathname,
+              referrer: document.referrer || '', language: navigator.language || '',
+              screen: (w.screen ? (screen.width + 'x' + screen.height) : ''),
+              site: w.location.hostname, ua: navigator.userAgent,
+              consent: (consent === 'all' ? 'all' : 'essential')
+            })
+          }).catch(function () {});
+        } catch (e) {}
+      };
+      if (document.readyState === 'complete' || document.readyState === 'interactive') setTimeout(sendVisit, 800);
+      else w.addEventListener('load', function () { setTimeout(sendVisit, 800); });
+    }
   } catch (e) {}
 
   w.claude = {
