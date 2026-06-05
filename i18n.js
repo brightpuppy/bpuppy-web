@@ -1,6 +1,13 @@
-/* Idioma inicial = el del navegador/sistema. Por defecto espanol; si el navegador esta en ingles, entra en ingles. Otros idiomas: vacio -> Google Translate (chrome.js). */
-(function(){try{var k="bpuppy-lang";if(!localStorage.getItem(k)&&!localStorage.getItem("bpuppy-gt-lang")){var n=((navigator.languages&&navigator.languages[0])||navigator.language||navigator.userLanguage||"").slice(0,2).toLowerCase();if(n==="en")localStorage.setItem(k,"en");else if(n==="es")localStorage.setItem(k,"es");}}catch(e){}})();
 (function(){
+try {
+  var _bpK = "bpuppy-lang";
+  if (!localStorage.getItem(_bpK) && !localStorage.getItem("bpuppy-gt-lang")) {
+    var _bpN = (navigator.languages && navigator.languages[0] || navigator.language || navigator.userLanguage || "").slice(0, 2).toLowerCase();
+    if (_bpN === "en") localStorage.setItem(_bpK, "en");
+    else if (_bpN === "es") localStorage.setItem(_bpK, "es");
+  }
+} catch (e) {
+}
 const STRINGS = {
   nav: {
     puppies: ["Cachorros", "Puppies"],

@@ -1128,6 +1128,18 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
       ctx.fillRect(cx + 15, baseY - 23, 7, 3);
     };
     const drawLives = (st) => {
+      ctx.save();
+      ctx.fillStyle = "rgba(45,36,33,0.34)";
+      const bx = 3, by = 3, bw = 12 + MAXLIVES * 17, bh = 20, br = 7;
+      ctx.beginPath();
+      ctx.moveTo(bx + br, by);
+      ctx.arcTo(bx + bw, by, bx + bw, by + bh, br);
+      ctx.arcTo(bx + bw, by + bh, bx, by + bh, br);
+      ctx.arcTo(bx, by + bh, bx, by, br);
+      ctx.arcTo(bx, by, bx + bw, by, br);
+      ctx.closePath();
+      ctx.fill();
+      ctx.restore();
       for (let i = 0; i < MAXLIVES; i++) {
         const hx = 9 + i * 17, ty = 8, on = i < st.lives, s = 12, cx = hx + s / 2;
         ctx.save();
@@ -1232,7 +1244,8 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
         return;
       }
       st.fcount++;
-      st.speed = Math.min(6.6, Math.max(st.speed, 4.3));
+      st.flyFrames = (st.flyFrames || 0) + 1;
+      st.speed = Math.min(6.4, 3.2 + Math.min(st.flyFrames / 2400, 1) * 3.2);
       st.dist += st.speed;
       st.score = Math.floor(st.dist / 10) + st.treats * 8;
       if (st.fcount % 6 === 0) setScore(st.score);

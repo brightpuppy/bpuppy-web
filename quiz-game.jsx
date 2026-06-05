@@ -561,7 +561,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
     // capa de superhéroe (ondea)
     const drawCape = (cx, baseY, f) => { const w = Math.sin(f*0.3)*3; ctx.fillStyle='#E23B3B'; ctx.beginPath(); ctx.moveTo(cx+19, baseY-22); ctx.quadraticCurveTo(cx+4+w, baseY-25, cx-8+w, baseY-6); ctx.quadraticCurveTo(cx+1+w, baseY-2, cx+12, baseY-9); ctx.lineTo(cx+19, baseY-15); ctx.closePath(); ctx.fill(); ctx.fillStyle='#b51d1d'; ctx.fillRect(cx+15, baseY-23, 7, 3); };
     // HUD de vidas con corazoncitos
-    const drawLives = (st) => { for(let i=0;i<MAXLIVES;i++){ const hx=9+i*17, ty=8, on=i<st.lives, s=12, cx=hx+s/2; ctx.save(); if(on){ ctx.shadowColor='rgba(226,59,59,0.55)'; ctx.shadowBlur=6; } ctx.fillStyle= on?'#E23B3B':'rgba(45,36,33,0.15)'; ctx.beginPath(); ctx.moveTo(cx, ty+s*0.3); ctx.bezierCurveTo(cx, ty, hx, ty, hx, ty+s*0.3); ctx.bezierCurveTo(hx, ty+s*0.55, cx, ty+s*0.8, cx, ty+s); ctx.bezierCurveTo(cx, ty+s*0.8, hx+s, ty+s*0.55, hx+s, ty+s*0.3); ctx.bezierCurveTo(hx+s, ty, cx, ty, cx, ty+s*0.3); ctx.closePath(); ctx.fill(); ctx.restore(); } };
+    const drawLives = (st) => { ctx.save(); ctx.fillStyle='rgba(45,36,33,0.34)'; const bx=3,by=3,bw=12+MAXLIVES*17,bh=20,br=7; ctx.beginPath(); ctx.moveTo(bx+br,by); ctx.arcTo(bx+bw,by,bx+bw,by+bh,br); ctx.arcTo(bx+bw,by+bh,bx,by+bh,br); ctx.arcTo(bx,by+bh,bx,by,br); ctx.arcTo(bx,by,bx+bw,by,br); ctx.closePath(); ctx.fill(); ctx.restore(); for(let i=0;i<MAXLIVES;i++){ const hx=9+i*17, ty=8, on=i<st.lives, s=12, cx=hx+s/2; ctx.save(); if(on){ ctx.shadowColor='rgba(226,59,59,0.55)'; ctx.shadowBlur=6; } ctx.fillStyle= on?'#E23B3B':'rgba(45,36,33,0.15)'; ctx.beginPath(); ctx.moveTo(cx, ty+s*0.3); ctx.bezierCurveTo(cx, ty, hx, ty, hx, ty+s*0.3); ctx.bezierCurveTo(hx, ty+s*0.55, cx, ty+s*0.8, cx, ty+s); ctx.bezierCurveTo(cx, ty+s*0.8, hx+s, ty+s*0.55, hx+s, ty+s*0.3); ctx.bezierCurveTo(hx+s, ty, cx, ty, cx, ty+s*0.3); ctx.closePath(); ctx.fill(); ctx.restore(); } };
     // modo vuelo (transform → flyintro → fly)
     const FLYW = 640; // ancho del lienzo al volar (PC): crece a lo ancho, no a lo alto
     const flyLoop = (st) => {
@@ -597,7 +597,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
       }
       if(st.mode==='flyintro'){ drawCape(dogX, GY-st.py, st.fcount); drawDog(ctx, dogX, GY-st.py, tone, breed.key, st.frame, true); ctx.restore(); drawLives(st); return; }
       // ── fly ── (rápido: piso de velocidad alto, ya venimos del minuto 3)
-      st.fcount++; st.speed = Math.min(6.6, Math.max(st.speed, 4.3)); st.dist += st.speed;
+      st.fcount++; st.flyFrames=(st.flyFrames||0)+1; st.speed = Math.min(6.4, 3.2 + Math.min(st.flyFrames/2400,1)*3.2); st.dist += st.speed;
       st.score = Math.floor(st.dist/10) + st.treats*8; if(st.fcount%6===0) setScore(st.score);
       if(st.inv>0) st.inv--;
       if(st.holdUp) st.flyTarget = Math.min(H-30, (st.flyTarget==null?st.py:st.flyTarget) + 3.4);

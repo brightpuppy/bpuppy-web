@@ -1,5 +1,8 @@
 // i18n.jsx — bilingual strings + LangContext
 
+// Idioma inicial = el del navegador/sistema. Por defecto espanol; si el navegador esta en ingles, entra en ingles.
+try{ var _bpK="bpuppy-lang"; if(!localStorage.getItem(_bpK)&&!localStorage.getItem("bpuppy-gt-lang")){ var _bpN=((navigator.languages&&navigator.languages[0])||navigator.language||navigator.userLanguage||"").slice(0,2).toLowerCase(); if(_bpN==="en")localStorage.setItem(_bpK,"en"); else if(_bpN==="es")localStorage.setItem(_bpK,"es"); } }catch(e){}
+
 const STRINGS = {
   nav: {
     puppies:  ['Cachorros',     'Puppies'],
