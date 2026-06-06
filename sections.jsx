@@ -3,7 +3,9 @@
 /* ─────────── About / Quiénes somos ─────────── */
 function About() {
   const t = useT();
+  const { lang } = useLang();
   const S = STRINGS.about;
+  const storyVid = lang === 'es' ? 'qW0jwJeNrPk' : 'YImasdUtIrI';
   return (
     <section className="sec about" id="about">
       <div className="container about-grid">
@@ -31,7 +33,7 @@ function About() {
         <div className="about-video reveal">
           <div className="about-video-frame" style={{ borderRadius: 20, overflow: 'hidden', aspectRatio: '9/16', position: 'relative', maxWidth: 340, margin: '0 auto', boxShadow: '0 12px 48px rgba(0,0,0,0.14)' }}>
             <iframe
-              src="https://www.youtube.com/embed/YImasdUtIrI?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es"
+              src={'https://www.youtube.com/embed/' + storyVid + '?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=' + (lang === 'es' ? 'es' : 'en')}
               title="Quiénes somos — BPuppy"
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
