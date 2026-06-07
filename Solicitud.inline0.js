@@ -64,7 +64,11 @@ function SolicitudForm() {
   function canNext() {
     if (step === 0) return !!form.species;
     if (step === 1) return !!form.living;
-    if (step === 2) return form.name && form.email && form.phone;
+    if (step === 2) {
+      var digits = (form.phone || "").replace(/\D/g, "");
+      var emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email || "");
+      return !!(form.name && form.name.trim().length >= 2) && emailOk && digits.length >= 10;
+    }
     return false;
   }
   async function submit() {
