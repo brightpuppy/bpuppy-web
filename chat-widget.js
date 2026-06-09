@@ -91,14 +91,15 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
   async function saveSession(key, data) {
     if (!supa) return;
     try {
-      await supa.from("chat_sessions").upsert({
-        session_key: key,
-        client_name: data.clientName || null,
-        client_phone: data.clientPhone || null,
-        messages: data.messages,
-        lang: data.lang || "es",
-        updated_at: (/* @__PURE__ */ new Date()).toISOString()
-      }, { onConflict: "session_key" });
+      try {
+        await fetch(SUPA_URL + "/functions/v1/chat_save", {
+          method: "POST",
+          keepalive: true,
+          headers: { "Content-Type": "application/json", "apikey": SUPA_KEY, "Authorization": "Bearer " + SUPA_KEY },
+          body: JSON.stringify({ session_key: key, client_name: data.clientName || null, client_phone: data.clientPhone || null, messages: data.messages, lang: data.lang || "es" })
+        });
+      } catch (e) {
+      }
       if (data.clientPhone && !localStorage.getItem("bp_lead_" + key)) {
         const convo = (data.messages || []).map((m) => (m.role === "user" ? "Cliente: " : "Asesor: ") + (m.content || "")).join("\n").slice(0, 2e3);
         const { error } = await supa.from("website_leads").insert({

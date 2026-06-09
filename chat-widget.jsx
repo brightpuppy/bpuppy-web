@@ -104,14 +104,14 @@ Never say you are an AI unless directly asked. Stay in character as a helpful hu
   async function saveSession(key, data) {
     if (!supa) return;
     try {
-      await supa.from('chat_sessions').upsert({
-        session_key: key,
-        client_name:  data.clientName  || null,
-        client_phone: data.clientPhone || null,
-        messages:     data.messages,
-        lang:         data.lang || 'es',
-        updated_at:   new Date().toISOString(),
-      }, { onConflict: 'session_key' });
+      // La sesion se guarda via edge function con service_role (chat_sessions ya no es escribible por anon).
+      try {
+        await fetch(SUPA_URL + '/functions/v1/chat_save', {
+          method: 'POST', keepalive: true,
+          headers: { 'Content-Type': 'application/json', 'apikey': SUPA_KEY, 'Authorization': 'Bearer ' + SUPA_KEY },
+          body: JSON.stringify({ session_key: key, client_name: data.clientName || null, client_phone: data.clientPhone || null, messages: data.messages, lang: data.lang || 'es' }),
+        });
+      } catch (e) {}
 
       // Crear lead en website_leads cuando hay telefono (una sola vez por sesion)
       if (data.clientPhone && !localStorage.getItem('bp_lead_' + key)) {
