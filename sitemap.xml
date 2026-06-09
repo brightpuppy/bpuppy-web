@@ -398,6 +398,18 @@
   </url>
 
   <url>
+    <loc>https://bpuppy.us/blog?art=54</loc>
+    <changefreq>monthly</changefreq>
+    <priority>0.5</priority>
+  </url>
+
+  <url>
+    <loc>https://bpuppy.us/adopciones-gatos</loc>
+    <changefreq>weekly</changefreq>
+    <priority>0.7</priority>
+  </url>
+
+  <url>
     <loc>https://bpuppy.us/financiamiento</loc>
     <changefreq>weekly</changefreq>
   </url>
