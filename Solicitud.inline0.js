@@ -61,13 +61,17 @@ function SolicitudForm() {
   function toggle(key, val) {
     set(key, form[key] === val ? "" : val);
   }
+  function usPhoneOk(p) {
+    var d = (p || "").replace(/\D/g, "");
+    if (d.length === 11 && d.charAt(0) === "1") d = d.slice(1);
+    return d.length === 10 && /^[2-9]\d{2}[2-9]\d{6}$/.test(d);
+  }
   function canNext() {
     if (step === 0) return !!form.species;
     if (step === 1) return !!form.living;
     if (step === 2) {
-      var digits = (form.phone || "").replace(/\D/g, "");
       var emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email || "");
-      return !!(form.name && form.name.trim().length >= 2) && emailOk && digits.length >= 10;
+      return !!(form.name && form.name.trim().length >= 2) && emailOk && usPhoneOk(form.phone);
     }
     return false;
   }
@@ -180,7 +184,7 @@ function SolicitudForm() {
         },
         style: { width: "100%", padding: "12px 16px", border: "1.5px solid var(--line)", borderRadius: 10, fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", background: "#fff", outline: "none", boxSizing: "border-box" }
       }
-    ));
+    ), f[0] === "phone" && form.phone && !usPhoneOk(form.phone) ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#B3431E", marginTop: 5, lineHeight: 1.5 } }, t(["Ingresa un n\xFAmero de tel\xE9fono de EE. UU. v\xE1lido (10 d\xEDgitos). Nuestro servicio est\xE1 disponible solo en USA.", "Enter a valid US phone number (10 digits). Our service is available in the USA only."])) : null);
   }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 11, fontWeight: 700, color: "var(--ink-2)", display: "block", marginBottom: 4 } }, t(["Algo m\xE1s que debamos saber", "Anything else we should know"])), /* @__PURE__ */ React.createElement(
     "textarea",
     {
