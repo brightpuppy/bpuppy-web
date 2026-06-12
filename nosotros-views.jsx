@@ -190,7 +190,13 @@ function NosotrosApp() {
                   </div>
               )}
               </div>
-              <image-slot id="nosotros-filosofia" shape="rounded" radius="20" placeholder={t(['Foto del local o del equipo trabajando', 'Photo of the storefront or the team at work'])} style={{ width: '100%', aspectRatio: '16/9', display: 'block' }} />
+              <figure style={{ margin: 0 }}>
+                <div style={{ position: 'relative', maxWidth: 460, margin: '0 auto', borderRadius: 20, overflow: 'hidden', boxShadow: '0 16px 44px -12px rgba(45,36,33,0.28)' }}>
+                  <img src="assets/portada-local.png" alt={t(['Nuevo local de BPuppy', 'New BPuppy location'])} loading="lazy" style={{ width: '100%', display: 'block' }} />
+                  <span style={{ position: 'absolute', top: 14, left: 14, background: 'var(--orange)', color: '#fff', fontSize: 11, fontWeight: 800, letterSpacing: '0.1em', textTransform: 'uppercase', padding: '6px 13px', borderRadius: 999, boxShadow: '0 4px 14px rgba(245,130,32,0.4)' }}>{t(['Próximamente', 'Coming soon'])}</span>
+                </div>
+                <figcaption style={{ fontSize: 14, color: 'var(--ink-2)', lineHeight: 1.65, marginTop: 16, maxWidth: 460, marginLeft: 'auto', marginRight: 'auto', textAlign: 'center' }}>{t(['Nuestro nuevo local abre muy pronto. Desde ahí ofreceremos grooming, hotel para mascotas y day care, y manejaremos todas nuestras operaciones.', 'Our new location opens very soon. From there we’ll offer grooming, a pet hotel and day care, and run all of our operations.'])}</figcaption>
+              </figure>
             </div>
           </div>
         }
