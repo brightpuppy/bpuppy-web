@@ -11,7 +11,7 @@ const TIMELINE = [
 
 
 const IMPACT_STORIES = [
-{ emoji: '🧩', tag: ['Autismo', 'Autism'], title: ['Mateo y su Shih Tzu', 'Mateo and his Shih Tzu'], body: ['Mateo tiene 7 años y TEA nivel 2. Sus padres buscaban una raza calmada y gentil. Trabajamos con su terapeuta para elegir el cachorro correcto. Seis meses después, su madre nos escribió: "Mateo habla más con el perro que con cualquier persona. Es su mejor amigo."', 'Mateo is 7 years old and has level 2 autism. His parents were looking for a calm, gentle breed. We worked with his therapist to choose the right puppy. Six months later, his mother wrote to us: "Mateo talks to the dog more than to anyone else. He\'s his best friend."'], img: 'nosotros-impact-0' },
+{ emoji: '🧩', tag: ['Autismo', 'Autism'], title: ['Dilan y su Shih Tzu', 'Dilan and his Shih Tzu'], body: ['Dilan tiene 7 años y TEA nivel 2. Sus padres buscaban una raza calmada y gentil. Trabajamos con su terapeuta para elegir el cachorro correcto. Seis meses después, su madre nos escribió: "Dilan habla más con el perro que con cualquier persona. Es su mejor amigo."', 'Dilan is 7 years old and has level 2 autism. His parents were looking for a calm, gentle breed. We worked with his therapist to choose the right puppy. Six months later, his mother wrote to us: "Dilan talks to the dog more than to anyone else. He\'s his best friend."'], photos: ['assets/dilan-autism-1.jpg','assets/dilan-autism-2.jpg'], img: 'nosotros-impact-0' },
 { emoji: '👴', tag: ['Adultos mayores', 'Seniors'], title: ['Jeff & Freda - Lilly', 'Jeff & Freda - Lilly'], body: ['Entrevistamos a dos adultos mayores que nos contaron de primera mano lo mucho que su mascota Lilly los ha ayudado durante los momentos más difíciles de su vida. Sus testimonios nos recordaron por qué hacemos lo que hacemos — un compañero fiel puede cambiar una vida entera.', 'We sat down with two seniors who told us firsthand just how much their dog Lilly has helped them through the hardest moments of their lives. Their stories reminded us why we do what we do — a faithful companion can change an entire life.'], img: 'nosotros-impact-1', video: 'rr2gVZjCFWs' },
 { emoji: '🏠', tag: ['Refugio', 'Shelter'], title: ['Visita al Humane Society Kansas', 'A visit to the Humane Society in Kansas'], body: ['Visitamos el Caring Hands Humane Society de Newton, Kansas y entrevistamos a su directora de marketing. Nos habló sobre el increíble trabajo que realizan, cómo gestionan el refugio y su misión de darle una segunda oportunidad a cada animal.', 'We visited the Caring Hands Humane Society in Newton, Kansas and spoke with their marketing director. She told us about the incredible work they do, how they run the shelter, and their mission to give every animal a second chance.'], img: 'nosotros-impact-2', video: 'J5Q6c3wy0QE' },
 { emoji: '🎓', tag: ['Educación', 'Education'], title: ['Taller en Lincoln Marti School', 'Workshop at Lincoln Marti School'], hidden: true, body: ['Llevamos un cachorro a una escuela primaria en Hialeah para una charla sobre responsabilidad animal, empatía y cuidado de mascotas. 120 niños, un cachorro, y muchas lágrimas de emoción de los maestros.', 'We brought a puppy to an elementary school in Hialeah for a talk on animal responsibility, empathy, and pet care. 120 kids, one puppy, and plenty of happy tears from the teachers.'], img: 'nosotros-impact-3' }];
@@ -92,7 +92,14 @@ function ImpactStories() {
           <h3 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 24, fontWeight: 800, color: 'var(--ink)', margin: '0 0 14px', letterSpacing: '-0.02em' }}>{t(story.title)}</h3>
           <p style={{ fontSize: 15.5, color: 'var(--ink-2)', lineHeight: 1.75, margin: 0, fontStyle: 'italic', fontFamily: 'Instrument Serif,Georgia,serif' }}>"{t(story.body)}"</p>
         </div>
-        {story.video ?
+        {story.photos ?
+        <div style={{ display: 'flex', gap: 14, justifyContent: 'center', alignItems: 'flex-start', maxWidth: 470, width: '100%', margin: '0 auto' }}>
+          {story.photos.map((p, i) =>
+            <img key={i} src={p} alt={t(story.title)} loading="lazy"
+              style={{ width: 'calc(50% - 7px)', aspectRatio: '5/6', objectFit: 'cover', borderRadius: 16, border: '1px solid var(--line)', display: 'block', background: 'var(--bg)' }} />
+          )}
+        </div> :
+        story.video ?
         <div style={{ borderRadius: 20, overflow: 'hidden', aspectRatio: '16/9', position: 'relative' }}>
             <iframe
             src={'https://www.youtube.com/embed/' + story.video + '?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es'}
