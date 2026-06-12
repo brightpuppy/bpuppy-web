@@ -25,6 +25,7 @@ function DeliveryMap() {
   return /* @__PURE__ */ React.createElement("section", { className: "reveal", style: { padding: "80px 0", background: "#F2E7D0" } }, /* @__PURE__ */ React.createElement("div", { className: "container", style: { textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { className: "eyebrow", style: { color: "#C2521E" } }, "\u{1F9ED} ", t(["Bit\xE1cora de vuelo", "Flight log"])), /* @__PURE__ */ React.createElement("h2", { className: "display", style: { fontSize: "clamp(32px,5vw,60px)", margin: "10px 0 8px" } }, t(["Familias felices ", "Happy families "]), /* @__PURE__ */ React.createElement("em", { className: "serif-italic", style: { color: "#C2521E" } }, t(["alrededor del mundo", "around the world"]))), /* @__PURE__ */ React.createElement("p", { style: { color: "var(--ink-2)", maxWidth: "56ch", margin: "0 auto 22px" } }, t(["Cada cachorro entregado es un nuevo hogar en el mapa.", "Every delivered puppy is a new home on the map."])), /* @__PURE__ */ React.createElement("iframe", { src: "/mapa-entregas", loading: "lazy", title: "Mapa de entregas", style: { width: "100%", height: "460px", border: "2px solid #d8c7a6", borderRadius: "18px" } })));
 }
 function DeliveryMapLive() {
+  return null;
   const live = () => window.SitePublish ? window.SitePublish.isSectionLive("Home", "mapa") : false;
   const [show, setShow] = React.useState(live);
   React.useEffect(() => {

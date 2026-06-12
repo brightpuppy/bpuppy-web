@@ -37,6 +37,8 @@ function DeliveryMap() {
   );
 }
 function DeliveryMapLive() {
+  // Oculto temporalmente por pedido de Luis. Para reactivar: borra la linea de abajo.
+  return null;
   const live = () => (window.SitePublish ? window.SitePublish.isSectionLive('Home', 'mapa') : false);
   const [show, setShow] = React.useState(live);
   React.useEffect(() => {
