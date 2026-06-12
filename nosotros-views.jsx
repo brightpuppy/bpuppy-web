@@ -117,6 +117,79 @@ function ImpactStories() {
 
 }
 
+// ── Mapa 3D con ruta de vuelo RD -> Florida ─────────────────────────────────────
+function RouteMap({ t }) {
+  return (
+    <div style={{ position: 'relative', width: '100%', aspectRatio: '1/0.82', borderRadius: 20, overflow: 'hidden', background: 'radial-gradient(120% 120% at 70% 10%, rgba(245,130,32,0.10), transparent 55%)' }}>
+      <svg viewBox="0 0 460 380" width="100%" height="100%" style={{ display: 'block' }} role="img" aria-label={t(['Ruta de vuelo de República Dominicana a Florida', 'Flight route from the Dominican Republic to Florida'])}>
+        <defs>
+          <linearGradient id="rmSea" x1="0" y1="0" x2="0" y2="1">
+            <stop offset="0" stopColor="#241a16"/><stop offset="1" stopColor="#15100d"/>
+          </linearGradient>
+          <linearGradient id="rmLandFL" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#5b4a3f"/><stop offset="1" stopColor="#3a2d27"/>
+          </linearGradient>
+          <linearGradient id="rmLandDR" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stopColor="#F6A24B"/><stop offset="1" stopColor="#E07A1B"/>
+          </linearGradient>
+          <linearGradient id="rmRoute" x1="0" y1="0" x2="1" y2="0">
+            <stop offset="0" stopColor="#F58220"/><stop offset="1" stopColor="#FFD9A8"/>
+          </linearGradient>
+          <filter id="rmShadow" x="-30%" y="-30%" width="160%" height="160%">
+            <feDropShadow dx="0" dy="6" stdDeviation="7" floodColor="#000" floodOpacity="0.45"/>
+          </filter>
+          <filter id="rmGlow" x="-60%" y="-60%" width="220%" height="220%">
+            <feDropShadow dx="0" dy="0" stdDeviation="3.4" floodColor="#F58220" floodOpacity="0.9"/>
+          </filter>
+        </defs>
+
+        {/* grid sutil 3D */}
+        <rect x="0" y="0" width="460" height="380" fill="url(#rmSea)"/>
+        <g stroke="rgba(245,130,32,0.07)" strokeWidth="1">
+          {[60,120,180,240,300].map(function(y){ return <line key={'h'+y} x1="0" y1={y} x2="460" y2={y}/>; })}
+          {[80,160,240,320,400].map(function(x){ return <line key={'v'+x} x1={x} y1="0" x2={x} y2="380"/>; })}
+        </g>
+
+        {/* Florida (arriba-izquierda), tilt 3D */}
+        <g filter="url(#rmShadow)" transform="translate(86 92) skewX(-9)">
+          <path d="M14,2 C26,0 40,1 46,10 C52,18 50,30 56,40 C61,49 70,55 70,68 C70,86 60,104 50,118 C44,126 40,120 40,108 C40,92 34,80 28,70 C20,57 8,52 6,38 C4,24 4,8 14,2 Z" fill="url(#rmLandFL)" stroke="rgba(255,255,255,0.06)" strokeWidth="1"/>
+        </g>
+
+        {/* República Dominicana (abajo-derecha), destacada en naranja */}
+        <g filter="url(#rmShadow)" transform="translate(250 232) skewX(-9)">
+          <path d="M6,30 C26,20 58,16 96,20 C120,22 150,24 158,34 C164,42 150,48 132,50 C150,52 160,58 150,66 C138,74 110,70 84,68 C96,76 92,86 76,84 C58,82 44,72 30,66 C16,60 2,52 2,42 C2,36 4,32 6,30 Z" fill="url(#rmLandDR)" stroke="rgba(255,255,255,0.18)" strokeWidth="1.2"/>
+        </g>
+
+        {/* Ruta de vuelo (curva) */}
+        <path id="rmPath" d="M300,250 C250,150 180,150 120,140" fill="none" stroke="url(#rmRoute)" strokeWidth="3" strokelinecap="round" strokeDasharray="2 9" opacity="0.9"/>
+
+        {/* Punto origen (Santiago, RD) */}
+        <g transform="translate(300 250)">
+          <circle r="9" fill="rgba(245,130,32,0.25)"><animate attributeName="r" values="6;13;6" dur="2.4s" repeatCount="indefinite"/></circle>
+          <circle r="5" fill="#F58220" stroke="#fff" strokeWidth="1.5"/>
+          <text x="12" y="5" fill="rgba(255,255,255,0.82)" fontSize="11" fontWeight="700" fontFamily="Plus Jakarta Sans,sans-serif">Santiago, RD</text>
+        </g>
+        {/* Punto destino (Florida) */}
+        <g transform="translate(120 140)">
+          <circle r="5" fill="#fff" stroke="#F58220" strokeWidth="2"/>
+          <text x="-12" y="-12" textAnchor="end" fill="rgba(255,255,255,0.82)" fontSize="11" fontWeight="700" fontFamily="Plus Jakarta Sans,sans-serif">Florida, USA</text>
+        </g>
+
+        {/* Avion 3D viajando por la ruta */}
+        <g filter="url(#rmGlow)">
+          <g transform="scale(1.25)">
+            <path d="M0,0 L18,-3 C22,-3.6 24,-2 22,-0.4 L8,4 L4,12 L1,12 L3,4 L-6,5 L-9,9 L-11,9 L-9,3 L-11,-2 L-9,-2 L-6,1 L3,0 Z" fill="#fff" stroke="#E07A1B" strokeWidth="0.8" strokeLinejoin="round"/>
+            <path d="M0,0 L18,-3 L8,1 L3,0 Z" fill="#d9cabb"/>
+          </g>
+          <animateMotion dur="6s" rotate="auto" repeatCount="indefinite" keyPoints="0;1" keyTimes="0;1" calcMode="linear">
+            <mpath href="#rmPath"/>
+          </animateMotion>
+        </g>
+      </svg>
+    </div>
+  );
+}
+
 // ── Main Nosotros page ─────────────────────────────────────────────────────────
 function NosotrosApp() {
   const t = useT();
@@ -148,11 +221,7 @@ function NosotrosApp() {
               )}
             </div>
           </div>
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 10 }}>
-            {[['Equipo BPuppy', 'The BPuppy team'], ['Nuestro local', 'Our storefront'], ['Con las familias', 'With the families'], ['Primera camada', 'The first litter']].map((label, i) =>
-            <image-slot key={i} id={`nosotros-hero-${i}`} shape="rounded" radius="16" placeholder={t(label)} style={{ aspectRatio: '1', display: 'block' }} />
-            )}
-          </div>
+          <RouteMap t={t} />
         </div>
       </div>
 
