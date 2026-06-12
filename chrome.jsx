@@ -444,6 +444,8 @@ function Header({ overDark }) {
 
 function Footer() {
   const t = useT();
+  const { lang } = useLang();
+  const EN = lang === 'en';
   const [show, setShow] = React.useState(false);
   React.useEffect(() => {
     const h = () => setShow(window.scrollY > 400);
@@ -461,10 +463,10 @@ function Footer() {
         <p>{t(STRINGS.foot.rights)}</p>
         <div className="foot-links">
           <a href="/tarjeta-regalo">{t(['Tarjetas de regalo', 'Gift cards'])}</a>
-          <a href="/garantia">{t(['Garantía', 'Guarantee'])}</a>
-          <a href="#">{t(STRINGS.foot.health)}</a>
-          <a href="#">{t(STRINGS.foot.privacy)}</a>
-          <a href="#">{t(STRINGS.foot.terms)}</a>
+          <a href="/garantia">{t(['Garantía de salud', 'Health guarantee'])}</a>
+          <a href={EN ? '/refunds' : '/reembolsos'}>{t(['Política de devolución', 'Refund policy'])}</a>
+          <a href={EN ? '/privacy' : '/privacidad'}>{t(STRINGS.foot.privacy)}</a>
+          <a href={EN ? '/terms' : '/terminos'}>{t(STRINGS.foot.terms)}</a>
         </div>
       </div>
       <div className="container" style={{ marginTop:14, paddingTop:14, borderTop:'1px solid rgba(45,36,33,0.08)', display:'flex', alignItems:'center', justifyContent:'space-between', flexWrap:'wrap', gap:12 }}>
