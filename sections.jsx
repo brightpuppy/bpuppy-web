@@ -24,7 +24,7 @@ function About() {
               </div>
             )}
           </div>
-          <a href="/historia" className="btn btn-dark" style={{ marginTop: 28 }}>
+          <a href="/nosotros?tab=historia" className="btn btn-dark" style={{ marginTop: 28 }}>
             {t(['Conocer más sobre nuestra historia', 'Learn more about our story'])}
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M13 5l7 7-7 7" /></svg>
           </a>

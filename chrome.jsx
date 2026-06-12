@@ -363,6 +363,7 @@ function Header({ overDark }) {
     { label: t(['Conoce las razas', 'Meet the breeds']), href: '/razas' },
     { label: t(['Encuentra tu Match', 'Find Your Match']), href: '/quiz', className: 'bp-shine' },
     { label: t(['Solicita tu cachorro ideal', 'Request your ideal puppy']), href: '/solicitud' },
+    { label: t(['Garantía de salud', 'Health guarantee']), href: '/garantia' },
     ...(pv['Cachorros-Entregados'] !== false ? [{ label: t(['Cachorros Entregados', 'Delivered Puppies']), href: '/entregados' }] : []),
     ...(pv['Adopciones'] ? [{ label: t(['Adopciones', 'Adoptions']), href: '/adopciones' }] : []),
   ];
