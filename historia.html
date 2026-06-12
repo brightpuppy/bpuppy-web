@@ -210,7 +210,7 @@
       </div>
       <figure style="margin: 0;">
         <div class="origins-img" style="aspect-ratio: auto;">
-          <img src="assets/first-post-2012.jpg" alt="Primera publicación de Cachorros RD en Facebook, enero de 2012: cachorrita yorkie con lazo" loading="lazy" style="width: 100%; height: auto; display: block;">
+          <img src="assets/first-post-2012.jpg" alt="Primera publicación de Cachorros RD en Facebook, enero de 2012: cachorrita yorkie con lazo" loading="lazy" style="width: 100%; height: auto; display: block; cursor: zoom-in;" onclick="bpLightbox(this)" title="Clic para ampliar">
         </div>
         <figcaption style="font-size: 13.5px; color: var(--ink-soft); line-height: 1.55; margin-top: 12px; text-align: center;">Nuestra primera publicación en Facebook (enero de 2012), cuando en República Dominicana nos llamábamos simplemente <strong style="color: var(--ink-2);">Cachorros RD</strong>.</figcaption>
       </figure>
@@ -359,5 +359,25 @@ document.querySelectorAll('[data-prov]').forEach(path => {
 <script src="Historia.inline0.js?v=1781243875889"></script>
 <script src="claude-bridge.js?v=1781243875889"></script>
 <script src="chat-widget.js?v=1781243875889"></script>
+<script>
+function bpLightbox(img){
+  var ov = document.createElement('div');
+  ov.style.cssText = 'position:fixed;inset:0;z-index:9999;background:rgba(20,14,10,0.92);display:flex;align-items:center;justify-content:center;padding:4vmin;cursor:zoom-out;opacity:0;transition:opacity .2s';
+  var big = document.createElement('img');
+  big.src = img.src; big.alt = img.alt || '';
+  big.style.cssText = 'max-width:100%;max-height:100%;border-radius:12px;box-shadow:0 24px 80px rgba(0,0,0,0.6)';
+  var x = document.createElement('button');
+  x.setAttribute('aria-label','Cerrar');
+  x.style.cssText = 'position:absolute;top:18px;right:22px;width:42px;height:42px;border-radius:50%;border:1.5px solid rgba(255,255,255,0.4);background:transparent;color:#fff;font-size:20px;line-height:1;cursor:pointer';
+  x.textContent = '×';
+  ov.appendChild(big); ov.appendChild(x);
+  function close(){ ov.style.opacity = '0'; document.removeEventListener('keydown', onKey); setTimeout(function(){ ov.remove(); }, 200); }
+  function onKey(e){ if(e.key === 'Escape') close(); }
+  ov.addEventListener('click', close);
+  document.addEventListener('keydown', onKey);
+  document.body.appendChild(ov);
+  requestAnimationFrame(function(){ ov.style.opacity = '1'; });
+}
+</script>
 </body>
 </html>
