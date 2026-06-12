@@ -99,8 +99,8 @@ const STRINGS = {
     eyebrow:  ['Familias felices', 'Happy families'],
     title_a:  ['Miles de razones',        'Thousands of reasons'],
     title_b:  ['para sonreír.',           'to smile.'],
-    sub:      ['Cada cachorro y familia tiene una historia y pronto tendrás una propia que contar.',
-               'Every puppy and family has a story, and soon you\u2019ll have your own to tell.'],
+    sub:      ['Cada cachorro y familia tiene una historia y pronto tendrás una propia que contar. Entregas desde 2012, cuando éramos solo Cachorros RD.',
+               'Every puppy and family has a story, and soon you\u2019ll have your own to tell. Delivering since 2012, when we were just Cachorros RD.'],
     hint:     ['Pasa el mouse para pausar', 'Hover to pause the marquee'],
     cards: [
       { name: ['Mochi y Sofía',  'Mochi & Sofia'],  loc: ['Miami, FL',     'Miami, FL'],     breed: ['Golden Retriever', 'Golden Retriever'] },

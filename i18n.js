@@ -123,8 +123,8 @@ const STRINGS = {
     title_a: ["Miles de razones", "Thousands of reasons"],
     title_b: ["para sonre\xEDr.", "to smile."],
     sub: [
-      "Cada cachorro y familia tiene una historia y pronto tendr\xE1s una propia que contar.",
-      "Every puppy and family has a story, and soon you\u2019ll have your own to tell."
+      "Cada cachorro y familia tiene una historia y pronto tendr\xE1s una propia que contar. Entregas desde 2012, cuando \xE9ramos solo Cachorros RD.",
+      "Every puppy and family has a story, and soon you\u2019ll have your own to tell. Delivering since 2012, when we were just Cachorros RD."
     ],
     hint: ["Pasa el mouse para pausar", "Hover to pause the marquee"],
     cards: [
