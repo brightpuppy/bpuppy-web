@@ -47,6 +47,12 @@ function MediaApp({ visibility = {} }) {
 }
 function MediaHero() {
   const t = useT();
+  const [feat, setFeat] = React.useState("M4D398WTPb0");
+  const EPISODES = [
+    { id: "M4D398WTPb0", title: ["The Girl \u2014 Comercial", "The Girl \u2014 Commercial"], tag: ["Nuevo", "New"] },
+    { id: "m5zU7U34GC0", title: ["Comercial 2", "Commercial 2"], tag: ["Comercial", "Commercial"] },
+    { id: t(["qW0jwJeNrPk", "YImasdUtIrI"]), title: ["Nuestra historia (corto)", "Our story (short)"], tag: ["Historia", "Story"] }
+  ];
   const chars = [
     { c: "B", outline: false, stroke: null, dur: 5.8, delay: 0 },
     { c: "M", outline: true, stroke: "rgba(255,255,255,0.38)", dur: 6.5, delay: -0.9 },
@@ -84,16 +90,58 @@ function MediaHero() {
     },
     /* @__PURE__ */ React.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "currentColor" }, /* @__PURE__ */ React.createElement("polygon", { points: "5 3 19 12 5 21 5 3" })),
     t(["Ver ahora", "Watch now"])
-  ))), /* @__PURE__ */ React.createElement("div", { style: { padding: "0 clamp(24px,6vw,120px) 48px", position: "relative", zIndex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", borderRadius: 20, overflow: "hidden", background: "rgba(255,255,255,0.048)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(16px)", maxWidth: 700, boxShadow: "0 4px 64px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)" } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", aspectRatio: "16/9" } }, /* @__PURE__ */ React.createElement(
+  ))), /* @__PURE__ */ React.createElement("div", { style: { padding: "0 clamp(24px,6vw,120px) 48px", position: "relative", zIndex: 1, display: "flex", gap: 24, flexWrap: "wrap", alignItems: "stretch" } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", borderRadius: 20, overflow: "hidden", background: "rgba(255,255,255,0.048)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(16px)", flex: "1 1 420px", maxWidth: 700, boxShadow: "0 4px 64px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)" } }, /* @__PURE__ */ React.createElement("div", { style: { position: "relative", aspectRatio: "16/9" } }, /* @__PURE__ */ React.createElement(
     "iframe",
     {
-      src: "https://www.youtube.com/embed/M4D398WTPb0?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es",
-      title: "Comercial 1 BPuppy",
+      key: feat,
+      src: "https://www.youtube.com/embed/" + feat + "?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es",
+      title: "BPuppy Media",
       allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
       allowFullScreen: true,
       style: { position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", display: "block" }
     }
-  ), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 14, left: 14, background: MC.brand, color: "#fff", fontSize: 10.5, fontWeight: 700, padding: "4px 10px", borderRadius: 6, letterSpacing: "0.06em", textTransform: "uppercase", pointerEvents: "none" } }, t(["Nuevo", "New"]))), /* @__PURE__ */ React.createElement("div", { style: { padding: "18px 20px 22px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 600, color: MC.brand, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 } }, t(["Episodio destacado", "Featured episode"])), /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 700, color: "rgba(255,255,255,0.92)", letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 8 } }, t(["Mira nuestro \xFAltimo episodio", "Watch our latest episode"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: "rgba(255,255,255,0.35)" } }, "BPuppy \xB7 2026")))), /* @__PURE__ */ React.createElement("div", { style: { borderTop: "1px solid rgba(255,255,255,0.07)", overflow: "hidden", height: 38, display: "flex", alignItems: "center", background: "rgba(0,0,0,0.22)", position: "relative", zIndex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 0, animation: "mediaTicker 26s linear infinite", whiteSpace: "nowrap" } }, [...Array(4)].map(function(_, i) {
+  ), /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 14, left: 14, background: MC.brand, color: "#fff", fontSize: 10.5, fontWeight: 700, padding: "4px 10px", borderRadius: 6, letterSpacing: "0.06em", textTransform: "uppercase", pointerEvents: "none" } }, t((EPISODES.find(function(e) {
+    return e.id === feat;
+  }) || EPISODES[0]).tag))), /* @__PURE__ */ React.createElement("div", { style: { padding: "18px 20px 22px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 600, color: MC.brand, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 } }, t(["Episodio destacado", "Featured episode"])), /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 700, color: "rgba(255,255,255,0.92)", letterSpacing: "-0.02em", lineHeight: 1.2, marginBottom: 8 } }, t((EPISODES.find(function(e) {
+    return e.id === feat;
+  }) || EPISODES[0]).title)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: "rgba(255,255,255,0.35)" } }, "BPuppy \xB7 2026"))), /* @__PURE__ */ React.createElement("div", { style: { flex: "1 1 300px", maxWidth: 440, borderRadius: 20, background: "rgba(255,255,255,0.048)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(16px)", boxShadow: "0 4px 64px rgba(0,0,0,0.45), inset 0 1px 0 rgba(255,255,255,0.08)", padding: "20px 18px", display: "flex", flexDirection: "column", gap: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: MC.brand, letterSpacing: "0.1em", textTransform: "uppercase", margin: "2px 4px 6px" } }, t(["M\xE1s episodios", "More episodes"])), EPISODES.map(function(ep) {
+    const sel = ep.id === feat;
+    return /* @__PURE__ */ React.createElement(
+      "button",
+      {
+        key: ep.id,
+        type: "button",
+        onClick: function() {
+          setFeat(ep.id);
+        },
+        style: { display: "flex", alignItems: "center", gap: 14, padding: 10, borderRadius: 14, cursor: "pointer", textAlign: "left", background: "transparent", border: sel ? "1.5px solid " + MC.brand : "1.5px solid rgba(255,255,255,0.08)", transition: "border-color .2s, background .2s" },
+        onMouseEnter: function(e) {
+          if (!sel) e.currentTarget.style.background = "rgba(255,255,255,0.05)";
+        },
+        onMouseLeave: function(e) {
+          e.currentTarget.style.background = "transparent";
+        }
+      },
+      /* @__PURE__ */ React.createElement("div", { style: { position: "relative", width: 96, minWidth: 96, aspectRatio: "16/9", borderRadius: 8, overflow: "hidden", background: "#000" } }, /* @__PURE__ */ React.createElement("img", { src: "https://i.ytimg.com/vi/" + ep.id + "/mqdefault.jpg", alt: t(ep.title), loading: "lazy", style: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block", opacity: sel ? 1 : 0.85 } }), /* @__PURE__ */ React.createElement("svg", { width: "22", height: "22", viewBox: "0 0 24 24", fill: "rgba(255,255,255,0.92)", style: { position: "absolute", top: "50%", left: "50%", transform: "translate(-50%,-50%)", filter: "drop-shadow(0 1px 4px rgba(0,0,0,0.6))" } }, /* @__PURE__ */ React.createElement("polygon", { points: "6 3 21 12 6 21 6 3" }))),
+      /* @__PURE__ */ React.createElement("div", { style: { minWidth: 0 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, fontWeight: 700, color: sel ? "#fff" : "rgba(255,255,255,0.78)", lineHeight: 1.3, marginBottom: 3 } }, t(ep.title)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: "rgba(255,255,255,0.35)", textTransform: "uppercase", letterSpacing: "0.06em" } }, sel ? t(["Reproduciendo", "Now playing"]) : t(ep.tag)))
+    );
+  }), /* @__PURE__ */ React.createElement(
+    "a",
+    {
+      href: "https://www.youtube.com/watch?v=" + feat,
+      target: "_blank",
+      rel: "noopener",
+      style: { marginTop: "auto", display: "inline-flex", alignItems: "center", justifyContent: "center", gap: 8, padding: "11px 18px", borderRadius: 999, border: "1.5px solid rgba(255,255,255,0.22)", color: "rgba(255,255,255,0.85)", fontWeight: 700, fontSize: 13, textDecoration: "none", transition: "border-color .2s" },
+      onMouseEnter: function(e) {
+        e.currentTarget.style.borderColor = MC.brand;
+      },
+      onMouseLeave: function(e) {
+        e.currentTarget.style.borderColor = "rgba(255,255,255,0.22)";
+      }
+    },
+    /* @__PURE__ */ React.createElement("svg", { width: "15", height: "15", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6" }), /* @__PURE__ */ React.createElement("polyline", { points: "15 3 21 3 21 9" }), /* @__PURE__ */ React.createElement("line", { x1: "10", y1: "14", x2: "21", y2: "3" })),
+    t(["Ver en YouTube", "Watch on YouTube"])
+  ))), /* @__PURE__ */ React.createElement("div", { style: { borderTop: "1px solid rgba(255,255,255,0.07)", overflow: "hidden", height: 38, display: "flex", alignItems: "center", background: "rgba(0,0,0,0.22)", position: "relative", zIndex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 0, animation: "mediaTicker 26s linear infinite", whiteSpace: "nowrap" } }, [...Array(4)].map(function(_, i) {
     return /* @__PURE__ */ React.createElement("span", { key: i, style: { fontSize: 10.5, fontWeight: 700, letterSpacing: "0.13em", textTransform: "uppercase", color: "rgba(255,255,255,0.25)", paddingRight: 72 } }, /* @__PURE__ */ React.createElement("span", { style: { color: MC.brand } }, "\u25C6"), "\xA0", t(["Videos", "Videos"]), " \xA0\xB7\xA0 ", t(["Podcasts", "Podcasts"]), " \xA0\xB7\xA0 ", t(["Entrevistas", "Interviews"]), " \xA0\xB7\xA0 ", t(["Razas", "Breeds"]), " \xA0\xB7\xA0 ", t(["Crianza", "Breeding"]), " \xA0\xB7\xA0 ", t(["Salud", "Health"]), " \xA0\xB7\xA0 ", t(["Adopciones", "Adoptions"]), " \xA0\xB7\xA0 ", t(["Comunidad", "Community"]), " \xA0");
   }))));
 }
