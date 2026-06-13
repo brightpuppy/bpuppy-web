@@ -228,7 +228,7 @@ function BlogListing({ onSelect }) {
 }
 
 // ── Article reader ─────────────────────────────────────────────────────────────
-function ArticleReader({ art, onBack }) {
+function ArticleReader({ art, onBack, onSelect }) {
   const related = useMemo(() =>
     BLOG.filter(a => a.id !== art.id && (a.cat === art.cat || (a.tags || []).some(t => (art.tags || []).includes(t)))).slice(0, 3)
   , [art]);
@@ -416,7 +416,7 @@ function ArticleReader({ art, onBack }) {
           <div className="container">
             <h3 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 22, fontWeight: 800, letterSpacing: '-0.02em', color: 'var(--ink)', margin: '0 0 24px' }}>{tr('Artículos relacionados', 'Related articles')}</h3>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill,minmax(260px,1fr))', gap: 20 }}>
-              {related.map(a => <ArticleCard key={a.id} art={a} onClick={onBack.constructor === Function ? () => {} : onBack} featured={false} />)}
+              {related.map(a => <ArticleCard key={a.id} art={a} onClick={onSelect || onBack} featured={false} />)}
             </div>
           </div>
         </div>
@@ -468,7 +468,7 @@ function BlogApp({ initialArtId, onHero }) {
   };
 
   if (selected) {
-    return <ArticleReader art={selected} onBack={handleBack} />;
+    return <ArticleReader art={selected} onBack={handleBack} onSelect={handleSelect} />;
   }
   return <BlogListing onSelect={handleSelect} />;
 }

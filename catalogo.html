@@ -277,7 +277,7 @@
       + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">'
       +   '<button onclick="document.getElementById(\'dtlOv\').remove();interes('+i+')" style="width:100%;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Me interesa','I am interested')+'</button>'
       +   (reserved?'':'<button onclick="document.getElementById(\'dtlOv\').remove();apartar('+i+')" style="width:100%;background:#0EA5E9;color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — $500','Reserve — $500')+'</button>')
-      +   '<button onclick="document.getElementById(\'dtlOv\').remove();financiar('+i+')" style="width:100%;background:none;border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('💳 Tarjeta / Financiar','💳 Card / Finance')+'</button>'
+      +   '<button onclick="document.getElementById(\'dtlOv\').remove();financiar('+i+')" style="width:100%;background:linear-gradient(135deg,#1D4ED8,#38BDF8);border:none;color:#fff;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 5px 16px rgba(29,78,216,.38)">'+T('💳 Tarjeta / Financiar','💳 Card / Finance')+'</button>'
       + '</div>'
       + '</div>';
     document.body.appendChild(ov);
@@ -360,7 +360,7 @@
           + '<div style="margin-top:9px;font-size:12.5px;font-weight:700;color:var(--orange)">'+T('ⓘ Ver detalles e info de la raza','ⓘ See details & breed info')+'</div>'
           + '<button class="cta" onclick="event.stopPropagation();interes('+i+')" style="border:none;cursor:pointer;width:100%;font-family:inherit;margin-top:9px">'+T('Me interesa','I am interested')+'</button>'
           + (reserved? '' : '<button onclick="event.stopPropagation();apartar('+i+')" style="margin-top:8px;width:100%;background:#16a34a;color:#fff;border:none;border-radius:12px;padding:11px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — $500','Reserve — $500')+'</button>')
-          + (reserved? '' : '<button onclick="event.stopPropagation();financiar('+i+')" style="margin-top:8px;width:100%;background:none;border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;padding:10px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Tarjeta / Financiar','Card / Finance')+'</button>')
+          + (reserved? '' : '<button onclick="event.stopPropagation();financiar('+i+')" style="margin-top:8px;width:100%;background:linear-gradient(135deg,#1D4ED8,#38BDF8);border:none;color:#fff;border-radius:12px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 5px 16px rgba(29,78,216,.38)">'+T('💳 Tarjeta / Financiar','💳 Card / Finance')+'</button>')
         + '</div>'
       + '</div>';
     }).join('');
