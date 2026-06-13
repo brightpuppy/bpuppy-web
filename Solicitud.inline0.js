@@ -52,6 +52,8 @@ function SolicitudForm() {
     email: "",
     phone: "",
     state: "",
+    contact_lang: "",
+    contact_method: "",
     notes: ""
   });
   function set(key, val) {
@@ -72,7 +74,7 @@ function SolicitudForm() {
     if (step === 1) return !!form.living;
     if (step === 2) {
       var emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email || "");
-      return !!(form.name && form.name.trim().length >= 2) && emailOk && usPhoneOk(form.phone) && !!form.state;
+      return !!(form.name && form.name.trim().length >= 2) && emailOk && usPhoneOk(form.phone) && !!form.state && !!form.contact_lang && !!form.contact_method;
     }
     return false;
   }
@@ -88,6 +90,8 @@ function SolicitudForm() {
       form.age_pref && `Edad preferida: ${form.age_pref}`,
       `Vive en: ${form.living}`,
       form.state && `Estado (EE. UU.): ${form.state}`,
+      form.contact_lang && `Idioma de contacto: ${form.contact_lang}`,
+      form.contact_method && `Contactar por: ${form.contact_method}`,
       form.kids && `Ni\xF1os: ${form.kids}`,
       form.other_pets && `Otras mascotas: ${form.other_pets}`,
       form.energy && `Energ\xEDa: ${form.energy}`,
@@ -106,6 +110,8 @@ function SolicitudForm() {
         email: form.email,
         phone: form.phone,
         state: form.state,
+        contact_lang: form.contact_lang,
+        contact_method: form.contact_method,
         puppy_breed: form.breed || null,
         message: msg,
         source: "solicitud_ideal"
@@ -189,7 +195,7 @@ function SolicitudForm() {
         style: { width: "100%", padding: "12px 16px", border: "1.5px solid var(--line)", borderRadius: 10, fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", background: "#fff", outline: "none", boxSizing: "border-box" }
       }
     ), f[0] === "phone" && form.phone && !usPhoneOk(form.phone) ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#B3431E", marginTop: 5, lineHeight: 1.5 } }, t(["Ingresa un n\xFAmero de tel\xE9fono de EE. UU. v\xE1lido (10 d\xEDgitos). Nuestro servicio est\xE1 disponible solo en USA.", "Enter a valid US phone number (10 digits). Our service is available in the USA only."])) : null);
-  }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 11, fontWeight: 700, color: "var(--ink-2)", display: "block", marginBottom: 4 } }, t(["Estado (EE. UU.) *", "State (USA) *"])), /* @__PURE__ */ React.createElement("select", { value: form.state, onChange: function(e) { set("state", e.target.value); }, style: { width: "100%", padding: "12px 16px", border: "1.5px solid var(--line)", borderRadius: 10, fontFamily: "var(--body)", fontSize: 14, color: form.state ? "var(--ink)" : "#9a8c7e", background: "#fff", outline: "none", boxSizing: "border-box" } }, /* @__PURE__ */ React.createElement("option", { value: "" }, t(["Selecciona tu estado…", "Select your state…"])), "Alabama,Alaska,Arizona,Arkansas,California,Colorado,Connecticut,Delaware,Florida,Georgia,Hawaii,Idaho,Illinois,Indiana,Iowa,Kansas,Kentucky,Louisiana,Maine,Maryland,Massachusetts,Michigan,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New Hampshire,New Jersey,New Mexico,New York,North Carolina,North Dakota,Ohio,Oklahoma,Oregon,Pennsylvania,Rhode Island,South Carolina,South Dakota,Tennessee,Texas,Utah,Vermont,Virginia,Washington,West Virginia,Wisconsin,Wyoming,Washington D.C.,Puerto Rico".split(",").map(function(s) { return /* @__PURE__ */ React.createElement("option", { key: s, value: s }, s); }))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 11, fontWeight: 700, color: "var(--ink-2)", display: "block", marginBottom: 4 } }, t(["Algo m\xE1s que debamos saber", "Anything else we should know"])), /* @__PURE__ */ React.createElement(
+  }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 11, fontWeight: 700, color: "var(--ink-2)", display: "block", marginBottom: 4 } }, t(["Estado (EE. UU.) *", "State (USA) *"])), /* @__PURE__ */ React.createElement("select", { value: form.state, onChange: function(e) { set("state", e.target.value); }, style: { width: "100%", padding: "12px 16px", border: "1.5px solid var(--line)", borderRadius: 10, fontFamily: "var(--body)", fontSize: 14, color: form.state ? "var(--ink)" : "#9a8c7e", background: "#fff", outline: "none", boxSizing: "border-box" } }, /* @__PURE__ */ React.createElement("option", { value: "" }, t(["Selecciona tu estado…", "Select your state…"])), "Alabama,Alaska,Arizona,Arkansas,California,Colorado,Connecticut,Delaware,Florida,Georgia,Hawaii,Idaho,Illinois,Indiana,Iowa,Kansas,Kentucky,Louisiana,Maine,Maryland,Massachusetts,Michigan,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New Hampshire,New Jersey,New Mexico,New York,North Carolina,North Dakota,Ohio,Oklahoma,Oregon,Pennsylvania,Rhode Island,South Carolina,South Dakota,Tennessee,Texas,Utah,Vermont,Virginia,Washington,West Virginia,Wisconsin,Wyoming,Washington D.C.,Puerto Rico".split(",").map(function(s) { return /* @__PURE__ */ React.createElement("option", { key: s, value: s }, s); }))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 12, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("div", { style: { flex: "1 1 160px" } }, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 11, fontWeight: 700, color: "var(--ink-2)", display: "block", marginBottom: 4 } }, t(["Idioma para hablarte *", "Language to talk to you *"])), /* @__PURE__ */ React.createElement("select", { value: form.contact_lang, onChange: function(e) { set("contact_lang", e.target.value); }, style: { width: "100%", padding: "12px 16px", border: "1.5px solid var(--line)", borderRadius: 10, fontFamily: "var(--body)", fontSize: 14, color: form.contact_lang ? "var(--ink)" : "#9a8c7e", background: "#fff", outline: "none", boxSizing: "border-box" } }, /* @__PURE__ */ React.createElement("option", { value: "" }, t(["Selecciona…", "Select…"])), /* @__PURE__ */ React.createElement("option", { value: "Espa\xF1ol" }, "Espa\xF1ol"), /* @__PURE__ */ React.createElement("option", { value: "English" }, "English"))), /* @__PURE__ */ React.createElement("div", { style: { flex: "1 1 160px" } }, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 11, fontWeight: 700, color: "var(--ink-2)", display: "block", marginBottom: 4 } }, t(["Contactar tu n\xFAmero por *", "Contact your number via *"])), /* @__PURE__ */ React.createElement("select", { value: form.contact_method, onChange: function(e) { set("contact_method", e.target.value); }, style: { width: "100%", padding: "12px 16px", border: "1.5px solid var(--line)", borderRadius: 10, fontFamily: "var(--body)", fontSize: 14, color: form.contact_method ? "var(--ink)" : "#9a8c7e", background: "#fff", outline: "none", boxSizing: "border-box" } }, /* @__PURE__ */ React.createElement("option", { value: "" }, t(["Selecciona…", "Select…"])), /* @__PURE__ */ React.createElement("option", { value: "WhatsApp" }, "WhatsApp"), /* @__PURE__ */ React.createElement("option", { value: "SMS" }, t(["SMS (texto)", "SMS (text)"]))))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 11, fontWeight: 700, color: "var(--ink-2)", display: "block", marginBottom: 4 } }, t(["Algo m\xE1s que debamos saber", "Anything else we should know"])), /* @__PURE__ */ React.createElement(
     "textarea",
     {
       rows: "3",
