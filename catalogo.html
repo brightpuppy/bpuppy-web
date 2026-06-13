@@ -99,8 +99,20 @@
   <div class="topbar"><div class="wrap">
     <img src="assets/logo.webp" alt="BrightPuppy" onerror="this.style.display='none'">
     <span class="brandname">BrightPuppy</span>
-    <span class="priv"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0110 0v4"/></svg> Catálogo privado</span>
   </div></div>
+  <div style="background:var(--paper,#faf5ee);border-bottom:1px solid var(--line);padding:9px 16px;font-size:12.5px;color:var(--ink-2)">
+    <div class="wrap" style="display:flex;flex-wrap:wrap;gap:6px 14px;align-items:center;justify-content:center;text-align:center">
+      <span id="trustline">Paga en <b>cuotas sin intereses</b> (Klarna/Afterpay) · aparta con <b>$500</b> · o paga con tarjeta, Cash App y más</span>
+      <span style="opacity:.4">|</span>
+      <nav style="display:flex;gap:12px;flex-wrap:wrap">
+        <a href="/terminos" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Condiciones</a>
+        <a href="/garantia" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Garantía</a>
+        <a href="/nosotros" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Por qué confiar en nosotros</a>
+        <a href="/reembolsos" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Reembolsos</a>
+      </nav>
+    </div>
+  </div>
+  <script>try{if((localStorage.getItem('bpuppy-lang')||'es')==='en'){var _t=document.getElementById('trustline');if(_t)_t.innerHTML='Pay in <b>interest-free installments</b> (Klarna/Afterpay) · reserve with <b>$500</b> · or pay by card, Cash App & more';}}catch(e){}</script>
 
   <div id="app">
     <div class="center"><div><div class="spinner"></div><div style="color:var(--ink-soft);font-weight:600">Cargando tu catálogo…</div></div></div>
@@ -178,6 +190,7 @@
   }
   var SIZE_LBL={ small:['Pequeño','Small'], medium:['Mediano','Medium'], large:['Grande','Large'], xlarge:['Muy grande','Very large'], toy:['Toy / muy pequeño','Toy'] };
   function scaleTxt(n, words){ n=Number(n)||0; if(n<1) return ''; return words[Math.max(1,Math.min(words.length-1,n))]||''; }
+  function blogArticleFor(breed){ var n=String(breed||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); if(!n) return null; var M=[['golden',1],['french',2],['frances',2],['labrador',3],['poodle',4],['caniche',4],['schnauzer',5],['yorkshire',6],['yorkie',6],['york',6],['beagle',7],['cocker',8],['chihuahua',9],['shih',10],['shitzu',10]]; for(var i=0;i<M.length;i++){ if(n.indexOf(M[i][0])>=0) return M[i][1]; } return null; }
 
   function interes(i){
     var p=(window._PUPS||[])[i]; if(!p) return;
@@ -275,6 +288,7 @@
       + '<div style="font-family:var(--display);font-weight:800;font-size:22px;margin-top:12px">'+money(p.price)+(p.price!=null&&!isNaN(p.price)?' <span style="font-size:12px;color:var(--ink-soft);font-weight:600">USD</span>':'')+'</div>'
       + factsH + descH + breedH
       + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">'
+      +   (p.breed? '<a href="'+(blogArticleFor(p.breed)?('/blog?art='+blogArticleFor(p.breed)):'/razas')+'" target="_blank" rel="noopener" style="display:block;text-align:center;background:none;border:1.5px solid var(--line);color:var(--ink-2);border-radius:12px;padding:11px;font-weight:700;font-size:13.5px;text-decoration:none">'+T('Conocer más sobre los ','Learn more about ')+esc(p.breed)+' →</a>' : '')
       +   '<button onclick="document.getElementById(\'dtlOv\').remove();interes('+i+')" style="width:100%;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Me interesa','I am interested')+'</button>'
       +   (reserved?'':'<button onclick="document.getElementById(\'dtlOv\').remove();apartar('+i+')" style="width:100%;background:#0EA5E9;color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — $500','Reserve — $500')+'</button>')
       +   '<button onclick="document.getElementById(\'dtlOv\').remove();financiar('+i+')" style="width:100%;background:linear-gradient(135deg,#1D4ED8,#38BDF8);border:none;color:#fff;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 5px 16px rgba(29,78,216,.38)">'+T('💳 Tarjeta / Financiar','💳 Card / Finance')+'</button>'
