@@ -51,6 +51,7 @@ function SolicitudForm() {
     name: "",
     email: "",
     phone: "",
+    state: "",
     notes: ""
   });
   function set(key, val) {
@@ -71,7 +72,7 @@ function SolicitudForm() {
     if (step === 1) return !!form.living;
     if (step === 2) {
       var emailOk = /^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(form.email || "");
-      return !!(form.name && form.name.trim().length >= 2) && emailOk && usPhoneOk(form.phone);
+      return !!(form.name && form.name.trim().length >= 2) && emailOk && usPhoneOk(form.phone) && !!form.state;
     }
     return false;
   }
@@ -86,6 +87,7 @@ function SolicitudForm() {
       form.gender && `G\xE9nero: ${form.gender}`,
       form.age_pref && `Edad preferida: ${form.age_pref}`,
       `Vive en: ${form.living}`,
+      form.state && `Estado (EE. UU.): ${form.state}`,
       form.kids && `Ni\xF1os: ${form.kids}`,
       form.other_pets && `Otras mascotas: ${form.other_pets}`,
       form.energy && `Energ\xEDa: ${form.energy}`,
@@ -103,6 +105,8 @@ function SolicitudForm() {
         full_name: form.name,
         email: form.email,
         phone: form.phone,
+        state: form.state,
+        puppy_breed: form.breed || null,
         message: msg,
         source: "solicitud_ideal"
       });
@@ -185,7 +189,7 @@ function SolicitudForm() {
         style: { width: "100%", padding: "12px 16px", border: "1.5px solid var(--line)", borderRadius: 10, fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", background: "#fff", outline: "none", boxSizing: "border-box" }
       }
     ), f[0] === "phone" && form.phone && !usPhoneOk(form.phone) ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#B3431E", marginTop: 5, lineHeight: 1.5 } }, t(["Ingresa un n\xFAmero de tel\xE9fono de EE. UU. v\xE1lido (10 d\xEDgitos). Nuestro servicio est\xE1 disponible solo en USA.", "Enter a valid US phone number (10 digits). Our service is available in the USA only."])) : null);
-  }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 11, fontWeight: 700, color: "var(--ink-2)", display: "block", marginBottom: 4 } }, t(["Algo m\xE1s que debamos saber", "Anything else we should know"])), /* @__PURE__ */ React.createElement(
+  }), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 11, fontWeight: 700, color: "var(--ink-2)", display: "block", marginBottom: 4 } }, t(["Estado (EE. UU.) *", "State (USA) *"])), /* @__PURE__ */ React.createElement("select", { value: form.state, onChange: function(e) { set("state", e.target.value); }, style: { width: "100%", padding: "12px 16px", border: "1.5px solid var(--line)", borderRadius: 10, fontFamily: "var(--body)", fontSize: 14, color: form.state ? "var(--ink)" : "#9a8c7e", background: "#fff", outline: "none", boxSizing: "border-box" } }, /* @__PURE__ */ React.createElement("option", { value: "" }, t(["Selecciona tu estado…", "Select your state…"])), "Alabama,Alaska,Arizona,Arkansas,California,Colorado,Connecticut,Delaware,Florida,Georgia,Hawaii,Idaho,Illinois,Indiana,Iowa,Kansas,Kentucky,Louisiana,Maine,Maryland,Massachusetts,Michigan,Minnesota,Mississippi,Missouri,Montana,Nebraska,Nevada,New Hampshire,New Jersey,New Mexico,New York,North Carolina,North Dakota,Ohio,Oklahoma,Oregon,Pennsylvania,Rhode Island,South Carolina,South Dakota,Tennessee,Texas,Utah,Vermont,Virginia,Washington,West Virginia,Wisconsin,Wyoming,Washington D.C.,Puerto Rico".split(",").map(function(s) { return /* @__PURE__ */ React.createElement("option", { key: s, value: s }, s); }))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("label", { style: { fontSize: 11, fontWeight: 700, color: "var(--ink-2)", display: "block", marginBottom: 4 } }, t(["Algo m\xE1s que debamos saber", "Anything else we should know"])), /* @__PURE__ */ React.createElement(
     "textarea",
     {
       rows: "3",
