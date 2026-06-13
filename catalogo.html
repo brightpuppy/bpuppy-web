@@ -250,7 +250,7 @@
       var info=[];
       if(b.lifespan) info.push([T('Expectativa de vida','Life expectancy'),esc(b.lifespan)]);
       var sz=b.size&&SIZE_LBL[b.size]?T(SIZE_LBL[b.size][0],SIZE_LBL[b.size][1]):(b.size||''); var szl=[sz, b.weight, b.height].filter(Boolean).join(' · '); if(szl) info.push([T('Tamaño','Size'),esc(szl)]);
-      if(b.origin) info.push([T('Origen','Origin'),(b.flag?b.flag+' ':'')+esc(LANG==='en'?(b.originEn||b.origin):b.origin)]);
+      if(b.origin) info.push([T('Origen de la raza','Breed origin'),(b.flag?b.flag+' ':'')+esc(LANG==='en'?(b.originEn||b.origin):b.origin)]);
       var conducta=[];
       var e1=scaleTxt(b.energy,['','Muy tranquilo','Tranquilo','Energía moderada','Activo','Muy activo']); if(e1) conducta.push(T('Energía','Energy')+': '+e1);
       var bk=scaleTxt(b.barking,['','Casi no ladra','Ladra poco','Ladra a veces','Ladrador','Muy ladrador']); if(bk) conducta.push(T('Ladridos','Barking')+': '+bk);
@@ -263,7 +263,7 @@
       var careH=bi.care?'<div style="font-size:13px;color:var(--ink-2);margin:6px 0;line-height:1.55"><b>'+T('Cuidados','Care')+':</b> '+esc(bi.care)+'</div>':'';
       var healthH=bi.health?'<div style="font-size:13px;color:var(--ink-2);margin:6px 0;line-height:1.55"><b>'+T('Salud','Health')+':</b> '+esc(bi.health)+'</div>':'';
       var dscH=bi.desc?'<div style="font-size:13px;color:var(--ink-2);margin:6px 0;line-height:1.6">'+esc(bi.desc)+'</div>':'';
-      breedH='<div style="border-top:1px solid var(--line);margin-top:14px;padding-top:12px"><div style="font-family:var(--display);font-weight:800;font-size:16px;margin-bottom:4px">'+T('Sobre el ','About the ')+esc(p.breed||'')+'</div>'+infoH+tempH+condH+careH+healthH+dscH+'</div>';
+      breedH='<div style="border-top:1px solid var(--line);margin-top:14px;padding-top:12px"><div style="font-family:var(--display);font-weight:800;font-size:16px;margin-bottom:4px">'+T('Sobre la raza ','About the ')+esc(p.breed||'')+'</div>'+infoH+tempH+condH+careH+healthH+dscH+'</div>';
     }
     var reserved=(p.status==='reserved');
     var ov=document.getElementById('dtlOv'); if(ov) ov.remove();
@@ -277,7 +277,7 @@
       + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">'
       +   '<button onclick="document.getElementById(\'dtlOv\').remove();interes('+i+')" style="width:100%;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Me interesa','I am interested')+'</button>'
       +   (reserved?'':'<button onclick="document.getElementById(\'dtlOv\').remove();apartar('+i+')" style="width:100%;background:#0EA5E9;color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — $500','Reserve — $500')+'</button>')
-      +   '<button onclick="document.getElementById(\'dtlOv\').remove();financiar('+i+')" style="width:100%;background:none;border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('💳 Financiar / pagar en cuotas','💳 Finance / pay in installments')+'</button>'
+      +   '<button onclick="document.getElementById(\'dtlOv\').remove();financiar('+i+')" style="width:100%;background:none;border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('💳 Tarjeta / Financiar','💳 Card / Finance')+'</button>'
       + '</div>'
       + '</div>';
     document.body.appendChild(ov);
@@ -294,6 +294,7 @@
       +'<div style="color:var(--orange);font-weight:700;font-size:13px;margin-bottom:12px">'+esc(p.breed||'')+'</div>'
       +'<div style="font-size:13.5px;color:var(--ink-2);line-height:1.6">'+T('Con un <b>apartado de $500</b> confirmas que este cachorrito sería tuyo. Un asesor de BrightPuppy te contactará para confirmar todo y coordinar la entrega.','With a <b>$500 reservation</b> you confirm this puppy would be yours. A BrightPuppy advisor will contact you to confirm everything and arrange delivery.')+'</div>'
       +'<div style="background:var(--paper,#faf5ee);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--ink-2);margin:13px 0;line-height:1.55">'+T('Como los cachorros se venden muy rápido (a veces en menos de 1 hora), tu depósito es <b>reembolsable</b> si el cachorro exacto ya no está disponible — te lo devolvemos o te buscamos otro de la misma raza y características. Tu depósito siempre está protegido. 💛','Because puppies sell very fast (sometimes in under an hour), your deposit is <b>refundable</b> if the exact puppy is no longer available — we refund it or find you another of the same breed. Your deposit is always protected. 💛')+'</div>'
+      +'<div style="font-size:12px;color:var(--ink-soft);margin:0 0 10px;text-align:center">'+T('Puedes pagar el apartado con tarjeta, Cash App, Klarna o Afterpay.','You can pay the deposit with card, Cash App, Klarna or Afterpay.')+'</div>'
       +'<button id="aptGo" style="width:100%;background:linear-gradient(135deg,#F58220,#FF9800);color:#fff;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">'+T('Apartar ahora — $500','Reserve now — $500')+'</button>'
       +'<button onclick="document.getElementById(\'aptOv\').remove()" style="width:100%;background:none;border:none;color:var(--ink-soft);font-size:13px;margin-top:8px;cursor:pointer">'+T('Cancelar','Cancel')+'</button>'
       +'</div>';
@@ -359,6 +360,7 @@
           + '<div style="margin-top:9px;font-size:12.5px;font-weight:700;color:var(--orange)">'+T('ⓘ Ver detalles e info de la raza','ⓘ See details & breed info')+'</div>'
           + '<button class="cta" onclick="event.stopPropagation();interes('+i+')" style="border:none;cursor:pointer;width:100%;font-family:inherit;margin-top:9px">'+T('Me interesa','I am interested')+'</button>'
           + (reserved? '' : '<button onclick="event.stopPropagation();apartar('+i+')" style="margin-top:8px;width:100%;background:#16a34a;color:#fff;border:none;border-radius:12px;padding:11px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — $500','Reserve — $500')+'</button>')
+          + (reserved? '' : '<button onclick="event.stopPropagation();financiar('+i+')" style="margin-top:8px;width:100%;background:none;border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;padding:10px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Tarjeta / Financiar','Card / Finance')+'</button>')
         + '</div>'
       + '</div>';
     }).join('');
