@@ -173,34 +173,117 @@
     var care=(LANG==='en'?(best.careEn||best.care):(best.care||best.careEn))||'';
     var desc=(LANG==='en'?(best.descEn||best.desc):(best.desc||best.descEn))||'';
     var coats=(best.coat||[]).map(function(c){ var l=COAT_LBL[c]; return l?T(l[0],l[1]):c; });
-    return { temperament:temp, coats:coats, care:care, desc:desc };
+    var health=(LANG==='en'?(best.healthEn||best.health):(best.health||best.healthEn))||'';
+    return { temperament:temp, coats:coats, care:care, desc:desc, health:health, raw:best };
   }
+  var SIZE_LBL={ small:['Pequeño','Small'], medium:['Mediano','Medium'], large:['Grande','Large'], xlarge:['Muy grande','Very large'], toy:['Toy / muy pequeño','Toy'] };
+  function scaleTxt(n, words){ n=Number(n)||0; if(n<1) return ''; return words[Math.max(1,Math.min(words.length-1,n))]||''; }
 
   function interes(i){
     var p=(window._PUPS||[])[i]; if(!p) return;
-    var price=(p.price!=null&&!isNaN(p.price))?Number(p.price):null;
-    var wa='https://wa.me/'+WA+'?text='+encodeURIComponent('Hola! Me interesa '+(p.name?p.name+' ':'')+'('+(p.breed||'cachorro')+') de mi catalogo. Quiero ver opciones de pago/financiamiento.');
-    var planH='';
-    if(price){ planH='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 6px">'
-      + '<div style="border:1px solid var(--line);border-radius:12px;padding:10px"><div style="font-size:11px;color:var(--ink-soft);font-weight:700">Klarna / Afterpay</div><div style="font-family:var(--display);font-weight:800;font-size:18px">'+money2(price/4)+'</div><div style="font-size:11px;color:var(--ink-soft)">'+T('x4 pagos · 0% interés','x4 payments · 0% interest')+'</div></div>'
-      + '<div style="border:1px solid var(--line);border-radius:12px;padding:10px"><div style="font-size:11px;color:var(--ink-soft);font-weight:700">Affirm</div><div style="font-family:var(--display);font-weight:800;font-size:18px">'+money2(price*1.15/12)+'<span style="font-size:11px">/'+T('mes','mo')+'</span></div><div style="font-size:11px;color:var(--ink-soft)">'+T('~12 meses','~12 months')+'</div></div>'
-      + '</div>'; }
+    var msg='Hola! Me interesa '+(p.name?p.name+' ':'')+'('+(p.breed||'cachorro')+') que vi en mi catálogo. ¿Sigue disponible?';
+    var enc=encodeURIComponent(msg);
+    var wa='https://wa.me/'+WA+'?text='+enc;
+    var sms='sms:+'+WA+'?&body='+enc;
     var ov=document.getElementById('intOv'); if(ov) ov.remove();
     ov=document.createElement('div'); ov.id='intOv';
     ov.style.cssText='position:fixed;inset:0;background:rgba(20,15,12,.6);z-index:200;display:flex;align-items:center;justify-content:center;padding:18px';
-    ov.innerHTML='<div style="background:var(--card);border-radius:20px;max-width:440px;width:100%;padding:22px;max-height:92vh;overflow:auto;box-shadow:var(--shadow)">'
+    ov.innerHTML='<div style="background:var(--card);border-radius:20px;max-width:420px;width:100%;padding:22px;max-height:92vh;overflow:auto;box-shadow:var(--shadow)">'
       + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><div style="font-family:var(--display);font-weight:800;font-size:20px">'+esc(p.name||p.breed||'Cachorro')+'</div><div style="color:var(--orange);font-weight:700;font-size:13px">'+esc(p.breed||'')+'</div></div><button onclick="document.getElementById(\'intOv\').remove()" style="background:none;border:none;font-size:26px;cursor:pointer;color:var(--ink-soft);line-height:1">&times;</button></div>'
-      + (price? '<div style="font-family:var(--display);font-weight:800;font-size:24px;margin-top:8px">'+money2(price)+' <span style="font-size:13px;color:var(--ink-soft);font-weight:600">USD</span></div>':'')
-      + '<div style="font-size:13px;color:var(--ink-2);margin-top:8px">'+T('Puedes financiarlo en cómodos pagos o pagar como prefieras. Estimaciones:','You can finance it in easy payments or pay however you prefer. Estimates:')+'</div>'
-      + planH
-      + '<div style="font-size:12px;color:var(--ink-soft);margin:8px 0 14px">'+T('También aceptamos Zelle, Cash App, tarjeta y transferencia.','We also accept Zelle, Cash App, card and bank transfer.')+'</div>'
-      + '<a href="'+wa+'" target="_blank" rel="noopener" class="btn-wa" style="display:flex;justify-content:center;width:100%;margin-bottom:10px"><svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg> '+T('Me interesa — WhatsApp','I am interested — WhatsApp')+'</a>'
-      + '<a href="/financiamiento" target="_blank" style="display:block;text-align:center;font-size:13px;color:var(--orange);font-weight:700">'+T('Ver opciones de financiamiento →','See financing options →')+'</a>'
+      + '<div style="font-size:14px;color:var(--ink-2);margin:10px 0 14px">'+T('¿Cómo prefieres que sigamos? Te abrimos el mensaje listo para enviar:','How would you like to continue? We open the message ready to send:')+'</div>'
+      + '<a href="'+wa+'" target="_blank" rel="noopener" class="btn-wa" style="display:flex;justify-content:center;width:100%;margin-bottom:10px"><svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg> '+T('Enviar por WhatsApp','Send via WhatsApp')+'</a>'
+      + '<a href="'+sms+'" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:#3B82F6;color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;text-decoration:none;margin-bottom:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> '+T('Enviar por SMS','Send via SMS')+'</a>'
+      + '<button onclick="document.getElementById(\'intOv\').remove();financiar('+i+')" style="display:block;width:100%;text-align:center;background:none;border:none;font-size:13px;color:var(--orange);font-weight:700;cursor:pointer;font-family:inherit">'+T('💳 Ver opciones de financiamiento / pagar →','💳 See financing / pay options →')+'</button>'
       + '</div>';
     document.body.appendChild(ov);
     ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
   }
   window.interes=interes;
+  function financiar(i){
+    var p=(window._PUPS||[])[i]; if(!p||!p.id) return;
+    var price=(p.price!=null&&!isNaN(p.price))?Number(p.price):null;
+    var planH='';
+    if(price){ planH='<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0 6px">'
+      + '<div style="border:1px solid var(--line);border-radius:12px;padding:10px"><div style="font-size:11px;color:var(--ink-soft);font-weight:700">Klarna / Afterpay</div><div style="font-family:var(--display);font-weight:800;font-size:18px">'+money2(price/4)+'</div><div style="font-size:11px;color:var(--ink-soft)">'+T('x4 pagos','x4 payments')+'</div></div>'
+      + '<div style="border:1px solid var(--line);border-radius:12px;padding:10px"><div style="font-size:11px;color:var(--ink-soft);font-weight:700">Affirm</div><div style="font-family:var(--display);font-weight:800;font-size:18px">'+money2(price*1.15/12)+'<span style="font-size:11px">/'+T('mes','mo')+'</span></div><div style="font-size:11px;color:var(--ink-soft)">'+T('~12 meses','~12 months')+'</div></div>'
+      + '</div>'; }
+    var ov=document.getElementById('finOv'); if(ov) ov.remove();
+    ov=document.createElement('div'); ov.id='finOv';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(20,15,12,.6);z-index:230;display:flex;align-items:center;justify-content:center;padding:18px';
+    ov.innerHTML='<div style="background:var(--card);border-radius:20px;max-width:440px;width:100%;padding:22px;max-height:92vh;overflow:auto;box-shadow:var(--shadow)">'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div><div style="font-family:var(--display);font-weight:800;font-size:20px">'+T('Financiar a ','Finance ')+esc(p.name||p.breed||'')+'</div><div style="color:var(--orange);font-weight:700;font-size:13px">'+esc(p.breed||'')+'</div></div><button onclick="document.getElementById(\'finOv\').remove()" style="background:none;border:none;font-size:26px;cursor:pointer;color:var(--ink-soft);line-height:1">&times;</button></div>'
+      + (price? '<div style="font-family:var(--display);font-weight:800;font-size:24px;margin-top:8px">'+money2(price)+' <span style="font-size:13px;color:var(--ink-soft);font-weight:600">USD</span></div>':'')
+      + planH
+      + '<div style="background:var(--paper,#faf5ee);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--ink-2);margin:13px 0;line-height:1.55">'+T('Puedes aplicar con <b>Klarna</b>, <b>Afterpay</b> o <b>Affirm</b> en la página de pago. Consultar tu elegibilidad con estas compañías <b>normalmente no afecta tu puntaje de crédito</b> (es una consulta suave) — puedes probar con varias para ver cuál te aprueba.','You can apply with <b>Klarna</b>, <b>Afterpay</b> or <b>Affirm</b> on the payment page. Checking your eligibility with these companies <b>usually does not affect your credit score</b> (it is a soft check) — you can try several.')+'</div>'
+      + '<button id="finGo" style="width:100%;background:linear-gradient(135deg,#F58220,#FF9800);color:#fff;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">'+T('Continuar al pago / financiamiento →','Continue to payment / financing →')+'</button>'
+      + '<div style="font-size:12px;color:var(--ink-soft);margin-top:10px;text-align:center">'+T('También aceptamos tarjeta, Cash App, Zelle y transferencia.','We also accept card, Cash App, Zelle and transfer.')+'</div>'
+      + '</div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
+    document.getElementById('finGo').onclick=function(){
+      var btn=this; btn.disabled=true; btn.textContent=T('Conectando con el pago seguro…','Connecting to secure payment…');
+      fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({type:'finance',token:token,puppy_id:p.id})})
+        .then(function(r){return r.json();}).then(function(d){ if(d&&d.url){ location.href=d.url; } else { btn.disabled=false; btn.textContent=T('Continuar al pago / financiamiento →','Continue to payment / financing →'); alert((d&&d.error)||T('No se pudo iniciar el pago. Escríbenos por WhatsApp.','Could not start payment. Message us on WhatsApp.')); } })
+        .catch(function(){ btn.disabled=false; btn.textContent=T('Continuar al pago / financiamiento →','Continue to payment / financing →'); alert(T('Error de conexión. Intenta de nuevo.','Connection error. Try again.')); });
+    };
+  }
+  window.financiar=financiar;
+  function detalle(i){
+    var p=(window._PUPS||[])[i]; if(!p) return;
+    var bi=breedInfo(p.breed); var b=bi&&bi.raw;
+    var photos=GAL[i]||[]; var crp=GAL_CROP[i];
+    var main=photos[0]||'';
+    var imgH = main ? '<div style="border-radius:14px;overflow:hidden;background:#f3f3f3;aspect-ratio:4/3"><img id="dtl-main" src="'+esc(main)+'" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover'+(crp?';clip-path:inset(0 0 8% 0)':'')+'"></div>' : '';
+    var thumbs = photos.length>1 ? '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+photos.slice(0,8).map(function(u){ return '<img src="'+esc(u)+'" referrerpolicy="no-referrer" onclick="var m=document.getElementById(\'dtl-main\');if(m)m.src=this.src" style="width:52px;height:52px;border-radius:8px;object-fit:cover;cursor:pointer;border:2px solid var(--line)">'; }).join('')+'</div>' : '';
+    var facts=[];
+    var g=genderEs(p.gender); if(g) facts.push([T('Sexo','Sex'),g]);
+    var a=p.age_text?esc(p.age_text):ageEs(p.age_weeks); if(a) facts.push([T('Edad','Age'),a]);
+    if(p.color) facts.push([T('Color','Color'),esc(p.color)]);
+    if(p.born) facts.push([T('Nacimiento','Born'),esc(p.born)]);
+    if(p.pedigree) facts.push([T('Pedigrí / registro','Pedigree'),(p.pedigree==='Sí'?T('Sí','Yes'):esc(p.pedigree))]);
+    if(p.microchip) facts.push([T('Microchip','Microchip'),(p.microchip==='Sí'?T('Sí','Yes'):esc(p.microchip))]);
+    var factsH=facts.length?'<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px 14px;margin:12px 0">'+facts.map(function(x){return '<div style="display:flex;justify-content:space-between;font-size:13px;border-bottom:1px solid var(--line);padding-bottom:4px"><span style="color:var(--ink-soft)">'+x[0]+'</span><span style="font-weight:700">'+x[1]+'</span></div>';}).join('')+'</div>':'';
+    var descH=p.description?'<div style="font-size:13.5px;color:var(--ink-2);line-height:1.6;margin:6px 0 4px">'+esc(p.description)+'</div>':'';
+    // Info de la raza
+    var breedH='';
+    if(b){
+      var info=[];
+      if(b.lifespan) info.push([T('Expectativa de vida','Life expectancy'),esc(b.lifespan)]);
+      var sz=b.size&&SIZE_LBL[b.size]?T(SIZE_LBL[b.size][0],SIZE_LBL[b.size][1]):(b.size||''); var szl=[sz, b.weight, b.height].filter(Boolean).join(' · '); if(szl) info.push([T('Tamaño','Size'),esc(szl)]);
+      if(b.origin) info.push([T('Origen','Origin'),(b.flag?b.flag+' ':'')+esc(LANG==='en'?(b.originEn||b.origin):b.origin)]);
+      var conducta=[];
+      var e1=scaleTxt(b.energy,['','Muy tranquilo','Tranquilo','Energía moderada','Activo','Muy activo']); if(e1) conducta.push(T('Energía','Energy')+': '+e1);
+      var bk=scaleTxt(b.barking,['','Casi no ladra','Ladra poco','Ladra a veces','Ladrador','Muy ladrador']); if(bk) conducta.push(T('Ladridos','Barking')+': '+bk);
+      var kd=scaleTxt(b.kids,['','Mejor sin niños pequeños','Con niños mayores','Bien con niños','Muy bueno con niños','Excelente con niños']); if(kd) conducta.push(T('Con niños','With kids')+': '+kd);
+      var tr=scaleTxt(b.trainability,['','Independiente','Requiere paciencia','Entrenable','Fácil de entrenar','Muy fácil de entrenar']); if(tr) conducta.push(T('Entrenamiento','Training')+': '+tr);
+      var ap=scaleTxt(b.apartment,['','','','Se adapta a casa','Ideal para apartamento','Perfecto para apartamento']); if(ap) conducta.push(T('Hogar','Home')+': '+ap);
+      var infoH=info.length?'<div style="display:flex;flex-direction:column;gap:5px;margin:8px 0">'+info.map(function(x){return '<div style="display:flex;justify-content:space-between;font-size:13px"><span style="color:var(--ink-soft)">'+x[0]+'</span><span style="font-weight:700;text-align:right">'+x[1]+'</span></div>';}).join('')+'</div>':'';
+      var tempH=(bi.temperament&&bi.temperament.length)?'<div style="display:flex;flex-wrap:wrap;gap:5px;margin:8px 0">'+bi.temperament.map(function(t){return '<span class="chip">'+esc(t)+'</span>';}).join('')+'</div>':'';
+      var condH=conducta.length?'<div style="font-size:13px;color:var(--ink-2);line-height:1.7;margin:6px 0"><b>'+T('Conducta','Behavior')+':</b><br>'+conducta.map(esc).join('<br>')+'</div>':'';
+      var careH=bi.care?'<div style="font-size:13px;color:var(--ink-2);margin:6px 0;line-height:1.55"><b>'+T('Cuidados','Care')+':</b> '+esc(bi.care)+'</div>':'';
+      var healthH=bi.health?'<div style="font-size:13px;color:var(--ink-2);margin:6px 0;line-height:1.55"><b>'+T('Salud','Health')+':</b> '+esc(bi.health)+'</div>':'';
+      var dscH=bi.desc?'<div style="font-size:13px;color:var(--ink-2);margin:6px 0;line-height:1.6">'+esc(bi.desc)+'</div>':'';
+      breedH='<div style="border-top:1px solid var(--line);margin-top:14px;padding-top:12px"><div style="font-family:var(--display);font-weight:800;font-size:16px;margin-bottom:4px">'+T('Sobre el ','About the ')+esc(p.breed||'')+'</div>'+infoH+tempH+condH+careH+healthH+dscH+'</div>';
+    }
+    var reserved=(p.status==='reserved');
+    var ov=document.getElementById('dtlOv'); if(ov) ov.remove();
+    ov=document.createElement('div'); ov.id='dtlOv';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(20,15,12,.62);z-index:240;display:flex;align-items:flex-start;justify-content:center;padding:18px;overflow-y:auto';
+    ov.innerHTML='<div style="background:var(--card);border-radius:20px;max-width:560px;width:100%;padding:22px;margin:auto;box-shadow:var(--shadow)">'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px"><div><div style="color:var(--orange);font-weight:700;font-size:13px">'+esc(p.breed||'')+'</div><div style="font-family:var(--display);font-weight:800;font-size:23px">'+esc(p.name||p.breed||'Cachorro')+'</div></div><button onclick="document.getElementById(\'dtlOv\').remove()" style="background:none;border:none;font-size:28px;cursor:pointer;color:var(--ink-soft);line-height:1">&times;</button></div>'
+      + imgH + thumbs
+      + '<div style="font-family:var(--display);font-weight:800;font-size:22px;margin-top:12px">'+money(p.price)+(p.price!=null&&!isNaN(p.price)?' <span style="font-size:12px;color:var(--ink-soft);font-weight:600">USD</span>':'')+'</div>'
+      + factsH + descH + breedH
+      + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">'
+      +   '<button onclick="document.getElementById(\'dtlOv\').remove();interes('+i+')" style="width:100%;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Me interesa','I am interested')+'</button>'
+      +   (reserved?'':'<button onclick="document.getElementById(\'dtlOv\').remove();apartar('+i+')" style="width:100%;background:#0EA5E9;color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — $500','Reserve — $500')+'</button>')
+      +   '<button onclick="document.getElementById(\'dtlOv\').remove();financiar('+i+')" style="width:100%;background:none;border:1.5px solid var(--orange);color:var(--orange);border-radius:12px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('💳 Financiar / pagar en cuotas','💳 Finance / pay in installments')+'</button>'
+      + '</div>'
+      + '</div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
+  }
+  window.detalle=detalle;
   function apartar(i){
     var p=(window._PUPS||[])[i]; if(!p||!p.id) return;
     var ov=document.getElementById('aptOv'); if(ov) ov.remove();
@@ -267,15 +350,15 @@
           + '<span class="badge '+(reserved?'reserved':'available')+'">'+(reserved?T('Reservado','Reserved'):T('Disponible','Available'))+'</span>'
         + '</div>'
         + thumbs
-        + '<div class="body">'
+        + '<div class="body" onclick="detalle('+i+')" style="cursor:pointer">'
           + '<div class="breed">'+esc(p.breed||'')+'</div>'
           + (p.name? '<h3>'+esc(p.name)+'</h3>':'')
           + (meta.length? '<div class="meta">'+meta.map(function(m){return '<span class="chip">'+m+'</span>';}).join('')+'</div>':'')
           + '<div class="price">'+money(p.price)+(p.price!=null&&!isNaN(p.price)?' <small>USD</small>':'')+'</div>'
           + detH
-          + biH
-          + '<button class="cta" onclick="interes('+i+')" style="border:none;cursor:pointer;width:100%;font-family:inherit">'+T('Me interesa','I am interested')+'</button>'
-          + (reserved? '' : '<button onclick="apartar('+i+')" style="margin-top:8px;width:100%;background:#16a34a;color:#fff;border:none;border-radius:12px;padding:11px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — $500','Reserve — $500')+'</button>')
+          + '<div style="margin-top:9px;font-size:12.5px;font-weight:700;color:var(--orange)">'+T('ⓘ Ver detalles e info de la raza','ⓘ See details & breed info')+'</div>'
+          + '<button class="cta" onclick="event.stopPropagation();interes('+i+')" style="border:none;cursor:pointer;width:100%;font-family:inherit;margin-top:9px">'+T('Me interesa','I am interested')+'</button>'
+          + (reserved? '' : '<button onclick="event.stopPropagation();apartar('+i+')" style="margin-top:8px;width:100%;background:#16a34a;color:#fff;border:none;border-radius:12px;padding:11px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — $500','Reserve — $500')+'</button>')
         + '</div>'
       + '</div>';
     }).join('');
