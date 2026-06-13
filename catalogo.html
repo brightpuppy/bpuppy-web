@@ -111,8 +111,8 @@
     <a class="wa" href="https://wa.me/18084928294" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.488-.927z"/></svg> Escríbenos por WhatsApp</a>
   </div></footer>
 
-<script src="breed-data.js?v=1781312733420"></script>
-<script src="cat-breed-data.js?v=1781312733420"></script>
+<script src="breed-data.js?v=1781315902872"></script>
+<script src="cat-breed-data.js?v=1781315902872"></script>
 <script>
 (function(){
   var SUPA = 'https://oqqwmcplljirbreowrll.supabase.co';
@@ -122,6 +122,7 @@
 
   function qp(n){ try{ return new URLSearchParams(location.search).get(n)||''; }catch(e){ return ''; } }
   var token = (qp('t') || qp('token') || '').trim();
+  if(qp('paid')==='1'){ try{ var pb=document.createElement('div'); pb.style.cssText='position:fixed;top:0;left:0;right:0;z-index:300;background:#16a34a;color:#fff;padding:12px 16px;text-align:center;font-weight:700;font-size:14px;font-family:var(--body,sans-serif)'; pb.innerHTML='✓ ¡Apartado recibido! Un asesor de BrightPuppy te contactará muy pronto para confirmar todo y coordinar la entrega. 💛'; document.body.appendChild(pb); setTimeout(function(){ pb.style.transition='opacity .6s'; pb.style.opacity='0'; setTimeout(function(){pb.remove();},700); }, 9000); }catch(e){} }
 
   function esc(s){ return String(s==null?'':s).replace(/[&<>"']/g,function(c){ return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]; }); }
   function money(n){ if(n==null||isNaN(n)) return 'Consultar'; return '$'+Number(n).toLocaleString('en-US'); }
@@ -198,6 +199,29 @@
     ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
   }
   window.interes=interes;
+  function apartar(i){
+    var p=(window._PUPS||[])[i]; if(!p||!p.id) return;
+    var ov=document.getElementById('aptOv'); if(ov) ov.remove();
+    ov=document.createElement('div'); ov.id='aptOv';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(20,15,12,.6);z-index:220;display:flex;align-items:center;justify-content:center;padding:18px';
+    ov.innerHTML='<div style="background:var(--card);border-radius:20px;max-width:440px;width:100%;padding:24px;max-height:92vh;overflow:auto;box-shadow:var(--shadow)">'
+      +'<div style="font-family:var(--display);font-weight:800;font-size:21px">'+T('Apartar a ','Reserve ')+esc(p.name||p.breed||T('este cachorro','this puppy'))+'</div>'
+      +'<div style="color:var(--orange);font-weight:700;font-size:13px;margin-bottom:12px">'+esc(p.breed||'')+'</div>'
+      +'<div style="font-size:13.5px;color:var(--ink-2);line-height:1.6">'+T('Con un <b>apartado de $500</b> confirmas que este cachorrito sería tuyo. Un asesor de BrightPuppy te contactará para confirmar todo y coordinar la entrega.','With a <b>$500 reservation</b> you confirm this puppy would be yours. A BrightPuppy advisor will contact you to confirm everything and arrange delivery.')+'</div>'
+      +'<div style="background:var(--paper,#faf5ee);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--ink-2);margin:13px 0;line-height:1.55">'+T('Como los cachorros se venden muy rápido (a veces en menos de 1 hora), tu depósito es <b>reembolsable</b> si el cachorro exacto ya no está disponible — te lo devolvemos o te buscamos otro de la misma raza y características. Tu depósito siempre está protegido. 💛','Because puppies sell very fast (sometimes in under an hour), your deposit is <b>refundable</b> if the exact puppy is no longer available — we refund it or find you another of the same breed. Your deposit is always protected. 💛')+'</div>'
+      +'<button id="aptGo" style="width:100%;background:linear-gradient(135deg,#F58220,#FF9800);color:#fff;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">'+T('Apartar ahora — $500','Reserve now — $500')+'</button>'
+      +'<button onclick="document.getElementById(\'aptOv\').remove()" style="width:100%;background:none;border:none;color:var(--ink-soft);font-size:13px;margin-top:8px;cursor:pointer">'+T('Cancelar','Cancel')+'</button>'
+      +'</div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+    document.getElementById('aptGo').onclick=function(){
+      var btn=this; btn.disabled=true; btn.textContent=T('Conectando con el pago seguro…','Connecting to secure payment…');
+      fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({type:'apartado',token:token,puppy_id:p.id})})
+        .then(function(r){return r.json();}).then(function(d){ if(d&&d.url){ location.href=d.url; } else { btn.disabled=false; btn.textContent=T('Apartar ahora — $500','Reserve now — $500'); alert((d&&d.error)||T('No se pudo iniciar el pago. Escríbenos por WhatsApp.','Could not start payment. Message us on WhatsApp.')); } })
+        .catch(function(){ btn.disabled=false; btn.textContent=T('Apartar ahora — $500','Reserve now — $500'); alert(T('Error de conexión. Intenta de nuevo.','Connection error. Try again.')); });
+    };
+  }
+  window.apartar=apartar;
   function render(d){
     var pups = d.puppies||[]; window._PUPS = pups;
     if(!pups.length){ app.innerHTML = stateBox(pawIcon,'Catálogo vacío','Tu asesor todavía está preparando tu selección. Escríbenos y te lo enviamos enseguida.', true); return; }
@@ -249,6 +273,7 @@
           + detH
           + biH
           + '<button class="cta" onclick="interes('+i+')" style="border:none;cursor:pointer;width:100%;font-family:inherit">'+T('Me interesa','I am interested')+'</button>'
+          + (reserved? '' : '<button onclick="apartar('+i+')" style="margin-top:8px;width:100%;background:#16a34a;color:#fff;border:none;border-radius:12px;padding:11px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — $500','Reserve — $500')+'</button>')
         + '</div>'
       + '</div>';
     }).join('');
