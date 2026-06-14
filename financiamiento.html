@@ -17,8 +17,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Instrument+Serif:ital@0;1&display=swap">
 <link rel="icon" href="assets/favicon.webp">
-<link rel="stylesheet" href="styles.css?v=1781448742755">
-<script src="site-publish.js?v=1781448742755"></script>
+<link rel="stylesheet" href="styles.css?v=1781465369951">
+<script src="site-publish.js?v=1781465369951"></script>
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
 <style>
@@ -169,10 +169,9 @@ input[type=range]:focus::-webkit-slider-thumb { box-shadow:0 0 0 4px rgba(245,13
     <h1>Tu nuevo compañero<br/><em>merece no esperar.</em></h1>
     <p>Con Klarna, Affirm y Cash App, puedes traer a tu compañero a casa hoy y pagar en cuotas que se adaptan a tu vida. Sin sacrificios. Sin renuncias.</p>
     <div class="fin-hero-ctas">
-      <a href="#calculadora" class="btn btn-primary">Calcular mi plan →</a>
-      <a href="https://wa.me/18084928294?text=Hola!%20Me%20interesa%20saber%20sobre%20los%20planes%20de%20financiamiento%20de%20BPuppy." target="_blank" rel="noreferrer"
-        class="btn" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.2)">
-        💬 Hablar con nosotros
+      <a href="#calculadora" class="btn btn-primary">Hacer pago con tarjeta →</a>
+      <a href="#solicitud" class="btn" style="background:rgba(255,255,255,0.08);color:#fff;border:1px solid rgba(255,255,255,0.2)">
+        Aplicar a financiamiento
       </a>
     </div>
   </div>
@@ -289,6 +288,36 @@ input[type=range]:focus::-webkit-slider-thumb { box-shadow:0 0 0 4px rgba(245,13
   </div>
 </section>
 
+<!-- ── Abonos / Ahorra a tu ritmo ── -->
+<section style="padding:84px 0;background:var(--bg);border-top:1px solid var(--line)" id="abonos">
+  <div class="container">
+    <div style="display:grid;grid-template-columns:1.05fr 1fr;gap:48px;align-items:center">
+      <div>
+        <div class="eyebrow">Ahorra a tu ritmo</div>
+        <h2 class="display" style="font-size:clamp(32px,5vw,58px);margin:12px 0 0;letter-spacing:-0.03em">
+          Empieza a abonar<br/><em class="serif-italic">aunque aún no lo elijas.</em>
+        </h2>
+        <p style="font-size:16px;color:var(--ink-2);margin:18px 0 0;max-width:46ch;line-height:1.7">
+          ¿Te enamoraste de una raza pero quieres ir pagando poco a poco? Puedes abrir un plan de abonos: aportas lo que quieras cuando quieras, nosotros guardamos tu saldo a tu nombre, y cuando completes —o cuando aparezca tu cachorrito ideal— lo eliges y coordinamos la entrega. Sin prisa, sin perder tu dinero.
+        </p>
+        <ul style="list-style:none;padding:0;margin:22px 0 0;display:flex;flex-direction:column;gap:12px">
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--ink-2);line-height:1.55"><span style="color:var(--orange);font-weight:800">—</span> Empiezas con el abono que tú decidas (mínimo $50).</li>
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--ink-2);line-height:1.55"><span style="color:var(--orange);font-weight:800">—</span> Sigues abonando a tu ritmo, sin fecha límite estricta.</li>
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--ink-2);line-height:1.55"><span style="color:var(--orange);font-weight:800">—</span> Eliges tu cachorro cuando estés listo y recibes el resto del proceso.</li>
+          <li style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--ink-2);line-height:1.55"><span style="color:var(--orange);font-weight:800">—</span> Totalmente reembolsable cuando quieras, menos un 3% de servicio (mínimo $2).</li>
+        </ul>
+        <p style="font-size:12.5px;color:var(--ink-soft);margin:18px 0 0">
+          Tu saldo queda registrado a tu nombre. <a href="/terminos#abonos" style="color:var(--orange);font-weight:700;text-decoration:underline">Ver política de abonos</a>.
+        </p>
+      </div>
+      <div style="background:#fff;border:1px solid var(--line);border-radius:22px;padding:32px;box-shadow:0 4px 32px rgba(0,0,0,0.05)">
+        <div style="font-size:11px;font-weight:700;letter-spacing:0.1em;text-transform:uppercase;color:var(--ink-2);margin-bottom:14px">Hacer un abono ahora</div>
+        <div id="fin-abono-root"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
 <!-- ── Partners ── -->
 <section class="fin-partners">
   <div class="container">
@@ -366,17 +395,17 @@ input[type=range]:focus::-webkit-slider-thumb { box-shadow:0 0 0 4px rgba(245,13
 
 <div id="__chrome-ftr"></div>
 
-<script src="site-animations.js?v=1781448742755"></script>
+<script src="site-animations.js?v=1781465369951"></script>
 
 <!-- ── React: Calculator + Form ── -->
-<script src="Financiamiento.inline0.js?v=1781448742755"></script>
+<script src="Financiamiento.inline0.js?v=1781465369951"></script>
 
 <!-- ── Chrome ── -->
-<script src="tweaks-panel.js?v=1781448742755"></script>
-<script src="i18n.js?v=1781448742755"></script>
-<script src="chrome.js?v=1781448742755"></script>
-<script src="Financiamiento.inline1.js?v=1781448742755"></script>
-<script src="claude-bridge.js?v=1781448742755"></script>
-<script src="chat-widget.js?v=1781448742755"></script>
+<script src="tweaks-panel.js?v=1781465369951"></script>
+<script src="i18n.js?v=1781465369951"></script>
+<script src="chrome.js?v=1781465369951"></script>
+<script src="Financiamiento.inline1.js?v=1781465369951"></script>
+<script src="claude-bridge.js?v=1781465369951"></script>
+<script src="chat-widget.js?v=1781465369951"></script>
 </body>
 </html>

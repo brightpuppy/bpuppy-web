@@ -1,4 +1,19 @@
 (function(){
+var FIN_SUPA = 'https://oqqwmcplljirbreowrll.supabase.co';
+var FIN_ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+function finCheckout(amount, desc, btn) {
+  if (!(amount >= 50)) { alert("El monto mínimo es $50."); return; }
+  var old = btn ? btn.textContent : null;
+  if (btn) { btn.disabled = true; btn.textContent = "Abriendo pago seguro…"; }
+  fetch(FIN_SUPA + "/functions/v1/stripe_checkout", {
+    method: "POST",
+    headers: { "Content-Type": "application/json", "apikey": FIN_ANON, "Authorization": "Bearer " + FIN_ANON },
+    body: JSON.stringify({ type: "abono", amount: amount, description: desc, success_url: "https://bpuppy.us/financiamiento?paid=1", cancel_url: "https://bpuppy.us/financiamiento" })
+  }).then(function(r){ return r.json(); }).then(function(d){
+    if (d && d.url) { location.href = d.url; }
+    else { alert((d && d.error) || "No se pudo iniciar el pago. Escríbenos por WhatsApp."); if (btn) { btn.disabled = false; btn.textContent = old; } }
+  }).catch(function(){ alert("Error de conexión. Intenta de nuevo."); if (btn) { btn.disabled = false; btn.textContent = old; } });
+}
 const FIN_PLANS = [
   { id: "k4", name: "Klarna", sub: ["4 pagos \xB7 Sin inter\xE9s", "4 payments \xB7 No interest"], count: 4, apr: 0, color: "#FFB3C7", textColor: "#1a1a2e", recommended: true },
   { id: "cash", name: "Cash App", sub: ["Paga al instante", "Pay instantly"], count: 1, apr: 0, color: "#00D54B", textColor: "#0a0a0a", recommended: false },
@@ -32,6 +47,7 @@ function FinCalc() {
   var [price, setPrice] = React.useState(3500);
   var [dp, setDp] = React.useState(700);
   var [sel, setSel] = React.useState("k4");
+  var [agree, setAgree] = React.useState(false);
   var fin = Math.max(0, price - dp);
   var plan = FIN_PLANS.find(function(p) {
     return p.id === sel;
@@ -84,7 +100,7 @@ function FinCalc() {
       /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, color: "var(--ink)" } }, finFmt(r.pmt)),
       /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "var(--ink-soft)" } }, lbl, " \xB7 " + t(["Total: ", "Total: "]), finFmt(r.total))
     );
-  })), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 10.5, color: "var(--ink-soft)", textAlign: "center", fontStyle: "italic", margin: "0 0 18px" } }, t(["* Estimaciones orientativas. Aprobaci\xF3n y t\xE9rminos dependen del proveedor financiero.", "* Estimates only. Approval and terms depend on the financing provider."])), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 } }, [
+  })), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 10.5, color: "var(--ink-soft)", textAlign: "center", fontStyle: "italic", margin: "0 0 18px" } }, t(["* Estimaciones orientativas. Aprobaci\xF3n y t\xE9rminos dependen del proveedor financiero.", "* Estimates only. Approval and terms depend on the financing provider."])), /* @__PURE__ */ React.createElement("label", { style: { display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: "var(--ink-2)", lineHeight: 1.5, margin: "0 0 12px", cursor: "pointer" } }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: agree, onChange: function(e){ setAgree(e.target.checked); }, style: { marginTop: 2 } }), /* @__PURE__ */ React.createElement("span", null, t(["He leído y acepto la ", "I have read and accept the "]), /* @__PURE__ */ React.createElement("a", { href: "/terminos#abonos", target: "_blank", style: { color: "var(--orange)", fontWeight: 700 } }, t(["política de abonos", "deposit policy"])), ".")), /* @__PURE__ */ React.createElement("button", { disabled: !agree, onClick: function(e){ if(!agree) return; finCheckout(dp > 0 ? dp : 500, t(["Pago inicial / abono — BPuppy", "Down payment / deposit — BPuppy"]), e.currentTarget); }, style: { width: "100%", padding: "15px", borderRadius: 14, border: "none", background: agree ? "var(--orange)" : "var(--line)", color: "#fff", fontFamily: "inherit", fontSize: 15, fontWeight: 800, cursor: agree ? "pointer" : "not-allowed", opacity: agree ? 1 : 0.6, marginBottom: 10 } }, t(["Realizar pago de ", "Pay "]) + finFmt(dp > 0 ? dp : 500) + t([" con tarjeta o Cash App", " by card or Cash App"])), /* @__PURE__ */ React.createElement("button", { disabled: !agree, onClick: function(e){ if(!agree) return; finCheckout(500, t(["Apartado de cachorro — BPuppy", "Puppy reservation — BPuppy"]), e.currentTarget); }, style: { width: "100%", padding: "12px", borderRadius: 12, border: "1.5px solid var(--line)", background: "#fff", color: "var(--ink)", fontFamily: "inherit", fontSize: 13.5, fontWeight: 700, cursor: agree ? "pointer" : "not-allowed", opacity: agree ? 1 : 0.6, marginBottom: 16 } }, t(["O aparta tu cachorrito por $500", "Or reserve your puppy for $500"])), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(3,1fr)", gap: 8 } }, [
     { label: "WhatsApp", icon: "\u{1F4AC}", bg: "#25D366", href: "https://wa.me/18084928294?text=Hola!%20Me%20interesa%20financiar%20una%20mascota%20con%20BPuppy.", color: "#fff" },
     { label: "SMS", icon: "\u{1F4F1}", bg: "var(--bg)", href: "sms:+18084928294?body=Hola!%20Me%20interesa%20financiar%20una%20mascota%20con%20BPuppy.", color: "var(--ink)", border: true },
     { label: "Email", icon: "\u2709\uFE0F", bg: "var(--bg)", href: "mailto:hello@bpuppy.us?subject=Solicitud%20de%20financiamiento", color: "var(--ink)", border: true }
@@ -168,9 +184,28 @@ function FinForm() {
     t(["\u2709\uFE0F Enviar por Email", "\u2709\uFE0F Send via Email"])
   ))));
 }
+function FinAbono() {
+  var lang = useLiveLang();
+  var t = function(a){ return Array.isArray(a) ? (lang === 'en' ? (a[1] || a[0]) : a[0]) : a; };
+  var [amt, setAmt] = React.useState(200);
+  var [agree, setAgree] = React.useState(false);
+  var chips = [50, 200, 500, 1000];
+  return /* @__PURE__ */ React.createElement("div", null,
+    /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginBottom: 14 } },
+      /* @__PURE__ */ React.createElement("span", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 34, fontWeight: 800, color: "var(--orange)" } }, "$"),
+      /* @__PURE__ */ React.createElement("input", { type: "number", min: 50, step: 10, value: amt, onChange: function(e){ setAmt(Math.max(0, +e.target.value || 0)); }, className: "fin-input", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 30, fontWeight: 800, padding: "6px 12px", width: "100%" } })),
+    /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(4,1fr)", gap: 8, marginBottom: 18 } }, chips.map(function(c){
+      var active = amt === c;
+      return /* @__PURE__ */ React.createElement("button", { key: c, onClick: function(){ setAmt(c); }, style: { padding: "9px 0", borderRadius: 10, cursor: "pointer", fontFamily: "inherit", fontSize: 13, fontWeight: 700, border: active ? "2px solid var(--orange)" : "1.5px solid var(--line)", background: active ? "rgba(245,130,32,0.08)" : "#fff", color: "var(--ink)" } }, "$" + c);
+    })),
+    /* @__PURE__ */ React.createElement("label", { style: { display: "flex", alignItems: "flex-start", gap: 8, fontSize: 12, color: "var(--ink-2)", lineHeight: 1.5, margin: "0 0 12px", cursor: "pointer" } }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: agree, onChange: function(e){ setAgree(e.target.checked); }, style: { marginTop: 2 } }), /* @__PURE__ */ React.createElement("span", null, t(["He leído y acepto la ", "I have read and accept the "]), /* @__PURE__ */ React.createElement("a", { href: "/terminos#abonos", target: "_blank", style: { color: "var(--orange)", fontWeight: 700 } }, t(["política de abonos", "deposit policy"])), ".")), /* @__PURE__ */ React.createElement("button", { disabled: !agree, onClick: function(e){ if(!agree) return; finCheckout(amt, t(["Abono / plan de pagos — BPuppy", "Deposit / payment plan — BPuppy"]), e.currentTarget); }, style: { width: "100%", padding: "15px", borderRadius: 14, border: "none", background: agree ? "var(--ink)" : "var(--line)", color: "#fff", fontFamily: "inherit", fontSize: 15, fontWeight: 800, cursor: agree ? "pointer" : "not-allowed", opacity: agree ? 1 : 0.6, marginBottom: 10 } }, t(["Abonar ahora", "Pay deposit now"])),
+    /* @__PURE__ */ React.createElement("p", { style: { fontSize: 11, color: "var(--ink-soft)", textAlign: "center", margin: 0, lineHeight: 1.5 } }, t(["Tarjeta, Cash App, Klarna o Affirm. Reembolsable cuando quieras, menos 3% de servicio.", "Card, Cash App, Klarna or Affirm. Refundable anytime, minus a 3% service fee."])));
+}
 var calcRoot = document.getElementById("fin-calc-root");
 var formRoot = document.getElementById("fin-form-root");
+var abonoRoot = document.getElementById("fin-abono-root");
 if (calcRoot) ReactDOM.createRoot(calcRoot).render(React.createElement(FinCalc));
 if (formRoot) ReactDOM.createRoot(formRoot).render(React.createElement(FinForm));
+if (abonoRoot) ReactDOM.createRoot(abonoRoot).render(React.createElement(FinAbono));
 
 })();
