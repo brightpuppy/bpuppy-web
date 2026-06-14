@@ -74,7 +74,7 @@ function Testimonials() {
               <div className="stars">★★★★★</div>
               <blockquote>{pick(it.q, lang)}</blockquote>
               <div className="who">
-                <div className="av">{pick(it.n, lang).charAt(0)}</div>
+                <div className="av">{(pick(it.n, lang) || "").trim().charAt(0).toUpperCase()}</div>
                 <div>
                   <div className="nm">{pick(it.n, lang)}</div>
                   <div className="meta">{pick(it.m, lang)}</div>
