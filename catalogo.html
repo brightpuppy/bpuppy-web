@@ -138,8 +138,8 @@
     <a class="wa" href="https://wa.me/18084928294" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884a9.86 9.86 0 001.51 5.26l-.999 3.648 3.488-.927z"/></svg> Escríbenos por WhatsApp</a>
   </div></footer>
 
-<script src="breed-data.js?v=1781475817420"></script>
-<script src="cat-breed-data.js?v=1781475817420"></script>
+<script src="breed-data.js?v=1781476900318"></script>
+<script src="cat-breed-data.js?v=1781476900318"></script>
 <script>
 (function(){
   var SUPA = 'https://oqqwmcplljirbreowrll.supabase.co';
@@ -184,12 +184,16 @@
   function _norm(s){ return String(s||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,'').replace(/[^a-z0-9]+/g,' ').trim(); }
   var COAT_LBL={ short:['Corto','Short'], long:['Largo','Long'], curly:['Rizado','Curly'], smooth:['Liso','Smooth'], wiry:['Áspero','Wiry'], hairless:['Sin pelo','Hairless'], soft:['Suave','Soft'], medium:['Medio','Medium'], double:['Doble capa','Double coat'] };
   function _allBreeds(){ return [].concat(window.DOG_BREEDS||[], window.DESIGNER_BREEDS||[], window.CAT_BREEDS||[]); }
+  var BREED_ALIAS={ 'yorkie':'yorkshire terrier','yorky':'yorkshire terrier','yorkies':'yorkshire terrier','frenchie':'french bulldog','frenchies':'french bulldog','frances':'french bulldog','doxie':'dachshund','salchicha':'dachshund','teckel':'dachshund','pom':'pomeranian','pomerania':'pomeranian','lab':'labrador retriever','golden':'golden retriever','aussie':'australian shepherd','mini schnauzer':'miniature schnauzer','schnauzer miniatura':'miniature schnauzer','caniche':'standard poodle','bichon':'bichon frise' };
   function breedInfo(breedStr){
     var nb=_norm(breedStr); if(!nb) return null;
+    nb = BREED_ALIAS[nb] || nb;
+    var nbc=nb.replace(/ /g,'');
     var all=_allBreeds(), best=null, bestLen=0;
     for(var k=0;k<all.length;k++){ var e=all[k];
       [_norm(e.name),_norm(e.es)].forEach(function(nm){ if(!nm) return;
-        if(nb===nm){ if(nm.length+100>bestLen){ best=e; bestLen=nm.length+100; } }
+        var nmc=nm.replace(/ /g,'');
+        if(nb===nm || nbc===nmc){ if(nm.length+100>bestLen){ best=e; bestLen=nm.length+100; } }
         else if((' '+nb+' ').indexOf(' '+nm+' ')>=0 || (' '+nm+' ').indexOf(' '+nb+' ')>=0){ if(nm.length>bestLen){ best=e; bestLen=nm.length; } }
       });
     }
@@ -201,6 +205,7 @@
     var health=(LANG==='en'?(best.healthEn||best.health):(best.health||best.healthEn))||'';
     return { temperament:temp, coats:coats, care:care, desc:desc, health:health, raw:best };
   }
+  function breedLabel(breedStr){ var bi=breedInfo(breedStr); if(bi&&bi.raw){ return (LANG==='en'?(bi.raw.name||bi.raw.es):(bi.raw.es||bi.raw.name))||breedStr||''; } return breedStr||''; }
   var SIZE_LBL={ small:['Pequeño','Small'], medium:['Mediano','Medium'], large:['Grande','Large'], xlarge:['Muy grande','Very large'], toy:['Toy / muy pequeño','Toy'] };
   function scaleTxt(n, words){ n=Number(n)||0; if(n<1) return ''; return words[Math.max(1,Math.min(words.length-1,n))]||''; }
   function blogArticleFor(breed){ var n=String(breed||'').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g,''); if(!n) return null; var M=[['golden',1],['french',2],['frances',2],['labrador',3],['poodle',4],['caniche',4],['schnauzer',5],['yorkshire',6],['yorkie',6],['york',6],['beagle',7],['cocker',8],['chihuahua',9],['shih',10],['shitzu',10]]; for(var i=0;i<M.length;i++){ if(n.indexOf(M[i][0])>=0) return M[i][1]; } return null; }
@@ -289,14 +294,14 @@
       var careH=bi.care?'<div style="font-size:13px;color:var(--ink-2);margin:6px 0;line-height:1.55"><b>'+T('Cuidados','Care')+':</b> '+esc(bi.care)+'</div>':'';
       var healthH=bi.health?'<div style="font-size:13px;color:var(--ink-2);margin:6px 0;line-height:1.55"><b>'+T('Salud','Health')+':</b> '+esc(bi.health)+'</div>':'';
       var dscH=bi.desc?'<div style="font-size:13px;color:var(--ink-2);margin:6px 0;line-height:1.6">'+esc(bi.desc)+'</div>':'';
-      breedH='<div style="border-top:1px solid var(--line);margin-top:14px;padding-top:12px"><div style="font-family:var(--display);font-weight:800;font-size:16px;margin-bottom:4px">'+T('Sobre la raza ','About the ')+esc(p.breed||'')+'</div>'+infoH+tempH+condH+careH+healthH+dscH+'</div>';
+      breedH='<div style="border-top:1px solid var(--line);margin-top:14px;padding-top:12px"><div style="font-family:var(--display);font-weight:800;font-size:16px;margin-bottom:4px">'+T('Sobre la raza ','About the ')+esc(breedLabel(p.breed))+'</div>'+infoH+tempH+condH+careH+healthH+dscH+'</div>';
     }
     var reserved=(p.status==='reserved');
     var ov=document.getElementById('dtlOv'); if(ov) ov.remove();
     ov=document.createElement('div'); ov.id='dtlOv';
     ov.style.cssText='position:fixed;inset:0;background:rgba(20,15,12,.62);z-index:240;display:flex;align-items:flex-start;justify-content:center;padding:18px;overflow-y:auto';
     ov.innerHTML='<div style="background:var(--card);border-radius:20px;max-width:560px;width:100%;padding:22px;margin:auto;box-shadow:var(--shadow)">'
-      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px"><div><div style="color:var(--orange);font-weight:700;font-size:13px">'+esc(p.breed||'')+'</div><div style="font-family:var(--display);font-weight:800;font-size:23px">'+esc(p.name||p.breed||'Cachorro')+'</div></div><button onclick="document.getElementById(\'dtlOv\').remove()" style="background:none;border:none;font-size:28px;cursor:pointer;color:var(--ink-soft);line-height:1">&times;</button></div>'
+      + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px"><div><div style="color:var(--orange);font-weight:700;font-size:13px">'+esc(breedLabel(p.breed))+'</div><div style="font-family:var(--display);font-weight:800;font-size:23px">'+esc(p.name||p.breed||'Cachorro')+'</div></div><button onclick="document.getElementById(\'dtlOv\').remove()" style="background:none;border:none;font-size:28px;cursor:pointer;color:var(--ink-soft);line-height:1">&times;</button></div>'
       + imgH + thumbs
       + '<div style="font-family:var(--display);font-weight:800;font-size:22px;margin-top:12px">'+money(p.price)+(p.price!=null&&!isNaN(p.price)?' <span style="font-size:12px;color:var(--ink-soft);font-weight:600">USD</span>':'')+'</div>'
       + factsH + descH + breedH
@@ -379,7 +384,7 @@
         + '</div>'
         + thumbs
         + '<div class="body" onclick="detalle('+i+')" style="cursor:pointer">'
-          + '<div class="breed">'+esc(p.breed||'')+'</div>'
+          + '<div class="breed">'+esc(breedLabel(p.breed))+'</div>'
           + (p.name? '<h3>'+esc(p.name)+'</h3>':'')
           + (meta.length? '<div class="meta">'+meta.map(function(m){return '<span class="chip">'+m+'</span>';}).join('')+'</div>':'')
           + '<div class="price">'+money(p.price)+(p.price!=null&&!isNaN(p.price)?' <small>USD</small>':'')+'</div>'
