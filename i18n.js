@@ -1,7 +1,10 @@
 (function(){
 try {
   var _bpK = "bpuppy-lang";
-  if (!localStorage.getItem(_bpK) && !localStorage.getItem("bpuppy-gt-lang")) {
+  var _bpU = (new URLSearchParams(location.search).get("lang") || "").toLowerCase();
+  if (_bpU === "en" || _bpU === "es") {
+    localStorage.setItem(_bpK, _bpU);
+  } else if (!localStorage.getItem(_bpK) && !localStorage.getItem("bpuppy-gt-lang")) {
     var _bpN = (navigator.languages && navigator.languages[0] || navigator.language || navigator.userLanguage || "").slice(0, 2).toLowerCase();
     if (_bpN === "en") localStorage.setItem(_bpK, "en");
     else if (_bpN === "es") localStorage.setItem(_bpK, "es");
@@ -391,6 +394,10 @@ const STRINGS = {
 const pick = (t, lang) => Array.isArray(t) ? lang === "en" ? t[1] ?? t[0] : t[0] : t;
 const bpSavedLang = () => {
   try {
+    var u = new URLSearchParams(location.search).get("lang");
+    if (u === "en" || u === "es") { try { sessionStorage.setItem("bpuppy-lang-s", u); } catch (e2) {} return u; }
+    var s = null; try { s = sessionStorage.getItem("bpuppy-lang-s"); } catch (e3) {}
+    if (s === "en" || s === "es") return s;
     return localStorage.getItem("bpuppy-lang") || null;
   } catch (e) {
     return null;
