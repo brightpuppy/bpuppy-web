@@ -2,7 +2,7 @@
 <html lang="es">
 <head>
 <meta charset="UTF-8">
-<script>try{var _ql=(new URLSearchParams(location.search).get('lang')||'').toLowerCase();var _bl=(_ql==='en'||_ql==='es')?_ql:localStorage.getItem('bpuppy-lang');if(!_bl){_bl=(((navigator.language||navigator.userLanguage||'')+'').toLowerCase().indexOf('es')===0)?'es':'en';}localStorage.setItem('bpuppy-lang',_bl);document.documentElement.lang=_bl;}catch(e){}/*bplangboot*/</script>
+<script>try{var _ql=(new URLSearchParams(location.search).get('lang')||'').toLowerCase();var _qok=(_ql==='en'||_ql==='es');var _st=localStorage.getItem('bpuppy-lang');var _auto=(((navigator.language||navigator.userLanguage||'')+'').toLowerCase().indexOf('es')===0)?'es':'en';var _bl=_qok?_ql:(_st||_auto);if(!_qok&&!_st){localStorage.setItem('bpuppy-lang',_auto);}window.__BP_LANG=_bl;document.documentElement.lang=_bl;}catch(e){}/*bplangboot*/</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
 <title>Cachorros Disponibles · BrightPuppy</title>
@@ -125,7 +125,7 @@
       </nav>
     </div>
   </div>
-  <script>try{if((localStorage.getItem('bpuppy-lang')||'es')==='en'){
+  <script>try{if((window.__BP_LANG||localStorage.getItem('bpuppy-lang')||'es')==='en'){
     var _swapEN=function(){
       var s=function(sel,html){var el=document.querySelector(sel);if(el)el.innerHTML=html;};
       s('#trustline','Pay in <b>interest-free installments</b> (Klarna/Afterpay) · reserve with <b>$500</b> · or pay by card, Cash App & more');
@@ -190,7 +190,7 @@
   var clockIcon='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>';
   var pawIcon='<svg viewBox="0 0 24 24" fill="currentColor"><circle cx="5.5" cy="10.5" r="2.2"/><circle cx="9.5" cy="6.5" r="2.2"/><circle cx="14.5" cy="6.5" r="2.2"/><circle cx="18.5" cy="10.5" r="2.2"/><path d="M12 12c-3 0-5.5 2.2-5.5 4.6 0 1.7 1.4 2.4 3 2.4 1.2 0 1.8-.5 2.5-.5s1.3.5 2.5.5c1.6 0 3-.7 3-2.4C17.5 14.2 15 12 12 12z"/></svg>';
 
-  var LANG=(function(){try{return (localStorage.getItem('bpuppy-lang')||'es');}catch(e){return 'es';}})();
+  var LANG=(function(){try{return (window.__BP_LANG||localStorage.getItem('bpuppy-lang')||'es');}catch(e){return 'es';}})();
   function T(es,en){ return LANG==='en'? en : es; }
   function money2(n){ return '$'+Number(Math.round(n)).toLocaleString('en-US'); }
 
@@ -363,11 +363,11 @@
     var note = d.note ? '<p>'+esc(d.note)+'</p>' : '<p>'+T('Estos son los cachorros que seleccionamos especialmente para ti. Toca <b>Me interesa</b> en el que te enamore.','These are the puppies we picked especially for you. Tap <b>I am interested</b> on the one you fall in love with.')+'</p>';
 
     var cards = pups.map(function(p, i){
-      var photos = photosOf(p); GAL[i]=photos; GAL_CROP[i]=(crop && !!p.sourced);
+      var photos = photosOf(p); GAL[i]=photos; GAL_CROP[i]=!!p.sourced;
       var ph = photos[0]||'';
       var reserved = (p.status==='reserved');
       var isSourced = !!p.sourced;
-      var cropCls = (crop && isSourced) ? ' crop' : '';
+      var cropCls = isSourced ? ' crop' : '';
       var brand = isSourced ? '<div class="brandmark"><span class="dot"></span>BrightPuppy</div>' : '';
       var count = photos.length>1 ? '<span class="gcount">'+photos.length+' fotos</span>' : '';
       var meta = [];
