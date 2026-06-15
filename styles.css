@@ -1415,3 +1415,16 @@ html.media-dark .hdr .nav-dropdown a:hover { color: #FFB877 !important; backgrou
 [data-theme="boutique"] .fmap-card { border-radius: 8px; }
 [data-theme="boutique"] .faq-icon { border-radius: 6px; }
 [data-theme="boutique"] .about-title em { color: var(--accent); }
+
+/* ===== Grooming móvil: hero apilado y centrado + reserva 1 columna ===== */
+@media (max-width: 760px) {
+  .g-hero { min-height: auto !important; display: flex !important; flex-direction: column !important; align-items: stretch !important; }
+  .g-hero .container { padding-top: 88px !important; padding-bottom: 22px !important; order: 1; }
+  .g-hero-copy { max-width: 100% !important; text-align: center !important; margin: 0 auto !important; }
+  .g-hero-copy > div[style*="inline-flex"] { justify-content: center; }
+  .g-hero-copy p { margin-left: auto !important; margin-right: auto !important; }
+  .g-hero-cta { justify-content: center !important; }
+  .g-hero-grad { display: none !important; }
+  .g-hero-dog { position: static !important; order: 2; width: 100% !important; right: auto !important; bottom: auto !important; }
+  .g-book-grid { grid-template-columns: 1fr !important; gap: 28px !important; }
+}
