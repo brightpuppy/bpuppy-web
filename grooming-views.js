@@ -889,7 +889,7 @@ function IntroOfferBanner() {
       /* @__PURE__ */ React.createElement("div", { className: "container intro-offer-inner" },
         /* @__PURE__ */ React.createElement("div", { className: "intro-offer-text" },
           /* @__PURE__ */ React.createElement("span", { className: "intro-offer-eyebrow" }, t(["Oferta de introducci\xF3n \xB7 Tiempo limitado", "Intro offer \xB7 Limited time"])),
-          /* @__PURE__ */ React.createElement("div", { className: "intro-offer-title" }, t(["Grooming completo desde $50", "Full grooming from $50"])),
+          /* @__PURE__ */ React.createElement("div", { className: "intro-offer-title" }, t(["Primer grooming completo… desde $50", "First full grooming… from $50"])),
           /* @__PURE__ */ React.createElement("div", { className: "intro-offer-sub" }, t(["Perros peque\xF1os y medianos $50 \xB7 grandes $70 \xB7 ba\xF1o, u\xF1as, o\xEDdos y corte", "Small & medium dogs $50 \xB7 large $70 \xB7 bath, nails, ears & haircut"]))
         ),
         /* @__PURE__ */ React.createElement("button", { className: "intro-offer-btn", onClick: function() { setOpen(true); } }, t(["Reclamar oferta", "Claim offer"])),
