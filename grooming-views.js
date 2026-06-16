@@ -746,7 +746,7 @@ function GroomingApp() {
     /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex" } }, /* @__PURE__ */ React.createElement(Icon, { name: "user", size: 15 })),
     " ",
     t(["Ya soy cliente \xB7 Entrar", "Already a client \xB7 Sign in"])
-  ))))), /* @__PURE__ */ React.createElement(OpeningBanner, null), /* @__PURE__ */ React.createElement("div", { style: { background: "var(--paper)", borderBottom: "1px solid var(--line)" } }, /* @__PURE__ */ React.createElement("div", { className: "container", style: { display: "flex", gap: 0, overflowX: "auto", scrollbarWidth: "none" } }, [["scissors", t(["Grooming profesional", "Professional grooming"])], ["van", "Pickup & Delivery"], ["leaf", t(["Productos premium", "Premium products"])], ["clock", t(["Lun\u2013S\xE1b 9am\u20136pm", "Mon\u2013Sat 9am\u20136pm"])], ["chat", t(["Confirmaci\xF3n inmediata", "Instant confirmation"])]].map(([ic, label]) => /* @__PURE__ */ React.createElement("div", { key: label, style: { display: "flex", alignItems: "center", gap: 8, padding: "14px 20px", borderRight: "1px solid var(--line)", whiteSpace: "nowrap", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("span", { style: { color: "var(--orange)", display: "inline-flex" } }, /* @__PURE__ */ React.createElement(Icon, { name: ic, size: 18 })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, fontWeight: 600, color: "var(--ink-2)" } }, label))))), /* @__PURE__ */ React.createElement("div", { className: "container", style: { padding: "60px 0 0" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 4, background: "var(--paper)", borderRadius: 14, padding: 5, marginBottom: 40, width: "fit-content" } }, [["servicios", t(["Servicios", "Services"])], ["paquetes", t(["Paquetes", "Packages"])], ["memberships", t(["Membres\xEDas", "Memberships"])]].map(([id, label]) => /* @__PURE__ */ React.createElement("button", { key: id, onClick: () => {
+  ))))), /* @__PURE__ */ React.createElement(IntroOfferBanner, null), /* @__PURE__ */ React.createElement("div", { style: { background: "var(--paper)", borderBottom: "1px solid var(--line)" } }, /* @__PURE__ */ React.createElement("div", { className: "container", style: { display: "flex", gap: 0, overflowX: "auto", scrollbarWidth: "none" } }, [["scissors", t(["Grooming profesional", "Professional grooming"])], ["van", "Pickup & Delivery"], ["leaf", t(["Productos premium", "Premium products"])], ["clock", t(["Lun\u2013S\xE1b 9am\u20136pm", "Mon\u2013Sat 9am\u20136pm"])], ["chat", t(["Confirmaci\xF3n inmediata", "Instant confirmation"])]].map(([ic, label]) => /* @__PURE__ */ React.createElement("div", { key: label, style: { display: "flex", alignItems: "center", gap: 8, padding: "14px 20px", borderRight: "1px solid var(--line)", whiteSpace: "nowrap", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("span", { style: { color: "var(--orange)", display: "inline-flex" } }, /* @__PURE__ */ React.createElement(Icon, { name: ic, size: 18 })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12.5, fontWeight: 600, color: "var(--ink-2)" } }, label))))), /* @__PURE__ */ React.createElement("div", { className: "container", style: { padding: "60px 0 0" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 4, background: "var(--paper)", borderRadius: 14, padding: 5, marginBottom: 40, width: "fit-content" } }, [["servicios", t(["Servicios", "Services"])], ["paquetes", t(["Paquetes", "Packages"])], ["memberships", t(["Membres\xEDas", "Memberships"])]].map(([id, label]) => /* @__PURE__ */ React.createElement("button", { key: id, onClick: () => {
     setTab(id);
     if (id === "memberships") document.getElementById("memberships")?.scrollIntoView();
   }, style: { padding: "9px 18px", borderRadius: 10, border: "none", cursor: "pointer", fontFamily: "inherit", fontSize: 13, fontWeight: tab === id ? 700 : 500, background: tab === id ? "var(--orange)" : "transparent", color: tab === id ? "#fff" : "var(--ink-2)", transition: "all .15s" } }, label))), tab === "servicios" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 14, marginBottom: 20, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ink)", margin: 0 } }, t(["Precios por servicio", "Prices per service"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6 } }, ["S", "M", "L", "XL"].map((s, i) => /* @__PURE__ */ React.createElement("button", { key: s, onClick: () => setSizeIdx(i), style: { padding: "5px 14px", borderRadius: 999, border: "none", background: sizeIdx === i ? "var(--orange)" : "var(--bg)", color: sizeIdx === i ? "#fff" : "var(--ink-2)", fontFamily: "inherit", fontSize: 12, fontWeight: 700, cursor: "pointer" } }, s))), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, color: "var(--ink-soft)" } }, [t(["Peque\xF1o (< 15 lbs)", "Small (< 15 lbs)"]), t(["Mediano (15-40 lbs)", "Medium (15-40 lbs)"]), t(["Grande (40-70 lbs)", "Large (40-70 lbs)"]), t(["XL (70+ lbs)", "XL (70+ lbs)"])][sizeIdx])), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(140px,1fr))", gap: 12, marginBottom: 40 } }, SERVICES.map((sv) => /* @__PURE__ */ React.createElement("div", { key: sv.name, style: { background: sv.highlight ? "linear-gradient(135deg,rgba(245,130,32,0.10),rgba(232,93,117,0.10))" : "var(--paper)", borderRadius: 16, padding: "18px 14px", border: sv.highlight ? "1.5px solid rgba(245,130,32,0.3)" : "1px solid var(--line)", textAlign: "center", position: "relative" } }, sv.highlight && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: -8, left: "50%", transform: "translateX(-50%)", background: "var(--orange)", color: "#fff", fontSize: 9, fontWeight: 800, padding: "2px 8px", borderRadius: 999, whiteSpace: "nowrap" } }, t(["TODO INCLUIDO", "ALL INCLUDED"])), /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 8, color: "var(--orange)", display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement(Icon, { name: sv.icon, size: 28 })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, fontWeight: 700, color: "var(--ink)", lineHeight: 1.25, marginBottom: 6 } }, groomT(t, sv.name)), /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, color: sv.highlight ? "var(--orange)" : "var(--ink)" } }, "$", sv.prices[sizeKey]), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "var(--ink-soft)", marginTop: 4, lineHeight: 1.4 } }, groomT(t, sv.desc)))))), tab === "paquetes" && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 24, fontWeight: 800, color: "var(--ink)", margin: "0 0 8px" } }, t(["Paquetes combinados", "Combined packages"])), /* @__PURE__ */ React.createElement("p", { style: { color: "var(--ink-2)", marginBottom: 24 } }, t(["Selecciona el tama\xF1o de tu mascota:", "Select your pet\u2019s size:"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 6, marginBottom: 28 } }, ["S", "M", "L", "XL"].map((s, i) => /* @__PURE__ */ React.createElement("button", { key: s, onClick: () => setSizeIdx(i), style: { padding: "6px 16px", borderRadius: 999, border: "none", background: sizeIdx === i ? "var(--orange)" : "var(--bg)", color: sizeIdx === i ? "#fff" : "var(--ink-2)", fontFamily: "inherit", fontSize: 12, fontWeight: 700, cursor: "pointer" } }, s))), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(260px,1fr))", gap: 20, marginBottom: 40 } }, PACKAGES.map((pkg) => /* @__PURE__ */ React.createElement("div", { key: pkg.name, style: { background: "var(--paper)", borderRadius: 20, padding: "24px", border: pkg.popular ? `2px solid ${pkg.color}` : "1px solid var(--line)", position: "relative", overflow: "hidden" } }, pkg.popular && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 16, right: 16, background: pkg.color, color: "#fff", fontSize: 10, fontWeight: 800, padding: "3px 10px", borderRadius: 999 } }, t(["M\xC1S POPULAR", "MOST POPULAR"])), /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 10, color: pkg.color, display: "flex" } }, /* @__PURE__ */ React.createElement(Icon, { name: pkg.icon, size: 30 })), /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 18, fontWeight: 800, color: "var(--ink)", marginBottom: 4 } }, groomT(t, pkg.name)), /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 30, fontWeight: 800, color: pkg.color, marginBottom: 4 } }, "$", pkg.prices[sizeKey]), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "var(--ink-soft)", marginBottom: 16 } }, groomT(t, pkg.note)), /* @__PURE__ */ React.createElement("ul", { style: { padding: 0, margin: "0 0 20px", listStyle: "none", display: "flex", flexDirection: "column", gap: 6 } }, pkg.includes.map((item) => /* @__PURE__ */ React.createElement("li", { key: item, style: { display: "flex", gap: 8, fontSize: 13, color: "var(--ink-2)" } }, /* @__PURE__ */ React.createElement("span", { style: { color: pkg.color, fontWeight: 700, flexShrink: 0 } }, "\u2713"), groomT(t, item)))), /* @__PURE__ */ React.createElement("a", { href: "#booking", style: { display: "block", textAlign: "center", padding: "11px", borderRadius: 12, background: pkg.color, color: "#fff", fontFamily: "inherit", fontSize: 13, fontWeight: 700, textDecoration: "none" } }, t(["Agendar este paquete", "Book this package"]))))))), /* @__PURE__ */ React.createElement("div", { id: "booking", style: { background: "var(--bg)", padding: "70px 0" } }, /* @__PURE__ */ React.createElement("div", { className: "container g-book-grid", style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 48, alignItems: "start" } }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "eyebrow", style: { marginBottom: 10 } }, t(["Reserva tu cita", "Book your appointment"])), /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(26px,3.5vw,38px)", fontWeight: 800, color: "var(--ink)", margin: "0 0 14px", letterSpacing: "-0.03em" } }, t(["Agenda r\xE1pido,", "Book in minutes,"]), /* @__PURE__ */ React.createElement("br", null), t(["Confirmaci\xF3n Inmediata", "Instant Confirmation"])), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 15, color: "var(--ink-2)", lineHeight: 1.65, margin: "0 0 24px" } }, t(["Selecciona servicio, fecha y hora. Te confirmamos disponibilidad en menos de 2 horas. Tambi\xE9n ofrecemos", "Select a service, date and time. We confirm availability within 2 hours. We also offer"]), " ", /* @__PURE__ */ React.createElement("strong", null, t(["recogida y entrega", "pickup and delivery"])), " \u2014 ", t(["pregunta al reservar.", "just ask when you book."])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexDirection: "column", gap: 12 } }, [["pin", t(["Pr\xF3ximamente \xB7 Haines City, FL", "Opening soon \xB7 Haines City, FL"]), "5604 Kalogridis Rd, Haines City, FL 33844"], ["van", "Pickup & Delivery", t(["Recogemos y entregamos en tu casa (+$20)", "We pick up and drop off at your home (+$20)"])], ["clock", t(["Horario", "Hours"]), t(["Lun \u2013 S\xE1b: 9:00 AM \u2013 6:00 PM", "Mon \u2013 Sat: 9:00 AM \u2013 6:00 PM"])]].map(([ic, title, sub]) => /* @__PURE__ */ React.createElement("div", { key: title, style: { display: "flex", gap: 12, padding: "14px 16px", background: "var(--paper)", borderRadius: 12, border: "1px solid var(--line)" } }, /* @__PURE__ */ React.createElement("span", { style: { flexShrink: 0, color: "var(--orange)", display: "inline-flex" } }, /* @__PURE__ */ React.createElement(Icon, { name: ic, size: 22 })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, fontWeight: 700, color: "var(--ink)" } }, title), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "var(--ink-2)", marginTop: 2 } }, sub)))))), /* @__PURE__ */ React.createElement(BookingCalendar, { me, activeMembership, activePlan, firstName, onLogin: () => {
@@ -819,6 +819,120 @@ function GroomingApp() {
     authBusy ? t(["Enviando\u2026", "Sending\u2026"]) : t(["Enviar enlace de acceso", "Send sign-in link"]) + " \u2192"
   )))), buyFor && /* @__PURE__ */ React.createElement(MembershipPetModal, { buyFor, me, billing, onClose: () => setBuyFor(null) }));
 }
-Object.assign(window, { GroomingApp, BookingCalendar });
+function _offerField(label, val, setter, type) {
+  return /* @__PURE__ */ React.createElement("div", { className: "offer-fg" },
+    /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, label),
+    /* @__PURE__ */ React.createElement("input", { className: "offer-in", type: type || "text", value: val, onChange: function(e) { setter(e.target.value); } })
+  );
+}
+function IntroOfferBanner() {
+  const t = useT();
+  const [closed, setClosed] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [size, setSize] = useState("");
+  const [firstName, setFirst] = useState("");
+  const [lastName, setLast] = useState("");
+  const [petName, setPet] = useState("");
+  const [address, setAddr] = useState("");
+  const [phone, setPhone] = useState("");
+  const [email, setEmail] = useState("");
+  const [day, setDay] = useState("");
+  const [time, setTime] = useState("");
+  const [pickup, setPickup] = useState(false);
+  const [notes, setNotes] = useState("");
+  const [blocked, setBlocked] = useState([]);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const TIMES = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
+  const URL2 = "https://oqqwmcplljirbreowrll.supabase.co";
+  const ANON2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
+  React.useEffect(function() {
+    if (!open) return;
+    try { var sb = window._groomSb; if (sb) sb.from("grooming_blocked_dates").select("date").then(function(r) { setBlocked((r.data || []).map(function(x) { return x.date; })); }); } catch (e) {}
+    var me = window._groomMe;
+    if (me && me.client) { if (!firstName) setFirst(me.client.first_name || ""); if (!lastName) setLast(me.client.last_name || ""); if (!phone) setPhone(me.client.phone || ""); if (!email) setEmail(me.email || me.client.email || ""); }
+  }, [open]);
+  const price = size === "gra" ? 70 : size ? 50 : 0;
+  const total = price + (pickup ? 20 : 0);
+  const todayISO = new Date().toISOString().slice(0, 10);
+  function validate() {
+    if (!firstName || !petName || !phone || !email) return t(["Completa nombre, mascota, tel\xE9fono y correo.", "Fill in name, pet, phone and email."]);
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return t(["Correo inv\xE1lido.", "Invalid email."]);
+    if (!size) return t(["Elige el tama\xF1o de tu mascota.", "Choose your pet’s size."]);
+    if (!day || !time) return t(["Elige fecha y hora.", "Choose date and time."]);
+    var d = new Date(day + "T00:00:00");
+    if (d.getDay() === 0) return t(["Los domingos estamos cerrados.", "We are closed on Sundays."]);
+    if (blocked.indexOf(day) >= 0) return t(["Esa fecha no est\xE1 disponible. Elige otra.", "That date is unavailable. Pick another."]);
+    return "";
+  }
+  async function reservar() {
+    var v = validate();
+    if (v) { setErr(v); return; }
+    setErr(""); setBusy(true);
+    try {
+      var sizeLabel = size === "gra" ? "Grande" : size === "med" ? "Mediano" : "Peque\xF1o";
+      var dd = new Date(day + "T00:00:00");
+      var lng = document.documentElement.lang === "en" ? "en-US" : "es-US";
+      var dateStr = dd.toLocaleDateString(lng, { day: "numeric", month: "long", year: "numeric" });
+      var br = await fetch(URL2 + "/functions/v1/offer_book", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON2, "Authorization": "Bearer " + ANON2 }, body: JSON.stringify({ firstName, lastName, petName, address, phone, email, size: sizeLabel, dateISO: day, dateStr, time, pickup, notes }) });
+      var bd = await br.json().catch(function() { return {}; });
+      if (!br.ok || !bd.ok) { setBusy(false); setErr(bd.already ? t(["Esta oferta de introducci\xF3n solo puede reclamarse una vez por cliente.", "This intro offer can only be claimed once per client."]) : bd.error || t(["No se pudo reservar. Intenta de nuevo.", "Could not book. Try again."])); return; }
+      var pr = await fetch(URL2 + "/functions/v1/stripe_checkout", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON2, "Authorization": "Bearer " + ANON2 }, body: JSON.stringify({ type: "grooming", grooming_id: bd.grooming_id }) });
+      var pd = await pr.json().catch(function() { return {}; });
+      if (pd && pd.url) { window.location.href = pd.url; return; }
+      setBusy(false); setErr(t(["No se pudo iniciar el pago. Escr\xEDbenos por WhatsApp.", "Could not start payment. Message us on WhatsApp."]));
+    } catch (e) { setBusy(false); setErr(t(["Ocurri\xF3 un error. Intenta de nuevo.", "Something went wrong. Try again."])); }
+  }
+  if (closed) return null;
+  return /* @__PURE__ */ React.createElement(React.Fragment, null,
+    /* @__PURE__ */ React.createElement("div", { className: "intro-offer-banner" },
+      /* @__PURE__ */ React.createElement("div", { className: "container intro-offer-inner" },
+        /* @__PURE__ */ React.createElement("div", { className: "intro-offer-text" },
+          /* @__PURE__ */ React.createElement("span", { className: "intro-offer-eyebrow" }, t(["Oferta de introducci\xF3n \xB7 Tiempo limitado", "Intro offer \xB7 Limited time"])),
+          /* @__PURE__ */ React.createElement("div", { className: "intro-offer-title" }, t(["Grooming completo desde $50", "Full grooming from $50"])),
+          /* @__PURE__ */ React.createElement("div", { className: "intro-offer-sub" }, t(["Perros peque\xF1os y medianos $50 \xB7 grandes $70 \xB7 ba\xF1o, u\xF1as, o\xEDdos y corte", "Small & medium dogs $50 \xB7 large $70 \xB7 bath, nails, ears & haircut"]))
+        ),
+        /* @__PURE__ */ React.createElement("button", { className: "intro-offer-btn", onClick: function() { setOpen(true); } }, t(["Reclamar oferta", "Claim offer"])),
+        /* @__PURE__ */ React.createElement("button", { className: "intro-offer-x", "aria-label": t(["Cerrar", "Close"]), onClick: function() { setClosed(true); } }, "×")
+      )
+    ),
+    open && /* @__PURE__ */ React.createElement("div", { className: "offer-modal-overlay" },
+      /* @__PURE__ */ React.createElement("div", { className: "offer-modal" },
+        /* @__PURE__ */ React.createElement("button", { className: "offer-modal-x", "aria-label": t(["Cerrar", "Close"]), onClick: function() { setOpen(false); } }, "×"),
+        /* @__PURE__ */ React.createElement("div", { className: "offer-modal-head" },
+          /* @__PURE__ */ React.createElement("div", { className: "offer-modal-eyebrow" }, t(["Oferta de introducci\xF3n", "Intro offer"])),
+          /* @__PURE__ */ React.createElement("h3", null, t(["Agenda tu grooming", "Book your grooming"])),
+          /* @__PURE__ */ React.createElement("p", null, t(["Ba\xF1o, u\xF1as, o\xEDdos y corte. Reserva y paga ahora; te confirmamos tu cita.", "Bath, nails, ears and haircut. Reserve and pay now; we confirm your appointment."]))
+        ),
+        /* @__PURE__ */ React.createElement("div", { className: "offer-modal-body" },
+          /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Tama\xF1o de tu mascota", "Your pet’s size"])),
+          /* @__PURE__ */ React.createElement("div", { className: "offer-sizes" },
+            [["peq", t(["Peque\xF1o", "Small"]), "$50"], ["med", t(["Mediano", "Medium"]), "$50"], ["gra", t(["Grande", "Large"]), "$70"]].map(function(s) {
+              return /* @__PURE__ */ React.createElement("button", { key: s[0], type: "button", className: "offer-size" + (size === s[0] ? " on" : ""), onClick: function() { setSize(s[0]); } }, /* @__PURE__ */ React.createElement("span", null, s[1]), /* @__PURE__ */ React.createElement("strong", null, s[2]));
+            })
+          ),
+          /* @__PURE__ */ React.createElement("div", { className: "offer-grid" },
+            _offerField(t(["Nombre", "First name"]), firstName, setFirst),
+            _offerField(t(["Apellido", "Last name"]), lastName, setLast),
+            _offerField(t(["Nombre de la mascota", "Pet name"]), petName, setPet),
+            _offerField(t(["Tel\xE9fono", "Phone"]), phone, setPhone, "tel"),
+            _offerField(t(["Correo", "Email"]), email, setEmail, "email"),
+            _offerField(t(["Direcci\xF3n", "Address"]), address, setAddr)
+          ),
+          /* @__PURE__ */ React.createElement("div", { className: "offer-grid" },
+            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Fecha", "Date"])), /* @__PURE__ */ React.createElement("input", { className: "offer-in", type: "date", min: todayISO, value: day, onChange: function(e) { setDay(e.target.value); } })),
+            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Hora", "Time"])), /* @__PURE__ */ React.createElement("select", { className: "offer-in", value: time, onChange: function(e) { setTime(e.target.value); } }, /* @__PURE__ */ React.createElement("option", { value: "" }, "—"), TIMES.map(function(tm) { return /* @__PURE__ */ React.createElement("option", { key: tm, value: tm }, tm); })))
+          ),
+          /* @__PURE__ */ React.createElement("label", { className: "offer-pickup" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: pickup, onChange: function(e) { setPickup(e.target.checked); } }), t(["Recogida y entrega a domicilio (+$20)", "Home pickup & delivery (+$20)"])),
+          /* @__PURE__ */ React.createElement("input", { className: "offer-in", style: { marginTop: 10 }, placeholder: t(["Notas (opcional)", "Notes (optional)"]), value: notes, onChange: function(e) { setNotes(e.target.value); } }),
+          err && /* @__PURE__ */ React.createElement("div", { className: "offer-err" }, err),
+          /* @__PURE__ */ React.createElement("button", { className: "offer-pay", disabled: busy, onClick: reservar }, busy ? t(["Procesando…", "Processing…"]) : t(["Reservar y pagar", "Reserve & pay"]) + (total ? " \xB7 $" + total : "")),
+          /* @__PURE__ */ React.createElement("div", { className: "offer-fine" }, t(["Pago seguro: tarjeta, Cash App, Klarna o Afterpay. Solo 1 oferta por cliente.", "Secure payment: card, Cash App, Klarna or Afterpay. One offer per client."]))
+        )
+      )
+    )
+  );
+}
+Object.assign(window, { GroomingApp, BookingCalendar, IntroOfferBanner });
 
 })();
