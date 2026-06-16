@@ -843,6 +843,7 @@ function IntroOfferBanner() {
   const [blocked, setBlocked] = useState([]);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
+  const [takenTimes, setTaken] = useState([]);
   const TIMES = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
   const URL2 = "https://oqqwmcplljirbreowrll.supabase.co";
   const ANON2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
@@ -855,6 +856,14 @@ function IntroOfferBanner() {
   const price = size === "gra" ? 70 : size ? 50 : 0;
   const total = price + (pickup ? 20 : 0);
   const todayISO = new Date().toISOString().slice(0, 10);
+  function pickDate(v) {
+    setDay(v); setTime(""); setTaken([]); setErr("");
+    if (!v) return;
+    var dd = new Date(v + "T00:00:00");
+    if (dd.getDay() === 0) { setErr(t(["Los domingos estamos cerrados. Elige otra fecha.", "We are closed on Sundays. Pick another date."])); return; }
+    if (blocked.indexOf(v) >= 0) { setErr(t(["Esa fecha no est\xE1 disponible. Elige otra.", "That date is unavailable. Pick another."])); return; }
+    try { fetch(URL2 + "/functions/v1/grooming_slots", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON2, "Authorization": "Bearer " + ANON2 }, body: JSON.stringify({ date: v }) }).then(function(r) { return r.json(); }).then(function(d2) { setTaken((d2 && d2.taken) || []); }).catch(function() {}); } catch (e) {}
+  }
   function validate() {
     if (!firstName || !petName || !phone || !email) return t(["Completa nombre, mascota, tel\xE9fono y correo.", "Fill in name, pet, phone and email."]);
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return t(["Correo inv\xE1lido.", "Invalid email."]);
@@ -920,8 +929,8 @@ function IntroOfferBanner() {
             _offerField(t(["Direcci\xF3n", "Address"]), address, setAddr)
           ),
           /* @__PURE__ */ React.createElement("div", { className: "offer-grid" },
-            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Fecha", "Date"])), /* @__PURE__ */ React.createElement("input", { className: "offer-in", type: "date", min: todayISO, value: day, onChange: function(e) { setDay(e.target.value); } })),
-            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Hora", "Time"])), /* @__PURE__ */ React.createElement("select", { className: "offer-in", value: time, onChange: function(e) { setTime(e.target.value); } }, /* @__PURE__ */ React.createElement("option", { value: "" }, "—"), TIMES.map(function(tm) { return /* @__PURE__ */ React.createElement("option", { key: tm, value: tm }, tm); })))
+            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Fecha", "Date"])), /* @__PURE__ */ React.createElement("input", { className: "offer-in", type: "date", min: todayISO, value: day, onChange: function(e) { pickDate(e.target.value); } })),
+            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Hora", "Time"])), /* @__PURE__ */ React.createElement("select", { className: "offer-in", value: time, onChange: function(e) { setTime(e.target.value); } }, /* @__PURE__ */ React.createElement("option", { value: "" }, "—"), TIMES.filter(function(tm) { return takenTimes.indexOf(tm) < 0; }).map(function(tm) { return /* @__PURE__ */ React.createElement("option", { key: tm, value: tm }, tm); }), day && TIMES.filter(function(tm) { return takenTimes.indexOf(tm) < 0; }).length === 0 ? /* @__PURE__ */ React.createElement("option", { value: "", disabled: true }, t(["D\xEDa lleno — elige otra fecha", "Day full — pick another date"])) : null))
           ),
           /* @__PURE__ */ React.createElement("label", { className: "offer-pickup" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: pickup, onChange: function(e) { setPickup(e.target.checked); } }), t(["Recogida y entrega a domicilio (+$20)", "Home pickup & delivery (+$20)"])),
           /* @__PURE__ */ React.createElement("input", { className: "offer-in", style: { marginTop: 10 }, placeholder: t(["Notas (opcional)", "Notes (optional)"]), value: notes, onChange: function(e) { setNotes(e.target.value); } }),
