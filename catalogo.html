@@ -457,7 +457,7 @@
   function buildCatToolbar(d){
     var el=document.getElementById('cat-toolbar'); if(!el) return;
     var L=LANG, breed=catBreedName(d);
-    var entregas='/entregados?ret=1&lang='+L+'&breed='+encodeURIComponent(breed);
+    var entregas='https://bpuppy.us/?ret=1&lang='+L+'&breed='+encodeURIComponent(breed)+'#gallery';
     var historia='/historia?lang='+L;
     var home='https://bpuppy.us/?lang='+L;
     var ig='https://instagram.com/bpuppyus';
@@ -480,14 +480,14 @@
       heart:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.8-10-9.3C.3 8.4 2 5 5.3 5c2 0 3.3 1.2 4.2 2.4C10.4 6.2 11.7 5 13.7 5 17 5 18.7 8.4 17 11.7 14.5 16.2 12 21 12 21z"/></svg>'
     };
     var steps = EN ? [
-      ['deposit','Reserve your puppy','A $500 deposit holds your puppy in your name — no rush, you plan at your pace.'],
-      ['cal','We book the flight','Once reserved, we schedule a flight to reach you and coordinate the arrival date with you.'],
+      ['deposit','Reserve your puppy','A $500 deposit holds the puppy you chose, in your name.'],
+      ['cal','We book the flight','Once reserved, we schedule a flight to reach you and coordinate the date and delivery with you.'],
       ['plane','Flies in-cabin, accompanied','Your puppy travels with us in the cabin (never in cargo) — safe, warm and cared for the whole way.'],
       ['hands','In your hands in 2–4 days','On average your puppy arrives within 2 to 4 days — healthy, vet-checked and with its papers.'],
       ['heart','We deliver happiness','From our home to yours. Welcome to the BrightPuppy family.']
     ] : [
-      ['deposit','Apartas tu cachorro','Con $500 lo dejamos apartado a tu nombre — sin prisa, planeas a tu ritmo.'],
-      ['cal','Agendamos su vuelo','Una vez apartas, programamos un vuelo para llegar donde estés y coordinamos contigo la fecha.'],
+      ['deposit','Apartas tu cachorro','Con $500 dejamos apartado a tu nombre el cachorro que elegiste.'],
+      ['cal','Agendamos su vuelo','Una vez apartado, programamos un vuelo para llegar donde estés y coordinamos contigo la fecha y la entrega.'],
       ['plane','Viaja en cabina, acompañado','Tu cachorro vuela con nosotros en cabina (nunca en bodega) — seguro, calientito y con cariño todo el camino.'],
       ['hands','Llega a tus manos en 2–4 días','En promedio tu cachorro llega en 2 a 4 días — sano, revisado y con sus documentos.'],
       ['heart','Repartimos felicidad','De nuestra casa a la tuya. Bienvenido a la familia BrightPuppy.']
@@ -498,7 +498,7 @@
       + '<div class="cdl-head"><button class="cdl-x" onclick="var o=document.getElementById(\'cdl-ov\');if(o)o.remove()" aria-label="Cerrar">&times;</button>'
       + '<h2>'+(EN?'Our Delivery':'Nuestro Delivery')+'</h2><p>'+(EN?'How your puppy gets home, step by step.':'Cómo llega tu cachorro a casa, paso a paso.')+'</p></div>'
       + '<div class="cdl-steps">'+rows+'</div>'
-      + '<div class="cdl-foot"><span class="happy">'+IC.heart+' '+(EN?'We deliver happiness — safe, simple and full of love.':'Repartimos felicidad — seguro, simple y con mucho amor.')+'</span></div>'
+      + '<div class="cdl-foot"><span class="happy">'+IC.heart+' '+(EN?'Experts bringing joy to homes since 2012.':'Expertos llevando la alegría a los hogares desde 2012.')+'</span></div>'
       + '</div>';
     ov.onclick=function(){ ov.remove(); };
     document.body.appendChild(ov);

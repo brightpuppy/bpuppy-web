@@ -59,12 +59,43 @@
 <script src="hero.js?v=1781476900318"></script>
 <script src="sections.js?v=1781476900318"></script>
 <script src="process-quiz.js?v=1781476900318"></script>
-<script src="gallery.js?v=1781730000000"></script>
+<script src="gallery.js?v=1781730000001"></script>
 <script src="tweaks.js?v=1781476900318"></script>
 <script src="app.js?v=1781476900318"></script>
 
 <script src="site-animations.js?v=1781476900318"></script>
 <script src="claude-bridge.js?v=1781476900318"></script>
 <script src="chat-widget.js?v=1781476900318"></script>
+<script>
+/* Llegada desde un catálogo privado (?ret=1&breed=&lang=): baja a "Familias felices" y muestra botón flotante para volver al catálogo */
+(function(){
+  try{
+    var qp=new URLSearchParams(location.search);
+    var ret=(qp.get('ret')||'').toLowerCase();
+    if(ret!=='1' && ret!=='true') return;
+    var EN=(qp.get('lang')||'').toLowerCase()==='en';
+    var breed=(qp.get('breed')||'').trim();
+    var label=EN?('‹ Back to '+(breed?breed+' ':'')+'available'):('‹ Volver a '+(breed?breed+' ':'')+'disponibles');
+    var st=document.createElement('style');
+    st.textContent='#bp-ret-cat{position:fixed;top:14px;left:14px;z-index:100000;background:#fff;color:#241a14;border:none;border-radius:999px;padding:8px 15px;font-weight:800;font-size:12.5px;font-family:inherit;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.22)}'
+      +'#bp-ret-cat::before{content:"";position:absolute;inset:0;border-radius:999px;padding:2px;background:linear-gradient(90deg,#ff5f6d,#ffc371,#47e891,#3aafff,#a86bff,#ff5f6d);background-size:300% 100%;-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask-composite:exclude;animation:bpRetRainbow 5s linear infinite;pointer-events:none}'
+      +'@keyframes bpRetRainbow{0%{background-position:0% 50%}100%{background-position:300% 50%}}';
+    document.head.appendChild(st);
+    var b=document.createElement('button');
+    b.id='bp-ret-cat'; b.type='button'; b.textContent=label;
+    b.onclick=function(){ try{ if(window.opener && !window.opener.closed){ window.opener.focus(); return; } }catch(e){} try{ if(history.length>1){ history.back(); } else { window.close(); } }catch(e){} };
+    var mount=function(){ if(!document.getElementById('bp-ret-cat')) document.body.appendChild(b); };
+    if(document.body) mount(); else document.addEventListener('DOMContentLoaded', mount);
+    var tries=0;
+    var go=function(){
+      tries++;
+      var g=document.getElementById('gallery');
+      if(g){ var y=g.getBoundingClientRect().top + window.pageYOffset - 70; window.scrollTo({ top:y, behavior:'smooth' }); return; }
+      if(tries<40) setTimeout(go, 150);
+    };
+    setTimeout(go, 350);
+  }catch(e){}
+})();
+</script>
 </body>
 </html>

@@ -59,6 +59,7 @@ function Gallery() {
     var el = trackRef.current; if (!el) return;
     var paused = false, resumeT = 0, raf = 0, last = 0;
     function pauseFor(ms) { paused = true; clearTimeout(resumeT); resumeT = setTimeout(function () { paused = false; }, ms); }
+    el.__bpPause = function () { pauseFor(5000); };
     var enter = function () { paused = true; };
     var leave = function () { paused = false; };
     var poke = function () { pauseFor(4500); };
@@ -89,9 +90,13 @@ function Gallery() {
   }, []);
   function nav(dir) {
     var el = trackRef.current; if (!el) return;
+    if (el.__bpPause) el.__bpPause();
+    var card = el.querySelector(".g-card");
+    var w = card ? card.getBoundingClientRect().width : 0;
+    var step = (w > 80) ? (w + 16) * 3 : Math.max(el.clientWidth * 0.85, 600);
     var half = el.scrollWidth / 2;
     if (dir < 0 && el.scrollLeft < 5 && half > 0) el.scrollLeft = half;
-    el.scrollBy({ left: dir * Math.max(300, el.clientWidth * 0.8), behavior: "smooth" });
+    el.scrollBy({ left: dir * step, behavior: "smooth" });
   }
   return /* @__PURE__ */ React.createElement("section", { className: "sec gallery", id: "gallery" }, /* @__PURE__ */ React.createElement("div", { className: "container" }, /* @__PURE__ */ React.createElement("div", { className: "sec-head reveal" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "eyebrow" }, t(STRINGS.gallery.eyebrow)), /* @__PURE__ */ React.createElement("h2", null, t(STRINGS.gallery.title_a), " ", /* @__PURE__ */ React.createElement("em", null, t(STRINGS.gallery.title_b)))), /* @__PURE__ */ React.createElement("p", null, t(STRINGS.gallery.sub))), /* @__PURE__ */ React.createElement("div", { className: "gal-carousel" },
     /* @__PURE__ */ React.createElement("button", { type: "button", className: "gal-arrow gal-prev", "aria-label": "Anterior", onClick: function () { nav(-1); } }, "\u2039"),
