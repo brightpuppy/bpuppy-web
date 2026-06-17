@@ -53,20 +53,56 @@ const GALLERY_PHOTOS = [
 ];
 function Gallery() {
   const t = useT();
-  const { lang } = useLang();
+  const trackRef = React.useRef(null);
   const seq = [...GALLERY_PHOTOS, ...GALLERY_PHOTOS];
-  return /* @__PURE__ */ React.createElement("section", { className: "sec gallery", id: "gallery" }, /* @__PURE__ */ React.createElement("div", { className: "container" }, /* @__PURE__ */ React.createElement("div", { className: "sec-head reveal" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "eyebrow" }, t(STRINGS.gallery.eyebrow)), /* @__PURE__ */ React.createElement("h2", null, t(STRINGS.gallery.title_a), " ", /* @__PURE__ */ React.createElement("em", null, t(STRINGS.gallery.title_b)))), /* @__PURE__ */ React.createElement("p", null, t(STRINGS.gallery.sub)))), /* @__PURE__ */ React.createElement("div", { className: "gallery-marquee" }, seq.map((photo, i) => {
-    const variant = i % 4 + 1;
-    return /* @__PURE__ */ React.createElement("div", { key: i, className: `g-card g-card-${variant}` }, /* @__PURE__ */ React.createElement(
-      "img",
-      {
-        className: "g-card-img",
-        src: photo,
-        alt: "Familia feliz con su cachorro",
-        loading: "lazy"
+  React.useEffect(function () {
+    var el = trackRef.current; if (!el) return;
+    var paused = false, resumeT = 0, raf = 0, last = 0;
+    function pauseFor(ms) { paused = true; clearTimeout(resumeT); resumeT = setTimeout(function () { paused = false; }, ms); }
+    var enter = function () { paused = true; };
+    var leave = function () { paused = false; };
+    var poke = function () { pauseFor(4500); };
+    el.addEventListener("pointerenter", enter);
+    el.addEventListener("pointerleave", leave);
+    el.addEventListener("pointerdown", poke);
+    el.addEventListener("wheel", poke, { passive: true });
+    el.addEventListener("touchmove", poke, { passive: true });
+    function tick(ts) {
+      if (!last) last = ts; var dt = ts - last; last = ts;
+      if (dt > 60) dt = 60; // evita saltos al volver de una pestaña en segundo plano
+      if (el && !paused) {
+        el.scrollLeft += dt * 0.045;
+        var half = el.scrollWidth / 2;
+        if (half > 0 && el.scrollLeft >= half) el.scrollLeft -= half;
       }
-    ), /* @__PURE__ */ React.createElement("div", { className: "g-card-overlay" }, /* @__PURE__ */ React.createElement("div", { className: "g-tag" }, /* @__PURE__ */ React.createElement("span", { className: "heart" }, "\u2665"), " BPuppy")));
-  })));
+      raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+    return function () {
+      cancelAnimationFrame(raf); clearTimeout(resumeT);
+      el.removeEventListener("pointerenter", enter);
+      el.removeEventListener("pointerleave", leave);
+      el.removeEventListener("pointerdown", poke);
+      el.removeEventListener("wheel", poke);
+      el.removeEventListener("touchmove", poke);
+    };
+  }, []);
+  function nav(dir) {
+    var el = trackRef.current; if (!el) return;
+    var half = el.scrollWidth / 2;
+    if (dir < 0 && el.scrollLeft < 5 && half > 0) el.scrollLeft = half;
+    el.scrollBy({ left: dir * Math.max(300, el.clientWidth * 0.8), behavior: "smooth" });
+  }
+  return /* @__PURE__ */ React.createElement("section", { className: "sec gallery", id: "gallery" }, /* @__PURE__ */ React.createElement("div", { className: "container" }, /* @__PURE__ */ React.createElement("div", { className: "sec-head reveal" }, /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { className: "eyebrow" }, t(STRINGS.gallery.eyebrow)), /* @__PURE__ */ React.createElement("h2", null, t(STRINGS.gallery.title_a), " ", /* @__PURE__ */ React.createElement("em", null, t(STRINGS.gallery.title_b)))), /* @__PURE__ */ React.createElement("p", null, t(STRINGS.gallery.sub))), /* @__PURE__ */ React.createElement("div", { className: "gal-carousel" },
+    /* @__PURE__ */ React.createElement("button", { type: "button", className: "gal-arrow gal-prev", "aria-label": "Anterior", onClick: function () { nav(-1); } }, "\u2039"),
+    /* @__PURE__ */ React.createElement("div", { className: "gal-track", ref: trackRef }, seq.map(function (photo, i) {
+      return /* @__PURE__ */ React.createElement("div", { key: i, className: "g-card" }, /* @__PURE__ */ React.createElement(
+        "img",
+        { className: "g-card-img", src: photo, alt: "Familia feliz con su cachorro", loading: "lazy" }
+      ), /* @__PURE__ */ React.createElement("div", { className: "g-card-overlay" }, /* @__PURE__ */ React.createElement("div", { className: "g-tag" }, /* @__PURE__ */ React.createElement("span", { className: "heart" }, "\u2665"), " BPuppy")));
+    })),
+    /* @__PURE__ */ React.createElement("button", { type: "button", className: "gal-arrow gal-next", "aria-label": "Siguiente", onClick: function () { nav(1); } }, "\u203a")
+  )));
 }
 function Testimonials() {
   const t = useT();

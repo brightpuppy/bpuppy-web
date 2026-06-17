@@ -106,6 +106,30 @@
   footer a.wa{ color:var(--ink); font-weight:700; display:inline-flex; align-items:center; gap:7px; }
   footer a.wa svg{ width:15px; height:15px; color:#1da851; }
   @media(max-width:560px){ .hero{ padding:30px 0 6px; } .grid{ gap:16px; grid-template-columns:repeat(auto-fill,minmax(160px,1fr)); } .body h3{ font-size:19px; } .price{ font-size:21px; } }
+  /* Barra de botones (borde arcoíris animado) */
+  .cat-toolbar{ display:flex; flex-wrap:wrap; gap:10px; justify-content:center; align-items:center; max-width:1000px; margin:0 auto; padding:14px 16px 2px; }
+  .cat-pill{ position:relative; border:none; background:#fffdf9; color:var(--ink,#2b2b2b); font-family:inherit; font-weight:800; font-size:13px; line-height:1; padding:11px 18px; border-radius:999px; cursor:pointer; transition:transform .12s; }
+  .cat-pill::before{ content:""; position:absolute; inset:0; border-radius:999px; padding:2px; background:linear-gradient(90deg,#ff5f6d,#ffc371,#47e891,#3aafff,#a86bff,#ff5f6d); background-size:300% 100%; -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude; animation:catrainbow 5s linear infinite; pointer-events:none; }
+  .cat-pill:hover{ transform:translateY(-1px); }
+  @keyframes catrainbow{ 0%{background-position:0% 50%} 100%{background-position:300% 50%} }
+  @media(max-width:560px){ .cat-pill{ font-size:12px; padding:9px 14px; } .cat-toolbar{ gap:8px; padding:10px 12px 0; } }
+  /* Popup "Nuestro Delivery" */
+  .cdl-ov{ position:fixed; inset:0; z-index:400; background:rgba(20,16,14,.62); display:flex; align-items:center; justify-content:center; padding:18px; }
+  .cdl-card{ background:#fff; border-radius:22px; max-width:560px; width:100%; max-height:90vh; overflow-y:auto; box-shadow:0 24px 70px rgba(0,0,0,.35); }
+  .cdl-head{ padding:26px 26px 18px; background:linear-gradient(135deg,#fff5ec,#fdeaf3); border-radius:22px 22px 0 0; position:relative; }
+  .cdl-head h2{ font-family:var(--display,inherit); font-size:26px; margin:0 0 4px; color:var(--ink,#2b2b2b); }
+  .cdl-head p{ margin:0; color:var(--ink-soft,#6b6258); font-size:14px; }
+  .cdl-x{ position:absolute; top:14px; right:16px; width:36px; height:36px; border-radius:50%; border:none; background:rgba(0,0,0,.07); color:#2b2b2b; font-size:20px; cursor:pointer; }
+  .cdl-steps{ padding:18px 26px 8px; }
+  .cdl-step{ display:flex; gap:14px; align-items:flex-start; padding:13px 0; border-bottom:1px solid var(--line,#eee); }
+  .cdl-step:last-child{ border-bottom:none; }
+  .cdl-ic{ flex:0 0 44px; width:44px; height:44px; border-radius:13px; display:grid; place-items:center; background:#fff4ea; color:#F58220; }
+  .cdl-ic svg{ width:23px; height:23px; }
+  .cdl-tt{ font-weight:800; font-size:15px; color:var(--ink,#2b2b2b); margin-bottom:2px; }
+  .cdl-ds{ font-size:13px; color:var(--ink-soft,#6b6258); line-height:1.5; }
+  .cdl-foot{ padding:8px 26px 24px; text-align:center; }
+  .cdl-foot .happy{ display:inline-flex; align-items:center; gap:8px; font-weight:800; color:#F58220; font-size:16px; }
+  .cdl-foot .happy svg{ width:20px; height:20px; }
 </style>
 </head>
 <body>
@@ -126,21 +150,27 @@
       </nav>
     </div>
   </div>
-  <script>try{if((window.__BP_LANG||localStorage.getItem('bpuppy-lang')||'es')==='en'){
-    var _swapEN=function(){
-      var s=function(sel,html){var el=document.querySelector(sel);if(el)el.innerHTML=html;};
-      s('#trustline','Pay in <b>interest-free installments</b> (Klarna/Afterpay) · reserve with <b>$500</b> · or pay by card, Cash App & more');
-      s('a[href="/planea-sin-prisa"]','Plan at Your Pace · Pay over time →');
-      s('a[href="/terminos"]','Terms');
-      s('a[href="/garantia"]','Health Guarantee');
-      s('a[href="/nosotros"]','Why trust us');
-      s('a[href="/reembolsos"]','Refunds');
-      s('#ld-txt','Loading your catalog…');
-      var disc=document.querySelector('footer .disc');if(disc)disc.textContent="Private, personal link — please don't share it. Prices and availability subject to confirmation. © BrightPuppy.";
-      var wa=document.querySelector('footer a.wa');if(wa){var svg=wa.querySelector('svg');wa.innerHTML='';if(svg)wa.appendChild(svg);wa.appendChild(document.createTextNode(' Message us on WhatsApp'));}
-    };
-    if(document.readyState!=='loading')_swapEN();else document.addEventListener('DOMContentLoaded',_swapEN);
-  }}catch(e){}</script>
+  <div id="cat-toolbar" class="cat-toolbar"></div>
+  <script>
+  // Idioma del "chrome" (barra, nav, footer) en AMBAS direcciones. El idioma REAL lo manda el enlace (catalog_view.lang), no el navegador.
+  window.applyChromeLang=function(lang){
+    try{
+      var EN=(lang==='en');
+      var s=function(sel,es,en){var el=document.querySelector(sel);if(el)el.innerHTML=EN?en:es;};
+      s('#trustline','Paga en <b>cuotas sin intereses</b> (Klarna/Afterpay) · aparta con <b>$500</b> · o paga con tarjeta, Cash App y más','Pay in <b>interest-free installments</b> (Klarna/Afterpay) · reserve with <b>$500</b> · or pay by card, Cash App & more');
+      s('a[href="/planea-sin-prisa"]','Planea Sin Prisa · Abona a tu ritmo →','Plan at Your Pace · Pay over time →');
+      s('a[href="/terminos"]','Condiciones','Terms');
+      s('a[href="/garantia"]','Garantía','Health Guarantee');
+      s('a[href="/nosotros"]','Por qué confiar en nosotros','Why trust us');
+      s('a[href="/reembolsos"]','Reembolsos','Refunds');
+      var ld=document.getElementById('ld-txt');if(ld)ld.textContent=EN?'Loading your catalog…':'Cargando tu catálogo…';
+      var disc=document.querySelector('footer .disc');if(disc)disc.textContent=EN?"Private, personal link — please don't share it. Prices and availability subject to confirmation. © BrightPuppy.":"Enlace privado y personal — por favor no lo compartas. Precios y disponibilidad sujetos a confirmación. © BrightPuppy.";
+      var wa=document.querySelector('footer a.wa');if(wa){var svg=wa.querySelector('svg');wa.innerHTML='';if(svg)wa.appendChild(svg);wa.appendChild(document.createTextNode(EN?' Message us on WhatsApp':' Escríbenos por WhatsApp'));}
+      document.documentElement.lang=lang;
+    }catch(e){}
+  };
+  try{ var _bl0=(window.__BP_LANG||localStorage.getItem('bpuppy-lang')||'es'); if(document.readyState!=='loading')applyChromeLang(_bl0); else document.addEventListener('DOMContentLoaded',function(){applyChromeLang(_bl0);}); }catch(e){}
+  </script>
 
   <div id="app">
     <div class="center"><div><div class="spinner"></div><div id="ld-txt" style="color:var(--ink-soft);font-weight:600">Cargando tu catálogo…</div></div></div>
@@ -416,13 +446,71 @@
       + '<div class="grid">'+cards+'</div></div>';
   }
 
+  // ── Barra de botones (entregas, IG, delivery, historia, BrightPuppy) ──
+  function catBreedName(d){
+    var ps=(d&&d.puppies)||[], set={}, order=[];
+    ps.forEach(function(p){ var b=breedLabel(p.breed); if(b&&!set[b]){ set[b]=1; order.push(b); } });
+    if(order.length===1) return order[0];
+    return T('cachorros','puppies');
+  }
+  window.catOpenWin=function(u){ try{ window.open(u,'_blank'); }catch(e){ try{ location.href=u; }catch(_){} } };
+  function buildCatToolbar(d){
+    var el=document.getElementById('cat-toolbar'); if(!el) return;
+    var L=LANG, breed=catBreedName(d);
+    var entregas='/entregados?ret=1&lang='+L+'&breed='+encodeURIComponent(breed);
+    var historia='/historia?lang='+L;
+    var home='https://bpuppy.us/?lang='+L;
+    var ig='https://instagram.com/bpuppyus';
+    function pill(label,js){ return '<button type="button" class="cat-pill" onclick="'+js+'">'+label+'</button>'; }
+    el.innerHTML =
+        pill(T('Mira nuestras entregas','See our deliveries'), "catOpenWin('"+entregas+"')")
+      + pill(T('Síguenos en Instagram','Follow us on Instagram'), "catOpenWin('"+ig+"')")
+      + pill(T('Nuestro Delivery','Our Delivery'), "catDeliveryPopup()")
+      + pill(T('Quiénes somos','About us'), "catOpenWin('"+historia+"')")
+      + pill(T('Ir a BrightPuppy','Go to BrightPuppy'), "catOpenWin('"+home+"')");
+  }
+  window.catDeliveryPopup=function(){
+    var ex=document.getElementById('cdl-ov'); if(ex){ ex.remove(); return; }
+    var EN=(LANG==='en');
+    var IC={
+      deposit:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>',
+      cal:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><path d="M16 2v4M8 2v4M3 10h18"/></svg>',
+      plane:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.8 19.2 16 11l3.5-3.5a2.12 2.12 0 0 0-3-3L13 8 4.8 6.2a.8.8 0 0 0-.8 1.3L8 11l-2 3-2.2.4a.5.5 0 0 0-.2.9L6 17l1.7 2.4a.5.5 0 0 0 .9-.2L9 17l3-2 3.5 4a.8.8 0 0 0 1.3-.8z"/></svg>',
+      hands:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h3l2-2 4 4 4-4 2 2h3"/><path d="M5 12v6a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-6"/></svg>',
+      heart:'<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 21s-7.5-4.8-10-9.3C.3 8.4 2 5 5.3 5c2 0 3.3 1.2 4.2 2.4C10.4 6.2 11.7 5 13.7 5 17 5 18.7 8.4 17 11.7 14.5 16.2 12 21 12 21z"/></svg>'
+    };
+    var steps = EN ? [
+      ['deposit','Reserve your puppy','A $500 deposit holds your puppy in your name — no rush, you plan at your pace.'],
+      ['cal','We book the flight','Once reserved, we schedule a flight to reach you and coordinate the arrival date with you.'],
+      ['plane','Flies in-cabin, accompanied','Your puppy travels with us in the cabin (never in cargo) — safe, warm and cared for the whole way.'],
+      ['hands','In your hands in 2–4 days','On average your puppy arrives within 2 to 4 days — healthy, vet-checked and with its papers.'],
+      ['heart','We deliver happiness','From our home to yours. Welcome to the BrightPuppy family.']
+    ] : [
+      ['deposit','Apartas tu cachorro','Con $500 lo dejamos apartado a tu nombre — sin prisa, planeas a tu ritmo.'],
+      ['cal','Agendamos su vuelo','Una vez apartas, programamos un vuelo para llegar donde estés y coordinamos contigo la fecha.'],
+      ['plane','Viaja en cabina, acompañado','Tu cachorro vuela con nosotros en cabina (nunca en bodega) — seguro, calientito y con cariño todo el camino.'],
+      ['hands','Llega a tus manos en 2–4 días','En promedio tu cachorro llega en 2 a 4 días — sano, revisado y con sus documentos.'],
+      ['heart','Repartimos felicidad','De nuestra casa a la tuya. Bienvenido a la familia BrightPuppy.']
+    ];
+    var rows = steps.map(function(s){ return '<div class="cdl-step"><div class="cdl-ic">'+IC[s[0]]+'</div><div><div class="cdl-tt">'+s[1]+'</div><div class="cdl-ds">'+s[2]+'</div></div></div>'; }).join('');
+    var ov=document.createElement('div'); ov.className='cdl-ov'; ov.id='cdl-ov';
+    ov.innerHTML='<div class="cdl-card" onclick="event.stopPropagation()">'
+      + '<div class="cdl-head"><button class="cdl-x" onclick="var o=document.getElementById(\'cdl-ov\');if(o)o.remove()" aria-label="Cerrar">&times;</button>'
+      + '<h2>'+(EN?'Our Delivery':'Nuestro Delivery')+'</h2><p>'+(EN?'How your puppy gets home, step by step.':'Cómo llega tu cachorro a casa, paso a paso.')+'</p></div>'
+      + '<div class="cdl-steps">'+rows+'</div>'
+      + '<div class="cdl-foot"><span class="happy">'+IC.heart+' '+(EN?'We deliver happiness — safe, simple and full of love.':'Repartimos felicidad — seguro, simple y con mucho amor.')+'</span></div>'
+      + '</div>';
+    ov.onclick=function(){ ov.remove(); };
+    document.body.appendChild(ov);
+  };
+
   if(!token){ app.innerHTML = stateBox(lockIcon,T('Enlace no válido','Invalid link'),T('Este enlace no incluye un código de catálogo. Pídele a tu asesor que te lo reenvíe.','This link does not include a catalog code. Ask your advisor to resend it.'), true); return; }
 
   fetch(SUPA+'/functions/v1/catalog_view', {
     method:'POST', headers:{ 'Content-Type':'application/json', 'apikey':ANON, 'Authorization':'Bearer '+ANON },
     body: JSON.stringify({ token: token })
   }).then(function(r){ return r.json(); }).then(function(d){
-    if(d && d.ok){ render(d); return; }
+    if(d && d.ok){ LANG=(d.lang==='en'?'en':'es'); window.__BP_LANG=LANG; try{applyChromeLang(LANG);}catch(e){} render(d); try{buildCatToolbar(d);}catch(e){} return; }
     var reason = d && d.reason;
     if(reason==='expired') app.innerHTML = stateBox(clockIcon,'Tu enlace expiró','Por seguridad, los catálogos son temporales. Escríbenos y con gusto te enviamos uno nuevo y actualizado.', true);
     else if(reason==='revoked') app.innerHTML = stateBox(lockIcon,'Enlace desactivado','Este catálogo ya no está activo. Pídele a tu asesor un enlace nuevo.', true);
