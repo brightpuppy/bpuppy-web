@@ -433,6 +433,7 @@
           + (p.name? '<h3>'+esc(p.name)+'</h3>':'')
           + (meta.length? '<div class="meta">'+meta.map(function(m){return '<span class="chip">'+m+'</span>';}).join('')+'</div>':'')
           + '<div class="price">'+money(p.price)+(p.price!=null&&!isNaN(p.price)?' <small>USD</small>':'')+'</div>'
+          + (p.price!=null&&!isNaN(p.price)? '<div style="font-size:11px;color:var(--ink-soft);margin-top:3px;line-height:1.4">'+T('Incluye <b>delivery a todo USA</b>. Para delivery fuera de USA, contacta con el personal.','Includes <b>delivery anywhere in the USA</b>. For delivery outside the USA, contact our team.')+'</div>' : '')
           + detH
           + '<div style="margin-top:9px;font-size:12.5px;font-weight:700;color:var(--orange)">'+T('ⓘ Ver detalles e info de la raza','ⓘ See details & breed info')+'</div>'
           + '<button class="cta" onclick="event.stopPropagation();interes('+i+')" style="border:none;cursor:pointer;width:100%;font-family:inherit;margin-top:9px">'+T('Me interesa','I am interested')+'</button>'
