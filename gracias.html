@@ -122,7 +122,9 @@
   document.getElementById('cta-game').href = '/quiz'+lp;
   document.getElementById('cta-home').href = '/'+lp;
   var cp = '?welcome=1'+(pet?('&pet='+encodeURIComponent(pet)):'')+(name?('&name='+encodeURIComponent(name)):'')+(lq==='en'?'&lang=en':'');
-  document.getElementById('cta-comm').href = '/social'+cp;
+  var commBtn=document.getElementById('cta-comm');
+  commBtn.href = '/social'+cp;
+  commBtn.addEventListener('click', function(){ try{ var pend={}; try{ pend=JSON.parse(localStorage.getItem('bp_pending_social')||'{}')||{}; }catch(e){} if(pet) pend.pet_name=pet; if(name) pend.first_name=name; pend.from='purchase'; localStorage.setItem('bp_pending_social', JSON.stringify(pend)); }catch(e){} });
 
   // Logros
   var IC = {
