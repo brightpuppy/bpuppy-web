@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<script>try{var _ql=(new URLSearchParams(location.search).get('lang')||'').toLowerCase();var _bl=(_ql==='en'||_ql==='es')?_ql:((((navigator.language||'')+'').toLowerCase().indexOf('es')===0)?'es':'en');window.__BP_LANG=_bl;document.documentElement.lang=_bl;}catch(e){}</script>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="robots" content="noindex"/>
+<title>Preferencias de correo — BrightPuppy</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
+<link rel="icon" href="assets/logo.webp">
+<style>
+  :root{ --orange:#F58220; --ink:#2D2421; --ink2:#5C4F48; --soft:#8a7a6e; --paper:#FAF6F0; --line:#ece2d6; --wh:#fff; }
+  *{box-sizing:border-box}
+  body{ margin:0; background:var(--paper); color:var(--ink); font-family:'Plus Jakarta Sans',system-ui,Arial,sans-serif; -webkit-font-smoothing:antialiased; display:flex; min-height:100vh; align-items:center; justify-content:center; padding:24px; }
+  .card{ background:var(--wh); border:1px solid var(--line); border-radius:20px; max-width:460px; width:100%; padding:30px 26px; text-align:center; box-shadow:0 14px 44px rgba(0,0,0,.08); }
+  .logo{ display:inline-flex; align-items:center; gap:8px; margin-bottom:18px; font-weight:800; font-size:17px; }
+  .logo span{ color:var(--orange); } .logo img{ width:28px; height:28px; border-radius:7px; }
+  h1{ font-family:'Bricolage Grotesque',sans-serif; font-weight:800; font-size:24px; letter-spacing:-0.02em; margin:0 0 8px; }
+  p{ color:var(--ink2); line-height:1.6; font-size:14.5px; margin:0 0 18px; }
+  .em{ font-weight:700; color:var(--ink); }
+  .btn{ display:inline-block; width:100%; padding:14px; border-radius:13px; border:none; font-weight:800; font-size:15px; cursor:pointer; font-family:inherit; }
+  .btn-d{ background:#d14343; color:#fff; }
+  .btn-s{ background:var(--wh); color:var(--ink); border:1.5px solid var(--line); margin-top:10px; }
+  .ok{ color:#1EB87A; } .muted{ font-size:12.5px; color:var(--soft); margin-top:16px; }
+  a{ color:var(--orange); }
+</style>
+</head>
+<body>
+  <div class="card" id="card">
+    <div class="logo"><img src="assets/logo.webp" alt="" onerror="this.style.display='none'">Bright<span>Puppy</span></div>
+    <div id="body"></div>
+  </div>
+<script>
+(function(){
+  var SUPA='https://oqqwmcplljirbreowrll.supabase.co';
+  var ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+  var EN=(window.__BP_LANG==='en');
+  function T(es,en){ return EN?en:es; }
+  function qp(n){ try{ return new URLSearchParams(location.search).get(n)||''; }catch(e){ return ''; } }
+  function esc(s){ return String(s==null?'':s).replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];}); }
+  var email=(qp('e')||'').trim().toLowerCase(), token=(qp('t')||'').trim();
+  var body=document.getElementById('body');
+  function api(action){ return fetch(SUPA+'/functions/v1/email_optout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({action:action,email:email,token:token,source:'page'})}).then(function(r){return r.json();}); }
+  if(!email || !token){ body.innerHTML='<h1>'+T('Enlace incompleto','Incomplete link')+'</h1><p>'+T('Este enlace no es válido. Usa el botón de "darse de baja" desde uno de nuestros correos.','This link isn’t valid. Use the unsubscribe button from one of our emails.')+'</p>'; return; }
+  function ask(){
+    body.innerHTML='<h1>'+T('¿Dejar de recibir correos?','Stop receiving emails?')+'</h1>'
+      +'<p>'+T('El correo','The email')+' <span class="em">'+esc(email)+'</span> '+T('dejará de recibir todos los correos de marketing de BrightPuppy (seguimiento, consejos, novedades). Los correos importantes de tu compra o cita seguirán llegando.','will stop receiving all BrightPuppy marketing emails (follow-ups, tips, news). Important emails about your purchase or appointment will still arrive.')+'</p>'
+      +'<button class="btn btn-d" id="go">'+T('Sí, darme de baja','Yes, unsubscribe me')+'</button>'
+      +'<a class="btn btn-s" href="/" style="text-decoration:none;display:block;line-height:1.2">'+T('No, seguir recibiéndolos','No, keep them')+'</a>';
+    document.getElementById('go').onclick=function(){ this.disabled=true; this.textContent=T('Procesando…','Processing…'); api('unsubscribe').then(function(d){ if(d&&d.ok) done(); else fail(d&&d.error); }).catch(function(){ fail(); }); };
+  }
+  function done(){
+    body.innerHTML='<h1 class="ok">'+T('Listo, te diste de baja','Done, you’re unsubscribed')+'</h1>'
+      +'<p>'+T('No volverás a recibir correos de marketing de BrightPuppy. Lamentamos verte ir 🐾','You won’t receive BrightPuppy marketing emails anymore. Sorry to see you go.')+'</p>'
+      +'<button class="btn btn-s" id="re">'+T('¿Fue un error? Volver a suscribirme','Made a mistake? Re-subscribe')+'</button>'
+      +'<div class="muted"><a href="/">'+T('Ir a BrightPuppy','Go to BrightPuppy')+'</a></div>';
+    document.getElementById('re').onclick=function(){ this.disabled=true; api('resubscribe').then(function(d){ if(d&&d.ok){ body.innerHTML='<h1 class="ok">'+T('¡Bienvenido de vuelta!','Welcome back!')+'</h1><p>'+T('Volverás a recibir nuestros correos.','You’ll receive our emails again.')+'</p><div class="muted"><a href="/">'+T('Ir a BrightPuppy','Go to BrightPuppy')+'</a></div>'; } }); };
+  }
+  function fail(msg){ body.innerHTML='<h1>'+T('Algo salió mal','Something went wrong')+'</h1><p>'+(msg==='token_invalido'?T('Este enlace de baja no es válido o ya expiró. Usa el de tu correo más reciente.','This unsubscribe link is invalid or expired. Use the one from your most recent email.'):T('Inténtalo de nuevo en un momento.','Please try again in a moment.'))+'</p>'; }
+  // Verificar estado actual
+  api('check').then(function(d){ if(d&&d.ok&&d.opted_out){ done(); } else if(d&&d.error==='token_invalido'){ fail('token_invalido'); } else { ask(); } }).catch(function(){ ask(); });
+})();
+</script>
+</body>
+</html>

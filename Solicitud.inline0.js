@@ -244,7 +244,7 @@ function SolicitudForm() {
       placeholder: t(["Presupuesto, fechas, preguntas espec\xEDficas\u2026", "Budget, timing, specific questions\u2026"]),
       style: { width: "100%", padding: "12px 16px", border: "1.5px solid var(--line)", borderRadius: 10, fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", background: "#fff", resize: "vertical", outline: "none", boxSizing: "border-box" }
     }
-  )))), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 40, gap: 12 } }, /* @__PURE__ */ React.createElement(
+  )))), step === 2 && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "var(--ink-2)", lineHeight: 1.55, marginTop: 26, textAlign: "center" } }, t(["Al enviar, aceptas recibir correos de BrightPuppy con seguimiento, consejos y novedades. Puedes darte de baja cuando quieras.", "By submitting, you agree to receive BrightPuppy emails with follow-ups, tips and news. You can unsubscribe anytime."])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16, gap: 12 } }, /* @__PURE__ */ React.createElement(
     "button",
     {
       type: "button",
