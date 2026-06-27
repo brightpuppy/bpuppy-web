@@ -298,7 +298,7 @@
     ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
     document.getElementById('finGo').onclick=function(){
       var btn=this; btn.disabled=true; btn.textContent=T('Conectando con el pago seguro…','Connecting to secure payment…');
-      fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({type:'finance',token:token,puppy_id:p.id})})
+      fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({type:'finance',token:token,puppy_id:p.id,lang:LANG})})
         .then(function(r){return r.json();}).then(function(d){ if(d&&d.url){ location.href=d.url; } else { btn.disabled=false; btn.textContent=T('Continuar al pago / financiamiento →','Continue to payment / financing →'); alert((d&&d.error)||T('No se pudo iniciar el pago. Escríbenos por WhatsApp.','Could not start payment. Message us on WhatsApp.')); } })
         .catch(function(){ btn.disabled=false; btn.textContent=T('Continuar al pago / financiamiento →','Continue to payment / financing →'); alert(T('Error de conexión. Intenta de nuevo.','Connection error. Try again.')); });
     };
@@ -379,7 +379,7 @@
     ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
     document.getElementById('aptGo').onclick=function(){
       var btn=this; btn.disabled=true; btn.textContent=T('Conectando con el pago seguro…','Connecting to secure payment…');
-      fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({type:'apartado',token:token,puppy_id:p.id})})
+      fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({type:'apartado',token:token,puppy_id:p.id,lang:LANG})})
         .then(function(r){return r.json();}).then(function(d){ if(d&&d.url){ location.href=d.url; } else { btn.disabled=false; btn.textContent=T('Apartar ahora — $500','Reserve now — $500'); alert((d&&d.error)||T('No se pudo iniciar el pago. Escríbenos por WhatsApp.','Could not start payment. Message us on WhatsApp.')); } })
         .catch(function(){ btn.disabled=false; btn.textContent=T('Apartar ahora — $500','Reserve now — $500'); alert(T('Error de conexión. Intenta de nuevo.','Connection error. Try again.')); });
     };
