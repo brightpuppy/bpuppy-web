@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <script>try{var _ql=(new URLSearchParams(location.search).get('lang')||'').toLowerCase();var _qok=(_ql==='en'||_ql==='es');var _st=localStorage.getItem('bpuppy-lang');var _auto=(((navigator.language||navigator.userLanguage||'')+'').toLowerCase().indexOf('es')===0)?'es':'en';var _bl=_qok?_ql:(_st||_auto);if(!_qok&&!_st){localStorage.setItem('bpuppy-lang',_auto);}window.__BP_LANG=_bl;document.documentElement.lang=_bl;}catch(e){}/*bplangboot*/</script>
-<script>(function(){try{document.addEventListener("click",function(ev){try{if((window.__BP_LANG||"es")!=="en")return;var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/^(mailto:|tel:|#|javascript:)/i.test(h))return;var url;try{url=new URL(a.href,location.href);}catch(e){return;}if(url.origin!==location.origin)return;if(url.searchParams.get("lang"))return;url.searchParams.set("lang","en");a.setAttribute("href",url.pathname+url.search+url.hash);}catch(e){}},true);}catch(e){}})();/*bplangpropagate*/</script>
+<script>(function(){try{document.addEventListener("click",function(ev){try{var a=ev.target&&ev.target.closest&&ev.target.closest("a[href]");if(!a)return;var h=a.getAttribute("href")||"";if(/^(mailto:|tel:|#|javascript:)/i.test(h))return;var url;try{url=new URL(a.href,location.href);}catch(e){return;}if(url.origin!==location.origin)return;if(url.searchParams.get("lang"))return;url.searchParams.set("lang",(window.__BP_LANG==="en"?"en":"es"));a.setAttribute("href",url.pathname+url.search+url.hash);}catch(e){}},true);}catch(e){}})();/*bplangpropagate*/</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="robots" content="noindex,nofollow">
 <title>Cachorros Disponibles · BrightPuppy</title>
@@ -208,6 +208,8 @@
   function photoOf(p){ var a=photosOf(p); return a[0]||''; }
   function gswap(i, idx, el){ var u=(GAL[i]||[])[idx]; if(!u)return; var m=document.getElementById('gm-'+i); if(m){ m.src=u; m.dataset.idx=idx; } if(el&&el.parentNode){ [].slice.call(el.parentNode.children).forEach(function(c){c.classList.remove('on');}); el.classList.add('on'); } }
   function lbxOpen(i){ var m=document.getElementById('gm-'+i); var idx=m?parseInt(m.dataset.idx||'0',10):0; _lb.i=i; _lb.idx=idx; var u=(GAL[i]||[])[idx]; var lb=document.getElementById('lbx'); var im=document.getElementById('lbximg'); if(u&&lb&&im){ im.src=u; im.classList.toggle('crop', !!GAL_CROP[i]); lb.classList.add('open'); } }
+  function lbxAt(i, idx){ _lb.i=i; _lb.idx=idx||0; var u=(GAL[i]||[])[_lb.idx]; var lb=document.getElementById('lbx'); var im=document.getElementById('lbximg'); if(u&&lb&&im){ im.src=u; im.classList.toggle('crop', !!GAL_CROP[i]); lb.classList.add('open'); } }
+  window.lbxAt=lbxAt;
   function lbxNav(dir, ev){ if(ev)ev.stopPropagation(); var ph=GAL[_lb.i]||[]; if(ph.length<2)return; _lb.idx=(_lb.idx+dir+ph.length)%ph.length; var im=document.getElementById('lbximg'); if(im)im.src=ph[_lb.idx]; }
   function lbxClose(){ var lb=document.getElementById('lbx'); if(lb)lb.classList.remove('open'); }
   window.gswap=gswap; window.lbxOpen=lbxOpen; window.lbxNav=lbxNav; window.lbxClose=lbxClose;
@@ -319,8 +321,8 @@
     var bi=breedInfo(p.breed); var b=bi&&bi.raw;
     var photos=GAL[i]||[]; var crp=GAL_CROP[i];
     var main=photos[0]||'';
-    var imgH = main ? '<div style="border-radius:14px;overflow:hidden;background:#f3f3f3;aspect-ratio:4/3"><img id="dtl-main" src="'+esc(main)+'" referrerpolicy="no-referrer" style="width:100%;height:100%;object-fit:cover'+(crp?';clip-path:inset(13% 0 9% 0)':'')+'"></div>' : '';
-    var thumbs = photos.length>1 ? '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+photos.slice(0,8).map(function(u){ return '<img src="'+esc(u)+'" referrerpolicy="no-referrer" onclick="var m=document.getElementById(\'dtl-main\');if(m)m.src=this.src" style="width:52px;height:52px;border-radius:8px;object-fit:cover;cursor:pointer;border:2px solid var(--line)">'; }).join('')+'</div>' : '';
+    var imgH = main ? '<div style="position:relative;border-radius:14px;overflow:hidden;background:#f3f3f3;aspect-ratio:4/3"><img id="dtl-main" data-idx="0" src="'+esc(main)+'" referrerpolicy="no-referrer" onclick="lbxAt('+i+', parseInt(this.dataset.idx||\'0\',10))" style="width:100%;height:100%;object-fit:cover;cursor:zoom-in'+(crp?';clip-path:inset(13% 0 9% 0)':'')+'"><span style="position:absolute;bottom:8px;right:8px;background:rgba(0,0,0,.5);color:#fff;font-size:11px;font-weight:700;padding:3px 9px;border-radius:999px;pointer-events:none">'+T('Toca para ampliar','Tap to enlarge')+(photos.length>1?(' · '+photos.length):'')+'</span></div>' : '';
+    var thumbs = photos.length>1 ? '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+photos.slice(0,8).map(function(u,idx){ return '<img src="'+esc(u)+'" referrerpolicy="no-referrer" onclick="var m=document.getElementById(\'dtl-main\');if(m){m.src=this.src;m.dataset.idx=\''+idx+'\';}" style="width:52px;height:52px;border-radius:8px;object-fit:cover;cursor:pointer;border:2px solid var(--line)">'; }).join('')+'</div>' : '';
     var facts=[];
     var g=genderEs(p.gender); if(g) facts.push([T('Sexo','Sex'),g]);
     var a=p.age_text?esc(p.age_text):ageEs(p.age_weeks); if(a) facts.push([T('Edad','Age'),a]);
@@ -433,7 +435,7 @@
       var thumbs = photos.length>1 ? '<div class="thumbs">'+photos.slice(0,10).map(function(u,idx){ return '<img src="'+esc(u)+'" class="'+(idx===0?'on':'')+'" referrerpolicy="no-referrer" onerror="this.remove()" onclick="gswap('+i+','+idx+',this)">'; }).join('')+'</div>' : '';
       return '<div class="card">'
         + '<div class="photo'+cropCls+'">'
-          + (ph? '<img id="gm-'+i+'" data-idx="0" src="'+esc(ph)+'" alt="'+esc(p.breed||'Cachorro')+'" loading="lazy" referrerpolicy="no-referrer" style="cursor:zoom-in" onclick="lbxOpen('+i+')" onerror="this.style.display=\'none\'">' : '<div class="ph-empty">'+pawIcon+'</div>')
+          + (ph? '<img id="gm-'+i+'" data-idx="0" src="'+esc(ph)+'" alt="'+esc(p.breed||'Cachorro')+'" loading="lazy" referrerpolicy="no-referrer" style="cursor:pointer" onclick="detalle('+i+')" onerror="this.style.display=\'none\'">' : '<div class="ph-empty">'+pawIcon+'</div>')
           + brand + count
           + '<span class="badge '+(reserved?'reserved':'available')+'">'+(reserved?T('Reservado','Reserved'):T('Disponible','Available'))+'</span>'
         + '</div>'
