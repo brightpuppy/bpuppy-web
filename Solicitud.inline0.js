@@ -8,8 +8,8 @@ const sqSb = (() => {
     return null;
   }
 })();
-function Chip({ label, icon, selected, onClick }) {
-  return /* @__PURE__ */ React.createElement("button", { type: "button", onClick, style: {
+function Chip({ label, icon, selected, onClick, disabled }) {
+  return /* @__PURE__ */ React.createElement("button", { type: "button", disabled: !!disabled, onClick: disabled ? void 0 : onClick, style: {
     display: "flex",
     alignItems: "center",
     gap: 8,
@@ -21,9 +21,34 @@ function Chip({ label, icon, selected, onClick }) {
     fontSize: 14,
     fontWeight: 600,
     color: selected ? "var(--orange)" : "var(--ink)",
-    cursor: "pointer",
+    cursor: disabled ? "not-allowed" : "pointer",
+    opacity: disabled && !selected ? 0.4 : 1,
     transition: "all .15s"
   } }, icon && /* @__PURE__ */ React.createElement("span", { style: { fontSize: 18 } }, icon), label);
+}
+// raza -> atributos (de breed-data.js). Si la reconocemos, fijamos tamaño/pelaje/energía.
+function _bpNorm(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,"").replace(/[^a-z0-9]+/g," ").trim(); }
+var _BP_BREED_ALIAS = { "yorkie":"yorkshire terrier","yorky":"yorkshire terrier","frenchie":"french bulldog","frances":"french bulldog","doxie":"dachshund","salchicha":"dachshund","teckel":"dachshund","pom":"pomeranian","pomerania":"pomeranian","lab":"labrador retriever","labrador":"labrador retriever","golden":"golden retriever","aussie":"australian shepherd","caniche":"poodle","mini schnauzer":"miniature schnauzer","schnauzer miniatura":"miniature schnauzer" };
+function breedAttrs(breedStr){
+  try{
+    var nb = _bpNorm(breedStr); if(!nb || nb.length < 3) return null;
+    nb = _BP_BREED_ALIAS[nb] || nb;
+    var all = [].concat(window.DOG_BREEDS||[], window.CAT_BREEDS||[]);
+    var best = null;
+    for(var i=0;i<all.length;i++){
+      var e = all[i]; var nm = _bpNorm(e.name), es = _bpNorm(e.es);
+      if(nm===nb || es===nb || (nm && (nb.indexOf(nm)>=0 || nm.indexOf(nb)>=0) && Math.abs(nm.length-nb.length)<=4) || (es && (nb.indexOf(es)>=0 || es.indexOf(nb)>=0) && Math.abs(es.length-nb.length)<=4)){ best = e; if(nm===nb||es===nb) break; }
+    }
+    if(!best) return null;
+    var size = (best.size==="small"||best.size==="medium"||best.size==="large") ? best.size : "";
+    var coat = "";
+    if(best.hypo===true) coat = "hypo";
+    else { var c0 = Array.isArray(best.coat) ? best.coat[0] : best.coat; coat = (c0==="short") ? "short" : (c0 ? "long" : ""); }
+    var en = best.energy;
+    var energy = (typeof en==="number") ? (en<=1?"low":(en>=3?"high":"medium")) : (/(low|baj)/i.test(en)?"low":(/(high|alt)/i.test(en)?"high":(en?"medium":"")));
+    if(!size && !coat && !energy) return null;
+    return { size: size, coat: coat, energy: energy };
+  }catch(e){ return null; }
 }
 function Field({ label, children }) {
   return /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 24 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, color: "var(--ink-2)", letterSpacing: "0.04em", marginBottom: 10 } }, label), children);
@@ -34,6 +59,7 @@ function SolicitudForm() {
   const [step, setStep] = React.useState(0);
   const [done, setDone] = React.useState(false);
   const [loading, setLoad] = React.useState(false);
+  const [breedLock, setBreedLock] = React.useState(false);
   const [form, setForm] = React.useState({
     // Step 1
     species: "",
@@ -63,6 +89,18 @@ function SolicitudForm() {
   }
   function toggle(key, val) {
     set(key, form[key] === val ? "" : val);
+  }
+  function applyBreed(v) {
+    var a = breedAttrs(v);
+    setForm(function(f) {
+      var nf = Object.assign({}, f, { breed: v });
+      if (a) { if (a.size) nf.size = a.size; if (a.coat) nf.coat = a.coat; if (a.energy) nf.energy = a.energy; }
+      return nf;
+    });
+    setBreedLock(!!a);
+  }
+  function lockNote() {
+    return breedLock ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "var(--orange)", fontWeight: 600, marginTop: -14, marginBottom: 18, display: "flex", alignItems: "center", gap: 6 } }, "\u{1F512} ", t(["Definido por la raza que elegiste. Borra la raza para cambiarlo.", "Set by the breed you chose. Clear the breed to change it."])) : null;
   }
   function usPhoneOk(p) {
     var d = (p || "").replace(/\D/g, "");
@@ -136,17 +174,17 @@ function SolicitudForm() {
     {
       value: form.breed,
       onChange: function(e) {
-        set("breed", e.target.value);
+        applyBreed(e.target.value);
       },
       placeholder: t(["Ej. Golden Retriever, Poodle, Maine Coon\u2026", "e.g. Golden Retriever, Poodle, Maine Coon\u2026"]),
       style: { width: "100%", padding: "12px 16px", border: "1.5px solid var(--line)", borderRadius: 10, fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", background: "#fff", outline: "none", boxSizing: "border-box" }
     }
-  )), /* @__PURE__ */ React.createElement(Field, { label: t(["Tama\xF1o", "Size"]) }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } }, [["\u{1F43E}", ["Peque\xF1o", "Small"], "small"], ["\u{1F415}", ["Mediano", "Medium"], "medium"], ["\u{1F9AE}", ["Grande", "Large"], "large"], ["", ["Sin preferencia", "No preference"], "any"]].map(function(o) {
-    return /* @__PURE__ */ React.createElement(Chip, { key: o[2], icon: o[0] || null, label: t(o[1]), selected: form.size === o[2], onClick: function() {
+  )), lockNote(), /* @__PURE__ */ React.createElement(Field, { label: t(["Tama\xF1o", "Size"]) }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } }, [["\u{1F43E}", ["Peque\xF1o", "Small"], "small"], ["\u{1F415}", ["Mediano", "Medium"], "medium"], ["\u{1F9AE}", ["Grande", "Large"], "large"], ["", ["Sin preferencia", "No preference"], "any"]].map(function(o) {
+    return /* @__PURE__ */ React.createElement(Chip, { key: o[2], icon: o[0] || null, label: t(o[1]), disabled: breedLock, selected: form.size === o[2], onClick: function() {
       toggle("size", o[2]);
     } });
   }))), /* @__PURE__ */ React.createElement(Field, { label: t(["Tipo de pelaje", "Coat type"]) }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } }, [["\u2702\uFE0F", ["Pelo corto", "Short hair"], "short"], ["\u{1F415}\u200D\u{1F9BA}", ["Pelo largo", "Long hair"], "long"], ["\u{1F4A8}", ["Hipoalerg\xE9nico", "Hypoallergenic"], "hypo"], ["", ["Sin preferencia", "No preference"], "any"]].map(function(o) {
-    return /* @__PURE__ */ React.createElement(Chip, { key: o[2], icon: o[0] || null, label: t(o[1]), selected: form.coat === o[2], onClick: function() {
+    return /* @__PURE__ */ React.createElement(Chip, { key: o[2], icon: o[0] || null, label: t(o[1]), disabled: breedLock, selected: form.coat === o[2], onClick: function() {
       toggle("coat", o[2]);
     } });
   }))), /* @__PURE__ */ React.createElement(Field, { label: t(["G\xE9nero", "Gender"]) }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } }, [["\u2640\uFE0F", ["Hembra", "Female"], "female"], ["\u2642\uFE0F", ["Macho", "Male"], "male"], ["", ["Sin preferencia", "No preference"], "any"]].map(function(o) {
@@ -170,7 +208,7 @@ function SolicitudForm() {
       toggle("other_pets", o[2]);
     } });
   }))), /* @__PURE__ */ React.createElement(Field, { label: t(["Nivel de actividad que buscas", "Activity level you\u2019re looking for"]) }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, flexWrap: "wrap" } }, [["\u{1F634}", ["Tranquilo y relajado", "Calm and relaxed"], "low"], ["\u{1F6B6}", ["Moderado", "Moderate"], "medium"], ["\u{1F3C3}", ["Muy activo", "Very active"], "high"]].map(function(o) {
-    return /* @__PURE__ */ React.createElement(Chip, { key: o[2], icon: o[0], label: t(o[1]), selected: form.energy === o[2], onClick: function() {
+    return /* @__PURE__ */ React.createElement(Chip, { key: o[2], icon: o[0], label: t(o[1]), disabled: breedLock, selected: form.energy === o[2], onClick: function() {
       toggle("energy", o[2]);
     } });
   })))), step === 2 && /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--orange)", marginBottom: 10 } }, t(["Paso 3 de 3", "Step 3 of 3"])), /* @__PURE__ */ React.createElement("h1", { style: { fontFamily: "var(--display)", fontSize: "clamp(28px,5vw,52px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.95, margin: "0 0 8px", color: "var(--ink)" } }, t(["\xBFC\xF3mo te", "How can we"]), /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("em", { style: { fontFamily: "var(--serif)", fontStyle: "italic", color: "var(--orange)" } }, t(["contactamos?", "reach you?"]))), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 15, color: "var(--ink-2)", lineHeight: 1.65, margin: "0 0 36px" } }, t(["Revisaremos tu solicitud y te escribiremos con las mejores opciones disponibles.", "We\u2019ll review your request and write back with the best available options."])), /* @__PURE__ */ React.createElement("div", { style: { background: "#fff", border: "1px solid var(--line)", borderRadius: 14, padding: "16px 18px", marginBottom: 28 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: "var(--orange)", letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 10 } }, t(["Tu solicitud", "Your request"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, flexWrap: "wrap" } }, [
