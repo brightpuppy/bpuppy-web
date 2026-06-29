@@ -30,12 +30,15 @@ function CachorrosEntregados() {
       setStatus("error");
       return;
     }
-    ceSb.from("puppies_public").select("*").eq("status", "sold").order("created_at", { ascending: false }).then(({ data, error }) => {
+    ceSb.from("puppies_public").select("*").in("status", ["delivered", "sold", "in_transit"]).order("created_at", { ascending: false }).then(({ data, error }) => {
       if (error) {
         setStatus("error");
         return;
       }
-      setPuppies(data || []);
+      // Solo familias con foto real (evita placeholders vacíos); más reciente primero por fecha de entrega
+      var withPhoto = (data || []).filter(function(p){ return (Array.isArray(p.photos) && p.photos.length) || p.photo_url; });
+      withPhoto.sort(function(a, b){ return new Date(b.delivered_at || b.created_at) - new Date(a.delivered_at || a.created_at); });
+      setPuppies(withPhoto);
       setStatus("ok");
     });
   }, []);
