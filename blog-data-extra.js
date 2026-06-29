@@ -659,6 +659,47 @@ const BLOG_EXTRA = [
     tipsEn: ["Switch from puppy food to adult when they reach ~90% of their adult weight", 'Start "senior" checkups at age 7 in large breeds, at 9\u201310 in small breeds and cats', "A healthy weight is the #1 factor for a longer life", "Take care of the teeth: dental health affects the heart and kidneys"],
     close: "No hay una f\xF3rmula m\xE1gica \xFAnica, pero entender que tu mascota envejece distinto seg\xFAn su especie y tama\xF1o te ayuda a darle el cuidado correcto en cada etapa. Mira la tabla interactiva aqu\xED abajo.",
     closeEn: "There's no single magic formula, but understanding that your pet ages differently depending on its species and size helps you give it the right care at every stage. Take a look at the interactive table below."
+  },
+  // ── ENTRENAMIENTO BÁSICO DEL CACHORRO ─────────────────────────────────────
+  {
+    id: 55,
+    cat: "guias",
+    emoji: "\u{1F393}",
+    color: "#7C3AED",
+    title: "Entrenamiento b\xE1sico: los primeros comandos de tu cachorro",
+    titleEn: "Basic Training: Your Puppy's First Commands",
+    sub: "Sentado, ven, qu\xE9date y caminar con correa — con refuerzo positivo y sin estr\xE9s",
+    subEn: "Sit, come, stay and leash walking — with positive reinforcement and no stress",
+    date: "Junio 2025",
+    dateEn: "June 2025",
+    read: 7,
+    tags: ["entrenamiento", "cachorro", "obediencia", "refuerzo positivo"],
+    lead: "Entrenar a tu cachorro no es cuesti\xF3n de dominarlo, sino de comunicarte con \xE9l. Con sesiones cortas, premios y mucha paciencia, en pocas semanas tendr\xE1s un perro que entiende lo que le pides. La clave es el refuerzo positivo: premiar lo que quieres ver, ignorar lo que no. Aqu\xED van los primeros comandos, paso a paso.",
+    leadEn: "Training your puppy isn't about dominating it — it's about communicating with it. With short sessions, treats and lots of patience, in a few weeks you'll have a dog that understands what you ask. The key is positive reinforcement: reward what you want to see, ignore what you don't. Here are the first commands, step by step.",
+    body: [
+      { h: "1. Antes de empezar: las reglas de oro", hEn: "1. Before you start: the golden rules", p: "Sesiones de 5–10 minutos, 2–3 veces al d\xEDa — el cachorro se aburre r\xE1pido. Usa premios del tama\xF1o de un garbanzo (pollo, queso bajo en grasa). Entrena antes de comer, cuando tiene hambre y est\xE1 atento. Termina siempre con un \xE9xito y mucho cari\xF1o. Nunca castigues: si se distrae, simplemente vuelve a intentarlo.", pEn: "Sessions of 5–10 minutes, 2–3 times a day — puppies get bored fast. Use treats the size of a chickpea (chicken, low-fat cheese). Train before meals, when they're hungry and attentive. Always end on a success and lots of affection. Never punish: if they get distracted, simply try again." },
+      { h: "2. Sentado (el primero, el m\xE1s f\xE1cil)", hEn: "2. Sit (the first and easiest)", p: "Sostiene un premio frente a su nariz y mu\xE9velo despacio hacia atr\xE1s por encima de su cabeza. Al seguirlo con la mirada, su trasero baja solo. En el instante que se sienta, di “s\xEDtio” y dale el premio. Rep\xEDtelo. En 2–3 d\xEDas asociar\xE1 la palabra con la acci\xF3n.", pEn: "Hold a treat in front of their nose and move it slowly back over their head. As they follow it with their eyes, their rear lowers on its own. The instant they sit, say “sit” and give the treat. Repeat. In 2–3 days they'll link the word to the action." },
+      { h: "3. Ven (el comando que salva vidas)", hEn: "3. Come (the command that saves lives)", p: "Empieza en casa, sin distracciones. Ag\xE1chate, abre los brazos y di su nombre + “ven” con voz alegre. Cuando llegue, fiesta total: premio, caricias, voz emocionada. Nunca uses “ven” para algo que no le guste (ba\xF1o, regan\xF5) — o aprender\xE1 a ignorarlo. “Ven” siempre = cosa buena.", pEn: "Start at home, no distractions. Crouch, open your arms and say their name + “come” in a happy voice. When they arrive, total party: treat, petting, excited voice. Never use “come” for something they dislike (bath, scolding) — or they'll learn to ignore it. “Come” always = a good thing." },
+      { h: "4. Qu\xE9date (paciencia por etapas)", hEn: "4. Stay (patience in stages)", p: "Con el cachorro sentado, abre la palma y di “qu\xE9date”. Espera 1 segundo, premia. Sube de a poco: 2 segundos, 5, 10… y luego da un paso atr\xE1s. Si se levanta, no pasa nada: vuelve a empezar con menos tiempo. La constancia gana, no la velocidad.", pEn: "With the puppy seated, open your palm and say “stay.” Wait 1 second, reward. Build up slowly: 2 seconds, 5, 10… then take a step back. If they get up, no problem: restart with less time. Consistency wins, not speed." },
+      { h: "5. Caminar con correa sin jalar", hEn: "5. Walking on a leash without pulling", p: "Usa arn\xE9s, no collar. Cuando el cachorro jale, det\xE9nte como un \xE1rbol: no avances. En cuanto la correa se afloje o te mire, premia y sigue. As\xED aprende que jalar no lo lleva a ning\xFAn lado, pero caminar a tu lado s\xED. Premia mucho los primeros d\xEDas.", pEn: "Use a harness, not a collar. When the puppy pulls, stop like a tree: don't move forward. The moment the leash loosens or they look at you, reward and continue. They learn that pulling gets them nowhere, but walking beside you does. Reward generously the first days." },
+      { h: "6. Entrenamiento de ba\xF1o (la rutina lo es todo)", hEn: "6. Potty training (routine is everything)", p: "Saca al cachorro al mismo lugar al despertar, despu\xE9s de comer, de jugar y antes de dormir. Premia EN EL MOMENTO que termina afuera. Los accidentes son normales: lim\xEDpialos con limpiador enzim\xE1tico (quita el olor que lo invita a repetir) y nunca lo regan\xF1es despu\xE9s del hecho — no lo entiende.", pEn: "Take the puppy to the same spot on waking, after eating, after playing and before sleeping. Reward THE MOMENT they finish outside. Accidents are normal: clean them with an enzymatic cleaner (it removes the scent that invites a repeat) and never scold after the fact — they won't understand." }
+    ],
+    stat: "Los cachorros aprenden mejor entre las 8 y 16 semanas: es su ventana de socializaci\xF3n. Lo que aprenden (bueno o malo) en esas semanas marca su conducta de por vida. Pero nunca es tarde — los perros aprenden a cualquier edad.",
+    statEn: "Puppies learn best between 8 and 16 weeks: their socialization window. What they learn (good or bad) in those weeks shapes their behavior for life. But it's never too late — dogs learn at any age.",
+    tips: [
+      "Una palabra por comando, siempre la misma, dicha una sola vez",
+      "Todos en casa usan las mismas palabras y reglas — la consistencia es todo",
+      "Termina cada sesi\xF3n cuando el cachorro a\xFAn quiere m\xE1s, no cuando se cans\xF3",
+      "Si te frustras, para. Un entrenamiento con enojo ense\xF1a miedo, no comandos"
+    ],
+    tipsEn: [
+      "One word per command, always the same, said only once",
+      "Everyone at home uses the same words and rules — consistency is everything",
+      "End each session while the puppy still wants more, not when it's tired",
+      "If you get frustrated, stop. Training with anger teaches fear, not commands"
+    ],
+    close: "El entrenamiento no termina nunca, pero estos cinco comandos son la base de todo. Con 10 minutos al d\xEDa y mucho refuerzo positivo, tu cachorro no solo obedecer\xE1 — confiar\xE1 en ti. Y un perro que conf\xEDa es un perro feliz, equilibrado y seguro. Disfruta el proceso: cada peque\xF1o logro es un puente entre ustedes dos.",
+    closeEn: "Training never really ends, but these five commands are the foundation of everything. With 10 minutes a day and plenty of positive reinforcement, your puppy won't just obey — it will trust you. And a dog that trusts is a happy, balanced, confident dog. Enjoy the process: every little win is a bridge between the two of you."
   }
 ];
 BLOG.push(...BLOG_EXTRA);
