@@ -521,9 +521,9 @@
 
   fetch(SUPA+'/functions/v1/catalog_view', {
     method:'POST', headers:{ 'Content-Type':'application/json', 'apikey':ANON, 'Authorization':'Bearer '+ANON },
-    body: JSON.stringify({ token: token })
+    body: JSON.stringify({ token: token, pv: qp('pv') })
   }).then(function(r){ return r.json(); }).then(function(d){
-    if(d && d.ok){ LANG=(d.lang==='en'?'en':'es'); window.__BP_LANG=LANG; try{applyChromeLang(LANG);}catch(e){} render(d); try{buildCatToolbar(d);}catch(e){} return; }
+    if(d && d.ok){ LANG=(d.lang==='en'?'en':'es'); window.__BP_LANG=LANG; try{applyChromeLang(LANG);}catch(e){} render(d); try{buildCatToolbar(d);}catch(e){} if(d.preview){ try{ var _pb=document.createElement('div'); _pb.style.cssText='position:fixed;top:0;left:0;right:0;z-index:300;background:#7c3aed;color:#fff;padding:8px 14px;text-align:center;font-weight:700;font-size:13px;font-family:var(--body,sans-serif)'; _pb.textContent=T('Vista previa — este catálogo está '+(d.catalog_status==='active'?'caducado':'desactivado')+'. El cliente NO lo ve así.','Preview — this catalog is '+(d.catalog_status==='active'?'expired':'inactive')+'. Clients do NOT see it.'); document.body.appendChild(_pb); document.body.style.paddingTop='34px'; }catch(e){} } return; }
     var reason = d && d.reason;
     if(reason==='expired') app.innerHTML = stateBox(clockIcon,'Tu enlace expiró','Por seguridad, los catálogos son temporales. Escríbenos y con gusto te enviamos uno nuevo y actualizado.', true);
     else if(reason==='revoked') app.innerHTML = stateBox(lockIcon,'Enlace desactivado','Este catálogo ya no está activo. Pídele a tu asesor un enlace nuevo.', true);
