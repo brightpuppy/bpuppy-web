@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="robots" content="noindex,nofollow"/>
+<title>Tu reseña · BrightPuppy</title>
+<link rel="icon" href="assets/favicon.webp">
+<style>
+  :root{ --or:#F58220; --ink:#2D2421; --mid:#6B5A4E; --bg:#FAF6F0; --line:#eee2d6; }
+  *{ box-sizing:border-box; }
+  body{ margin:0; background:var(--bg); font-family:'Segoe UI',system-ui,Arial,sans-serif; color:var(--ink); display:flex; min-height:100vh; align-items:flex-start; justify-content:center; padding:28px 14px; }
+  .card{ background:#fff; border:1px solid var(--line); border-radius:18px; max-width:520px; width:100%; overflow:hidden; box-shadow:0 18px 50px -24px rgba(0,0,0,.3); }
+  .hd{ padding:18px 26px; border-bottom:1px solid #f3e9dd; }
+  .hd b{ font-size:18px; font-weight:800; letter-spacing:-0.02em; }
+  .hd .o{ color:var(--or); }
+  .bd{ padding:26px; }
+  h1{ font-size:22px; margin:0 0 8px; letter-spacing:-0.02em; }
+  p.sub{ color:var(--mid); font-size:14.5px; line-height:1.6; margin:0 0 18px; }
+  .stars{ display:flex; gap:8px; justify-content:center; margin:8px 0 18px; }
+  .star{ font-size:42px; line-height:1; cursor:pointer; color:#e3d8c8; transition:transform .1s, color .1s; user-select:none; }
+  .star:hover{ transform:scale(1.12); }
+  .star.on{ color:#F5B301; }
+  label{ font-size:12.5px; font-weight:700; color:var(--mid); display:block; margin:14px 0 5px; }
+  textarea,input{ width:100%; border:1px solid var(--line); border-radius:10px; padding:11px 13px; font-family:inherit; font-size:14.5px; color:var(--ink); }
+  textarea{ min-height:96px; resize:vertical; }
+  button.send{ width:100%; margin-top:18px; background:var(--or); color:#fff; border:none; border-radius:999px; padding:14px; font-weight:800; font-size:15px; cursor:pointer; }
+  button.send:disabled{ opacity:.55; cursor:not-allowed; }
+  .ok{ text-align:center; padding:18px 6px; }
+  .ok .big{ font-size:54px; }
+  .ok h2{ margin:10px 0 6px; }
+  .msg{ text-align:center; color:#b91c1c; font-size:13.5px; margin-top:10px; min-height:18px; }
+  .foot{ padding:14px 26px; border-top:1px solid #f3e9dd; font-size:11px; color:#b3a99e; text-align:center; }
+  a{ color:var(--or); }
+</style>
+</head>
+<body>
+<div class="card">
+  <div class="hd"><b>Bright<span class="o">Puppy</span></b></div>
+  <div class="bd" id="bd"><div style="text-align:center;color:var(--mid);padding:30px">Cargando…</div></div>
+  <div class="foot">BrightPuppy LLC · Haines City, FL · <a href="https://bpuppy.us">bpuppy.us</a></div>
+</div>
+<script>
+(function(){
+  var qp = new URLSearchParams(location.search);
+  var c = (qp.get('c')||'').trim(), p = (qp.get('p')||'').trim(), t = (qp.get('t')||'').trim();
+  var EN = (qp.get('lang')||'').toLowerCase()==='en';
+  document.documentElement.lang = EN ? 'en' : 'es';
+  var T = EN ? {
+    title:"How was your experience?", sub:"Tap the stars and, if you like, leave a few words. Your honest review helps other families.",
+    rev:"Your review (optional)", revph:"What did you love? How was the process and your puppy?", nm:"Your name (optional)", nmph:"Name",
+    send:"Send my review", pick:"Please tap a star to rate.", okh:"Thank you so much!", okp:"Your review was saved. It means the world to us.", bad:"This link is not valid or has expired.", sending:"Sending…"
+  } : {
+    title:"¿Cómo fue tu experiencia?", sub:"Toca las estrellas y, si quieres, deja unas palabras. Tu reseña sincera ayuda a otras familias.",
+    rev:"Tu reseña (opcional)", revph:"¿Qué te encantó? ¿Cómo fue el proceso y tu cachorro?", nm:"Tu nombre (opcional)", nmph:"Nombre",
+    send:"Enviar mi reseña", pick:"Toca una estrella para calificar.", okh:"¡Muchas gracias!", okp:"Tu reseña quedó guardada. Significa muchísimo para nosotros.", bad:"Este enlace no es válido o ya caducó.", sending:"Enviando…"
+  };
+  var bd = document.getElementById('bd');
+  if(!c || !t){ bd.innerHTML = '<div class="ok"><div class="big">🔗</div><h2>'+T.bad+'</h2></div>'; return; }
+  var rating = 0;
+  function render(){
+    bd.innerHTML = '<h1>'+T.title+'</h1><p class="sub">'+T.sub+'</p>'
+      + '<div class="stars" id="stars">'+[1,2,3,4,5].map(function(i){return '<span class="star" data-v="'+i+'">★</span>';}).join('')+'</div>'
+      + '<label>'+T.rev+'</label><textarea id="rv" placeholder="'+T.revph+'"></textarea>'
+      + '<label>'+T.nm+'</label><input id="nm" placeholder="'+T.nmph+'">'
+      + '<button class="send" id="go">'+T.send+'</button><div class="msg" id="msg"></div>';
+    var stars = bd.querySelectorAll('.star');
+    function paint(){ stars.forEach(function(s){ s.classList.toggle('on', parseInt(s.getAttribute('data-v'),10) <= rating); }); }
+    stars.forEach(function(s){ s.onclick = function(){ rating = parseInt(s.getAttribute('data-v'),10); paint(); document.getElementById('msg').textContent=''; }; });
+    document.getElementById('go').onclick = submit;
+  }
+  function submit(){
+    var msg = document.getElementById('msg');
+    if(!rating){ msg.textContent = T.pick; return; }
+    var go = document.getElementById('go'); go.disabled = true; go.textContent = T.sending;
+    fetch('https://oqqwmcplljirbreowrll.supabase.co/functions/v1/review_submit', {
+      method:'POST',
+      headers:{ 'Content-Type':'application/json', 'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4' },
+      body: JSON.stringify({ c:c, p:p, t:t, rating:rating, body:(document.getElementById('rv').value||''), name:(document.getElementById('nm').value||'') })
+    }).then(function(r){ return r.json(); }).then(function(d){
+      if(d && d.ok){ bd.innerHTML = '<div class="ok"><div class="big">🎉</div><h2>'+T.okh+'</h2><p class="sub">'+T.okp+'</p></div>'; }
+      else { go.disabled=false; go.textContent=T.send; msg.textContent = (d && d.error) ? d.error : T.bad; }
+    }).catch(function(){ go.disabled=false; go.textContent=T.send; msg.textContent = T.bad; });
+  }
+  render();
+})();
+</script>
+</body>
+</html>
