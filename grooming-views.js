@@ -257,10 +257,18 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   const MONTHS = ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"];
   const DAYS_OF_WEEK = ["Dom", "Lun", "Mar", "Mi\xE9", "Jue", "Vie", "S\xE1b"];
   const TIMES = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
+  const [times, setTimes] = useState(TIMES);
+  const [closedDays, setClosedDays] = useState([0]);
+  const [leadHours, setLeadHours] = useState(6);
+  useEffect(function() {
+    try {
+      fetch("https://oqqwmcplljirbreowrll.supabase.co/functions/v1/grooming_slots", { method: "POST", headers: { "Content-Type": "application/json", "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4" }, body: "{}" }).then(function(r) { return r.json(); }).then(function(cf) { if (cf && cf.times && cf.times.length) setTimes(cf.times); if (cf && cf.closed_days) setClosedDays(cf.closed_days); if (cf && cf.lead_hours != null) setLeadHours(cf.lead_hours); }).catch(function() {});
+    } catch (e) {}
+  }, []);
   const MONTHS_DISP = [t(["Enero", "January"]), t(["Febrero", "February"]), t(["Marzo", "March"]), t(["Abril", "April"]), t(["Mayo", "May"]), t(["Junio", "June"]), t(["Julio", "July"]), t(["Agosto", "August"]), t(["Septiembre", "September"]), t(["Octubre", "October"]), t(["Noviembre", "November"]), t(["Diciembre", "December"])];
   const MONTHS_ABBR_DISP = [t(["Ene", "Jan"]), t(["Feb", "Feb"]), t(["Mar", "Mar"]), t(["Abr", "Apr"]), t(["May", "May"]), t(["Jun", "Jun"]), t(["Jul", "Jul"]), t(["Ago", "Aug"]), t(["Sep", "Sep"]), t(["Oct", "Oct"]), t(["Nov", "Nov"]), t(["Dic", "Dec"])];
   const DAYS_OF_WEEK_DISP = [t(["Dom", "Sun"]), t(["Lun", "Mon"]), t(["Mar", "Tue"]), t(["Mi\xE9", "Wed"]), t(["Jue", "Thu"]), t(["Vie", "Fri"]), t(["S\xE1b", "Sat"])];
-  const LEAD_MS = 6 * 60 * 60 * 1e3;
+  const LEAD_MS = leadHours * 60 * 60 * 1e3;
   const cutoff = new Date(today.getTime() + LEAD_MS);
   const slotDate = (d, label) => {
     const m = /(\d+):(\d+)\s*(AM|PM)/i.exec(label);
@@ -269,7 +277,7 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
     if (/pm/i.test(m[3])) h += 12;
     return new Date(year, month, d, h, parseInt(m[2], 10), 0, 0);
   };
-  const availableTimes = (d) => TIMES.filter((t2) => {
+  const availableTimes = (d) => times.filter((t2) => {
     const s = slotDate(d, t2);
     return s && s >= cutoff;
   });
@@ -303,7 +311,7 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   const firstDayOfWeek = new Date(year, month, 1).getDay();
   const isAvailable = (d) => {
     const date = new Date(year, month, d);
-    if (date.getDay() === 0) return false;
+    if (closedDays.indexOf(date.getDay()) >= 0) return false;
     return availableTimes(d).length > 0;
   };
   const canStep2 = selectedServices.size > 0 && size;
@@ -845,11 +853,14 @@ function IntroOfferBanner() {
   const [err, setErr] = useState("");
   const [takenTimes, setTaken] = useState([]);
   const TIMES = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
+  const [times, setTimes] = useState(TIMES);
+  const [closedDays, setClosedDays] = useState([0]);
   const URL2 = "https://oqqwmcplljirbreowrll.supabase.co";
   const ANON2 = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
   React.useEffect(function() {
     if (!open) return;
     try { var sb = window._groomSb; if (sb) sb.from("grooming_blocked_dates").select("date").then(function(r) { setBlocked((r.data || []).map(function(x) { return x.date; })); }); } catch (e) {}
+    try { fetch(URL2 + "/functions/v1/grooming_slots", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON2, "Authorization": "Bearer " + ANON2 }, body: "{}" }).then(function(r) { return r.json(); }).then(function(cf) { if (cf && cf.times && cf.times.length) setTimes(cf.times); if (cf && cf.closed_days) setClosedDays(cf.closed_days); }).catch(function() {}); } catch (e) {}
     var me = window._groomMe;
     if (me && me.client) { if (!firstName) setFirst(me.client.first_name || ""); if (!lastName) setLast(me.client.last_name || ""); if (!phone) setPhone(me.client.phone || ""); if (!email) setEmail(me.email || me.client.email || ""); }
   }, [open]);
@@ -860,9 +871,9 @@ function IntroOfferBanner() {
     setDay(v); setTime(""); setTaken([]); setErr("");
     if (!v) return;
     var dd = new Date(v + "T00:00:00");
-    if (dd.getDay() === 0) { setErr(t(["Los domingos estamos cerrados. Elige otra fecha.", "We are closed on Sundays. Pick another date."])); return; }
+    if (closedDays.indexOf(dd.getDay()) >= 0) { setErr(t(["Ese día estamos cerrados. Elige otra fecha.", "We are closed that day. Pick another date."])); return; }
     if (blocked.indexOf(v) >= 0) { setErr(t(["Esa fecha no est\xE1 disponible. Elige otra.", "That date is unavailable. Pick another."])); return; }
-    try { fetch(URL2 + "/functions/v1/grooming_slots", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON2, "Authorization": "Bearer " + ANON2 }, body: JSON.stringify({ date: v }) }).then(function(r) { return r.json(); }).then(function(d2) { setTaken((d2 && d2.taken) || []); }).catch(function() {}); } catch (e) {}
+    try { fetch(URL2 + "/functions/v1/grooming_slots", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON2, "Authorization": "Bearer " + ANON2 }, body: JSON.stringify({ date: v }) }).then(function(r) { return r.json(); }).then(function(d2) { setTaken((d2 && d2.taken) || []); if (d2 && d2.times && d2.times.length) setTimes(d2.times); if (d2 && d2.closed_days) setClosedDays(d2.closed_days); }).catch(function() {}); } catch (e) {}
   }
   function validate() {
     if (!firstName || !petName || !phone || !email) return t(["Completa nombre, mascota, tel\xE9fono y correo.", "Fill in name, pet, phone and email."]);
@@ -870,7 +881,7 @@ function IntroOfferBanner() {
     if (!size) return t(["Elige el tama\xF1o de tu mascota.", "Choose your pet’s size."]);
     if (!day || !time) return t(["Elige fecha y hora.", "Choose date and time."]);
     var d = new Date(day + "T00:00:00");
-    if (d.getDay() === 0) return t(["Los domingos estamos cerrados.", "We are closed on Sundays."]);
+    if (closedDays.indexOf(d.getDay()) >= 0) return t(["Ese día estamos cerrados.", "We are closed that day."]);
     if (blocked.indexOf(day) >= 0) return t(["Esa fecha no est\xE1 disponible. Elige otra.", "That date is unavailable. Pick another."]);
     return "";
   }
@@ -930,7 +941,7 @@ function IntroOfferBanner() {
           ),
           /* @__PURE__ */ React.createElement("div", { className: "offer-grid" },
             /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Fecha", "Date"])), /* @__PURE__ */ React.createElement("input", { className: "offer-in", type: "date", min: todayISO, value: day, onChange: function(e) { pickDate(e.target.value); } })),
-            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Hora", "Time"])), /* @__PURE__ */ React.createElement("select", { className: "offer-in", value: time, onChange: function(e) { setTime(e.target.value); } }, /* @__PURE__ */ React.createElement("option", { value: "" }, "—"), TIMES.filter(function(tm) { return takenTimes.indexOf(tm) < 0; }).map(function(tm) { return /* @__PURE__ */ React.createElement("option", { key: tm, value: tm }, tm); }), day && TIMES.filter(function(tm) { return takenTimes.indexOf(tm) < 0; }).length === 0 ? /* @__PURE__ */ React.createElement("option", { value: "", disabled: true }, t(["D\xEDa lleno — elige otra fecha", "Day full — pick another date"])) : null))
+            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Hora", "Time"])), /* @__PURE__ */ React.createElement("select", { className: "offer-in", value: time, onChange: function(e) { setTime(e.target.value); } }, /* @__PURE__ */ React.createElement("option", { value: "" }, "—"), times.filter(function(tm) { return takenTimes.indexOf(tm) < 0; }).map(function(tm) { return /* @__PURE__ */ React.createElement("option", { key: tm, value: tm }, tm); }), day && times.filter(function(tm) { return takenTimes.indexOf(tm) < 0; }).length === 0 ? /* @__PURE__ */ React.createElement("option", { value: "", disabled: true }, t(["D\xEDa lleno — elige otra fecha", "Day full — pick another date"])) : null))
           ),
           /* @__PURE__ */ React.createElement("label", { className: "offer-pickup" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: pickup, onChange: function(e) { setPickup(e.target.checked); } }), t(["Recogida y entrega a domicilio (+$20)", "Home pickup & delivery (+$20)"])),
           /* @__PURE__ */ React.createElement("input", { className: "offer-in", style: { marginTop: 10 }, placeholder: t(["Notas (opcional)", "Notes (optional)"]), value: notes, onChange: function(e) { setNotes(e.target.value); } }),
