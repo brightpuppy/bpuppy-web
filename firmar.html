@@ -111,6 +111,14 @@ canvas{display:block;width:100%;height:200px;border-radius:10px;cursor:crosshair
   const $=id=>document.getElementById(id);
   function show(el){ el.style.display='block'; } function hide(el){ el.style.display='none'; }
   function err(msg){ hide($('loading')); show($('error')); $('error-msg').textContent = msg; }
+  function applyBrand(rd){
+    var name = rd ? 'Cachorros RD' : 'BrightPuppy';
+    try{ document.title = 'Firmar contrato — ' + name; }catch(e){}
+    var hb=document.querySelector('header b'); if(hb) hb.textContent = name + ' · Firma de contrato';
+    var hi=document.querySelector('header img'); if(hi && rd) hi.style.display='none';
+    var eb=document.querySelector('.hero .eyebrow'); if(eb) eb.textContent = 'Contrato ' + name;
+    var ssp=document.querySelector('#signed-state p'); if(ssp) ssp.textContent = 'Recibirás una copia por correo en los próximos minutos. Tu cachorro queda reservado a tu nombre. ¡Bienvenida a la familia ' + name + '!';
+  }
 
   if(!token){ err("Falta el token de firma en el link. Revisa el correo o WhatsApp que recibiste."); return; }
 
@@ -120,10 +128,14 @@ canvas{display:block;width:100%;height:200px;border-radius:10px;cursor:crosshair
     try {
       const { data, error } = await sb.from("contracts").select("id,client_name,client_email,breed,content,language,signer,signed_by_buyer_at,share_token_expires").eq("share_token", token).maybeSingle();
       if(error){ err("No pudimos cargar el contrato: " + error.message); return; }
-      if(!data){ err("Token inválido o expirado. Pide un link nuevo al equipo BrightPuppy (WhatsApp: +1 808 492 8294)."); return; }
+      if(!data){ err("Token inválido o expirado. Pide un link nuevo al equipo (WhatsApp: +1 929 428 7300)."); return; }
+      const rd = data.language==='spanish';
+      applyBrand(rd);
       if(data.signed_by_buyer_at){ hide($('loading')); show($('signed-state')); return; }
       $('meta').textContent = (data.client_name||'') + " · " + (data.breed||'cachorro') + " · " + (data.language==='spanish'?'Español':'English');
-      $('content').textContent = data.content || "(sin contenido)";
+      var _body = data.content || "(sin contenido)";
+      if(rd) _body = _body.replace(/BrightPuppy LLC/g,'Cachorros RD').replace(/Bright ?Puppy/g,'Cachorros RD');
+      $('content').textContent = _body;
       hide($('loading')); show($('sign-state'));
       initPad();
     } catch(e){ err("Error de conexión: " + e.message); }
