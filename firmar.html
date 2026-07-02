@@ -126,15 +126,18 @@ canvas{display:block;width:100%;height:200px;border-radius:10px;cursor:crosshair
 
   async function load(){
     try {
-      const { data, error } = await sb.from("contracts").select("id,client_name,client_email,breed,content,language,signer,signed_by_buyer_at,share_token_expires").eq("share_token", token).maybeSingle();
+      const { data, error } = await sb.from("contracts").select("id,client_name,client_email,breed,content,language,company,signer,signed_by_buyer_at,share_token_expires").eq("share_token", token).maybeSingle();
       if(error){ err("No pudimos cargar el contrato: " + error.message); return; }
       if(!data){ err("Token inválido o expirado. Pide un link nuevo al equipo (WhatsApp: +1 929 428 7300)."); return; }
-      const rd = data.language==='spanish';
+      // La MARCA la decide la empresa del contrato (company), NO el idioma. Fallback para contratos viejos: español => Cachorros RD.
+      var _brandParam = new URLSearchParams(location.search).get("brand");
+      const rd = (data.company ? data.company==='cachorrosrd' : (_brandParam ? _brandParam==='crd' : data.language==='spanish'));
       applyBrand(rd);
       if(data.signed_by_buyer_at){ hide($('loading')); show($('signed-state')); return; }
       $('meta').textContent = (data.client_name||'') + " · " + (data.breed||'cachorro') + " · " + (data.language==='spanish'?'Español':'English');
       var _body = data.content || "(sin contenido)";
       if(rd) _body = _body.replace(/BrightPuppy LLC/g,'Cachorros RD').replace(/Bright ?Puppy/g,'Cachorros RD');
+      else _body = _body.replace(/Cachorros ?RD/g,'BrightPuppy LLC');
       $('content').textContent = _body;
       hide($('loading')); show($('sign-state'));
       initPad();
