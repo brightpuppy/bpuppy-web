@@ -1,0 +1,107 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Cartilla de vacunación</title>
+<style>
+  body{margin:0;background:#f1f5f9;font-family:"Segoe UI",system-ui,Arial,sans-serif}
+  .wrap{max-width:880px;margin:0 auto;padding:12px}
+  .bar{display:flex;gap:8px;justify-content:flex-end;padding:10px 4px}
+  .btn{background:#0F766E;color:#fff;border:none;border-radius:999px;padding:10px 20px;font-weight:700;cursor:pointer;font-size:14px}
+  .card{background:#fff;box-shadow:0 6px 26px rgba(15,23,42,.10);border-radius:14px;overflow:hidden}
+  #cardframe{width:100%;border:0;display:block}
+  #msg{padding:56px 20px;text-align:center;color:#64748b;font-size:15px}
+  @media print{.bar{display:none}body{background:#fff}.card{box-shadow:none;border-radius:0}.wrap{padding:0;max-width:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="bar"><button class="btn" id="printBtn" style="display:none" onclick="doPrint()">Imprimir / Guardar PDF</button></div>
+  <div id="msg">Cargando cartilla…</div>
+  <div class="card" id="card" style="display:none"><iframe id="cardframe" scrolling="no"></iframe></div>
+</div>
+<script>
+var ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
+var FN="https://oqqwmcplljirbreowrll.supabase.co/functions/v1/vax_card";
+var VAX_SCHEDULE=[
+  { id:'dhpp1', es:'DHPP / DA2PP (1ª dosis)', en:'DHPP / DA2PP (1st dose)', ageEs:'6–8 semanas', ageEn:'6–8 weeks', core:true },
+  { id:'dhpp2', es:'DHPP / DA2PP (2ª dosis)', en:'DHPP / DA2PP (2nd dose)', ageEs:'10–12 semanas', ageEn:'10–12 weeks', core:true },
+  { id:'dhpp3', es:'DHPP / DA2PP (3ª dosis)', en:'DHPP / DA2PP (3rd dose)', ageEs:'14–16 semanas', ageEn:'14–16 weeks', core:true },
+  { id:'dhpp_boost', es:'DHPP (refuerzo anual)', en:'DHPP (annual booster)', ageEs:'12 meses', ageEn:'12 months', core:true },
+  { id:'rabies', es:'Rabia', en:'Rabies', ageEs:'12–16 semanas', ageEn:'12–16 weeks', core:true },
+  { id:'rabies_boost', es:'Rabia (refuerzo)', en:'Rabies (booster)', ageEs:'12 meses / 1–3 años', ageEn:'12 months / 1–3 yr', core:true },
+  { id:'bordetella', es:'Bordetella (tos de perreras)', en:'Bordetella (kennel cough)', ageEs:'8+ semanas', ageEn:'8+ weeks', core:false },
+  { id:'lepto', es:'Leptospirosis', en:'Leptospirosis', ageEs:'12+ semanas (2 dosis)', ageEn:'12+ weeks (2 doses)', core:false },
+  { id:'lyme', es:'Lyme', en:'Lyme', ageEs:'12+ semanas (2 dosis)', ageEn:'12+ weeks (2 doses)', core:false },
+  { id:'influenza', es:'Influenza canina', en:'Canine Influenza', ageEs:'8+ semanas (2 dosis)', ageEn:'8+ weeks (2 doses)', core:false }
+];
+function bpRenderVaxCard(pup, cli, data, lang){
+  pup=pup||{}; cli=cli||{}; data=data||{};
+  var en=(lang==='en'||lang==='english');
+  var esc=function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  var sched=VAX_SCHEDULE;
+  var T=en?{title:'VACCINATION RECORD',sub:'Puppy health & vaccination card',puppy:'PUPPY',owner:'OWNER',name:'Name',breed:'Breed',sex:'Sex',color:'Color',dob:'Date of birth',chip:'Microchip',phone:'Phone',vaccine:'Vaccine',dose:'Recommended age',given:'Given',date:'Date',next:'Next due',deworm:'DEWORMING',product:'Product',vet:'Veterinarian',clinic:'Clinic',notes:'Notes',sign:'Veterinarian signature & stamp',opt:'optional',foot:'Vaccination record — keep this document for your veterinarian.'}
+              :{title:'REGISTRO DE VACUNACIÓN',sub:'Cartilla de salud y vacunas del cachorro',puppy:'CACHORRO',owner:'PROPIETARIO',name:'Nombre',breed:'Raza',sex:'Sexo',color:'Color',dob:'Fecha de nacimiento',chip:'Microchip',phone:'Teléfono',vaccine:'Vacuna',dose:'Edad recomendada',given:'Aplicada',date:'Fecha',next:'Próxima',deworm:'DESPARASITACIÓN',product:'Producto',vet:'Veterinario',clinic:'Clínica',notes:'Notas',sign:'Firma y sello del veterinario',opt:'opcional',foot:'Registro de vacunación — conserve este documento para su veterinario.'};
+  var std=data.standard||{};
+  var ownerName=[cli.first_name,cli.last_name].filter(Boolean).join(' ');
+  function row(nm,age,on,date,next,opt){ return '<tr'+(on?' style="background:#f0fdfa"':'')+'><td>'+esc(nm)+(opt?' <span style="font-size:9px;color:#94a3b8">('+T.opt+')</span>':'')+'</td><td style="color:#64748b">'+esc(age)+'</td><td style="text-align:center;font-size:16px">'+(on?'<span style="color:#0F766E;font-weight:800">☑</span>':'<span style="color:#cbd5e1">☐</span>')+'</td><td>'+esc(date||'')+'</td><td style="color:#64748b">'+esc(next||'')+'</td></tr>'; }
+  var rows=sched.map(function(v){ var e=std[v.id]||{}; return row(en?v.en:v.es, en?v.ageEn:v.ageEs, !!e.applied, e.date, e.next, !v.core); }).join('');
+  var custom=(data.custom||[]).filter(function(c){return c&&c.name;}).map(function(c){ return row(c.name, c.dose||'', true, c.date, c.next, false); }).join('');
+  var deworm=(data.deworming||[]).filter(function(d){return d&&(d.date||d.product);}).map(function(d){ return '<tr><td>'+esc(d.product||'—')+'</td><td style="color:#64748b">'+esc(d.date||'')+'</td></tr>'; }).join('');
+  var field=function(lbl,val){ return '<div style="min-width:120px"><div class="vx-l">'+esc(lbl)+'</div><div class="vx-v">'+(val?esc(val):'—')+'</div></div>'; };
+  var paw='<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="1.6"><circle cx="5.5" cy="10" r="1.8"/><circle cx="9.5" cy="6.5" r="1.8"/><circle cx="14.5" cy="6.5" r="1.8"/><circle cx="18.5" cy="10" r="1.8"/><path d="M8 14.5c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5c0 2.2-1.8 3-4 3s-4-.8-4-3z"/></svg>';
+  return '<html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><style>'
+    +'@page{size:letter;margin:0.55in}'
+    +'*{box-sizing:border-box}body{font-family:"Segoe UI",system-ui,Arial,sans-serif;color:#1e293b;background:#fff;max-width:820px;margin:0 auto;padding:34px 40px;font-size:12.5px;line-height:1.5}'
+    +'.vx-head{display:flex;align-items:center;gap:14px;border-bottom:3px solid #0F766E;padding-bottom:14px;margin-bottom:16px}'
+    +'.vx-t{font-size:22px;font-weight:800;letter-spacing:.02em;color:#0F172A;margin:0}'
+    +'.vx-s{font-size:11px;color:#64748b;letter-spacing:.14em;text-transform:uppercase;margin-top:2px}'
+    +'.vx-sec{font-size:11px;font-weight:800;color:#0F766E;letter-spacing:.14em;margin:16px 0 6px}'
+    +'.vx-grid{display:flex;flex-wrap:wrap;gap:16px 26px;background:#f8fafc;border:1px solid #e2e8f0;border-radius:10px;padding:12px 16px}'
+    +'.vx-l{font-size:9px;font-weight:700;color:#94a3b8;text-transform:uppercase;letter-spacing:.06em}'
+    +'.vx-v{font-size:13.5px;font-weight:600;color:#0f172a}'
+    +'table{width:100%;border-collapse:collapse;margin-top:4px}'
+    +'th{font-size:9.5px;text-transform:uppercase;letter-spacing:.06em;color:#64748b;text-align:left;padding:6px 8px;border-bottom:2px solid #e2e8f0}'
+    +'td{padding:6px 8px;border-bottom:1px solid #eef2f7;font-size:12px}'
+    +'.vx-sign{display:flex;gap:40px;margin-top:26px}.vx-sign>div{flex:1;border-top:1px solid #94a3b8;padding-top:5px;font-size:10.5px;color:#64748b}'
+    +'.vx-foot{margin-top:22px;border-top:1px solid #e2e8f0;padding-top:10px;font-size:10px;color:#94a3b8;text-align:center;letter-spacing:.04em}'
+    +'</style></head><body>'
+    +'<div class="vx-head">'+paw+'<div><h1 class="vx-t">'+T.title+'</h1><div class="vx-s">'+T.sub+'</div></div></div>'
+    +'<div class="vx-sec">'+T.puppy+'</div><div class="vx-grid">'
+      +field(T.name,pup.name)+field(T.breed,pup.breed)+field(T.sex,pup.gender)+field(T.color,pup.color)+field(T.dob,pup.birth_date)+field(T.chip,pup.microchip)
+    +'</div>'
+    +'<div class="vx-sec">'+T.owner+'</div><div class="vx-grid">'+field(T.name,ownerName)+field(T.phone,cli.phone)+'</div>'
+    +'<div class="vx-sec">'+T.vaccine.toUpperCase()+'</div>'
+    +'<table><thead><tr><th>'+T.vaccine+'</th><th>'+T.dose+'</th><th style="text-align:center">'+T.given+'</th><th>'+T.date+'</th><th>'+T.next+'</th></tr></thead><tbody>'+rows+custom+'</tbody></table>'
+    +(deworm?('<div class="vx-sec">'+T.deworm+'</div><table><thead><tr><th>'+T.product+'</th><th>'+T.date+'</th></tr></thead><tbody>'+deworm+'</tbody></table>'):'')
+    +(data.notes?('<div class="vx-sec">'+T.notes+'</div><div style="font-size:12px;white-space:pre-wrap">'+esc(data.notes)+'</div>'):'')
+    +'<div class="vx-sign"><div>'+T.sign+((data.vet||data.clinic)?('<div style="color:#0f172a;font-weight:600;margin-top:2px">'+esc([data.vet,data.clinic].filter(Boolean).join(' · '))+'</div>'):'')+'</div><div>'+T.date+'</div></div>'
+    +'<div class="vx-foot">'+T.foot+'</div>'
+    +'</body></html>';
+}
+function doPrint(){ var ifr=document.getElementById('cardframe'); try{ ifr.contentWindow.focus(); ifr.contentWindow.print(); }catch(e){ window.print(); } }
+function sizeFrame(){ var ifr=document.getElementById('cardframe'); try{ ifr.style.height=(ifr.contentWindow.document.body.scrollHeight+20)+'px'; }catch(e){} }
+(function(){
+  var q=new URLSearchParams(location.search); var p=q.get('p'), t=q.get('t');
+  var msg=document.getElementById('msg');
+  if(!p||!t){ msg.textContent='Link inválido o incompleto.'; return; }
+  fetch(FN,{ method:'POST', headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON}, body:JSON.stringify({action:'data',p:p,t:t}) })
+    .then(function(r){ return r.json(); })
+    .then(function(d){
+      if(!d||!d.ok||!d.puppy){ msg.textContent=(d&&d.error)?('No se pudo cargar: '+d.error):'No se encontró la cartilla.'; return; }
+      var lang=(d.client&&d.client.language)||'spanish';
+      var html=bpRenderVaxCard(d.puppy, d.client||{}, d.puppy.vaccinations||{}, lang);
+      var ifr=document.getElementById('cardframe');
+      ifr.onload=sizeFrame;
+      ifr.srcdoc=html;
+      msg.style.display='none';
+      document.getElementById('card').style.display='block';
+      document.getElementById('printBtn').style.display='inline-block';
+      setTimeout(sizeFrame,400); window.addEventListener('resize',sizeFrame);
+    })
+    .catch(function(e){ msg.textContent='Error de conexión.'; });
+})();
+</script>
+</body>
+</html>
