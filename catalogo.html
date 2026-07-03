@@ -146,29 +146,57 @@
       <span id="trustline">Paga en <b>cuotas sin intereses</b> (Klarna/Afterpay) · aparta con <b>$500</b> · o paga con tarjeta, Cash App y más</span>
       <span style="opacity:.4">|</span>
       <nav style="display:flex;gap:12px;flex-wrap:wrap">
-        <a href="/terminos" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Condiciones</a>
-        <a href="/garantia" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Garantía</a>
-        <a href="/nosotros" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Por qué confiar en nosotros</a>
-        <a href="/reembolsos" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Reembolsos</a>
+        <a id="nav-cond" href="/terminos" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Condiciones</a>
+        <a id="nav-gar" href="/garantia" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Garantía</a>
+        <a id="nav-nos" href="/nosotros" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Por qué confiar en nosotros</a>
+        <a id="nav-ree" href="/reembolsos" target="_blank" rel="noopener" style="color:var(--orange);font-weight:700;text-decoration:none">Reembolsos</a>
       </nav>
     </div>
   </div>
   <div id="cat-toolbar" class="cat-toolbar"></div>
   <script>
   // Idioma del "chrome" (barra, nav, footer) en AMBAS direcciones. El idioma REAL lo manda el enlace (catalog_view.lang), no el navegador.
+  // ── Marca del catálogo (BrightPuppy / Cachorros RD) — por ?company=crd o por el dominio ──
+  window.BP_BRAND=(function(){
+    function q(n){ try{ return new URLSearchParams(location.search).get(n)||''; }catch(e){ return ''; } }
+    var c=(q('company')||q('c')||'').toLowerCase();
+    if(!c && /cachorrosrd/i.test(location.hostname)) c='crd';
+    var crd=(c==='crd'||c==='cachorrosrd'||c==='cachorros-rd');
+    window.BP_IS_CRD=crd;
+    return crd ? {
+      key:'crd', name:'Cachorros RD', wa:'18295338385',
+      ig:'https://instagram.com/cachorrosrdd', site:'https://www.cachorrosrd.com',
+      logo:'assets/logo-cachorrosrd.png', google:'https://share.google/Sglw4ldTCPkrKlwci',
+      accent:'#F26A21',
+      links:{ condiciones:'https://www.cachorrosrd.com/politica-de-tienda', garantia:'https://www.cachorrosrd.com/preguntas-frecuentes', nosotros:'https://www.cachorrosrd.com/nosotros', reembolsos:'https://www.cachorrosrd.com/copia-de-politica-de-tienda', envios:'https://www.cachorrosrd.com/copia-de-politica-de-devoluci%C3%B3n', razas:'https://www.cachorrosrd.com/razas' }
+    } : {
+      key:'bp', name:'BrightPuppy', wa:'18084928294',
+      ig:'https://instagram.com/bpuppyus', site:'https://bpuppy.us',
+      logo:'assets/logo.webp', google:'', accent:'#F58220',
+      links:{ condiciones:'/terminos', garantia:'/garantia', nosotros:'/nosotros', reembolsos:'/reembolsos' }
+    };
+  })();
   window.applyChromeLang=function(lang){
     try{
-      var EN=(lang==='en');
+      var B=window.BP_BRAND||{}, CRD=!!window.BP_IS_CRD, EN=(lang==='en');
+      var img=document.querySelector('.topbar img'); if(img && B.logo){ img.src=B.logo; img.alt=B.name; img.style.display=''; }
+      var bn=document.querySelector('.brandname'); if(bn && B.name) bn.textContent=B.name;
+      try{ document.title=(EN?'Available Puppies · ':'Cachorros Disponibles · ')+(B.name||'BrightPuppy'); }catch(e){}
+      if(B.accent) document.documentElement.style.setProperty('--orange', B.accent);
+      var planea=document.querySelector('a[href="/planea-sin-prisa"]'); if(planea) planea.style.display=CRD?'none':'block';
       var s=function(sel,es,en){var el=document.querySelector(sel);if(el)el.innerHTML=EN?en:es;};
-      s('#trustline','Paga en <b>cuotas sin intereses</b> (Klarna/Afterpay) · aparta con <b>$500</b> · o paga con tarjeta, Cash App y más','Pay in <b>interest-free installments</b> (Klarna/Afterpay) · reserve with <b>$500</b> · or pay by card, Cash App & more');
-      s('a[href="/planea-sin-prisa"]','Planea Sin Prisa · Abona a tu ritmo →','Plan at Your Pace · Pay over time →');
-      s('a[href="/terminos"]','Condiciones','Terms');
-      s('a[href="/garantia"]','Garantía','Health Guarantee');
-      s('a[href="/nosotros"]','Por qué confiar en nosotros','Why trust us');
-      s('a[href="/reembolsos"]','Reembolsos','Refunds');
+      if(CRD){
+        s('#trustline','Trabajamos directo en <b>República Dominicana</b> y <b>Estados Unidos</b> · aparta con <b>RD$5,000</b> por transferencia','We work directly in the <b>Dominican Republic</b> and the <b>United States</b> · reserve with <b>RD$5,000</b> by transfer');
+      } else {
+        s('#trustline','Paga en <b>cuotas sin intereses</b> (Klarna/Afterpay) · aparta con <b>$500</b> · o paga con tarjeta, Cash App y más','Pay in <b>interest-free installments</b> (Klarna/Afterpay) · reserve with <b>$500</b> · or pay by card, Cash App & more');
+        s('a[href="/planea-sin-prisa"]','Planea Sin Prisa · Abona a tu ritmo →','Plan at Your Pace · Pay over time →');
+      }
+      var L=B.links||{};
+      var nav=[['#nav-cond',L.condiciones,'Condiciones','Terms'],['#nav-gar',L.garantia,'Garantía','Health Guarantee'],['#nav-nos',L.nosotros,CRD?'Quiénes somos':'Por qué confiar en nosotros',CRD?'About us':'Why trust us'],['#nav-ree',L.reembolsos,CRD?'Devoluciones':'Reembolsos',CRD?'Returns':'Refunds']];
+      nav.forEach(function(n){ var a=document.querySelector(n[0]); if(a){ a.innerHTML=EN?n[3]:n[2]; if(n[1]) a.setAttribute('href',n[1]); } });
       var ld=document.getElementById('ld-txt');if(ld)ld.textContent=EN?'Loading your catalog…':'Cargando tu catálogo…';
-      var disc=document.querySelector('footer .disc');if(disc)disc.textContent=EN?"Private, personal link — please don't share it. Prices and availability subject to confirmation. © BrightPuppy.":"Enlace privado y personal — por favor no lo compartas. Precios y disponibilidad sujetos a confirmación. © BrightPuppy.";
-      var wa=document.querySelector('footer a.wa');if(wa){var svg=wa.querySelector('svg');wa.innerHTML='';if(svg)wa.appendChild(svg);wa.appendChild(document.createTextNode(EN?' Message us on WhatsApp':' Escríbenos por WhatsApp'));}
+      var disc=document.querySelector('footer .disc');if(disc)disc.textContent=EN?("Private, personal link — please don't share it. Prices and availability subject to confirmation. © "+(B.name||'BrightPuppy')+"."):("Enlace privado y personal — por favor no lo compartas. Precios y disponibilidad sujetos a confirmación. © "+(B.name||'BrightPuppy')+".");
+      var wa=document.querySelector('footer a.wa');if(wa){ if(B.wa) wa.setAttribute('href','https://wa.me/'+B.wa); var svg=wa.querySelector('svg');wa.innerHTML='';if(svg)wa.appendChild(svg);wa.appendChild(document.createTextNode(EN?' Message us on WhatsApp':' Escríbenos por WhatsApp'));}
       document.documentElement.lang=lang;
     }catch(e){}
   };
@@ -192,7 +220,10 @@
 (function(){
   var SUPA = 'https://oqqwmcplljirbreowrll.supabase.co';
   var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
-  var WA = '18084928294';
+  var BRAND = window.BP_BRAND || { key:'bp', name:'BrightPuppy', wa:'18084928294', ig:'https://instagram.com/bpuppyus', site:'https://bpuppy.us', links:{} };
+  var IS_CRD = !!window.BP_IS_CRD;
+  var WA = BRAND.wa || '18084928294';
+  var APT_LABEL = IS_CRD ? 'RD$5,000' : '$500';
   var app = document.getElementById('app');
 
   function qp(n){ try{ return new URLSearchParams(location.search).get(n)||''; }catch(e){ return ''; } }
@@ -281,7 +312,7 @@
       + '<div style="font-size:14px;color:var(--ink-2);margin:10px 0 14px">'+T('¿Cómo prefieres que sigamos? Te abrimos el mensaje listo para enviar:','How would you like to continue? We open the message ready to send:')+'</div>'
       + '<a href="'+wa+'" target="_blank" rel="noopener" class="btn-wa" style="display:flex;justify-content:center;width:100%;margin-bottom:10px"><svg viewBox="0 0 24 24" fill="currentColor" style="width:18px;height:18px"><path d="M.057 24l1.687-6.163a11.867 11.867 0 01-1.587-5.946C.16 5.335 5.495 0 12.05 0a11.817 11.817 0 018.413 3.488 11.824 11.824 0 013.48 8.414c-.003 6.557-5.338 11.892-11.893 11.892a11.9 11.9 0 01-5.688-1.448L.057 24z"/></svg> '+T('Enviar por WhatsApp','Send via WhatsApp')+'</a>'
       + '<a href="'+sms+'" style="display:flex;align-items:center;justify-content:center;gap:8px;width:100%;background:#3B82F6;color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;text-decoration:none;margin-bottom:12px"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:18px;height:18px"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg> '+T('Enviar por SMS','Send via SMS')+'</a>'
-      + '<button onclick="document.getElementById(\'intOv\').remove();financiar('+i+')" style="display:block;width:100%;text-align:center;background:none;border:none;font-size:13px;color:var(--orange);font-weight:700;cursor:pointer;font-family:inherit">'+T('💳 Ver opciones de financiamiento / pagar →','💳 See financing / pay options →')+'</button>'
+      + (IS_CRD?'':'<button onclick="document.getElementById(\'intOv\').remove();financiar('+i+')" style="display:block;width:100%;text-align:center;background:none;border:none;font-size:13px;color:var(--orange);font-weight:700;cursor:pointer;font-family:inherit">'+T('💳 Ver opciones de financiamiento / pagar →','💳 See financing / pay options →')+'</button>')
       + '</div>';
     document.body.appendChild(ov);
     ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
@@ -360,13 +391,13 @@
     ov.innerHTML='<div style="background:var(--card);border-radius:20px;max-width:560px;width:100%;padding:22px;margin:auto;box-shadow:var(--shadow)">'
       + '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px;margin-bottom:10px"><div><div style="color:var(--orange);font-weight:700;font-size:13px">'+esc(breedLabel(p.breed))+'</div><div style="font-family:var(--display);font-weight:800;font-size:23px">'+esc(p.name||p.breed||'Cachorro')+'</div></div><button onclick="document.getElementById(\'dtlOv\').remove()" style="background:none;border:none;font-size:28px;cursor:pointer;color:var(--ink-soft);line-height:1">&times;</button></div>'
       + imgH + thumbs
-      + '<div style="font-family:var(--display);font-weight:800;font-size:22px;margin-top:12px">'+money(p.price)+(p.price!=null&&!isNaN(p.price)?' <span style="font-size:12px;color:var(--ink-soft);font-weight:600">USD</span>':'')+'</div>'
+      + '<div style="font-family:var(--display);font-weight:800;font-size:22px;margin-top:12px">'+money(p.price)+((p.price!=null&&!isNaN(p.price)&&!IS_CRD)?' <span style="font-size:12px;color:var(--ink-soft);font-weight:600">USD</span>':'')+'</div>'
       + factsH + descH + breedH
       + '<div style="display:flex;flex-direction:column;gap:8px;margin-top:16px">'
-      +   (p.breed? '<a href="'+(blogArticleFor(p.breed)?('/blog?art='+blogArticleFor(p.breed)):'/razas')+'" target="_blank" rel="noopener" style="display:block;text-align:center;background:none;border:1.5px solid var(--line);color:var(--ink-2);border-radius:12px;padding:11px;font-weight:700;font-size:13.5px;text-decoration:none">'+T('Conocer más sobre los ','Learn more about ')+esc(p.breed)+' →</a>' : '')
+      +   (p.breed? '<a href="'+(IS_CRD?(BRAND.links.razas||'#'):(blogArticleFor(p.breed)?('/blog?art='+blogArticleFor(p.breed)):'/razas'))+'" target="_blank" rel="noopener" style="display:block;text-align:center;background:none;border:1.5px solid var(--line);color:var(--ink-2);border-radius:12px;padding:11px;font-weight:700;font-size:13.5px;text-decoration:none">'+T('Conocer más sobre los ','Learn more about ')+esc(p.breed)+' →</a>' : '')
       +   '<button onclick="document.getElementById(\'dtlOv\').remove();interes('+i+')" style="width:100%;background:linear-gradient(135deg,#16a34a,#22c55e);color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Me interesa','I am interested')+'</button>'
-      +   (reserved?'':'<button onclick="document.getElementById(\'dtlOv\').remove();apartar('+i+')" style="width:100%;background:#0EA5E9;color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — $500','Reserve — $500')+'</button>')
-      +   '<button onclick="document.getElementById(\'dtlOv\').remove();financiar('+i+')" style="width:100%;background:linear-gradient(135deg,#1D4ED8,#38BDF8);border:none;color:#fff;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 5px 16px rgba(29,78,216,.38)">'+T('💳 Tarjeta / Financiar','💳 Card / Finance')+'</button>'
+      +   (reserved?'':'<button onclick="document.getElementById(\'dtlOv\').remove();apartar('+i+')" style="width:100%;background:#0EA5E9;color:#fff;border:none;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — '+APT_LABEL,'Reserve — '+APT_LABEL)+'</button>')
+      +   (IS_CRD?'':'<button onclick="document.getElementById(\'dtlOv\').remove();financiar('+i+')" style="width:100%;background:linear-gradient(135deg,#1D4ED8,#38BDF8);border:none;color:#fff;border-radius:12px;padding:13px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 5px 16px rgba(29,78,216,.38)">'+T('💳 Tarjeta / Financiar','💳 Card / Finance')+'</button>')
       + '</div>'
       + '</div>';
     document.body.appendChild(ov);
@@ -375,6 +406,7 @@
   window.detalle=detalle;
   function apartar(i){
     var p=(window._PUPS||[])[i]; if(!p||!p.id) return;
+    if(IS_CRD){ return apartarPopular(p); }
     var ov=document.getElementById('aptOv'); if(ov) ov.remove();
     ov=document.createElement('div'); ov.id='aptOv';
     ov.style.cssText='position:fixed;inset:0;background:rgba(20,15,12,.6);z-index:220;display:flex;align-items:center;justify-content:center;padding:18px';
@@ -397,6 +429,47 @@
     };
   }
   window.apartar=apartar;
+  // ── Apartado Cachorros RD: transferencia a Banco Popular (sin pasarela) ──
+  function apartarPopular(p){
+    var ov=document.getElementById('aptOv'); if(ov) ov.remove();
+    ov=document.createElement('div'); ov.id='aptOv';
+    ov.style.cssText='position:fixed;inset:0;background:rgba(20,15,12,.6);z-index:220;display:flex;align-items:center;justify-content:center;padding:18px';
+    ov.innerHTML='<div style="background:#fff;border-radius:20px;max-width:460px;width:100%;max-height:94vh;overflow:auto;box-shadow:var(--shadow)">'
+      +'<div style="background:linear-gradient(135deg,#00297A,#0047B3);color:#fff;padding:18px 20px;border-radius:20px 20px 0 0">'
+      +'<div style="font-family:var(--display);font-weight:800;font-size:20px;line-height:1.12">'+T('Aparta con RD$5,000','Reserve with RD$5,000')+'</div>'
+      +'<div style="font-size:13px;opacity:.92;margin-top:3px">'+T('Transferencia · Banco Popular Dominicano','Transfer · Banco Popular Dominicano')+'</div>'
+      +'</div>'
+      +'<div style="padding:18px 20px">'
+      +'<div style="font-size:13.5px;color:var(--ink-2);line-height:1.6">'+T('Aparta a ','Reserve ')+'<b>'+esc(p.name||p.breed||T('este cachorro','this puppy'))+'</b>'+T(' con una transferencia de <b>RD$5,000</b> a nuestra cuenta. Al recibirla, un asesor de Cachorros RD te contacta para confirmar todo y coordinar la entrega.',' with an <b>RD$5,000</b> transfer to our account. Once received, a Cachorros RD advisor will contact you to confirm everything and arrange delivery.')+'</div>'
+      +'<div style="border:1.5px solid #00297A;border-radius:14px;overflow:hidden;margin:14px 0">'
+      +'<div style="background:#EAF0FB;padding:8px 14px;font-size:11px;font-weight:800;color:#00297A;letter-spacing:.06em;text-transform:uppercase">'+T('Datos para la transferencia','Transfer details')+'</div>'
+      +'<div style="padding:12px 14px;font-size:14px;color:var(--ink);line-height:1.85">'
+      +'<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:var(--ink-soft)">'+T('Banco','Bank')+'</span><b>Banco Popular</b></div>'
+      +'<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:var(--ink-soft)">'+T('Tipo de cuenta','Account type')+'</span><b>'+T('Corriente','Checking')+'</b></div>'
+      +'<div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span style="color:var(--ink-soft)">'+T('No. de cuenta','Account no.')+'</span><b style="font-size:17px;letter-spacing:.03em">831357389</b></div>'
+      +'<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:var(--ink-soft)">'+T('A nombre de','Account holder')+'</span><b>Angelina Henríquez Díaz</b></div>'
+      +'<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:var(--ink-soft)">'+T('Moneda','Currency')+'</span><b>'+T('Pesos (RD$)','Pesos (RD$)')+'</b></div>'
+      +'</div></div>'
+      +'<button onclick="popularCopy(this)" style="width:100%;background:#00297A;color:#fff;border:none;border-radius:12px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Copiar número de cuenta','Copy account number')+'</button>'
+      +'<div style="background:#FFF7ED;border:1px solid #F5C9A0;border-radius:12px;padding:11px 13px;font-size:12.5px;color:#8a5a1e;margin:13px 0;line-height:1.55">'+T('⚡ Hazla como <b>Pago al Instante (LBTR)</b> para que llegue <b>el mismo día</b>. Horario LBTR: <b>7:00 a.m.–4:00 p.m.</b> y <b>7:00 p.m.–11:00 p.m.</b> Fuera de ese horario puede tardar.','⚡ Send it as an <b>Instant Payment (LBTR)</b> so it arrives <b>the same day</b>. LBTR hours: <b>7:00 a.m.–4:00 p.m.</b> and <b>7:00 p.m.–11:00 p.m.</b>')+'</div>'
+      +'<div style="background:var(--paper,#faf5ee);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--ink-2);margin:0 0 13px;line-height:1.55">'+T('Como los cachorros se venden muy rápido, tu apartado es <b>reembolsable</b> si el cachorro exacto ya no está disponible — te lo devolvemos o te buscamos otro de la misma raza y características. Tu apartado siempre está protegido. 🐾','Because puppies sell fast, your reservation is <b>refundable</b> if the exact puppy is no longer available — we refund it or find you another of the same breed. Your reservation is always protected. 🐾')+'</div>'
+      +'<button onclick="abrirPopular()" style="width:100%;background:linear-gradient(135deg,#00297A,#0047B3);color:#fff;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">'+T('Ir al Banco Popular →','Go to Banco Popular →')+'</button>'
+      +'<div style="font-size:11.5px;color:var(--ink-soft);text-align:center;margin:7px 0 12px">'+T('En el celular abre tu app del Banco Popular; en computadora abre popularenlinea.com','On mobile it opens your Banco Popular app; on desktop it opens popularenlinea.com')+'</div>'
+      +'<a href="https://wa.me/'+WA+'?text='+encodeURIComponent(T('Hola! Acabo de hacer la transferencia de RD$5,000 para apartar a ','Hi! I just made the RD$5,000 transfer to reserve ')+(p.name||p.breed||'')+T('. Aquí está el comprobante.','. Here is the receipt.'))+'" target="_blank" rel="noopener" class="btn-wa" style="display:flex;justify-content:center;width:100%">'+T('Ya transferí — enviar comprobante','I transferred — send receipt')+'</a>'
+      +'<button onclick="document.getElementById(\'aptOv\').remove()" style="width:100%;background:none;border:none;color:var(--ink-soft);font-size:13px;margin-top:8px;cursor:pointer">'+T('Cancelar','Cancel')+'</button>'
+      +'</div></div>';
+    document.body.appendChild(ov);
+    ov.addEventListener('click',function(e){ if(e.target===ov) ov.remove(); });
+  }
+  window.apartarPopular=apartarPopular;
+  function popularCopy(btn){ try{ navigator.clipboard.writeText('831357389'); }catch(e){} if(btn){ var t=btn.getAttribute('data-t')||btn.textContent; btn.setAttribute('data-t',t); btn.textContent=T('✓ Copiado','✓ Copied'); setTimeout(function(){ btn.textContent=t; },1500); } }
+  window.popularCopy=popularCopy;
+  function abrirPopular(){
+    var ua=(navigator.userAgent||navigator.vendor||''); var web='https://www.popularenlinea.com';
+    if(/android/i.test(ua)){ try{ window.location.href='intent://popularenlinea.com/#Intent;scheme=https;package=com.popular.app.android;S.browser_fallback_url='+encodeURIComponent('https://play.google.com/store/apps/details?id=com.popular.app.android')+';end'; return; }catch(e){} }
+    try{ window.open(web,'_blank'); }catch(e){ location.href=web; }
+  }
+  window.abrirPopular=abrirPopular;
   function render(d){
     var pups = d.puppies||[]; window._PUPS = pups;
     if(!pups.length){ app.innerHTML = stateBox(pawIcon,T('Catálogo vacío','Empty catalog'),T('Tu asesor todavía está preparando tu selección. Escríbenos y te lo enviamos enseguida.','Your advisor is still preparing your selection. Message us and we will send it right away.'), true); return; }
@@ -411,7 +484,7 @@
       var reserved = (p.status==='reserved');
       var isSourced = !!p.sourced;
       var cropCls = isSourced ? ' crop' : '';
-      var brand = isSourced ? '<div class="brandmark"><span class="dot"></span>BrightPuppy</div>' : '';
+      var brand = isSourced ? '<div class="brandmark"><span class="dot"></span>'+esc(BRAND.name)+'</div>' : '';
       var count = photos.length>1 ? '<span class="gcount">'+photos.length+' fotos</span>' : '';
       var meta = [];
       var g = genderEs(p.gender); if(g) meta.push(g);
@@ -444,13 +517,13 @@
           + '<div class="breed">'+esc(breedLabel(p.breed))+'</div>'
           + (p.name? '<h3>'+esc(p.name)+'</h3>':'')
           + (meta.length? '<div class="meta">'+meta.map(function(m){return '<span class="chip">'+m+'</span>';}).join('')+'</div>':'')
-          + '<div class="price">'+money(p.price)+(p.price!=null&&!isNaN(p.price)?' <small>USD</small>':'')+'</div>'
-          + (p.price!=null&&!isNaN(p.price)? '<div style="font-size:11px;color:var(--ink-soft);margin-top:3px;line-height:1.4">'+T('Incluye <b>delivery a todo USA</b>. Para delivery fuera de USA, contacta con el personal.','Includes <b>delivery anywhere in the USA</b>. For delivery outside the USA, contact our team.')+'</div>' : '')
+          + '<div class="price">'+money(p.price)+((p.price!=null&&!isNaN(p.price)&&!IS_CRD)?' <small>USD</small>':'')+'</div>'
+          + (p.price!=null&&!isNaN(p.price)? '<div style="font-size:11px;color:var(--ink-soft);margin-top:3px;line-height:1.4">'+(IS_CRD?T('Entregamos en <b>RD y EE.UU.</b> — escríbenos por el total y el envío.','We deliver in the <b>DR and USA</b> — message us for the total and shipping.'):T('Incluye <b>delivery a todo USA</b>. Para delivery fuera de USA, contacta con el personal.','Includes <b>delivery anywhere in the USA</b>. For delivery outside the USA, contact our team.'))+'</div>' : '')
           + detH
           + '<div style="margin-top:9px;font-size:12.5px;font-weight:700;color:var(--orange)">'+T('ⓘ Ver detalles e info de la raza','ⓘ See details & breed info')+'</div>'
           + '<button class="cta" onclick="event.stopPropagation();interes('+i+')" style="border:none;cursor:pointer;width:100%;font-family:inherit;margin-top:9px">'+T('Me interesa','I am interested')+'</button>'
-          + (reserved? '' : '<button onclick="event.stopPropagation();apartar('+i+')" style="margin-top:8px;width:100%;background:#16a34a;color:#fff;border:none;border-radius:12px;padding:11px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — $500','Reserve — $500')+'</button>')
-          + (reserved? '' : '<button onclick="event.stopPropagation();financiar('+i+')" style="margin-top:8px;width:100%;background:linear-gradient(135deg,#1D4ED8,#38BDF8);border:none;color:#fff;border-radius:12px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 5px 16px rgba(29,78,216,.38)">'+T('💳 Tarjeta / Financiar','💳 Card / Finance')+'</button>')
+          + (reserved? '' : '<button onclick="event.stopPropagation();apartar('+i+')" style="margin-top:8px;width:100%;background:#16a34a;color:#fff;border:none;border-radius:12px;padding:11px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Apartar — '+APT_LABEL,'Reserve — '+APT_LABEL)+'</button>')
+          + ((reserved||IS_CRD)? '' : '<button onclick="event.stopPropagation();financiar('+i+')" style="margin-top:8px;width:100%;background:linear-gradient(135deg,#1D4ED8,#38BDF8);border:none;color:#fff;border-radius:12px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit;box-shadow:0 5px 16px rgba(29,78,216,.38)">'+T('💳 Tarjeta / Financiar','💳 Card / Finance')+'</button>')
         + '</div>'
       + '</div>';
     }).join('');
@@ -470,11 +543,20 @@
   function buildCatToolbar(d){
     var el=document.getElementById('cat-toolbar'); if(!el) return;
     var L=LANG, breed=catBreedName(d);
+    var ig=BRAND.ig, home=BRAND.site;
+    function pill(label,js){ return '<button type="button" class="cat-pill" onclick="'+js+'">'+label+'</button>'; }
+    if(IS_CRD){
+      var nos=(BRAND.links&&BRAND.links.nosotros)||home;
+      el.innerHTML =
+          (BRAND.google? pill(T('★ Reseñas en Google','★ Google reviews'), "catOpenWin('"+BRAND.google+"')") : '')
+        + pill(T('Síguenos en Instagram','Follow us on Instagram'), "catOpenWin('"+ig+"')")
+        + pill(T('Nuestro Delivery','Our Delivery'), "catDeliveryPopup()")
+        + pill(T('Quiénes somos','About us'), "catOpenWin('"+nos+"')")
+        + pill(T('Ir a Cachorros RD','Go to Cachorros RD'), "catOpenWin('"+home+"')");
+      return;
+    }
     var entregas='https://bpuppy.us/?ret=1&lang='+L+'&breed='+encodeURIComponent(breed)+'#gallery';
     var historia='/historia?lang='+L;
-    var home='https://bpuppy.us/?lang='+L;
-    var ig='https://instagram.com/bpuppyus';
-    function pill(label,js){ return '<button type="button" class="cat-pill" onclick="'+js+'">'+label+'</button>'; }
     el.innerHTML =
         pill(T('Mira nuestras entregas','See our deliveries'), "catOpenWin('"+entregas+"')")
       + pill(T('Síguenos en Instagram','Follow us on Instagram'), "catOpenWin('"+ig+"')")
@@ -497,13 +579,13 @@
       ['cal','We book the flight','Once reserved, we schedule a flight to reach you and coordinate the date and delivery with you.'],
       ['plane','Flies in-cabin, accompanied','Your puppy travels with us in the cabin (never in cargo) — safe, warm and cared for the whole way.'],
       ['hands','In your hands in 2–4 days','On average your puppy arrives within 2 to 4 days — healthy, vet-checked and with its papers.'],
-      ['heart','We deliver happiness','From our home to yours. Welcome to the BrightPuppy family.']
+      ['heart','We deliver happiness','From our home to yours. Welcome to the '+BRAND.name+' family.']
     ] : [
       ['deposit','Apartas tu cachorro','Con $500 dejamos apartado a tu nombre el cachorro que elegiste.'],
       ['cal','Agendamos su vuelo','Una vez apartado, programamos un vuelo para llegar donde estés y coordinamos contigo la fecha y la entrega.'],
       ['plane','Viaja en cabina, acompañado','Tu cachorro vuela con nosotros en cabina (nunca en bodega) — seguro, calientito y con cariño todo el camino.'],
       ['hands','Llega a tus manos en 2–4 días','En promedio tu cachorro llega en 2 a 4 días — sano, revisado y con sus documentos.'],
-      ['heart','Repartimos felicidad','De nuestra casa a la tuya. Bienvenido a la familia BrightPuppy.']
+      ['heart','Repartimos felicidad','De nuestra casa a la tuya. Bienvenido a la familia '+BRAND.name+'.']
     ];
     var rows = steps.map(function(s){ return '<div class="cdl-step"><div class="cdl-ic">'+IC[s[0]]+'</div><div><div class="cdl-tt">'+s[1]+'</div><div class="cdl-ds">'+s[2]+'</div></div></div>'; }).join('');
     var ov=document.createElement('div'); ov.className='cdl-ov'; ov.id='cdl-ov';
@@ -511,7 +593,7 @@
       + '<div class="cdl-head"><button class="cdl-x" onclick="var o=document.getElementById(\'cdl-ov\');if(o)o.remove()" aria-label="Cerrar">&times;</button>'
       + '<h2>'+(EN?'Our Delivery':'Nuestro Delivery')+'</h2><p>'+(EN?'How your puppy gets home, step by step.':'Cómo llega tu cachorro a casa, paso a paso.')+'</p></div>'
       + '<div class="cdl-steps">'+rows+'</div>'
-      + '<div class="cdl-foot"><span class="happy">'+IC.heart+' '+(EN?'Experts bringing joy to homes since 2012.':'Expertos llevando la alegría a los hogares desde 2012.')+'</span></div>'
+      + '<div class="cdl-foot"><span class="happy">'+IC.heart+' '+(IS_CRD?(EN?'Bringing joy to homes in the DR and USA.':'Llevando alegría a los hogares en RD y EE.UU.'):(EN?'Experts bringing joy to homes since 2012.':'Expertos llevando la alegría a los hogares desde 2012.'))+'</span></div>'
       + '</div>';
     ov.onclick=function(){ ov.remove(); };
     document.body.appendChild(ov);
