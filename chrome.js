@@ -601,3 +601,6 @@ function useSitePublish(pageId) {
 Object.assign(window, { Header, Footer, PawCursor, useReveal, ComingSoon, useSitePublish });
 
 })();
+
+// Teclados fáciles en formularios (móvil): carga input-easy.js una sola vez en todas las páginas con chrome.
+(function(){ if(window.__bpInputEasy) return; try{ var s=document.createElement('script'); s.src='input-easy.js'; s.async=true; document.head.appendChild(s); }catch(e){} })();
