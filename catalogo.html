@@ -446,15 +446,14 @@
       +'<div style="padding:12px 14px;font-size:14px;color:var(--ink);line-height:1.85">'
       +'<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:var(--ink-soft)">'+T('Banco','Bank')+'</span><b>Banco Popular</b></div>'
       +'<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:var(--ink-soft)">'+T('Tipo de cuenta','Account type')+'</span><b>'+T('Corriente','Checking')+'</b></div>'
-      +'<div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span style="color:var(--ink-soft)">'+T('No. de cuenta','Account no.')+'</span><b style="font-size:17px;letter-spacing:.03em">831357389</b></div>'
+      +'<div style="display:flex;justify-content:space-between;gap:10px;align-items:center"><span style="color:var(--ink-soft)">'+T('No. de cuenta','Account no.')+'</span><span style="display:inline-flex;align-items:center;gap:8px"><b style="font-size:17px;letter-spacing:.03em">831357389</b><button onclick="popularCopy(this)" style="border:1px solid #00297A;background:#EAF0FB;color:#00297A;border-radius:8px;padding:3px 11px;font-size:12px;font-weight:800;cursor:pointer;font-family:inherit;white-space:nowrap">'+T('Copiar','Copy')+'</button></span></div>'
       +'<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:var(--ink-soft)">'+T('A nombre de','Account holder')+'</span><b>Angelina Henríquez Díaz</b></div>'
       +'<div style="display:flex;justify-content:space-between;gap:10px"><span style="color:var(--ink-soft)">'+T('Moneda','Currency')+'</span><b>'+T('Pesos (RD$)','Pesos (RD$)')+'</b></div>'
       +'</div></div>'
-      +'<button onclick="popularCopy(this)" style="width:100%;background:#00297A;color:#fff;border:none;border-radius:12px;padding:12px;font-weight:800;font-size:14px;cursor:pointer;font-family:inherit">'+T('Copiar número de cuenta','Copy account number')+'</button>'
-      +'<div style="background:#FFF7ED;border:1px solid #F5C9A0;border-radius:12px;padding:11px 13px;font-size:12.5px;color:#8a5a1e;margin:13px 0;line-height:1.55">'+T('⚡ Hazla como <b>Pago al Instante (LBTR)</b> para que llegue <b>el mismo día</b>. Horario LBTR: <b>7:00 a.m.–4:00 p.m.</b> y <b>7:00 p.m.–11:00 p.m.</b> Fuera de ese horario puede tardar.','⚡ Send it as an <b>Instant Payment (LBTR)</b> so it arrives <b>the same day</b>. LBTR hours: <b>7:00 a.m.–4:00 p.m.</b> and <b>7:00 p.m.–11:00 p.m.</b>')+'</div>'
+      +'<div style="background:#FFF7ED;border:1px solid #F5C9A0;border-radius:12px;padding:11px 13px;font-size:12.5px;color:#8a5a1e;margin:13px 0 0;line-height:1.55">'+T('⚡ Hazla como <b>Pago al Instante (LBTR)</b> para que llegue <b>el mismo día</b>. Horario LBTR: <b>7:00 a.m.–4:00 p.m.</b> y <b>7:00 p.m.–11:00 p.m.</b> Fuera de ese horario puede tardar.','⚡ Send it as an <b>Instant Payment (LBTR)</b> so it arrives <b>the same day</b>. LBTR hours: <b>7:00 a.m.–4:00 p.m.</b> and <b>7:00 p.m.–11:00 p.m.</b>')+'</div>'
       +'<div style="background:var(--paper,#faf5ee);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--ink-2);margin:0 0 13px;line-height:1.55">'+T('Como los cachorros se venden muy rápido, tu apartado es <b>reembolsable</b> si el cachorro exacto ya no está disponible — te lo devolvemos o te buscamos otro de la misma raza y características. Tu apartado siempre está protegido. 🐾','Because puppies sell fast, your reservation is <b>refundable</b> if the exact puppy is no longer available — we refund it or find you another of the same breed. Your reservation is always protected. 🐾')+'</div>'
-      +'<button onclick="abrirPopular()" style="width:100%;background:linear-gradient(135deg,#00297A,#0047B3);color:#fff;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">'+T('Ir al Banco Popular →','Go to Banco Popular →')+'</button>'
-      +'<div style="font-size:11.5px;color:var(--ink-soft);text-align:center;margin:7px 0 12px">'+T('En el celular abre tu app del Banco Popular; en computadora abre popularenlinea.com','On mobile it opens your Banco Popular app; on desktop it opens popularenlinea.com')+'</div>'
+      +'<button onclick="abrirPopular()" style="width:100%;background:linear-gradient(135deg,#00297A,#0047B3);color:#fff;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">'+T('Ir al Banco Popular (Popular en Línea) →','Go to Banco Popular (Popular en Línea) →')+'</button>'
+      +'<div style="font-size:11.5px;color:var(--ink-soft);text-align:center;margin:7px 0 12px">'+T('Se abre en otra ventana para que no pierdas este número. Si prefieres pagar desde otro banco, copia la cuenta y hazlo desde tu app.','Opens in a new window so you don\'t lose this number. Prefer another bank? Copy the account and pay from your app.')+'</div>'
       +'<a href="https://wa.me/'+WA+'?text='+encodeURIComponent(T('Hola! Acabo de hacer la transferencia de RD$5,000 para apartar a ','Hi! I just made the RD$5,000 transfer to reserve ')+(p.name||p.breed||'')+T('. Aquí está el comprobante.','. Here is the receipt.'))+'" target="_blank" rel="noopener" class="btn-wa" style="display:flex;justify-content:center;width:100%">'+T('Ya transferí — enviar comprobante','I transferred — send receipt')+'</a>'
       +'<button onclick="document.getElementById(\'aptOv\').remove()" style="width:100%;background:none;border:none;color:var(--ink-soft);font-size:13px;margin-top:8px;cursor:pointer">'+T('Cancelar','Cancel')+'</button>'
       +'</div></div>';
@@ -465,9 +464,10 @@
   function popularCopy(btn){ try{ navigator.clipboard.writeText('831357389'); }catch(e){} if(btn){ var t=btn.getAttribute('data-t')||btn.textContent; btn.setAttribute('data-t',t); btn.textContent=T('✓ Copiado','✓ Copied'); setTimeout(function(){ btn.textContent=t; },1500); } }
   window.popularCopy=popularCopy;
   function abrirPopular(){
-    var ua=(navigator.userAgent||navigator.vendor||''); var web='https://www.popularenlinea.com';
-    if(/android/i.test(ua)){ try{ window.location.href='intent://popularenlinea.com/#Intent;scheme=https;package=com.popular.app.android;S.browser_fallback_url='+encodeURIComponent('https://play.google.com/store/apps/details?id=com.popular.app.android')+';end'; return; }catch(e){} }
-    try{ window.open(web,'_blank'); }catch(e){ location.href=web; }
+    // Abrir SIEMPRE en otra ventana/pestaña para NO salir del popup (así el cliente sigue viendo/copiando la cuenta,
+    // aunque decida pagar desde otro banco). No reemplazamos location.
+    var web='https://www.popularenlinea.com';
+    try{ window.open(web,'_blank','noopener'); }catch(e){}
   }
   window.abrirPopular=abrirPopular;
   function render(d){
