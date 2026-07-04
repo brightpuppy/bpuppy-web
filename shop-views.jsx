@@ -241,7 +241,7 @@ function TiendaApp() {
             <div style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 18, fontWeight: 800, marginBottom: 4 }}>{t(['¿Quieres vender tus propios productos aquí?', 'Want to sell your own products here?'])}</div>
             <p style={{ fontSize: 13.5, opacity: 0.75, margin: 0, lineHeight: 1.6 }}>{t(['Conecta tu inventario de', 'Connect your'])} <strong>Airtable</strong> {t(['o', 'or'])} <strong>Shopify</strong> {t(['y tus productos aparecen automáticamente en esta tienda. Escríbenos para configurarlo.', 'inventory and your products show up automatically in this store. Message us to set it up.'])}</p>
           </div>
-          <a href="https://wa.me/18084928294" target="_blank" rel="noopener noreferrer" style={{ padding: '12px 22px', borderRadius: 12, background: '#25D366', color: '#fff', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
+          <a href="https://wa.me/19294287300" target="_blank" rel="noopener noreferrer" style={{ padding: '12px 22px', borderRadius: 12, background: '#25D366', color: '#fff', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, textDecoration: 'none', whiteSpace: 'nowrap' }}>
             💬 {t(['Conectar inventario', 'Connect inventory'])}
           </a>
         </div>

@@ -101,8 +101,8 @@ function PdFinCalc({ price }) {
       /* @__PURE__ */ React.createElement("div", { style: { textAlign: "right" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 17, fontWeight: 800, color: active ? "var(--ink)" : "var(--ink)" } }, pdFmt(r.pmt)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, color: "var(--ink-2)" } }, lbl))
     );
   })), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: "var(--ink-soft)", textAlign: "center", fontStyle: "italic", marginBottom: 16 } }, t(["* Estimaciones. T\xE9rminos finales dependen de aprobaci\xF3n de cr\xE9dito.", "* Estimates. Final terms are subject to credit approval."])), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8 } }, [
-    { label: "WhatsApp", icon: "\u{1F4AC}", bg: "#25D366", href: `https://wa.me/18084928294?text=${encodeURIComponent(t(["Hola, me interesa financiar un cachorro", "Hi, I'm interested in financing a puppy"]))}`, color: "#fff" },
-    { label: "SMS", icon: "\u{1F4F1}", bg: "var(--bg)", href: `sms:+18084928294?body=${encodeURIComponent(t(["Hola, me interesa financiar un cachorro", "Hi, I'm interested in financing a puppy"]))}`, color: "var(--ink)", bdr: "var(--line)" },
+    { label: "WhatsApp", icon: "\u{1F4AC}", bg: "#25D366", href: `https://wa.me/19294287300?text=${encodeURIComponent(t(["Hola, me interesa financiar un cachorro", "Hi, I'm interested in financing a puppy"]))}`, color: "#fff" },
+    { label: "SMS", icon: "\u{1F4F1}", bg: "var(--bg)", href: `sms:+19294287300?body=${encodeURIComponent(t(["Hola, me interesa financiar un cachorro", "Hi, I'm interested in financing a puppy"]))}`, color: "var(--ink)", bdr: "var(--line)" },
     { label: t(["Aplicar", "Apply"]), icon: "\u2713", bg: "var(--orange)", href: "legal/financing.html", color: "#fff", blank: true }
   ].map(function(b, i) {
     return /* @__PURE__ */ React.createElement(
@@ -329,7 +329,7 @@ function PdHero({ p, photos, age }) {
   ), /* @__PURE__ */ React.createElement(
     "a",
     {
-      href: `https://wa.me/18084928294?text=${encodeURIComponent(t(["Hola! Me interesa", "Hi! I'm interested in"]))} ${encodeURIComponent(p.name || p.breed || t(["un cachorro", "a puppy"]))}`,
+      href: `https://wa.me/19294287300?text=${encodeURIComponent(t(["Hola! Me interesa", "Hi! I'm interested in"]))} ${encodeURIComponent(p.name || p.breed || t(["un cachorro", "a puppy"]))}`,
       target: "_blank",
       rel: "noreferrer",
       style: { padding: "13px 24px", background: "#25D366", color: "#fff", borderRadius: 999, fontWeight: 700, fontSize: 14, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8 }
@@ -338,7 +338,7 @@ function PdHero({ p, photos, age }) {
   ), /* @__PURE__ */ React.createElement(
     "a",
     {
-      href: `sms:+18084928294?body=${encodeURIComponent(t(["Hola! Me interesa", "Hi! I'm interested in"]))} ${encodeURIComponent(p.name || p.breed || t(["un cachorro", "a puppy"]))}`,
+      href: `sms:+19294287300?body=${encodeURIComponent(t(["Hola! Me interesa", "Hi! I'm interested in"]))} ${encodeURIComponent(p.name || p.breed || t(["un cachorro", "a puppy"]))}`,
       style: { padding: "13px 24px", background: "var(--bg)", color: "var(--ink)", borderRadius: 999, fontWeight: 700, fontSize: 14, textDecoration: "none", display: "flex", alignItems: "center", justifyContent: "center", gap: 8, border: "1.5px solid var(--line)" }
     },
     t(["\u{1F4F1} Enviar SMS", "\u{1F4F1} Send a text"])
@@ -410,7 +410,7 @@ Notas: ${v("notes")}`,
       });
       setSent(true);
     } catch (err) {
-      alert(t(["Error al enviar. Cont\xE1ctanos por WhatsApp: +1 (808) 492-8294", "There was an error sending your request. Contact us on WhatsApp: +1 (808) 492-8294"]));
+      alert(t(["Error al enviar. Cont\xE1ctanos por WhatsApp: +1 (929) 428-7300", "There was an error sending your request. Contact us on WhatsApp: +1 (929) 428-7300"]));
     } finally {
       setLoading(false);
     }

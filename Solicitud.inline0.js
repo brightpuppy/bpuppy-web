@@ -156,7 +156,7 @@ function SolicitudForm() {
       });
       setDone(true);
     } catch (e) {
-      alert(t(["Error al enviar. Por favor escr\xEDbenos por WhatsApp: +1 (808) 492-8294", "There was an error sending your request. Please message us on WhatsApp: +1 (808) 492-8294"]));
+      alert(t(["Error al enviar. Por favor escr\xEDbenos por WhatsApp: +1 (929) 428-7300", "There was an error sending your request. Please message us on WhatsApp: +1 (929) 428-7300"]));
     } finally {
       setLoad(false);
     }

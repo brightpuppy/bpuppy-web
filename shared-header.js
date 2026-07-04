@@ -145,7 +145,7 @@ class SiteHeader extends HTMLElement {
     </nav>
 
     <div style="display:flex;align-items:center;gap:10px">
-      <a href="tel:+18084928294" class="hdr-phone" aria-label="${t('Llamar','Call')}">${phoneSvg}</a>
+      <a href="tel:+19294287300" class="hdr-phone" aria-label="${t('Llamar','Call')}">${phoneSvg}</a>
       <div class="lang" role="group" aria-label="Language">
         <button data-active="${this._lang === 'es'}" data-lang="es">ES</button>
         <button data-active="${this._lang === 'en'}" data-lang="en">EN</button>

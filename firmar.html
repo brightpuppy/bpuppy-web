@@ -121,7 +121,7 @@ canvas{display:block;width:100%;height:200px;border-radius:10px;cursor:crosshair
     var en = String(data.language||'').toLowerCase().indexOf('en')===0;
     var sex = String(data.sex||'').toLowerCase();
     var welcome = en ? 'Welcome to the family' : (sex==='female' ? 'Bienvenida a la familia' : (sex==='male' ? 'Bienvenido a la familia' : 'Te damos la bienvenida a la familia'));
-    var phone = /angel|angelina|henr/.test(String(data.signer||'').toLowerCase()) ? '(808) 492-8294' : '(929) 428-7300';
+    var phone = /angel|angelina|henr/.test(String(data.signer||'').toLowerCase()) ? '(929) 428-7300' : '(929) 428-7300';
     var msg = en
       ? ('You\'ll receive a copy by email shortly. Your puppy is officially reserved in your name. ' + welcome + ' ' + name + '! Questions? WhatsApp +1 ' + phone + '.')
       : ('Recibirás una copia por correo en los próximos minutos. Tu cachorro queda reservado a tu nombre. ¡' + welcome + ' ' + name + '! ¿Dudas? WhatsApp +1 ' + phone + '.');

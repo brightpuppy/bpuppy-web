@@ -166,7 +166,7 @@
 </style>
 <script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
 <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"PetStore","name":"BPuppy","url":"https://bpuppy.us/cachorros","telephone":"+18084928294","image":"https://bpuppy.us/assets/og-brand.jpg","priceRange":"$$","address":{"@type":"PostalAddress","streetAddress":"5604 Kalogridis Rd","addressLocality":"Haines City","addressRegion":"FL","postalCode":"33844","addressCountry":"US"},"areaServed":[{"@type":"State","name":"Florida"},{"@type":"State","name":"New York"},{"@type":"City","name":"Boston"}],"description":"Premium family-raised puppies with a written health guarantee. Nationwide shipping across the USA."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"PetStore","name":"BPuppy","url":"https://bpuppy.us/cachorros","telephone":"+19294287300","image":"https://bpuppy.us/assets/og-brand.jpg","priceRange":"$$","address":{"@type":"PostalAddress","streetAddress":"5604 Kalogridis Rd","addressLocality":"Haines City","addressRegion":"FL","postalCode":"33844","addressCountry":"US"},"areaServed":[{"@type":"State","name":"Florida"},{"@type":"State","name":"New York"},{"@type":"City","name":"Boston"}],"description":"Premium family-raised puppies with a written health guarantee. Nationwide shipping across the USA."}</script>
 </head>
 <body>
 <div id="__chrome-hdr"></div>
@@ -283,8 +283,8 @@
     <h2 class="display" style="font-size: clamp(32px,5vw,56px); margin: 0 0 16px;">¿Necesitas ayuda <em class="serif-italic">eligiendo?</em></h2>
     <p style="color: var(--ink-2); max-width: 44ch; margin: 0 auto 28px;">Nuestro equipo te guía para encontrar el compañero perfecto para tu hogar y estilo de vida.</p>
     <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
-      <a href="https://wa.me/18084928294" target="_blank" rel="noreferrer" class="btn btn-primary">Escríbenos por WhatsApp</a>
-      <a href="tel:+18084928294" class="btn btn-outline">Llámanos · (808) 492-8294</a>
+      <a href="https://wa.me/19294287300" target="_blank" rel="noreferrer" class="btn btn-primary">Escríbenos por WhatsApp</a>
+      <a href="tel:+19294287300" class="btn btn-outline">Llámanos · (929) 428-7300</a>
       <a href="/#quiz" class="btn btn-outline">Hacer el quiz</a>
     </div>
   </div>
@@ -584,7 +584,7 @@
         message:'SOLICITUD DE CACHORRO\nRaza: '+breed+'\nFiltros: '+filterDesc+'\nNotas: '+notes, source:'puppy_request' });
       var grid = document.getElementById('pup-grid');
       if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 24px"><div style="font-size:52px;margin-bottom:16px">🎉</div><h3 style="font-family:var(--display);font-size:24px;font-weight:700;color:var(--ink);margin:0 0 10px">¡Solicitud recibida!</h3><p style="color:var(--ink-2);font-size:15px">Te contactaremos cuando tengamos el cachorro perfecto para ti.</p></div>';
-    } catch(err) { alert('Error al enviar. Por favor escríbenos por WhatsApp: +1 (808) 492-8294'); }
+    } catch(err) { alert('Error al enviar. Por favor escríbenos por WhatsApp: +1 (929) 428-7300'); }
   }
   window.submitPuppyRequest = submitPuppyRequest;
 
@@ -669,7 +669,7 @@ async function submitIntlShipping() {
     await sb2.from('website_leads').insert({ gclid: (function(){try{window.bpLead&&window.bpLead()}catch(e){}return (typeof window!=='undefined'&&window.bpGclid?window.bpGclid():null)})(), full_name:g('is-name'), email:g('is-email'), phone:g('is-phone'), message:'ENVÍO INTERNACIONAL - País: '+g('is-country'), source:'intl_shipping' });
     var modal = document.getElementById('__intl-modal');
     if (modal) modal.querySelector('div').innerHTML = '<div style="text-align:center;padding:40px 20px"><div style="font-size:52px;margin-bottom:16px">✈️</div><div style="font-family:Bricolage Grotesque,sans-serif;font-size:22px;font-weight:700;color:#2D2421;margin-bottom:8px">¡Solicitud recibida!</div><p style="color:#6B5A4E;font-size:14px;line-height:1.65">Te enviaremos la cotización y los requisitos para '+g('is-country')+' en breve.</p><button onclick="document.getElementById(\'__intl-modal\').style.display=\'none\'" style="margin-top:20px;background:#F58220;color:#fff;border:none;padding:12px 24px;border-radius:999px;font-weight:700;cursor:pointer;font-family:inherit">Cerrar</button></div>';
-  } catch(err) { alert('Error al enviar. Escríbenos por WhatsApp: +1 (808) 492-8294'); }
+  } catch(err) { alert('Error al enviar. Escríbenos por WhatsApp: +1 (929) 428-7300'); }
 }
 window.submitIntlShipping = submitIntlShipping;
 </script>

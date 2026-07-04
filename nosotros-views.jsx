@@ -306,7 +306,7 @@ function NosotrosApp() {
             <div style={{ background: 'var(--paper)', borderRadius: 20, padding: '32px', border: '1px solid var(--line)' }}>
               <h3 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 20, fontWeight: 800, color: 'var(--ink)', margin: '0 0 12px' }}>{t(['¿Quieres unirte al equipo?', 'Want to join the team?'])}</h3>
               <p style={{ fontSize: 14.5, color: 'var(--ink-2)', margin: '0 0 18px', lineHeight: 1.65 }}>{t(['Es probable que estemos buscando personas para ser parte del equipo, apasionadas por los animales. Grooming, cuidado de cachorros, adoptions coordinator. Escríbenos.', 'We\'re often looking for animal-loving people to join the team. Grooming, puppy care, adoptions coordinator. Reach out to us.'])}</p>
-              <a href="https://wa.me/18084928294" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 22px', borderRadius: 12, background: '#25D366', color: '#fff', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
+              <a href="https://wa.me/19294287300" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '12px 22px', borderRadius: 12, background: '#25D366', color: '#fff', fontFamily: 'inherit', fontSize: 14, fontWeight: 700, textDecoration: 'none' }}>
                 💬 {t(['Escribir por WhatsApp', 'Message us on WhatsApp'])}
               </a>
             </div>
@@ -332,7 +332,7 @@ function NosotrosApp() {
             <div style={{ padding: '28px 32px', background: 'var(--paper)', borderRadius: 20, border: '1px solid var(--line)' }}>
               <h3 style={{ fontFamily: 'Bricolage Grotesque,sans-serif', fontSize: 18, fontWeight: 800, color: 'var(--ink)', margin: '0 0 10px' }}>{t(['¿Eres periodista o creador de contenido?', 'Are you a journalist or content creator?'])}</h3>
               <p style={{ fontSize: 14, color: 'var(--ink-2)', margin: '0 0 16px', lineHeight: 1.6 }}>{t(['Estamos disponibles para entrevistas, colaboraciones y apariciones en medios sobre adopción responsable, grooming, bienestar animal y la historia de BPuppy.', 'We\'re available for interviews, collaborations, and media appearances on responsible adoption, grooming, animal welfare, and the BPuppy story.'])}</p>
-              <a href="https://wa.me/18084928294" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 20px', borderRadius: 12, background: 'var(--orange)', color: '#fff', fontFamily: 'inherit', fontSize: 13.5, fontWeight: 700, textDecoration: 'none' }}>
+              <a href="https://wa.me/19294287300" target="_blank" rel="noopener noreferrer" style={{ display: 'inline-flex', alignItems: 'center', gap: 8, padding: '11px 20px', borderRadius: 12, background: 'var(--orange)', color: '#fff', fontFamily: 'inherit', fontSize: 13.5, fontWeight: 700, textDecoration: 'none' }}>
                 📧 {t(['Contacto de prensa', 'Press contact'])}
               </a>
             </div>

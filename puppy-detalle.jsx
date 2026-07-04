@@ -151,8 +151,8 @@ function PdFinCalc({ price }) {
       {/* Action buttons */}
       <div style={{ display:'grid', gridTemplateColumns:'1fr 1fr 1fr', gap:8 }}>
         {[
-          { label:'WhatsApp', icon:'💬', bg:'#25D366', href:`https://wa.me/18084928294?text=${encodeURIComponent(t(['Hola, me interesa financiar un cachorro', "Hi, I'm interested in financing a puppy"]))}`, color:'#fff' },
-          { label:'SMS',      icon:'📱', bg:'var(--bg)', href:`sms:+18084928294?body=${encodeURIComponent(t(['Hola, me interesa financiar un cachorro', "Hi, I'm interested in financing a puppy"]))}`, color:'var(--ink)', bdr:'var(--line)' },
+          { label:'WhatsApp', icon:'💬', bg:'#25D366', href:`https://wa.me/19294287300?text=${encodeURIComponent(t(['Hola, me interesa financiar un cachorro', "Hi, I'm interested in financing a puppy"]))}`, color:'#fff' },
+          { label:'SMS',      icon:'📱', bg:'var(--bg)', href:`sms:+19294287300?body=${encodeURIComponent(t(['Hola, me interesa financiar un cachorro', "Hi, I'm interested in financing a puppy"]))}`, color:'var(--ink)', bdr:'var(--line)' },
           { label:t(['Aplicar', 'Apply']),  icon:'✓',  bg:'var(--orange)', href:'legal/financing.html', color:'#fff', blank:true },
         ].map(function(b, i) {
           return (
@@ -558,12 +558,12 @@ function PdHero({ p, photos, age }) {
                     {t(['⏰ Lista de espera', '⏰ Join the waitlist'])}
                   </button>
                 )}
-                <a href={`https://wa.me/18084928294?text=${encodeURIComponent(t(['Hola! Me interesa', "Hi! I'm interested in"]))} ${encodeURIComponent(p.name || p.breed || t(['un cachorro', 'a puppy']))}`}
+                <a href={`https://wa.me/19294287300?text=${encodeURIComponent(t(['Hola! Me interesa', "Hi! I'm interested in"]))} ${encodeURIComponent(p.name || p.breed || t(['un cachorro', 'a puppy']))}`}
                   target="_blank" rel="noreferrer"
                   style={{ padding:'13px 24px', background:'#25D366', color:'#fff', borderRadius:999, fontWeight:700, fontSize:14, textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'center', gap:8 }}>
                   {t(['💬 Escribir por WhatsApp', '💬 Message us on WhatsApp'])}
                 </a>
-                <a href={`sms:+18084928294?body=${encodeURIComponent(t(['Hola! Me interesa', "Hi! I'm interested in"]))} ${encodeURIComponent(p.name || p.breed || t(['un cachorro', 'a puppy']))}`}
+                <a href={`sms:+19294287300?body=${encodeURIComponent(t(['Hola! Me interesa', "Hi! I'm interested in"]))} ${encodeURIComponent(p.name || p.breed || t(['un cachorro', 'a puppy']))}`}
                   style={{ padding:'13px 24px', background:'var(--bg)', color:'var(--ink)', borderRadius:999, fontWeight:700, fontSize:14, textDecoration:'none', display:'flex', alignItems:'center', justifyContent:'center', gap:8, border:'1.5px solid var(--line)' }}>
                   {t(['📱 Enviar SMS', '📱 Send a text'])}
                 </a>
@@ -623,7 +623,7 @@ function IntlShippingModal({ puppyName, puppyBreed, defaultSpecies, onClose }) {
       });
       setSent(true);
     } catch(err) {
-      alert(t(['Error al enviar. Contáctanos por WhatsApp: +1 (808) 492-8294', 'There was an error sending your request. Contact us on WhatsApp: +1 (808) 492-8294']));
+      alert(t(['Error al enviar. Contáctanos por WhatsApp: +1 (929) 428-7300', 'There was an error sending your request. Contact us on WhatsApp: +1 (929) 428-7300']));
     } finally { setLoading(false); }
   }
 
