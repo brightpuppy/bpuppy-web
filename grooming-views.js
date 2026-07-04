@@ -283,6 +283,7 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   });
   const sizeKey = { "Peque\xF1o": "s", "Mediano": "m", "Grande": "l", "XL": "xl" }[size] || "s";
   const SPA_VIP = "Spa VIP";
+  const BASE_SERVICES = ["Ba\xF1o completo", "Ba\xF1o + Corte", "Corte solo", "Spa VIP"];
   const toggleService = (name) => {
     setSelectedServices((prev) => {
       const n = new Set(prev);
@@ -292,6 +293,12 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
           n.clear();
           n.add(SPA_VIP);
         }
+        return n;
+      }
+      if (BASE_SERVICES.indexOf(name) >= 0) {
+        const wasSelected = n.has(name);
+        BASE_SERVICES.forEach((b) => n.delete(b));
+        if (!wasSelected) n.add(name);
         return n;
       }
       n.delete(SPA_VIP);
