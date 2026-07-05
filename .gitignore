@@ -1,3 +1,5 @@
 # Local-only backups of pre-optimization images (do NOT commit — keep repo .git small)
 _archive/
 node_modules/
+.wrangler/
+node_modules/
