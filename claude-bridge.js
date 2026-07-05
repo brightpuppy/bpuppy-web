@@ -56,11 +56,24 @@
   } catch (e) {}
 
   // Dispara la conversion de LEAD ($500). Se llama al enviar formulario o chat.
-  w.bpLead = function () {
+  // Normaliza telefono a E.164 (US por defecto) para Enhanced Conversions.
+  function bpNormPhone(v){ var d=String(v||'').replace(/[^0-9]/g,''); if(!d) return ''; if(d.length===10) return '+1'+d; if(d.length===11 && d[0]==='1') return '+'+d; if(String(v).trim()[0]==='+') return '+'+d; return d.length>=10 ? '+'+d : ''; }
+  // Dispara la conversion de LEAD ($500). Enhanced Conversions: toma correo/telefono
+  // del argumento o, si no, del formulario en pantalla (input email/tel con valor).
+  w.bpLead = function (ud) {
     try {
       if (w.bpLeadFired) return;          // una sola vez por carga
       w.bpLeadFired = true;
       if (!w.gtag) return;
+      var user = ud || {};
+      try {
+        if (!user.email) { var em = document.querySelector('input[type=email], input[name*=email i], input[id*=email i]'); if (em && em.value) user.email = em.value; }
+        if (!user.phone_number && !user.phone) { var ph = document.querySelector('input[type=tel], input[name*=phone i], input[name*=tel i], input[id*=phone i], input[id*=telefono i]'); if (ph && ph.value) user.phone_number = ph.value; }
+      } catch (e) {}
+      var u = {};
+      if (user.email) u.email = String(user.email).trim().toLowerCase();
+      var pn = bpNormPhone(user.phone_number || user.phone); if (pn) u.phone_number = pn;
+      if (u.email || u.phone_number) { try { w.gtag('set', 'user_data', u); } catch (e) {} }
       w.gtag('event', 'conversion', { send_to: LEAD_SEND_TO, value: 500.0, currency: 'USD' });
       w.gtag('event', 'generate_lead', { value: 500.0, currency: 'USD' });
     } catch (e) {}
