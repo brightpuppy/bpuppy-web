@@ -46,11 +46,11 @@
       w.dataLayer = w.dataLayer || [];
       w.gtag = function () { w.dataLayer.push(arguments); };
       w.gtag('js', new Date());
-      w.gtag('config', AW_ID);
-      w.gtag('config', GA4_ID);
+      w.gtag('config', AW_ID, {transport_url:'https://bpuppy.us/metrics'});
+      w.gtag('config', GA4_ID, {transport_url:'https://bpuppy.us/metrics'});
       var gs = document.createElement('script');
       gs.async = true;
-      gs.src = 'https://www.googletagmanager.com/gtag/js?id=' + AW_ID;
+      gs.src = 'https://bpuppy.us/metrics/gtag/js?id=' + AW_ID;
       (document.head || document.documentElement).appendChild(gs);
     }
   } catch (e) {}
