@@ -472,9 +472,8 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   const [best, setBest] = useState(() => { try { return parseInt(localStorage.getItem('bp_game_best')||'0',10)||0; } catch(e){ return 0; } });
   // scoreboard
   const [board, setBoard] = useState([]);
-  const [name, setName] = useState('');
-  const [country, setCountry] = useState('');
-  const [city, setCity] = useState('');
+  // COPPA: solo un apodo/iniciales (máx 12). Sin nombre completo, sin ciudad, sin país.
+  const [nick, setNick] = useState('');
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [lives, setLives] = useState(3);
@@ -490,7 +489,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
 
   const loadBoard = () => {
     const s = gameSupa(); if(!s) return;
-    s.from('game_scores').select('name,country,city,score,breed').order('score',{ascending:false}).limit(10)
+    s.from('game_scores').select('name,score,breed').order('score',{ascending:false}).limit(10)
       .then(({data})=>{ if(data) setBoard(data); }).catch(()=>{});
   };
   useEffect(()=>{ loadBoard(); }, []);
@@ -748,18 +747,19 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
   const tap = () => { const st=stRef.current; if(phase==='ready'){ start(); return; } if(phase!=='playing') return; if(st && st.mode==='flyintro'){ dismissFlyIntro(); return; } if(st && st.mode==='fly'){ st.flyTarget = Math.max(0, Math.min(GY-22, (st.flyTarget==null?st.py:st.flyTarget)+22)); return; } jump(); };
 
   const submitScore = () => {
-    const s = gameSupa(); const nm = name.trim();
+    // COPPA: solo se guarda un apodo/iniciales (máx 12 caracteres). NO se guarda
+    // nombre completo, ni ciudad, ni país, ni email — el ranking es anónimo.
+    const s = gameSupa(); const nm = nick.trim().slice(0,12);
     if(!nm){ return; }
     setSaving(true);
-    const row = { name: nm.slice(0,40), country: country||null, city: city.trim()||null, breed: breed.name, score };
-    if(prefillEmail) row.email = prefillEmail;
-    const done = ()=>{ setSaving(false); setSaved(true); loadBoard(); try{ localStorage.setItem('bp_game_player', JSON.stringify({name:nm,country,city})); }catch(e){} };
+    const row = { name: nm, breed: breed.name, score };
+    const done = ()=>{ setSaving(false); setSaved(true); loadBoard(); try{ localStorage.setItem('bp_game_nick', nm); }catch(e){} };
     if(s){ s.from('game_scores').insert(row).then(({error})=>{ done(); }).catch(()=>{ setSaving(false); setSaved(true); }); }
     else { done(); }
   };
 
-  // prefill player identity
-  useEffect(()=>{ try{ const p=JSON.parse(localStorage.getItem('bp_game_player')||'null'); if(p){ setName(p.name||''); setCountry(p.country||''); setCity(p.city||''); } }catch(e){} }, []);
+  // prefill nickname (no personal info)
+  useEffect(()=>{ try{ const n=localStorage.getItem('bp_game_nick'); if(n) setNick(n); }catch(e){} }, []);
 
   const cardSt = { background:'#fff', borderRadius:24, border:'1px solid var(--line)', overflow:'hidden', boxShadow:'0 10px 40px rgba(45,36,33,0.12)' };
   const firstName = breed.name.split(' (')[0];
@@ -856,20 +856,14 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
               {!saved ? (
                 <div style={{ marginBottom:18 }}>
                   <div style={{ fontWeight:800, fontSize:14, marginBottom:8, color:'var(--ink)' }}>{t(['Guarda tu puntuación','Save your score'])}</div>
-                  <input value={name} onChange={e=>setName(e.target.value)} maxLength={40} placeholder={t(['Tu nombre','Your name'])}
-                    style={{ width:'100%', boxSizing:'border-box', padding:'11px 13px', borderRadius:12, border:'1px solid var(--line)', fontSize:14, fontFamily:'inherit', marginBottom:9, outline:'none' }}/>
-                  <div style={{ display:'flex', gap:9, marginBottom:12 }}>
-                    <select value={country} onChange={e=>setCountry(e.target.value)} style={{ flex:1, padding:'11px 12px', borderRadius:12, border:'1px solid var(--line)', fontSize:14, fontFamily:'inherit', background:'#fff', outline:'none' }}>
-                      <option value="">{t(['País…','Country…'])}</option>
-                      {COUNTRIES.map(c=> <option key={c} value={c}>{c}</option>)}
-                    </select>
-                    <input value={city} onChange={e=>setCity(e.target.value)} list="bp-cities" placeholder={t(['Ciudad','City'])}
-                      style={{ flex:1, minWidth:0, padding:'11px 12px', borderRadius:12, border:'1px solid var(--line)', fontSize:14, fontFamily:'inherit', outline:'none' }}/>
-                    <datalist id="bp-cities">{CITY_HINTS.map(c=> <option key={c} value={c}/>)}</datalist>
-                  </div>
-                  <button onClick={submitScore} disabled={!name.trim()||saving} className="btn btn-primary" style={{ width:'100%', justifyContent:'center', cursor: name.trim()?'pointer':'default', opacity: name.trim()?1:0.6 }}>
+                  <input value={nick} onChange={e=>setNick(e.target.value.slice(0,12))} maxLength={12} placeholder={t(['Apodo o iniciales','Nickname or initials'])}
+                    style={{ width:'100%', boxSizing:'border-box', padding:'11px 13px', borderRadius:12, border:'1px solid var(--line)', fontSize:14, fontFamily:'inherit', marginBottom:12, outline:'none' }}/>
+                  <button onClick={submitScore} disabled={!nick.trim()||saving} className="btn btn-primary" style={{ width:'100%', justifyContent:'center', cursor: nick.trim()?'pointer':'default', opacity: nick.trim()?1:0.6 }}>
                     {saving ? t(['Guardando…','Saving…']) : t(['Guardar en el ranking','Save to leaderboard'])}
                   </button>
+                  <div style={{ fontSize:11.5, color:'var(--ink-soft)', marginTop:9, lineHeight:1.45 }}>
+                    {t(['Este juego es para todos y no pide datos personales. Solo usa un apodo o tus iniciales; no pongas tu nombre completo.','This game is for everyone and does not collect personal info. Use only a nickname or your initials; do not enter your full name.'])}
+                  </div>
                 </div>
               ) : (
                 <div style={{ marginBottom:18, padding:'12px 14px', borderRadius:12, background:'rgba(16,185,129,0.08)', border:'1px solid rgba(16,185,129,0.25)', fontSize:13.5, color:'var(--ink)', fontWeight:600 }}>
@@ -890,7 +884,6 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }){
                   <div key={i} style={{ display:'flex', alignItems:'center', gap:10, padding:'6px 0', borderBottom: i<board.length-1?'1px solid var(--line)':'none' }}>
                     <span style={{ width:22, fontWeight:900, color: i<3?'var(--orange)':'var(--ink-soft)', fontSize:14 }}>{i+1}</span>
                     <span style={{ flex:1, fontSize:13.5, fontWeight:700, color:'var(--ink)', overflow:'hidden', textOverflow:'ellipsis', whiteSpace:'nowrap' }}>{r.name}</span>
-                    <span style={{ fontSize:11.5, color:'var(--ink-soft)' }}>{[r.city,r.country].filter(Boolean).join(', ')}</span>
                     <span style={{ fontSize:14, fontWeight:900, color:'var(--ink)', minWidth:42, textAlign:'right' }}>{r.score}</span>
                   </div>
                 ))}

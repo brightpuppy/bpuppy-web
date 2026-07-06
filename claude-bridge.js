@@ -41,19 +41,34 @@
   var AW_ID = 'AW-11003229221';
   var GA4_ID = 'G-BRLSXJ4V73';
   var LEAD_SEND_TO = 'AW-11003229221/2mP_CNO6uKQcEKXo3_4o'; // "BPuppy - Lead Form Submitted"
+
+  // ── Aislamiento COPPA del juego de niños (/quiz) ──────────────────────────
+  // El quiz/juego de razas es para niños. En esa ruta NO cargamos gtag, GA4,
+  // Google Ads ni ningún pixel de terceros: cero datos a terceros. Dejamos
+  // gtag como no-op para que nada del sitio se rompa si intenta llamarlo.
+  var _isKidsGame = false;
   try {
-    if (!w.dataLayer) {
-      w.dataLayer = w.dataLayer || [];
-      w.gtag = function () { w.dataLayer.push(arguments); };
-      w.gtag('js', new Date());
-      w.gtag('config', AW_ID, {transport_url:'https://bpuppy.us/metrics'});
-      w.gtag('config', GA4_ID, {transport_url:'https://bpuppy.us/metrics'});
-      var gs = document.createElement('script');
-      gs.async = true;
-      gs.src = 'https://bpuppy.us/metrics/gtag/js?id=' + AW_ID;
-      (document.head || document.documentElement).appendChild(gs);
-    }
+    var _p = (w.location.pathname || '').toLowerCase();
+    _isKidsGame = /(^|\/)quiz(\/|\.html?)?$/.test(_p) || _p.indexOf('/quiz') === 0 || _p.indexOf('quiz.html') !== -1;
   } catch (e) {}
+
+  if (_isKidsGame) {
+    if (!w.gtag) w.gtag = function () {};   // no-op: nunca envía nada a terceros
+  } else {
+    try {
+      if (!w.dataLayer) {
+        w.dataLayer = w.dataLayer || [];
+        w.gtag = function () { w.dataLayer.push(arguments); };
+        w.gtag('js', new Date());
+        w.gtag('config', AW_ID, {transport_url:'https://bpuppy.us/metrics'});
+        w.gtag('config', GA4_ID, {transport_url:'https://bpuppy.us/metrics'});
+        var gs = document.createElement('script');
+        gs.async = true;
+        gs.src = 'https://bpuppy.us/metrics/gtag/js?id=' + AW_ID;
+        (document.head || document.documentElement).appendChild(gs);
+      }
+    } catch (e) {}
+  }
 
   // Dispara la conversion de LEAD ($500). Se llama al enviar formulario o chat.
   // Normaliza telefono a E.164 (US por defecto) para Enhanced Conversions.

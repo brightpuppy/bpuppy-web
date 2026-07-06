@@ -939,9 +939,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
     }
   });
   const [board, setBoard] = useState([]);
-  const [name, setName] = useState("");
-  const [country, setCountry] = useState("");
-  const [city, setCity] = useState("");
+  const [nick, setNick] = useState("");
   const [saved, setSaved] = useState(false);
   const [saving, setSaving] = useState(false);
   const [lives, setLives] = useState(3);
@@ -956,7 +954,7 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   const loadBoard = () => {
     const s = gameSupa();
     if (!s) return;
-    s.from("game_scores").select("name,country,city,score,breed").order("score", { ascending: false }).limit(10).then(({ data }) => {
+    s.from("game_scores").select("name,score,breed").order("score", { ascending: false }).limit(10).then(({ data }) => {
       if (data) setBoard(data);
     }).catch(() => {
     });
@@ -1708,19 +1706,18 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   };
   const submitScore = () => {
     const s = gameSupa();
-    const nm = name.trim();
+    const nm = nick.trim().slice(0, 12);
     if (!nm) {
       return;
     }
     setSaving(true);
-    const row = { name: nm.slice(0, 40), country: country || null, city: city.trim() || null, breed: breed.name, score };
-    if (prefillEmail) row.email = prefillEmail;
+    const row = { name: nm, breed: breed.name, score };
     const done = () => {
       setSaving(false);
       setSaved(true);
       loadBoard();
       try {
-        localStorage.setItem("bp_game_player", JSON.stringify({ name: nm, country, city }));
+        localStorage.setItem("bp_game_nick", nm);
       } catch (e) {
       }
     };
@@ -1737,12 +1734,8 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   };
   useEffect(() => {
     try {
-      const p = JSON.parse(localStorage.getItem("bp_game_player") || "null");
-      if (p) {
-        setName(p.name || "");
-        setCountry(p.country || "");
-        setCity(p.city || "");
-      }
+      const n = localStorage.getItem("bp_game_nick");
+      if (n) setNick(n);
     } catch (e) {
     }
   }, []);
@@ -1781,22 +1774,13 @@ function BreedRunner({ breed, t, lang, onCreateProfile, prefillEmail }) {
   }, onMouseDown: (e) => e.stopPropagation(), className: "btn btn-primary", style: { marginTop: 12, cursor: "pointer" } }, t(["Continuar", "Resume"])))), phase === "ready" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(255,255,255,0.55)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", display: "flex", flexDirection: "column", alignItems: "center", gap: 14, background: "rgba(255,255,255,0.78)", borderRadius: 16, padding: "16px 22px" } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, color: "var(--ink)", lineHeight: 1.1 } }, t(["\xA1Toca para empezar!", "Tap to start!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 600, color: "var(--ink-2)" } }, t(["Salta con clic, toque o barra espaciadora \xB7 doble = doble salto", "Jump with click, tap or spacebar \xB7 double = double jump"])))), phase === "over" && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.45)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff" } }, /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 28, fontWeight: 800 } }, t(["\xA1Buen intento!", "Nice run!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, marginTop: 2 } }, t(["Puntuaci\xF3n", "Score"]), ": ", /* @__PURE__ */ React.createElement("b", null, score)))), flyIntro && /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, display: "grid", placeItems: "center", background: "rgba(45,36,33,0.62)" } }, /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: "#fff", background: "rgba(0,0,0,0.42)", borderRadius: 16, padding: "18px 22px", maxWidth: 300 } }, /* @__PURE__ */ React.createElement("div", { className: "bp-rainbow", style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 24, fontWeight: 800 } }, t(["\xA1Modo vuelo!", "Flight mode!"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, margin: "8px 0 14px", lineHeight: 1.45 } }, t(["Controla a tu cachorro con el mouse o las flechas \u2191 \u2193. Esquiva los obst\xE1culos del aire y a los gatos.", "Control your puppy with the mouse or the \u2191 \u2193 arrows. Dodge the air obstacles and the cats."])), /* @__PURE__ */ React.createElement("button", { onClick: dismissFlyIntro, className: "btn btn-primary", style: { cursor: "pointer" } }, t(["\xA1A volar!", "Let us fly!"]))))), /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", fontSize: 12, fontWeight: 600, color: "var(--ink-soft)", padding: "8px 12px 0" } }, t(["Salta con clic, toque o barra espaciadora", "Jump with click, tap or spacebar"])), /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 20px 22px" } }, phase !== "over" && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 10, alignItems: "center" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => phase === "playing" ? jump() : start(), className: "btn btn-primary", style: { flex: 1, justifyContent: "center", cursor: "pointer" } }, phase === "playing" ? t(["Saltar", "Jump"]) : t(["Empezar a jugar", "Start playing"]))), phase === "over" && /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 520, margin: "0 auto" } }, /* @__PURE__ */ React.createElement("button", { onClick: start, className: "btn btn-primary", style: { width: "100%", justifyContent: "center", cursor: "pointer", marginBottom: 16, fontSize: 15 } }, "\u21BB ", t(["Jugar otra vez", "Play again"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 14, alignItems: "center", background: "#FFF7EE", border: "1.5px solid rgba(245,130,32,0.25)", borderRadius: 16, padding: "14px 16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { width: 54, height: 54, borderRadius: "50%", overflow: "hidden", border: "2px solid var(--orange)", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("img", { src: breed.img, alt: breed.name, style: { width: "100%", height: "100%", objectFit: "cover" } })), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, fontSize: 14, color: "var(--ink)", lineHeight: 1.5 } }, /* @__PURE__ */ React.createElement("b", null, firstName), " ", t(["te da un premio:", "gives you a prize:"]), " ", /* @__PURE__ */ React.createElement("b", { style: { color: "var(--orange2,#C2521E)" } }, prizeFor(score, lang)), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: "var(--ink-2)", marginTop: 2 } }, score, " ", t(["puntos", "points"]), " \xB7 ", treats, " treats")), /* @__PURE__ */ React.createElement("div", { style: { flexShrink: 0 } }, /* @__PURE__ */ React.createElement(PrizeSymbol, { tier: prizeTier(score), size: 46 }))), !saved ? /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, marginBottom: 8, color: "var(--ink)" } }, t(["Guarda tu puntuaci\xF3n", "Save your score"])), /* @__PURE__ */ React.createElement(
     "input",
     {
-      value: name,
-      onChange: (e) => setName(e.target.value),
-      maxLength: 40,
-      placeholder: t(["Tu nombre", "Your name"]),
-      style: { width: "100%", boxSizing: "border-box", padding: "11px 13px", borderRadius: 12, border: "1px solid var(--line)", fontSize: 14, fontFamily: "inherit", marginBottom: 9, outline: "none" }
+      value: nick,
+      onChange: (e) => setNick(e.target.value.slice(0, 12)),
+      maxLength: 12,
+      placeholder: t(["Apodo o iniciales", "Nickname or initials"]),
+      style: { width: "100%", boxSizing: "border-box", padding: "11px 13px", borderRadius: 12, border: "1px solid var(--line)", fontSize: 14, fontFamily: "inherit", marginBottom: 12, outline: "none" }
     }
-  ), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 9, marginBottom: 12 } }, /* @__PURE__ */ React.createElement("select", { value: country, onChange: (e) => setCountry(e.target.value), style: { flex: 1, padding: "11px 12px", borderRadius: 12, border: "1px solid var(--line)", fontSize: 14, fontFamily: "inherit", background: "#fff", outline: "none" } }, /* @__PURE__ */ React.createElement("option", { value: "" }, t(["Pa\xEDs\u2026", "Country\u2026"])), COUNTRIES.map((c) => /* @__PURE__ */ React.createElement("option", { key: c, value: c }, c))), /* @__PURE__ */ React.createElement(
-    "input",
-    {
-      value: city,
-      onChange: (e) => setCity(e.target.value),
-      list: "bp-cities",
-      placeholder: t(["Ciudad", "City"]),
-      style: { flex: 1, minWidth: 0, padding: "11px 12px", borderRadius: 12, border: "1px solid var(--line)", fontSize: 14, fontFamily: "inherit", outline: "none" }
-    }
-  ), /* @__PURE__ */ React.createElement("datalist", { id: "bp-cities" }, CITY_HINTS.map((c) => /* @__PURE__ */ React.createElement("option", { key: c, value: c })))), /* @__PURE__ */ React.createElement("button", { onClick: submitScore, disabled: !name.trim() || saving, className: "btn btn-primary", style: { width: "100%", justifyContent: "center", cursor: name.trim() ? "pointer" : "default", opacity: name.trim() ? 1 : 0.6 } }, saving ? t(["Guardando\u2026", "Saving\u2026"]) : t(["Guardar en el ranking", "Save to leaderboard"]))) : /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 18, padding: "12px 14px", borderRadius: 12, background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)", fontSize: 13.5, color: "var(--ink)", fontWeight: 600 } }, t(["\xA1Puntuaci\xF3n guardada! Apareces en el ranking.", "Score saved! You are on the leaderboard."])), /* @__PURE__ */ React.createElement("a", { href: "/social?view=profile", className: "btn btn-outline", style: { width: "100%", justifyContent: "center", cursor: "pointer", marginBottom: 18 } }, t(["Crea tu perfil en B Social y gana m\xE1s premios", "Create your B Social profile to win more prizes"])), /* @__PURE__ */ React.createElement("div", { style: { background: "var(--paper)", borderRadius: 16, padding: "14px 16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, marginBottom: 10, color: "var(--ink)" } }, t(["Top 10 \u2014 Mejores puntuaciones", "Top 10 \u2014 Best scores"])), board.length === 0 && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: "var(--ink-soft)" } }, t(["S\xE9 el primero en el ranking.", "Be the first on the leaderboard."])), board.map((r, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", alignItems: "center", gap: 10, padding: "6px 0", borderBottom: i < board.length - 1 ? "1px solid var(--line)" : "none" } }, /* @__PURE__ */ React.createElement("span", { style: { width: 22, fontWeight: 900, color: i < 3 ? "var(--orange)" : "var(--ink-soft)", fontSize: 14 } }, i + 1), /* @__PURE__ */ React.createElement("span", { style: { flex: 1, fontSize: 13.5, fontWeight: 700, color: "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, r.name), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: "var(--ink-soft)" } }, [r.city, r.country].filter(Boolean).join(", ")), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, fontWeight: 900, color: "var(--ink)", minWidth: 42, textAlign: "right" } }, r.score))))))));
+  ), /* @__PURE__ */ React.createElement("button", { onClick: submitScore, disabled: !nick.trim() || saving, className: "btn btn-primary", style: { width: "100%", justifyContent: "center", cursor: nick.trim() ? "pointer" : "default", opacity: nick.trim() ? 1 : 0.6 } }, saving ? t(["Guardando\u2026", "Saving\u2026"]) : t(["Guardar en el ranking", "Save to leaderboard"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: "var(--ink-soft)", marginTop: 9, lineHeight: 1.45 } }, t(["Este juego es para todos y no pide datos personales. Solo usa un apodo o tus iniciales; no pongas tu nombre completo.", "This game is for everyone and does not collect personal info. Use only a nickname or your initials; do not enter your full name."]))) : /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 18, padding: "12px 14px", borderRadius: 12, background: "rgba(16,185,129,0.08)", border: "1px solid rgba(16,185,129,0.25)", fontSize: 13.5, color: "var(--ink)", fontWeight: 600 } }, t(["\xA1Puntuaci\xF3n guardada! Apareces en el ranking.", "Score saved! You are on the leaderboard."])), /* @__PURE__ */ React.createElement("a", { href: "/social?view=profile", className: "btn btn-outline", style: { width: "100%", justifyContent: "center", cursor: "pointer", marginBottom: 18 } }, t(["Crea tu perfil en B Social y gana m\xE1s premios", "Create your B Social profile to win more prizes"])), /* @__PURE__ */ React.createElement("div", { style: { background: "var(--paper)", borderRadius: 16, padding: "14px 16px", marginBottom: 18 } }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, marginBottom: 10, color: "var(--ink)" } }, t(["Top 10 \u2014 Mejores puntuaciones", "Top 10 \u2014 Best scores"])), board.length === 0 && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: "var(--ink-soft)" } }, t(["S\xE9 el primero en el ranking.", "Be the first on the leaderboard."])), board.map((r, i) => /* @__PURE__ */ React.createElement("div", { key: i, style: { display: "flex", alignItems: "center", gap: 10, padding: "6px 0", borderBottom: i < board.length - 1 ? "1px solid var(--line)" : "none" } }, /* @__PURE__ */ React.createElement("span", { style: { width: 22, fontWeight: 900, color: i < 3 ? "var(--orange)" : "var(--ink-soft)", fontSize: 14 } }, i + 1), /* @__PURE__ */ React.createElement("span", { style: { flex: 1, fontSize: 13.5, fontWeight: 700, color: "var(--ink)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, r.name), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 14, fontWeight: 900, color: "var(--ink)", minWidth: 42, textAlign: "right" } }, r.score))))))));
 }
 function prizeTier(score) {
   return score >= 800 ? 4 : score >= 500 ? 3 : score >= 300 ? 2 : score >= 150 ? 1 : 0;

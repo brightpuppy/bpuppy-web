@@ -244,7 +244,10 @@ function SolicitudForm() {
       placeholder: t(["Presupuesto, fechas, preguntas espec\xEDficas\u2026", "Budget, timing, specific questions\u2026"]),
       style: { width: "100%", padding: "12px 16px", border: "1.5px solid var(--line)", borderRadius: 10, fontFamily: "var(--body)", fontSize: 14, color: "var(--ink)", background: "#fff", resize: "vertical", outline: "none", boxSizing: "border-box" }
     }
-  )))), step === 2 && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "var(--ink-2)", lineHeight: 1.55, marginTop: 26, textAlign: "center" } }, t(["Al enviar, aceptas recibir correos de BrightPuppy con seguimiento, consejos y novedades. Puedes darte de baja cuando quieras.", "By submitting, you agree to receive BrightPuppy emails with follow-ups, tips and news. You can unsubscribe anytime."])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16, gap: 12 } }, /* @__PURE__ */ React.createElement(
+  )))), step === 2 && /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#6B7280", lineHeight: 1.55, marginTop: 26, textAlign: "center" } }, t([
+    /* @__PURE__ */ React.createElement(React.Fragment, { key: "es" }, "Al hacer clic en \xABEnviar\xBB aceptas nuestra ", /* @__PURE__ */ React.createElement("a", { href: "/privacidad", style: { color: "inherit", textDecoration: "underline" } }, "Pol\xEDtica de Privacidad"), " y ", /* @__PURE__ */ React.createElement("a", { href: "/terminos", style: { color: "inherit", textDecoration: "underline" } }, "T\xE9rminos"), ", y autorizas que BrightPuppy te contacte por correo, SMS y WhatsApp (incluidos mensajes autom\xE1ticos) sobre tu solicitud y novedades. Pueden aplicar tarifas de datos/mensajes. Responde STOP para no recibir textos, o usa el enlace de baja en los correos. Esto no es condici\xF3n para comprar."),
+    /* @__PURE__ */ React.createElement(React.Fragment, { key: "en" }, "By clicking “Send” you agree to our ", /* @__PURE__ */ React.createElement("a", { href: "/privacy", style: { color: "inherit", textDecoration: "underline" } }, "Privacy Policy"), " and ", /* @__PURE__ */ React.createElement("a", { href: "/terms", style: { color: "inherit", textDecoration: "underline" } }, "Terms"), ", and consent to receive email, SMS and WhatsApp messages (including automated) from BrightPuppy about your request and updates. Message/data rates may apply. Reply STOP to opt out of texts, or use the unsubscribe link in emails. This is not a condition of purchase.")
+  ])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginTop: 16, gap: 12 } }, /* @__PURE__ */ React.createElement(
     "button",
     {
       type: "button",
@@ -274,6 +277,7 @@ function SolicitudForm() {
     "button",
     {
       type: "button",
+      "data-consent": "clickwrap",
       onClick: submit,
       disabled: !canNext() || loading,
       style: { padding: "13px 28px", background: canNext() ? "var(--orange)" : "var(--line)", color: "#fff", border: "none", borderRadius: 999, fontFamily: "var(--body)", fontWeight: 700, fontSize: 15, cursor: canNext() ? "pointer" : "not-allowed", boxShadow: canNext() ? "0 8px 24px -8px rgba(245,130,32,0.4)" : "none", transition: "all .2s", opacity: loading ? 0.7 : 1 }
