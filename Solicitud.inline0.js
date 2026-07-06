@@ -152,7 +152,11 @@ function SolicitudForm() {
         contact_method: form.contact_method,
         puppy_breed: form.breed || null,
         message: msg,
-        source: "solicitud_ideal"
+        source: "solicitud_ideal",
+        email_consent: true,
+        sms_consent: true,
+        consent_ts: new Date().toISOString(),
+        consent_source: "web_solicitud_clickwrap"
       });
       setDone(true);
     } catch (e) {

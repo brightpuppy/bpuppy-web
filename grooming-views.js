@@ -504,7 +504,7 @@ function OpeningBanner() {
         } catch (e2) {
         }
         return typeof window !== "undefined" && window.bpGclid ? window.bpGclid() : null;
-      })(), full_name: name, phone, message: "OFERTA APERTURA - Ba\xF1o + Corte GRATIS. C\xF3d: APERTURA", source: "grooming_apertura" });
+      })(), full_name: name, phone, message: "OFERTA APERTURA - Ba\xF1o + Corte GRATIS. C\xF3d: APERTURA", source: "grooming_apertura", email_consent: true, sms_consent: true, consent_ts: new Date().toISOString(), consent_source: "web_grooming_clickwrap" });
     } catch (err) {
     } finally {
       setLoading(false);
