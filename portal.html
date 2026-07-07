@@ -319,6 +319,28 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   function renderGuardadosTab(){
     return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('bookmark',40)+'</div><div class="t">Tus guardados llegan pronto</div><div>Aquí podrás guardar tus razas favoritas y artículos del blog para verlos después.</div></div></div>';
   }
+  function renderCuentaTab(d){
+    var petNm=(d.pets&&d.pets[0]&&(d.pets[0].name||d.pets[0].pet_name))||'';
+    var petReason=petNm?('Mi mascota ('+esc(petNm)+') ya no está con nosotros'):'Mi mascota ya no está con nosotros';
+    if(d.email_opted_out){
+      return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('mail',40)+'</div>'+
+        '<div class="t">Correos detenidos</div>'+
+        '<div>Ahora mismo no te enviamos correos automáticos. Puedes reactivarlos cuando quieras.</div><br>'+
+        '<button class="go" id="pf-resume" style="border:none;cursor:pointer">Reactivar mis correos</button></div></div>';
+    }
+    return '<div class="card"><div class="empty" style="text-align:left"><div class="ico" style="color:var(--orange)">'+svg('mail',40)+'</div>'+
+      '<div class="t">Correos y notificaciones</div>'+
+      '<div style="margin-bottom:14px">Si ya no quieres recibir nuestros correos (novedades, recordatorios, cumpleaños de tu mascota), puedes detenerlos aquí. Cuéntanos por qué, así mejoramos.</div>'+
+      '<label style="display:block;font-size:12px;font-weight:700;color:#6b5a4e;margin-bottom:6px">Motivo</label>'+
+      '<select id="pf-reason" style="width:100%;padding:11px 12px;border:1px solid #e5d9cc;border-radius:12px;font-size:14px;margin-bottom:14px;background:#fff">'+
+        '<option value="Demasiados correos">Recibo demasiados correos</option>'+
+        '<option value="No me interesa el contenido">El contenido no me interesa</option>'+
+        '<option value="Nunca me suscribí">Nunca me suscribí</option>'+
+        '<option value="'+petReason.replace(/"/g,'&quot;')+'">'+petReason+'</option>'+
+        '<option value="Otro">Otro motivo</option>'+
+      '</select>'+
+      '<button id="pf-stop" style="background:#dc2626;border:none;cursor:pointer;color:#fff;width:100%;padding:12px;border-radius:12px;font-weight:800;font-size:14px">Detener mis correos</button></div></div>';
+  }
 
   function showDashboard(email){
     document.getElementById('logout').style.display='inline';
@@ -352,12 +374,14 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
             '<button class="tab" data-t="grooming">'+svg('scissors',16)+' Grooming</button>'+
             '<button class="tab" data-t="pagos">'+svg('card',16)+' Pagos'+((d.plans||[]).length?'<span class="n">'+d.plans.length+'</span>':'')+'</button>'+
             '<button class="tab" data-t="guardados">'+svg('bookmark',16)+' Guardados</button>'+
+            '<button class="tab" data-t="cuenta">'+svg('mail',16)+' Cuenta</button>'+
           '</div>';
 
           var panes='<div class="tabpane on" data-p="mascotas">'+renderPetsTab(d.pets)+'</div>'+
             '<div class="tabpane" data-p="grooming">'+renderGroomingTab(d)+'</div>'+
             '<div class="tabpane" data-p="pagos">'+renderPagosTab(d)+'</div>'+
-            '<div class="tabpane" data-p="guardados">'+renderGuardadosTab()+'</div>';
+            '<div class="tabpane" data-p="guardados">'+renderGuardadosTab()+'</div>'+
+            '<div class="tabpane" data-p="cuenta">'+renderCuentaTab(d)+'</div>';
 
           root.innerHTML=head+tabs+panes;
 
@@ -371,6 +395,21 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
           });
           // wire create-pet buttons
           root.querySelectorAll('.js-add-pet').forEach(function(b){ b.onclick=function(e){ e.preventDefault(); openPetModal(); }; });
+          // wire correos (detener / reactivar) — pestaña Cuenta
+          function pfEmail(action, reason, btn){
+            if(btn){ btn.disabled=true; btn.dataset.txt=btn.textContent; btn.textContent='Guardando…'; }
+            sb.auth.getSession().then(function(s){
+              var tok=s.data&&s.data.session&&s.data.session.access_token;
+              if(!tok){ showLogin({k:'err',t:'Sesión expirada, vuelve a entrar.'}); return; }
+              fetch(SUPA+'/functions/v1/portal_data',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:action,reason:reason})})
+                .then(function(r){return r.json();}).then(function(x){ if(x&&x.ok){ showDashboard(d.email); } else { if(btn){btn.disabled=false;btn.textContent=btn.dataset.txt;} alert((x&&x.error)||'No se pudo, intenta de nuevo.'); } })
+                .catch(function(){ if(btn){btn.disabled=false;btn.textContent=btn.dataset.txt;} alert('No se pudo, intenta de nuevo.'); });
+            });
+          }
+          var pfStop=root.querySelector('#pf-stop');
+          if(pfStop) pfStop.onclick=function(){ var rs=(root.querySelector('#pf-reason')||{}).value||''; if(!confirm('¿Detener todos los correos automáticos?')) return; pfEmail('stop_emails', rs, pfStop); };
+          var pfResume=root.querySelector('#pf-resume');
+          if(pfResume) pfResume.onclick=function(){ pfEmail('resume_emails', '', pfResume); };
           // wire pay buttons (plan abonos)
           root.querySelectorAll('button.pay[data-plan]').forEach(function(btn){
             btn.onclick=function(){ var pid=btn.getAttribute('data-plan'); var t=btn; t.disabled=true; t.textContent='Redirigiendo...';
