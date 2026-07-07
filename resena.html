@@ -65,13 +65,27 @@
     media:'Al enviar tu reseña autorizas a BrightPuppy a publicar tu opinión, nombre y las fotos que adjuntes (incl. de tu mascota) en su web y redes. Si aparece un menor, confirmas ser su padre/madre o tutor y lo autorizas.'
   };
   var bd = document.getElementById('bd');
-  if(!c || !t){ bd.innerHTML = '<div class="ok"><div class="big">🔗</div><h2>'+T.bad+'</h2></div>'; return; }
-  var rating = 0;
+  var anon = !c;   // link generico (sin cliente) -> pide nombre + lugar
+  if(c && !t){ bd.innerHTML = '<div class="ok"><div class="big">🔗</div><h2>'+T.bad+'</h2></div>'; return; }
+  var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
+  var SB = 'https://oqqwmcplljirbreowrll.supabase.co/functions/v1/';
+  var rating = 0, photos = [];
+  var L = {
+    loc: EN?'Your city / place':'Tu ciudad / lugar', locph: EN?'City, state or country':'Ciudad, estado o país',
+    ph: EN?'Photos (optional)':'Fotos (opcional)', add: EN?'📷 Add photos':'📷 Agregar fotos', upd: EN?'Uploading…':'Subiendo…',
+    needn: EN?'Please write your name':'Escribe tu nombre', needl: EN?'Please write your city / place':'Escribe tu ciudad / lugar'
+  };
+  var req = anon ? ' *' : '';
   function render(){
     bd.innerHTML = '<h1>'+T.title+'</h1><p class="sub">'+T.sub+'</p>'
       + '<div class="stars" id="stars">'+[1,2,3,4,5].map(function(i){return '<span class="star" data-v="'+i+'">★</span>';}).join('')+'</div>'
+      + '<label>'+T.nm+req+'</label><input id="nm" placeholder="'+T.nmph+'">'
+      + (anon ? ('<label>'+L.loc+req+'</label><input id="lc" placeholder="'+L.locph+'">') : '')
       + '<label>'+T.rev+'</label><textarea id="rv" placeholder="'+T.revph+'"></textarea>'
-      + '<label>'+T.nm+'</label><input id="nm" placeholder="'+T.nmph+'">'
+      + '<label>'+L.ph+'</label>'
+      + '<div id="thumbs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>'
+      + '<label for="pf" style="display:inline-block;background:#f3e9dd;color:#6B5A4E;border:1px solid var(--line);border-radius:10px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer">'+L.add+'</label>'
+      + '<input id="pf" type="file" accept="image/*" multiple style="display:none"> <span id="phst" style="font-size:12px;color:var(--mid)"></span>'
       + '<button class="send" id="go">'+T.send+'</button>'
       + '<p class="consent">'+T.media+'</p>'
       + '<p class="consent">'+T.consent+'</p>'
@@ -79,16 +93,38 @@
     var stars = bd.querySelectorAll('.star');
     function paint(){ stars.forEach(function(s){ s.classList.toggle('on', parseInt(s.getAttribute('data-v'),10) <= rating); }); }
     stars.forEach(function(s){ s.onclick = function(){ rating = parseInt(s.getAttribute('data-v'),10); paint(); document.getElementById('msg').textContent=''; }; });
+    document.getElementById('pf').onchange = function(){ addPhotos(this); };
     document.getElementById('go').onclick = submit;
+  }
+  function renderThumbs(){
+    var el=document.getElementById('thumbs'); if(!el) return;
+    el.innerHTML = photos.map(function(u,i){ return '<div style="position:relative;width:66px;height:66px;border-radius:8px;overflow:hidden;border:1px solid var(--line)"><img src="'+u+'" style="width:100%;height:100%;object-fit:cover"><span onclick="__rvDel('+i+')" style="position:absolute;top:1px;right:1px;background:rgba(0,0,0,.55);color:#fff;width:19px;height:19px;border-radius:50%;font-size:13px;line-height:19px;text-align:center;cursor:pointer">×</span></div>'; }).join('');
+  }
+  window.__rvDel = function(i){ photos.splice(i,1); renderThumbs(); };
+  function readFile(f){ return new Promise(function(res){ var r=new FileReader(); r.onload=function(){ res(r.result); }; r.onerror=function(){ res(null); }; r.readAsDataURL(f); }); }
+  async function addPhotos(input){
+    var files = [].slice.call(input.files||[]); input.value='';
+    var st=document.getElementById('phst'); if(st) st.textContent=L.upd;
+    for(var i=0;i<files.length && photos.length<6;i++){
+      var durl = await readFile(files[i]); if(!durl) continue;
+      try{
+        var r = await fetch(SB+'review_photo', { method:'POST', headers:{ 'Content-Type':'application/json', 'apikey':ANON }, body: JSON.stringify({ image: durl }) });
+        var d = await r.json(); if(d && d.ok && d.url){ photos.push(d.url); renderThumbs(); }
+      }catch(e){}
+    }
+    if(st) st.textContent='';
   }
   function submit(){
     var msg = document.getElementById('msg');
     if(!rating){ msg.textContent = T.pick; return; }
+    var nm = ((document.getElementById('nm')||{}).value||'').trim();
+    var lc = ((document.getElementById('lc')||{}).value||'').trim();
+    if(anon){ if(!nm){ msg.textContent=L.needn; return; } if(!lc){ msg.textContent=L.needl; return; } }
     var go = document.getElementById('go'); go.disabled = true; go.textContent = T.sending;
-    fetch('https://oqqwmcplljirbreowrll.supabase.co/functions/v1/review_submit', {
+    fetch(SB+'review_submit', {
       method:'POST',
-      headers:{ 'Content-Type':'application/json', 'apikey':'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4' },
-      body: JSON.stringify({ c:c, p:p, t:t, rating:rating, body:(document.getElementById('rv').value||''), name:(document.getElementById('nm').value||'') })
+      headers:{ 'Content-Type':'application/json', 'apikey':ANON },
+      body: JSON.stringify({ c:c, p:p, t:t, rating:rating, body:(document.getElementById('rv').value||''), name:nm, location:lc, photos:photos })
     }).then(function(r){ return r.json(); }).then(function(d){
       if(d && d.ok){ bd.innerHTML = '<div class="ok"><div class="big">🎉</div><h2>'+T.okh+'</h2><p class="sub">'+T.okp+'</p></div>'; }
       else { go.disabled=false; go.textContent=T.send; msg.textContent = (d && d.error) ? d.error : T.bad; }
