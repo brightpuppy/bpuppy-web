@@ -14,9 +14,11 @@
     grid.innerHTML = cache.slice(0, 6).map(function (rv, i) {
       var nm = esc(rv.name || "Cliente"), loc = esc(rv.location || ""), body = esc(rv.body || "");
       var av = esc((rv.name || "C").trim().charAt(0).toUpperCase());
+      var reply = rv.reply ? '<div style="margin:8px 0 0;padding:9px 11px;background:rgba(245,130,32,.07);border-left:3px solid #F58220;border-radius:6px;font-size:13px;color:#5b4a3d;text-align:left"><strong>Respuesta de BrightPuppy:</strong> ' + esc(rv.reply) + '</div>' : '';
       return '<div class="t-card reveal" data-bp-real="1" data-d="' + (i + 1) + '">'
         + '<div class="stars">' + stars(rv.rating) + '</div>'
         + '<blockquote>' + body + '</blockquote>'
+        + reply
         + '<div class="who"><div class="av">' + av + '</div><div>'
         + '<div class="nm">' + nm + '</div><div class="meta">' + loc + '</div></div></div>'
         + '</div>';
