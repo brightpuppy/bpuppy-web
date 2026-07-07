@@ -25,8 +25,11 @@
   .star:hover{ transform:scale(1.12); }
   .star.on{ color:#F5B301; }
   label{ font-size:12.5px; font-weight:700; color:var(--mid); display:block; margin:14px 0 5px; }
+  .req{ color:var(--or); }
   textarea,input{ width:100%; border:1px solid var(--line); border-radius:10px; padding:11px 13px; font-family:inherit; font-size:14.5px; color:var(--ink); }
   textarea{ min-height:96px; resize:vertical; }
+  .row{ display:flex; gap:10px; }
+  .row > div{ flex:1; min-width:0; }
   button.send{ width:100%; margin-top:18px; background:var(--or); color:#fff; border:none; border-radius:999px; padding:14px; font-weight:800; font-size:15px; cursor:pointer; }
   button.send:disabled{ opacity:.55; cursor:not-allowed; }
   .ok{ text-align:center; padding:18px 6px; }
@@ -45,6 +48,12 @@
   <div class="bd" id="bd"><div style="text-align:center;color:var(--mid);padding:30px">Cargando…</div></div>
   <div class="foot">BrightPuppy LLC · Haines City, FL · <a href="https://bpuppy.us">bpuppy.us</a></div>
 </div>
+<datalist id="usc">
+<option>New York, NY</option><option>Los Angeles, CA</option><option>Chicago, IL</option><option>Houston, TX</option><option>Phoenix, AZ</option><option>Philadelphia, PA</option><option>San Antonio, TX</option><option>San Diego, CA</option><option>Dallas, TX</option><option>San Jose, CA</option><option>Austin, TX</option><option>Jacksonville, FL</option><option>Fort Worth, TX</option><option>Columbus, OH</option><option>Charlotte, NC</option><option>San Francisco, CA</option><option>Indianapolis, IN</option><option>Seattle, WA</option><option>Denver, CO</option><option>Washington, DC</option><option>Boston, MA</option><option>El Paso, TX</option><option>Nashville, TN</option><option>Detroit, MI</option><option>Oklahoma City, OK</option><option>Portland, OR</option><option>Las Vegas, NV</option><option>Memphis, TN</option><option>Louisville, KY</option><option>Baltimore, MD</option><option>Milwaukee, WI</option><option>Albuquerque, NM</option><option>Tucson, AZ</option><option>Fresno, CA</option><option>Sacramento, CA</option><option>Kansas City, MO</option><option>Mesa, AZ</option><option>Atlanta, GA</option><option>Omaha, NE</option><option>Colorado Springs, CO</option><option>Raleigh, NC</option><option>Long Beach, CA</option><option>Virginia Beach, VA</option><option>Miami, FL</option><option>Oakland, CA</option><option>Minneapolis, MN</option><option>Tulsa, OK</option><option>Bakersfield, CA</option><option>Wichita, KS</option><option>Arlington, TX</option><option>Aurora, CO</option><option>Tampa, FL</option><option>New Orleans, LA</option><option>Cleveland, OH</option><option>Honolulu, HI</option><option>Anaheim, CA</option><option>Lexington, KY</option><option>Stockton, CA</option><option>Corpus Christi, TX</option><option>Henderson, NV</option><option>Riverside, CA</option><option>Newark, NJ</option><option>Saint Paul, MN</option><option>Santa Ana, CA</option><option>Cincinnati, OH</option><option>Irvine, CA</option><option>Orlando, FL</option><option>Pittsburgh, PA</option><option>St. Louis, MO</option><option>Greensboro, NC</option><option>Jersey City, NJ</option><option>Anchorage, AK</option><option>Lincoln, NE</option><option>Plano, TX</option><option>Durham, NC</option><option>Buffalo, NY</option><option>Chandler, AZ</option><option>Chula Vista, CA</option><option>Toledo, OH</option><option>Madison, WI</option><option>Gilbert, AZ</option><option>Reno, NV</option><option>Fort Wayne, IN</option><option>North Las Vegas, NV</option><option>St. Petersburg, FL</option><option>Lubbock, TX</option><option>Irving, TX</option><option>Laredo, TX</option><option>Winston-Salem, NC</option><option>Chesapeake, VA</option><option>Glendale, AZ</option><option>Garland, TX</option><option>Scottsdale, AZ</option><option>Norfolk, VA</option><option>Boise, ID</option><option>Fremont, CA</option><option>Spokane, WA</option><option>Baton Rouge, LA</option><option>Richmond, VA</option><option>Hialeah, FL</option><option>San Bernardino, CA</option><option>Tacoma, WA</option><option>Modesto, CA</option><option>Huntsville, AL</option><option>Des Moines, IA</option><option>Yonkers, NY</option><option>Rochester, NY</option><option>Moreno Valley, CA</option><option>Fayetteville, NC</option><option>Fontana, CA</option><option>Worcester, MA</option><option>Port St. Lucie, FL</option><option>Little Rock, AR</option><option>Augusta, GA</option><option>Oxnard, CA</option><option>Birmingham, AL</option><option>Montgomery, AL</option><option>Frisco, TX</option><option>Amarillo, TX</option><option>Salt Lake City, UT</option><option>Grand Rapids, MI</option><option>Huntington Beach, CA</option><option>Overland Park, KS</option><option>Providence, RI</option><option>Brownsville, TX</option><option>Knoxville, TN</option><option>Akron, OH</option><option>Cape Coral, FL</option><option>Fort Lauderdale, FL</option><option>Bridgeport, CT</option><option>Hartford, CT</option><option>Paterson, NJ</option><option>Elizabeth, NJ</option><option>Allentown, PA</option><option>Charleston, SC</option><option>Columbia, SC</option><option>Savannah, GA</option>
+</datalist>
+<datalist id="cos">
+<option>Estados Unidos</option><option>United States</option><option>Puerto Rico</option><option>Canadá</option><option>México</option><option>República Dominicana</option><option>Colombia</option><option>Venezuela</option><option>España</option><option>Perú</option><option>Ecuador</option><option>Argentina</option><option>Chile</option><option>Guatemala</option><option>Honduras</option><option>El Salvador</option><option>Nicaragua</option><option>Costa Rica</option><option>Panamá</option><option>Cuba</option><option>Bolivia</option><option>Paraguay</option><option>Uruguay</option><option>Brasil</option>
+</datalist>
 <script>
 (function(){
   var qp = new URLSearchParams(location.search);
@@ -52,39 +61,43 @@
   var EN = (qp.get('lang')||'').toLowerCase()==='en';
   document.documentElement.lang = EN ? 'en' : 'es';
   var T = EN ? {
-    title:"How was your experience?", sub:"Tap the stars and, if you like, leave a few words. Your honest review helps other families.",
-    rev:"Your review (optional)", revph:"What did you love? How was the process and your puppy?", nm:"Your name (optional)", nmph:"Name",
+    title:"How was your experience?", sub:"Tap the stars and tell us how it went. Your honest review helps other families.",
+    rev:"Your review", revph:"What did you love? How was the process and your puppy?", nm:"Your name", nmph:"Name",
+    city:"Your city", cityph:"Start typing your city…", country:"Country", countryph:"Country",
     send:"Send my review", pick:"Please tap a star to rate.", okh:"Thank you so much!", okp:"Your review was saved. It means the world to us.", bad:"This link is not valid or has expired.", sending:"Sending…",
+    needn:"Please write your name", needcity:"Please write your city", needcountry:"Please write your country", needrev:"Please write your review",
+    alreadyH:"You already left your review", alreadyP:"Thanks! You can only submit one review. If you'd like to leave another, please request a new link from BrightPuppy.",
+    defCountry:"United States",
     consent:'By clicking "Send my review" you agree to our <a href="https://bpuppy.us/privacy">Privacy Policy</a> and <a href="https://bpuppy.us/terms">Terms</a>, and consent to receive email, SMS and WhatsApp messages (including automated) from BrightPuppy about your request and updates. Message/data rates may apply. Reply STOP to opt out of texts, or use the unsubscribe link in emails. This is not a condition of purchase.',
     media:'By submitting your review you authorize BrightPuppy to publish your opinion, name and any photos you attach (incl. of your pet) on its website and social media. If a minor appears, you confirm you are their parent or guardian and authorize it.'
   } : {
-    title:"¿Cómo fue tu experiencia?", sub:"Toca las estrellas y, si quieres, deja unas palabras. Tu reseña sincera ayuda a otras familias.",
-    rev:"Tu reseña (opcional)", revph:"¿Qué te encantó? ¿Cómo fue el proceso y tu cachorro?", nm:"Tu nombre (opcional)", nmph:"Nombre",
+    title:"¿Cómo fue tu experiencia?", sub:"Toca las estrellas y cuéntanos cómo te fue. Tu reseña sincera ayuda a otras familias.",
+    rev:"Tu reseña", revph:"¿Qué te encantó? ¿Cómo fue el proceso y tu cachorro?", nm:"Tu nombre", nmph:"Nombre",
+    city:"Tu ciudad", cityph:"Empieza a escribir tu ciudad…", country:"País", countryph:"País",
     send:"Enviar mi reseña", pick:"Toca una estrella para calificar.", okh:"¡Muchas gracias!", okp:"Tu reseña quedó guardada. Significa muchísimo para nosotros.", bad:"Este enlace no es válido o ya caducó.", sending:"Enviando…",
+    needn:"Escribe tu nombre", needcity:"Escribe tu ciudad", needcountry:"Escribe tu país", needrev:"Escribe tu reseña",
+    alreadyH:"Ya dejaste tu reseña", alreadyP:"¡Gracias! Solo se puede dejar una reseña. Si quieres dejar otra, solicita un nuevo enlace a BrightPuppy.",
+    defCountry:"Estados Unidos",
     consent:'Al hacer clic en «Enviar mi reseña» aceptas nuestra <a href="https://bpuppy.us/privacidad">Política de Privacidad</a> y <a href="https://bpuppy.us/terminos">Términos</a>, y autorizas que BrightPuppy te contacte por correo, SMS y WhatsApp (incluidos mensajes automáticos) sobre tu solicitud y novedades. Pueden aplicar tarifas de datos/mensajes. Responde STOP para no recibir textos, o usa el enlace de baja en los correos. Esto no es condición para comprar.',
     media:'Al enviar tu reseña autorizas a BrightPuppy a publicar tu opinión, nombre y las fotos que adjuntes (incl. de tu mascota) en su web y redes. Si aparece un menor, confirmas ser su padre/madre o tutor y lo autorizas.'
   };
   var bd = document.getElementById('bd');
-  var anon = !c;   // link generico (sin cliente) -> pide nombre + lugar
   if(c && !t){ bd.innerHTML = '<div class="ok"><div class="big">🔗</div><h2>'+T.bad+'</h2></div>'; return; }
   var ANON = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
   var SB = 'https://oqqwmcplljirbreowrll.supabase.co/functions/v1/';
-  var rating = 0, photos = [];
-  var L = {
-    loc: EN?'Your city / place':'Tu ciudad / lugar', locph: EN?'City, state or country':'Ciudad, estado o país',
-    ph: EN?'Photos (optional)':'Fotos (opcional)', add: EN?'📷 Add photos':'📷 Agregar fotos', upd: EN?'Uploading…':'Subiendo…',
-    needn: EN?'Please write your name':'Escribe tu nombre', needl: EN?'Please write your city / place':'Escribe tu ciudad / lugar'
-  };
-  var req = anon ? ' *' : '';
+  var rating = 0, photos = [], pre = { name:'', city:'', country:'' };
+  function esc(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/"/g,'&quot;').replace(/</g,'&lt;'); }
+  function L(){ return '<span class="req"> *</span>'; }
   function render(){
     bd.innerHTML = '<h1>'+T.title+'</h1><p class="sub">'+T.sub+'</p>'
       + '<div class="stars" id="stars">'+[1,2,3,4,5].map(function(i){return '<span class="star" data-v="'+i+'">★</span>';}).join('')+'</div>'
-      + '<label>'+T.nm+req+'</label><input id="nm" placeholder="'+T.nmph+'">'
-      + (anon ? ('<label>'+L.loc+req+'</label><input id="lc" placeholder="'+L.locph+'">') : '')
-      + '<label>'+T.rev+'</label><textarea id="rv" placeholder="'+T.revph+'"></textarea>'
-      + '<label>'+L.ph+'</label>'
+      + '<label>'+T.nm+L()+'</label><input id="nm" placeholder="'+T.nmph+'" value="'+esc(pre.name)+'">'
+      + '<div class="row"><div><label>'+T.city+L()+'</label><input id="lc" list="usc" autocomplete="off" placeholder="'+T.cityph+'" value="'+esc(pre.city)+'"></div>'
+      +   '<div><label>'+T.country+L()+'</label><input id="co" list="cos" autocomplete="off" placeholder="'+T.countryph+'" value="'+esc(pre.country||T.defCountry)+'"></div></div>'
+      + '<label>'+T.rev+L()+'</label><textarea id="rv" placeholder="'+T.revph+'"></textarea>'
+      + '<label>'+(EN?'Photos (optional)':'Fotos (opcional)')+'</label>'
       + '<div id="thumbs" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px"></div>'
-      + '<label for="pf" style="display:inline-block;background:#f3e9dd;color:#6B5A4E;border:1px solid var(--line);border-radius:10px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer">'+L.add+'</label>'
+      + '<label for="pf" style="display:inline-block;background:#f3e9dd;color:#6B5A4E;border:1px solid var(--line);border-radius:10px;padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer">'+(EN?'📷 Add photos':'📷 Agregar fotos')+'</label>'
       + '<input id="pf" type="file" accept="image/*" multiple style="display:none"> <span id="phst" style="font-size:12px;color:var(--mid)"></span>'
       + '<button class="send" id="go">'+T.send+'</button>'
       + '<p class="consent">'+T.media+'</p>'
@@ -95,7 +108,9 @@
     stars.forEach(function(s){ s.onclick = function(){ rating = parseInt(s.getAttribute('data-v'),10); paint(); document.getElementById('msg').textContent=''; }; });
     document.getElementById('pf').onchange = function(){ addPhotos(this); };
     document.getElementById('go').onclick = submit;
+    renderThumbs();
   }
+  function blocked(head, msg){ bd.innerHTML = '<div class="ok"><div class="big">✅</div><h2>'+head+'</h2><p class="sub">'+msg+'</p></div>'; }
   function renderThumbs(){
     var el=document.getElementById('thumbs'); if(!el) return;
     el.innerHTML = photos.map(function(u,i){ return '<div style="position:relative;width:66px;height:66px;border-radius:8px;overflow:hidden;border:1px solid var(--line)"><img src="'+u+'" style="width:100%;height:100%;object-fit:cover"><span onclick="__rvDel('+i+')" style="position:absolute;top:1px;right:1px;background:rgba(0,0,0,.55);color:#fff;width:19px;height:19px;border-radius:50%;font-size:13px;line-height:19px;text-align:center;cursor:pointer">×</span></div>'; }).join('');
@@ -104,7 +119,7 @@
   function readFile(f){ return new Promise(function(res){ var r=new FileReader(); r.onload=function(){ res(r.result); }; r.onerror=function(){ res(null); }; r.readAsDataURL(f); }); }
   async function addPhotos(input){
     var files = [].slice.call(input.files||[]); input.value='';
-    var st=document.getElementById('phst'); if(st) st.textContent=L.upd;
+    var st=document.getElementById('phst'); if(st) st.textContent=(EN?'Uploading…':'Subiendo…');
     for(var i=0;i<files.length && photos.length<6;i++){
       var durl = await readFile(files[i]); if(!durl) continue;
       try{
@@ -119,18 +134,35 @@
     if(!rating){ msg.textContent = T.pick; return; }
     var nm = ((document.getElementById('nm')||{}).value||'').trim();
     var lc = ((document.getElementById('lc')||{}).value||'').trim();
-    if(anon){ if(!nm){ msg.textContent=L.needn; return; } if(!lc){ msg.textContent=L.needl; return; } }
+    var co = ((document.getElementById('co')||{}).value||'').trim();
+    var rv = ((document.getElementById('rv')||{}).value||'').trim();
+    if(!nm){ msg.textContent=T.needn; return; }
+    if(!lc){ msg.textContent=T.needcity; return; }
+    if(!co){ msg.textContent=T.needcountry; return; }
+    if(!rv){ msg.textContent=T.needrev; return; }
+    var loc = lc + ', ' + co;
     var go = document.getElementById('go'); go.disabled = true; go.textContent = T.sending;
     fetch(SB+'review_submit', {
       method:'POST',
       headers:{ 'Content-Type':'application/json', 'apikey':ANON },
-      body: JSON.stringify({ c:c, p:p, t:t, rating:rating, body:(document.getElementById('rv').value||''), name:nm, location:lc, photos:photos })
+      body: JSON.stringify({ c:c, p:p, t:t, rating:rating, body:rv, name:nm, location:loc, photos:photos })
     }).then(function(r){ return r.json(); }).then(function(d){
       if(d && d.ok){ bd.innerHTML = '<div class="ok"><div class="big">🎉</div><h2>'+T.okh+'</h2><p class="sub">'+T.okp+'</p></div>'; }
+      else if(d && d.already){ blocked(T.alreadyH, T.alreadyP); }
       else { go.disabled=false; go.textContent=T.send; msg.textContent = (d && d.error) ? d.error : T.bad; }
     }).catch(function(){ go.disabled=false; go.textContent=T.send; msg.textContent = T.bad; });
   }
-  render();
+  // Carga: si viene de un cliente (c+t), pre-llenar nombre/ciudad/país y revisar si ya reseñó
+  if(c && t){
+    fetch(SB+'review_submit', { method:'POST', headers:{ 'Content-Type':'application/json', 'apikey':ANON }, body: JSON.stringify({ action:'prefill', c:c, t:t }) })
+      .then(function(r){ return r.json(); }).then(function(d){
+        if(d && d.ok && d.already_reviewed){ blocked(T.alreadyH, T.alreadyP); return; }
+        if(d && d.ok){ pre.name=d.name||''; pre.city=(d.city? (d.state? (d.city+', '+d.state) : d.city) : ''); pre.country=d.country||''; }
+        render();
+      }).catch(function(){ render(); });
+  } else {
+    render();
+  }
 })();
 </script>
   <script src="input-easy.js"></script>
