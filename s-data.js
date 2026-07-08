@@ -84,6 +84,9 @@ const BSDATA = {
     { id: "v4", title: "Meetup de la comunidad BPuppy", dur: "1:32", thumb: "assets/photos/g06.webp" }
   ]
 };
+// Red por invitación / recién lanzada: SIN datos de prueba. Todo el contenido real viene de la API
+// (social_profiles/posts, bpuppy_events/news/videos). Vaciamos los demos para que no se muestre nada falso.
+['posts','stories','pack','suggestions','places','messages','community','bpuppyEvents','news','videos'].forEach(function(k){ if(Array.isArray(BSDATA[k])) BSDATA[k]=[]; });
 window.BSDATA = BSDATA;
 
 })();
