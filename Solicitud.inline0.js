@@ -161,6 +161,7 @@ function SolicitudForm() {
         consent_source: "web_solicitud_clickwrap"
       });
       setDone(true);
+      try { setTimeout(function() { if (window.bpSocialInvite) window.bpSocialInvite("popup_form"); }, 1100); } catch (e) {}
     } catch (e) {
       alert(t(["Error al enviar. Por favor escr\xEDbenos por WhatsApp: +1 (929) 428-7300", "There was an error sending your request. Please message us on WhatsApp: +1 (929) 428-7300"]));
     } finally {

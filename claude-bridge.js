@@ -148,6 +148,16 @@
     }
   } catch (e) {}
 
+  // ── Pop-up de invitacion a B Social (waitlist) — site-wide, NUNCA en el juego de ninos ──
+  if (!_isKidsGame) {
+    try {
+      var si = document.createElement('script');
+      si.src = '/bp-social-invite.js?v=1783526000000';
+      si.async = true;
+      (document.head || document.documentElement).appendChild(si);
+    } catch (e) {}
+  }
+
   w.claude = {
     complete: async function (opts) {
       var messages = opts.messages || [];
