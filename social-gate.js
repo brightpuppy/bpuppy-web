@@ -39,19 +39,16 @@
       "background:#f3f6fb", "color:" + INK, "font-family:'Plus Jakarta Sans',system-ui,sans-serif",
       "display:flex", "flex-direction:column", "align-items:center", "justify-content:center",
       "padding:44px 20px", "text-align:center", "-webkit-font-smoothing:antialiased"].join(";");
-    var bgUrl = window.BP_SOCIAL_BG || "";
+    var bgUrl = window.BP_SOCIAL_BG || "/assets/bsocial-bg.png";
     var bg = document.createElement("div");
-    bg.style.cssText = "position:absolute;inset:0;z-index:0;pointer-events:none;" +
-      (bgUrl ? ("background:#f3f6fb url('" + bgUrl + "') center/cover no-repeat;") : "background:#f3f6fb;");
+    bg.style.cssText = "position:absolute;inset:0;z-index:0;pointer-events:none;background:#e9edf3 url('" + bgUrl + "') center/cover no-repeat";
     var vin = document.createElement("div");
-    vin.style.cssText = "position:absolute;inset:0;z-index:1;pointer-events:none;" +
-      (bgUrl
-        ? "background:linear-gradient(180deg, rgba(243,246,251,0.78), rgba(243,246,251,0.92))"
-        : "background:radial-gradient(115% 80% at 50% -5%, rgba(14,165,233,0.10), rgba(243,246,251,0) 55%)");
+    vin.style.cssText = "position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg, rgba(233,237,243,0.34), rgba(233,237,243,0.30))";
     el.appendChild(bg); el.appendChild(vin);
     var innerEl = document.createElement("div");
     innerEl.id = GID + "-in";
-    innerEl.style.cssText = "position:relative;z-index:2;width:100%;max-width:472px";
+    // Contenido sobre una tarjeta clara translúcida (la foto cálida luce alrededor, pero todo se lee claro)
+    innerEl.style.cssText = "position:relative;z-index:2;width:100%;max-width:468px;background:rgba(255,255,255,0.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.75);border-radius:26px;padding:26px 22px;box-shadow:0 26px 70px rgba(18,28,48,0.22)";
     el.appendChild(innerEl);
     document.body.appendChild(el);
     document.documentElement.style.overflow = "hidden";
@@ -86,10 +83,10 @@
       '<h1 style="font-weight:800;letter-spacing:-0.03em;line-height:1.02;font-size:clamp(31px,6.6vw,48px);margin:0 0 16px;color:' + INK + '">' +
         '<span style="font-family:\'Bricolage Grotesque\',sans-serif">' + t("La red social de las mascotas.", "The social network for pets.") + '</span><br>' +
         '<span style="font-family:\'Instrument Serif\',Georgia,serif;font-style:italic;font-weight:400;color:' + ACC + ';font-size:1.06em">' + t("Se está construyendo.", "We’re building it.") + '</span></h1>' +
-      '<p style="color:' + MUT + ';line-height:1.65;font-size:15.5px;margin:0 auto 24px;max-width:41ch">' +
-        t("El lugar donde tu mascota y otros dueños comparten su experiencia en su ciudad, hacen actividades y se conocen. La estamos armando con calma para que sea especial — por eso, por ahora, es solo por invitación.",
-          "The place where your pet and other owners share their experience in their city, do activities and meet. We’re building it carefully to make it special — that’s why, for now, it’s invite-only.") + '</p>' +
-      '<div style="background:#fff;border:1px solid #e7ebf2;border-radius:20px;padding:20px;text-align:left;box-shadow:0 14px 40px rgba(20,30,50,0.08)">' +
+      '<p style="color:' + MUT + ';line-height:1.65;font-size:15.5px;margin:0 auto 22px;max-width:41ch">' +
+        t("El lugar donde tu mascota y otros dueños comparten su experiencia en su ciudad, hacen actividades y se conocen. En estos momentos, solo por invitación.",
+          "The place where your pet and other owners share their experience in their city, do activities and meet. Invite-only for now.") + '</p>' +
+      '<div style="text-align:left">' +
         '<div style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:700;font-size:16px;margin-bottom:14px;color:' + INK + '">' + t("Solicita ser parte", "Request to join") + '</div>' +
         '<input id="bpg-name" style="' + fieldCss() + '" placeholder="' + t("Tu nombre", "Your name") + '" autocomplete="name">' +
         '<input id="bpg-email" type="email" style="' + fieldCss() + '" placeholder="' + t("Tu correo", "Your email") + '" autocomplete="email">' +
