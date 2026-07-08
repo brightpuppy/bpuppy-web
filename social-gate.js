@@ -16,7 +16,8 @@
   var myEmail = "";
   var petHas = null, petType = "";
 
-  var ACC = "#0EA5E9", INK = "#151a22", MUT = "#5b6672", LINE = "#dde2ea";
+  // Paleta cálida y de clase (cognac/ámbar + crema), en armonía con la foto del café-lounge.
+  var ACC = "#A85F2D", INK = "#2A2018", MUT = "#6f6053", LINE = "#e6ddce";
 
   function sb() {
     if (window._bsSb) return window._bsSb;
@@ -36,19 +37,19 @@
     el = document.createElement("div");
     el.id = GID;
     el.style.cssText = ["position:fixed", "inset:0", "z-index:2147482000", "overflow-y:auto",
-      "background:#f3f6fb", "color:" + INK, "font-family:'Plus Jakarta Sans',system-ui,sans-serif",
+      "background:#efe9e0", "color:" + INK, "font-family:'Plus Jakarta Sans',system-ui,sans-serif",
       "display:flex", "flex-direction:column", "align-items:center", "justify-content:center",
       "padding:44px 20px", "text-align:center", "-webkit-font-smoothing:antialiased"].join(";");
-    var bgUrl = window.BP_SOCIAL_BG || "/assets/bsocial-bg.png";
+    var bgUrl = window.BP_SOCIAL_BG || "/assets/bsocial-bg.jpg";
     var bg = document.createElement("div");
-    bg.style.cssText = "position:absolute;inset:0;z-index:0;pointer-events:none;background:#e9edf3 url('" + bgUrl + "') center/cover no-repeat";
+    bg.style.cssText = "position:absolute;inset:0;z-index:0;pointer-events:none;background:#efe9e0 url('" + bgUrl + "') center/cover no-repeat";
     var vin = document.createElement("div");
-    vin.style.cssText = "position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg, rgba(233,237,243,0.34), rgba(233,237,243,0.30))";
+    vin.style.cssText = "position:absolute;inset:0;z-index:1;pointer-events:none;background:linear-gradient(180deg, rgba(250,246,239,0.30), rgba(44,32,24,0.10))";
     el.appendChild(bg); el.appendChild(vin);
     var innerEl = document.createElement("div");
     innerEl.id = GID + "-in";
-    // Contenido sobre una tarjeta clara translúcida (la foto cálida luce alrededor, pero todo se lee claro)
-    innerEl.style.cssText = "position:relative;z-index:2;width:100%;max-width:468px;background:rgba(255,255,255,0.82);-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px);border:1px solid rgba(255,255,255,0.75);border-radius:26px;padding:26px 22px;box-shadow:0 26px 70px rgba(18,28,48,0.22)";
+    // Contenido sobre una tarjeta clara translúcida color crema (la foto cálida luce alrededor, todo se lee claro)
+    innerEl.style.cssText = "position:relative;z-index:2;width:100%;max-width:468px;background:rgba(255,251,244,0.87);-webkit-backdrop-filter:blur(16px) saturate(1.1);backdrop-filter:blur(16px) saturate(1.1);border:1px solid rgba(255,255,255,0.55);border-radius:26px;padding:26px 22px;box-shadow:0 28px 70px rgba(52,34,16,0.28)";
     el.appendChild(innerEl);
     document.body.appendChild(el);
     document.documentElement.style.overflow = "hidden";
@@ -61,10 +62,10 @@
   var WORD = '<div style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;font-size:21px;letter-spacing:-0.02em;margin-bottom:18px"><span style="color:' + INK + '">B</span><span style="color:' + ACC + '"> Social</span></div>';
   var EYEBROW = '<div style="font-size:10.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:' + ACC + ';margin-bottom:14px">' + t("Por invitación · En construcción", "Invite-only · In the works") + '</div>';
   function lbl(x) { return '<div style="font-size:12.5px;font-weight:700;color:' + INK + ';margin:2px 0 7px;text-align:left">' + x + '</div>'; }
-  function fieldCss() { return "width:100%;padding:13px 15px;border-radius:12px;border:1px solid " + LINE + ";background:#fff;color:" + INK + ";font-size:15px;font-family:inherit;outline:none;margin-bottom:10px"; }
-  function primaryCss() { return "width:100%;padding:15px 18px;border:none;border-radius:999px;background:" + ACC + ";color:#fff;font-weight:800;font-size:15.5px;font-family:inherit;cursor:pointer;box-shadow:0 8px 22px rgba(14,165,233,0.28)"; }
-  function ghostCss() { return "display:inline-flex;align-items:center;gap:8px;justify-content:center;padding:12px 18px;border-radius:999px;border:1px solid " + LINE + ";background:#fff;color:" + INK + ";font-weight:700;font-size:14px;font-family:inherit;cursor:pointer;text-decoration:none"; }
-  function pillCss(on) { return "padding:10px 16px;border-radius:999px;font-family:inherit;font-weight:700;font-size:13.5px;cursor:pointer;background:#fff;" + (on ? ("border:1.5px solid " + ACC + ";color:" + ACC + ";box-shadow:inset 0 0 0 1px " + ACC) : ("border:1.5px solid " + LINE + ";color:" + MUT)); }
+  function fieldCss() { return "width:100%;padding:13px 15px;border-radius:12px;border:1px solid " + LINE + ";background:#fffdf9;color:" + INK + ";font-size:15px;font-family:inherit;outline:none;margin-bottom:10px"; }
+  function primaryCss() { return "width:100%;padding:15px 18px;border:none;border-radius:999px;background:" + ACC + ";color:#fffaf3;font-weight:800;font-size:15.5px;font-family:inherit;cursor:pointer;box-shadow:0 10px 24px rgba(168,95,45,0.32)"; }
+  function ghostCss() { return "display:inline-flex;align-items:center;gap:8px;justify-content:center;padding:12px 18px;border-radius:999px;border:1px solid " + LINE + ";background:rgba(255,253,249,0.9);color:" + INK + ";font-weight:700;font-size:14px;font-family:inherit;cursor:pointer;text-decoration:none"; }
+  function pillCss(on) { return "padding:10px 16px;border-radius:999px;font-family:inherit;font-weight:700;font-size:13.5px;cursor:pointer;background:#fffdf9;" + (on ? ("border:1.5px solid " + ACC + ";color:" + ACC + ";box-shadow:inset 0 0 0 1px " + ACC) : ("border:1.5px solid " + LINE + ";color:" + MUT)); }
 
   function paintPills() {
     var yes = document.getElementById("bpg-pet-yes"), no = document.getElementById("bpg-pet-no");
@@ -151,7 +152,7 @@
   function thanksView(already) {
     inner().innerHTML =
       WORD +
-      '<div style="width:66px;height:66px;border-radius:50%;background:rgba(14,165,233,0.10);border:1px solid rgba(14,165,233,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 18px">' +
+      '<div style="width:66px;height:66px;border-radius:50%;background:rgba(168,95,45,0.10);border:1px solid rgba(168,95,45,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 18px">' +
         '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="' + ACC + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
       '<h1 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;letter-spacing:-0.02em;font-size:clamp(25px,5vw,33px);margin:0 0 12px;color:' + INK + '">' +
         (already === true ? t("Ya estás en la lista", "You’re already on the list") : t("¡Listo! Recibimos tu solicitud", "Done! We got your request")) + '</h1>' +
@@ -170,7 +171,7 @@
       WORD + EYEBROW +
       '<h1 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;letter-spacing:-0.02em;font-size:clamp(25px,5vw,35px);margin:0 0 12px;color:' + INK + '">' + t("Entrar a B Social", "Sign in to B Social") + '</h1>' +
       '<p style="color:' + MUT + ';line-height:1.6;font-size:15px;margin:0 auto 20px;max-width:36ch">' + t("Si ya tienes acceso, te enviamos un enlace de entrada a tu correo.", "If you already have access, we’ll email you a sign-in link.") + '</p>' +
-      '<div style="text-align:left;background:#fff;border:1px solid #e7ebf2;border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(20,30,50,0.07)">' +
+      '<div style="text-align:left;background:#fffdf9;border:1px solid ' + LINE + ';border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(52,34,16,0.08)">' +
         '<input id="bpg-lemail" type="email" style="' + fieldCss() + '" placeholder="' + t("Tu correo", "Your email") + '" autocomplete="email">' +
         '<div id="bpg-lerr" style="color:#d33;font-size:13px;margin:-2px 0 10px;display:none"></div>' +
         '<button id="bpg-lsend" style="' + primaryCss() + '">' + t("Enviarme el enlace", "Send me the link") + '</button>' +

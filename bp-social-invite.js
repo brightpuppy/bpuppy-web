@@ -15,7 +15,7 @@
   var IS_QUIZ = /(^|\/)quiz(\/|\.html?)?$/.test(PATH) || PATH.indexOf("/quiz") === 0 || PATH.indexOf("quiz.html") !== -1;
   var EN = (function () { try { return (document.documentElement.lang || localStorage.getItem("bpuppy-lang") || "es").toLowerCase().indexOf("en") === 0; } catch (e) { return false; } })();
   function t(es, en) { return EN ? en : es; }
-  var ACC = "#0EA5E9", INK = "#151a22", MUT = "#5b6672", LINE = "#dde2ea";
+  var ACC = "#A85F2D", INK = "#2A2018", MUT = "#6f6053", LINE = "#e6ddce";
   var shown = false;
   try { shown = !!sessionStorage.getItem(KEY); } catch (e) {}
 
@@ -45,7 +45,7 @@
             "Where your pet and other owners share their experience in their city, do activities and meet. Request your access and we’ll let you know when we open.") + '</p>' +
         '<input id="bp-si-email" type="email" placeholder="' + t("Tu correo", "Your email") + '" autocomplete="email" style="width:100%;padding:13px 15px;border-radius:12px;border:1px solid ' + LINE + ';background:#fff;color:' + INK + ';font-size:15px;font-family:inherit;outline:none;margin-bottom:10px">' +
         '<div id="bp-si-err" style="color:#d33;font-size:12.5px;margin:-4px 0 8px;display:none"></div>' +
-        '<button id="bp-si-send" style="width:100%;padding:14px;border:none;border-radius:999px;background:' + ACC + ';color:#fff;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;box-shadow:0 8px 22px rgba(14,165,233,0.28)">' + t("Solicitar mi acceso", "Request my access") + '</button>' +
+        '<button id="bp-si-send" style="width:100%;padding:14px;border:none;border-radius:999px;background:' + ACC + ';color:#fff;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;box-shadow:0 8px 22px rgba(168,95,45,0.32)">' + t("Solicitar mi acceso", "Request my access") + '</button>' +
         '<button id="bp-si-no" style="margin-top:10px;background:none;border:none;color:' + MUT + ';font-size:13px;font-family:inherit;cursor:pointer">' + t("Ahora no", "Not now") + '</button>' +
       '</div>';
     document.body.appendChild(ov);
@@ -65,7 +65,7 @@
         .then(function () {
           ov.querySelector("div").innerHTML =
             '<div style="text-align:center;padding:6px 0">' +
-            '<div style="width:58px;height:58px;border-radius:50%;background:rgba(14,165,233,0.10);border:1px solid rgba(14,165,233,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="' + ACC + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
+            '<div style="width:58px;height:58px;border-radius:50%;background:rgba(168,95,45,0.10);border:1px solid rgba(168,95,45,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="' + ACC + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
             '<h2 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;font-size:22px;margin:0 0 8px">' + t("¡Listo! Estás en la lista", "Done! You’re on the list") + '</h2>' +
             '<p style="color:' + MUT + ';font-size:14px;line-height:1.55;margin:0 auto 16px;max-width:32ch">' + t("Te escribiremos por correo apenas abramos tu acceso a B Social.", "We’ll email you as soon as we open your access to B Social.") + '</p>' +
             '<button onclick="document.getElementById(\'bp-si\').remove()" style="padding:12px 26px;border:none;border-radius:999px;background:' + ACC + ';color:#fff;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer">' + t("Cerrar", "Close") + '</button></div>';
