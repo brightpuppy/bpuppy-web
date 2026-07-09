@@ -75,7 +75,8 @@ const SI_PATHS = {
   pack: '<circle cx="7" cy="9" r="1.7"/><circle cx="12" cy="7.4" r="1.7"/><circle cx="17" cy="9" r="1.7"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/>',
   pets: '<path d="M20.8 4.6a5.5 5.5 0 00-7.8 0L12 5.7l-1.1-1.1a5.5 5.5 0 00-7.8 7.8L12 21l8.8-8.6a5.5 5.5 0 000-7.8z"/>',
   profile: '<circle cx="12" cy="8" r="3.4"/><path d="M5.5 20a6.5 6.5 0 0113 0"/>',
-  messages: '<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>'
+  messages: '<path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/>',
+  stories: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>'
 };
 function SIcon({ name, color, size = 19 }) {
   const p = SI_PATHS[name];
@@ -87,6 +88,7 @@ function DesktopSidebar({ screen, setScreen, bs }) {
   const navItems = [
     { id: "feed", label: t(["Novedades", "Latest"]), icon: "home" },
     { id: "community", label: t(["Comunidad", "Community"]), icon: "community" },
+    { id: "historias", label: t(["Historias", "Stories"]), icon: "stories" },
     { id: "discover", label: t(["Descubrir", "Discover"]), icon: "discover" },
     { id: "events", label: t(["Eventos", "Events"]), icon: "events" },
     { id: "news", label: t(["Noticias", "News"]), icon: "news" },
@@ -144,6 +146,7 @@ function ScreenView({ screen, setScreen, posts, toggleLike, toggleSave, onOpenPo
   if (screen === "mapa") return /* @__PURE__ */ React.createElement(MapScreen, { setScreen });
   if (screen === "upload") return /* @__PURE__ */ React.createElement(UploadScreen, { setScreen });
   if (screen === "pets") return /* @__PURE__ */ React.createElement(PetsScreen, null);
+  if (screen === "historias") return /* @__PURE__ */ React.createElement(StoriesScreen, { setScreen });
   if (screen === "messages") return /* @__PURE__ */ React.createElement(MessagesScreen, { setScreen });
   if (screen === "editprofile") return /* @__PURE__ */ React.createElement(CreateProfileScreen, { me: window.BSAUTH && window.BSAUTH.me, onSave: window.BSAUTH && window.BSAUTH.saveProfile, onDone: () => setScreen("profile"), onLogout: window.BSAUTH && window.BSAUTH.logout });
   if (screen === "community") return /* @__PURE__ */ React.createElement(CommunityScreen, null);

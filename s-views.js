@@ -544,6 +544,61 @@ function PostDetail({ post, onClose }) {
     }
   ), /* @__PURE__ */ React.createElement("button", { onClick: send, disabled: !text.trim() || sending || !A.me, style: { width: 38, height: 38, borderRadius: "50%", border: "none", background: BS.brand, color: "#fff", cursor: text.trim() && A.me ? "pointer" : "default", opacity: text.trim() && A.me ? 1 : 0.5, display: "grid", placeItems: "center", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("svg", { width: "17", height: "17", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M22 2L11 13" }), /* @__PURE__ */ React.createElement("path", { d: "M22 2l-7 20-4-9-9-4 20-7z" }))))))));
 }
+function StoryComposeForm({ onDone, onCancel }) {
+  const BS = useBS();
+  const t = useT();
+  const A = typeof window !== "undefined" && window.BSAUTH || {};
+  const [title, setTitle] = useState("");
+  const [text, setText] = useState("");
+  const [photoUrl, setPhotoUrl] = useState("");
+  const [photoPrev, setPhotoPrev] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const fld = { width: "100%", padding: "12px 14px", borderRadius: 12, border: `1.5px solid ${BS.borderStrong}`, background: BS.surface2, fontSize: 14.5, color: BS.ink, fontFamily: "inherit", outline: "none", marginBottom: 10 };
+  const onPick = async (f) => { try { setPhotoPrev(URL.createObjectURL(f)); } catch (e) {} try { const u = await bsUpload(f, "stories"); if (u) setPhotoUrl(u); } catch (e) { setErr(t(["No se pudo subir la foto", "Couldn't upload the photo"])); } };
+  const save = async () => {
+    if (!text.trim() && !photoUrl) { setErr(t(["Escribe tu historia", "Write your story"])); return; }
+    setBusy(true); setErr("");
+    try { const d = await A.createPost({ kind: "story", title: title.trim(), caption: text.trim(), media_url: photoUrl }); if (d && d.ok) { onDone && onDone(); } else { setErr(d && d.error || t(["No se pudo publicar", "Couldn't post"])); setBusy(false); } }
+    catch (e) { setErr(t(["Error de red, intenta de nuevo", "Network error, try again"])); setBusy(false); }
+  };
+  return /* @__PURE__ */ React.createElement("div", { style: { padding: 16 } },
+    /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 18, fontWeight: 800, color: BS.ink, marginBottom: 4 } }, t(["Comparte tu historia", "Share your story"])),
+    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: BS.soft, marginBottom: 14, lineHeight: 1.5 } }, t(["C\xF3mo tu mascota cambi\xF3 tu vida o te acompa\xF1\xF3 en un momento importante.", "How your pet changed your life or was there for you in an important moment."])),
+    /* @__PURE__ */ React.createElement("div", { onClick: () => { const i = document.getElementById("bs-storyfile"); if (i) i.click(); }, style: { width: "100%", height: 160, borderRadius: 16, background: photoPrev ? `url(${photoPrev}) center/cover` : BS.surface2, border: `1.5px dashed ${BS.borderStrong}`, marginBottom: 12, cursor: "pointer", display: "grid", placeItems: "center", color: BS.soft, fontSize: 13, fontWeight: 600 } }, photoPrev ? null : t(["Toca para agregar una foto (opcional)", "Tap to add a photo (optional)"])),
+    /* @__PURE__ */ React.createElement("input", { id: "bs-storyfile", type: "file", accept: "image/*", style: { display: "none" }, onChange: (e) => { const f = e.target.files && e.target.files[0]; if (f) onPick(f); } }),
+    /* @__PURE__ */ React.createElement("input", { value: title, onChange: (e) => setTitle(e.target.value), placeholder: t(["T\xEDtulo de tu historia", "Your story's title"]), style: fld }),
+    /* @__PURE__ */ React.createElement("textarea", { value: text, onChange: (e) => setText(e.target.value), rows: 7, placeholder: t(["Cu\xE9ntanos tu historia…", "Tell us your story…"]), style: { ...fld, resize: "vertical", lineHeight: 1.6 } }),
+    err ? /* @__PURE__ */ React.createElement("div", { style: { color: BS.like, fontSize: 13, fontWeight: 600, marginBottom: 10 } }, err) : null,
+    /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8 } },
+      /* @__PURE__ */ React.createElement("button", { onClick: save, disabled: busy, className: "bs-btn", style: { flex: 1, padding: "14px", borderRadius: 12, border: "none", background: BS.grad, color: "#fff", fontWeight: 800, fontSize: 14.5, cursor: busy ? "default" : "pointer", fontFamily: "inherit", opacity: busy ? 0.7 : 1 } }, busy ? t(["Publicando…", "Posting…"]) : t(["Publicar historia", "Post story"])),
+      /* @__PURE__ */ React.createElement("button", { onClick: onCancel, className: "bs-btn", style: { padding: "14px 16px", borderRadius: 12, border: `1.5px solid ${BS.borderStrong}`, background: BS.surface2, color: BS.ink, fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "inherit" } }, t(["Cancelar", "Cancel"]))));
+}
+function StoriesScreen({ setScreen }) {
+  const BS = useBS();
+  const t = useT();
+  const [composing, setComposing] = useState(false);
+  const stories = (typeof BSDATA !== "undefined" && BSDATA.storiesLife) || [];
+  return /* @__PURE__ */ React.createElement("div", { className: "bs-fade", style: { background: BS.bg, minHeight: "100%" } },
+    /* @__PURE__ */ React.createElement("div", { style: { padding: "16px 16px 14px", background: BS.surface, borderBottom: `1px solid ${BS.border}`, position: "sticky", top: 0, zIndex: 10 } },
+      /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 22, fontWeight: 800, color: BS.ink, letterSpacing: "-0.02em" } }, t(["Historias que unen", "Stories that bond us"])),
+      /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Instrument Serif,Georgia,serif", fontStyle: "italic", fontSize: 15, color: BS.brand, marginTop: 1 } }, t(["C\xF3mo nuestras mascotas nos cambian la vida", "How our pets change our lives"])),
+      !composing ? /* @__PURE__ */ React.createElement("button", { onClick: () => setComposing(true), className: "bs-btn", style: { marginTop: 12, width: "100%", padding: "12px", borderRadius: 12, border: "none", background: BS.grad, color: "#fff", fontWeight: 800, fontSize: 14, cursor: "pointer", fontFamily: "inherit", boxShadow: BS.glow } }, t(["Compartir mi historia", "Share my story"])) : null),
+    composing ? /* @__PURE__ */ React.createElement(StoryComposeForm, { onDone: () => setComposing(false), onCancel: () => setComposing(false) }) : /* @__PURE__ */ React.createElement("div", { style: { padding: "14px 16px 24px" } },
+      stories.length ? stories.map((s) => /* @__PURE__ */ React.createElement("article", { key: s.id, className: "bs-pop", style: { background: BS.surface, borderRadius: 18, overflow: "hidden", border: `1px solid ${BS.border}`, marginBottom: 14 } },
+        s.img ? /* @__PURE__ */ React.createElement("img", { src: s.img, alt: "", style: { width: "100%", height: 200, objectFit: "cover", display: "block" } }) : null,
+        /* @__PURE__ */ React.createElement("div", { style: { padding: "16px 18px" } },
+          /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 9, marginBottom: 9 } },
+            /* @__PURE__ */ React.createElement(BSAvatar, { user: { username: s.username, initials: s.initials, color: s.color, avatar: s.avatar_url }, size: 34 }),
+            /* @__PURE__ */ React.createElement("div", null,
+              /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, fontWeight: 700, color: BS.ink } }, s.name || s.username),
+              s.city ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, color: BS.soft } }, s.city) : null)),
+          s.title ? /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 19, fontWeight: 800, color: BS.ink, letterSpacing: "-0.01em", lineHeight: 1.2, margin: "2px 0 8px" } }, s.title) : null,
+          /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, color: BS.ink, lineHeight: 1.65, whiteSpace: "pre-wrap" } }, s.caption || ""),
+          s.pet_name ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: BS.soft, marginTop: 10, fontStyle: "italic" } }, t(["Sobre ", "About "]) + s.pet_name) : null))) : /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", padding: "40px 24px", color: BS.soft } },
+        /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Instrument Serif,Georgia,serif", fontStyle: "italic", fontSize: 20, color: BS.ink2, lineHeight: 1.4, marginBottom: 10 } }, t(["A\xFAn no hay historias.", "No stories yet."])),
+        /* @__PURE__ */ React.createElement("div", { style: { fontSize: 14, lineHeight: 1.6, maxWidth: "32ch", margin: "0 auto" } }, t(["S\xE9 el primero en contar c\xF3mo tu mascota te cambi\xF3 la vida o te acompa\xF1\xF3 en un momento importante.", "Be the first to share how your pet changed your life or was there in an important moment."])))));
+}
 function SpotlightOne(species, sp, BS, t) {
   const pet = sp.pet || {}, owner = sp.owner || {};
   if (!pet.photo_url) return null;
@@ -585,6 +640,7 @@ function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
   const FBNAV = [
     { id: "feed", label: t(["Inicio", "Home"]), p: '<path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/>' },
     { id: "community", label: t(["Comunidad", "Community"]), p: '<path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87M16 3.13a4 4 0 010 7.75"/>' },
+    { id: "historias", label: t(["Historias", "Stories"]), p: '<path d="M4 19.5A2.5 2.5 0 016.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 014 19.5v-15A2.5 2.5 0 016.5 2z"/>' },
     { id: "events", label: t(["Eventos", "Events"]), p: '<rect x="3.5" y="5" width="17" height="16" rx="2"/><path d="M3.5 9.5h17M8 3v4M16 3v4"/>' },
     { id: "pack", label: t(["Mi Pack", "My Pack"]), p: '<circle cx="7" cy="9" r="1.7"/><circle cx="12" cy="7.4" r="1.7"/><circle cx="17" cy="9" r="1.7"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/>' },
     { id: "account", label: t(["Cuenta", "Account"]), p: '<rect x="3" y="4" width="18" height="16" rx="2"/><path d="M3 10h18M8 4v4"/>' },
@@ -1353,6 +1409,7 @@ Object.assign(window, {
   PetsScreen,
   MessagesScreen,
   CommunityScreen,
+  StoriesScreen,
   EventsScreen,
   NewsScreen,
   VideosScreen,
