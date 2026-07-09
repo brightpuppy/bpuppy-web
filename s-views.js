@@ -544,15 +544,13 @@ function PostDetail({ post, onClose }) {
     }
   ), /* @__PURE__ */ React.createElement("button", { onClick: send, disabled: !text.trim() || sending || !A.me, style: { width: 38, height: 38, borderRadius: "50%", border: "none", background: BS.brand, color: "#fff", cursor: text.trim() && A.me ? "pointer" : "default", opacity: text.trim() && A.me ? 1 : 0.5, display: "grid", placeItems: "center", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("svg", { width: "17", height: "17", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M22 2L11 13" }), /* @__PURE__ */ React.createElement("path", { d: "M22 2l-7 20-4-9-9-4 20-7z" }))))))));
 }
-function SpotlightCard() {
-  const BS = useBS();
-  const t = useT();
-  const sp = (typeof BSDATA !== "undefined" && BSDATA.spotlight) || null;
-  if (!sp || !sp.pet || !sp.pet.photo_url) return null;
-  const pet = sp.pet, owner = sp.owner || {};
-  const label = t(["Modelo del d\xEDa", "Model of the day"]);
+function SpotlightOne(species, sp, BS, t) {
+  const pet = sp.pet || {}, owner = sp.owner || {};
+  if (!pet.photo_url) return null;
+  const cat = species === "gato" ? t(["Gatos", "Cats"]) : species === "otro" ? t(["Otros", "Others"]) : t(["Perros", "Dogs"]);
+  const label = t(["Modelo del d\xEDa", "Model of the day"]) + " \xB7 " + cat;
   const meta = [pet.breed, pet.age].filter(Boolean).join(" \xB7 ");
-  return /* @__PURE__ */ React.createElement("div", { style: { padding: "12px 14px 2px", background: BS.bg } },
+  return /* @__PURE__ */ React.createElement("div", { key: species, style: { padding: "12px 14px 2px", background: BS.bg } },
     /* @__PURE__ */ React.createElement("div", { style: { position: "relative", borderRadius: 20, overflow: "hidden", border: `1px solid ${BS.border}`, boxShadow: BS.glow } },
       /* @__PURE__ */ React.createElement("img", { src: pet.photo_url, alt: pet.name || "", style: { width: "100%", height: 224, objectFit: "cover", display: "block" } }),
       /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(26,18,12,0.86) 0%, rgba(26,18,12,0.12) 55%, rgba(26,18,12,0) 100%)" } }),
@@ -564,6 +562,21 @@ function SpotlightCard() {
         /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.05, marginTop: 2 } }, pet.name || t(["Sin nombre", "Unnamed"])),
         meta ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, opacity: 0.9, marginTop: 3, fontWeight: 600 } }, meta) : null,
         owner.name ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, opacity: 0.78, marginTop: 4 } }, t(["con ", "with "]) + owner.name + (owner.city ? " \xB7 " + owner.city : "")) : null)));
+}
+function SpotlightCard() {
+  const BS = useBS();
+  const t = useT();
+  const sps = (typeof BSDATA !== "undefined" && BSDATA.spotlights) || null;
+  const list = [];
+  if (sps && (sps.perro || sps.gato || sps.otro)) {
+    if (sps.perro) list.push(["perro", sps.perro]);
+    if (sps.gato) list.push(["gato", sps.gato]);
+    if (sps.otro) list.push(["otro", sps.otro]);
+  } else if (typeof BSDATA !== "undefined" && BSDATA.spotlight) {
+    const s = BSDATA.spotlight; list.push([s.pet && s.pet.species || "perro", s]);
+  }
+  if (!list.length) return null;
+  return /* @__PURE__ */ React.createElement(React.Fragment, null, list.map(function (pair) { return SpotlightOne(pair[0], pair[1], BS, t); }));
 }
 function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
   const BS = useBS();
