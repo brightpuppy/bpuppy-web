@@ -618,17 +618,17 @@ function SpotlightOne(species, sp, BS, t) {
         meta ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, opacity: 0.9, marginTop: 3, fontWeight: 600 } }, meta) : null,
         owner.name ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, opacity: 0.78, marginTop: 4 } }, t(["con ", "with "]) + owner.name + (owner.city ? " \xB7 " + owner.city : "")) : null)));
 }
-function SpotlightCard() {
+function SpotlightCard({ only }) {
   const BS = useBS();
   const t = useT();
   const sps = (typeof BSDATA !== "undefined" && BSDATA.spotlights) || null;
   const list = [];
   if (sps && (sps.perro || sps.gato || sps.otro)) {
-    if (sps.perro) list.push(["perro", sps.perro]);
-    if (sps.gato) list.push(["gato", sps.gato]);
-    if (sps.otro) list.push(["otro", sps.otro]);
+    if (sps.perro && (!only || only === "perro")) list.push(["perro", sps.perro]);
+    if (sps.gato && (!only || only === "gato")) list.push(["gato", sps.gato]);
+    if (sps.otro && (!only || only === "otro")) list.push(["otro", sps.otro]);
   } else if (typeof BSDATA !== "undefined" && BSDATA.spotlight) {
-    const s = BSDATA.spotlight; list.push([s.pet && s.pet.species || "perro", s]);
+    const s = BSDATA.spotlight; const sp = s.pet && s.pet.species || "perro"; if (!only || only === sp) list.push([sp, s]);
   }
   if (!list.length) return null;
   return /* @__PURE__ */ React.createElement(React.Fragment, null, list.map(function (pair) { return SpotlightOne(pair[0], pair[1], BS, t); }));
@@ -648,9 +648,10 @@ function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
   ];
   const FEED_FILTERS = [
     { id: "parati", label: t(["Para ti", "For you"]) },
-    { id: "pack", label: t(["Mi Pack", "My Pack"]) },
-    { id: "razas", label: t(["Razas", "Breeds"]) },
-    { id: "cerca", label: t(["Cerca de m\xED", "Near me"]) }
+    { id: "perro", label: t(["Perros", "Dogs"]) },
+    { id: "gato", label: t(["Gatos", "Cats"]) },
+    { id: "otro", label: t(["Otros", "Others"]) },
+    { id: "pack", label: t(["Mi Pack", "My Pack"]) }
   ];
   return /* @__PURE__ */ React.createElement("div", { style: { background: BS.bg } }, /* @__PURE__ */ React.createElement("div", { style: { background: BS.surface, padding: "10px 14px 0", position: "sticky", top: 0, zIndex: 11, borderBottom: `1px solid ${BS.border}` } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 21, fontWeight: 800, letterSpacing: "-0.04em", background: BS.grad, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent", flexShrink: 0 } }, "B Social"), /* @__PURE__ */ React.createElement("button", { className: "bs-btn", onClick: () => setScreen("discover"), style: { flex: 1, minWidth: 0, display: "flex", alignItems: "center", gap: 8, background: BS.surface2, border: `1px solid ${BS.border}`, borderRadius: 999, padding: "9px 14px", cursor: "pointer", textAlign: "left" } }, /* @__PURE__ */ React.createElement("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: BS.soft, strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("circle", { cx: "11", cy: "11", r: "8" }), /* @__PURE__ */ React.createElement("path", { d: "m21 21-4.35-4.35" })), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: BS.soft, whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis" } }, t(["Buscar en B Social", "Search B Social"]))), /* @__PURE__ */ React.createElement("button", { className: "bs-btn", onClick: () => setScreen("messages"), style: { flexShrink: 0, color: BS.ink2, position: "relative", width: 38, height: 38, borderRadius: "50%", background: BS.surface2, border: `1px solid ${BS.border}`, display: "grid", placeItems: "center", cursor: "pointer" } }, /* @__PURE__ */ React.createElement("svg", { width: "19", height: "19", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" })), /* @__PURE__ */ React.createElement("span", { style: { position: "absolute", top: -1, right: -1, width: 9, height: 9, borderRadius: "50%", background: BS.rose, border: `2px solid ${BS.surface}` } }))), /* @__PURE__ */ React.createElement("div", { className: "bs-hscr", style: { display: "flex", gap: 2, marginTop: 6 } }, FBNAV.map((n) => {
     const on = n.id === "feed";
@@ -658,14 +659,13 @@ function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
   }))), /* @__PURE__ */ React.createElement("div", { className: "bs-hscr", style: { background: BS.surface, padding: "8px 14px 10px", display: "flex", gap: 7, borderBottom: `1px solid ${BS.border}` } }, FEED_FILTERS.map((f) => {
     const on = filt === f.id;
     return /* @__PURE__ */ React.createElement("button", { key: f.id, onClick: () => setFilt(f.id), className: "bs-btn", style: { padding: "7px 16px", borderRadius: 999, border: `1.5px solid ${on ? BS.brand : BS.border}`, background: "transparent", color: on ? BS.brand : BS.ink2, fontSize: 12.5, fontWeight: on ? 700 : 600, cursor: "pointer", whiteSpace: "nowrap", fontFamily: "inherit" } }, f.label);
-  })), /* @__PURE__ */ React.createElement(StoriesBar, null), /* @__PURE__ */ React.createElement(SpotlightCard, null), (() => {
+  })), /* @__PURE__ */ React.createElement(StoriesBar, null), /* @__PURE__ */ React.createElement(SpotlightCard, { only: (filt === "perro" || filt === "gato" || filt === "otro") ? filt : null }), (() => {
     const shown = filt === "parati" ? posts : posts.filter((p) => {
       if (filt === "pack") return !!(p.pack || p.following || p.is_pack);
-      if (filt === "razas") return !!(p.tags && p.tags.length || p.breed);
-      if (filt === "cerca") return !!(p.near || p.location || p.distance != null);
+      if (filt === "perro" || filt === "gato" || filt === "otro") return (p.pet_species || "") === filt;
       return true;
     });
-    if (!shown.length) return /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: BS.soft, padding: "48px 26px", fontSize: 14, lineHeight: 1.55 } }, filt === "pack" ? t(["A\xFAn no sigues a nadie. Cuando armes tu Pack, sus publicaciones aparecer\xE1n aqu\xED.", "You are not following anyone yet. When you build your Pack, their posts will show up here."]) : filt === "razas" ? t(["A\xFAn no hay publicaciones por raza.", "No breed posts yet."]) : filt === "cerca" ? t(["A\xFAn no hay publicaciones cerca de ti.", "No posts near you yet."]) : t(["A\xFAn no hay publicaciones. \xA1S\xE9 el primero en publicar!", "No posts yet \u2014 be the first to post!"]));
+    if (!shown.length) return /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: BS.soft, padding: "48px 26px", fontSize: 14, lineHeight: 1.55 } }, filt === "pack" ? t(["A\xFAn no sigues a nadie. Cuando armes tu Pack, sus publicaciones aparecer\xE1n aqu\xED.", "You are not following anyone yet. When you build your Pack, their posts will show up here."]) : (filt === "perro" || filt === "gato" || filt === "otro") ? t(["A\xFAn no hay publicaciones en esta categor\xEDa. \xA1S\xE9 el primero!", "No posts in this category yet \u2014 be the first!"]) : t(["A\xFAn no hay publicaciones. \xA1S\xE9 el primero en publicar!", "No posts yet \u2014 be the first to post!"]));
     return shown.map((p) => /* @__PURE__ */ React.createElement(PostCard, { key: p.id, post: p, onLike: toggleLike, onSave: toggleSave, onOpen: onOpenPost }));
   })(), /* @__PURE__ */ React.createElement("div", { style: { height: 20 } }));
 }
