@@ -383,6 +383,9 @@ function App() {
     postDetail: async (id) => apiCall("post_detail", { post_id: id }),
     addComment: async (id, text) => apiCall("comment_create", { post_id: id, text }),
     likeToggle: async (id) => apiCall("like_toggle", { post_id: id }),
+    myPets: BSDATA.myPets || [],
+    savePet: async (f) => { const d = await apiCall("pet_save", f); if (d && d.ok) await refresh(); return d; },
+    deletePet: async (id) => { const d = await apiCall("pet_delete", { id }); if (d && d.ok) await refresh(); return d; },
     // Mi Cuenta (portal) dentro de B Social — mismas tablas que el CRM (vía portal_data / portal_add_pet)
     accountData: async () => {
       const tok = await getToken();
