@@ -747,18 +747,54 @@ function PetProfileForm({ pet, onDone, onCancel }) {
     /* @__PURE__ */ React.createElement("input", { type: "date", value: gotcha || "", onChange: (e) => setGotcha(e.target.value), style: fld }),
     /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Sobre tu mascota", "About your pet"])),
     /* @__PURE__ */ React.createElement("textarea", { value: bio, onChange: (e) => setBio(e.target.value), rows: 3, placeholder: t(["Su personalidad, lo que ama…", "Their personality, what they love…"]), style: { ...fld, resize: "vertical", lineHeight: 1.5 } }),
-    /* @__PURE__ */ React.createElement("label", { style: { display: "flex", alignItems: "center", gap: 9, margin: "2px 0 14px", cursor: "pointer" } }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: memorial, onChange: (e) => setMemorial(e.target.checked), style: { width: 18, height: 18, accentColor: BS.brand } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: BS.ink2 } }, t(["En memoria (mascota que parti\xF3)", "In memory (a pet that passed)"]))),
+    /* @__PURE__ */ React.createElement("div", { style: { height: 4 } }),
     err ? /* @__PURE__ */ React.createElement("div", { style: { color: BS.like, fontSize: 13, fontWeight: 600, marginBottom: 10 } }, err) : null,
     /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8 } },
       /* @__PURE__ */ React.createElement("button", { onClick: save, disabled: busy, className: "bs-btn", style: { flex: 1, padding: "14px", borderRadius: 12, border: "none", background: BS.grad, color: "#fff", fontWeight: 800, fontSize: 14.5, cursor: busy ? "default" : "pointer", fontFamily: "inherit", opacity: busy ? 0.7 : 1 } }, busy ? t(["Guardando…", "Saving…"]) : t(["Guardar", "Save"])),
       /* @__PURE__ */ React.createElement("button", { onClick: onCancel, className: "bs-btn", style: { padding: "14px 16px", borderRadius: 12, border: `1.5px solid ${BS.borderStrong}`, background: BS.surface2, color: BS.ink, fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "inherit" } }, t(["Cancelar", "Cancel"]))),
     p.id ? /* @__PURE__ */ React.createElement("button", { onClick: del, className: "bs-btn", style: { width: "100%", marginTop: 10, padding: "11px", borderRadius: 12, border: "none", background: "none", color: BS.like, fontWeight: 700, fontSize: 13, cursor: "pointer", fontFamily: "inherit" } }, t(["Eliminar mascota", "Delete pet"])) : null);
 }
+function MemorialForm({ pet, onDone, onCancel }) {
+  const BS = useBS();
+  const t = useT();
+  const A = typeof window !== "undefined" && window.BSAUTH || {};
+  const [words, setWords] = useState("");
+  const [announce, setAnnounce] = useState(true);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const fld = { width: "100%", padding: "12px 14px", borderRadius: 12, border: `1.5px solid ${BS.borderStrong}`, background: BS.surface2, fontSize: 14.5, color: BS.ink, fontFamily: "inherit", outline: "none", lineHeight: 1.6, resize: "vertical" };
+  const save = async () => {
+    setBusy(true); setErr("");
+    const today = new Date().toISOString().slice(0, 10);
+    try {
+      const d = await A.savePet({ id: pet.id, name: pet.name, species: pet.species, breed: pet.breed, color: pet.color, bio: pet.bio, birthdate: pet.birthdate, gotcha_date: pet.gotcha_date, photo_url: pet.photo_url, litter_id: pet.litter_id, is_memorial: true, memorial_date: today });
+      if (!(d && d.ok)) { setErr(d && d.error || t(["No se pudo guardar", "Couldn't save"])); setBusy(false); return; }
+      if (announce) {
+        const nm = pet.name || t(["nuestra mascota", "our pet"]);
+        const cap = t(["En memoria de ", "In memory of "]) + nm + (words.trim() ? ("\n\n" + words.trim()) : ".");
+        try { await A.createPost({ kind: "memorial", title: t(["En memoria de ", "In memory of "]) + (pet.name || ""), caption: cap, media_url: pet.photo_url || "", pet_name: pet.name || "", pet_species: pet.species || "" }); } catch (e) {}
+      }
+      onDone && onDone();
+    } catch (e) { setErr(t(["Error de red, intenta de nuevo", "Network error, try again"])); setBusy(false); }
+  };
+  return /* @__PURE__ */ React.createElement("div", { style: { padding: 16 } },
+    pet.photo_url ? /* @__PURE__ */ React.createElement("img", { src: pet.photo_url, alt: "", style: { width: "100%", height: 170, objectFit: "cover", borderRadius: 16, display: "block", filter: "grayscale(0.5)", marginBottom: 14 } }) : null,
+    /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 800, color: BS.ink, letterSpacing: "-0.01em" } }, t(["En memoria de ", "In memory of "]) + (pet.name || "")),
+    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: BS.soft, margin: "6px 0 16px", lineHeight: 1.55 } }, t(["Su perfil se conservar\xE1 como un recuerdo y su foto quedar\xE1 en tono gris. Puedes despedirte con unas palabras.", "Their profile will be kept as a keepsake and their photo will turn grayscale. You can say goodbye with a few words."])),
+    /* @__PURE__ */ React.createElement("textarea", { value: words, onChange: (e) => setWords(e.target.value), rows: 5, placeholder: t(["Unas palabras de despedida…", "A few words of goodbye…"]), style: fld }),
+    /* @__PURE__ */ React.createElement("label", { style: { display: "flex", alignItems: "center", gap: 9, margin: "14px 0", cursor: "pointer" } }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: announce, onChange: (e) => setAnnounce(e.target.checked), style: { width: 18, height: 18, accentColor: BS.brand, flexShrink: 0 } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 13, color: BS.ink2, lineHeight: 1.45 } }, t(["Publicar un homenaje en el feed para que la comunidad lo acompa\xF1e", "Post a tribute in the feed so the community can be with you"]))),
+    err ? /* @__PURE__ */ React.createElement("div", { style: { color: BS.like, fontSize: 13, fontWeight: 600, marginBottom: 10 } }, err) : null,
+    /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8 } },
+      /* @__PURE__ */ React.createElement("button", { onClick: save, disabled: busy, className: "bs-btn", style: { flex: 1, padding: "14px", borderRadius: 12, border: "none", background: BS.grad, color: "#fff", fontWeight: 800, fontSize: 14.5, cursor: busy ? "default" : "pointer", fontFamily: "inherit", opacity: busy ? 0.7 : 1 } }, busy ? t(["Guardando…", "Saving…"]) : t(["Guardar homenaje", "Save tribute"])),
+      /* @__PURE__ */ React.createElement("button", { onClick: onCancel, className: "bs-btn", style: { padding: "14px 16px", borderRadius: 12, border: `1.5px solid ${BS.borderStrong}`, background: BS.surface2, color: BS.ink, fontWeight: 700, fontSize: 14, cursor: "pointer", fontFamily: "inherit" } }, t(["Cancelar", "Cancel"]))));
+}
 function MyPetsTab() {
   const BS = useBS();
   const t = useT();
   const pets = (typeof BSDATA !== "undefined" && BSDATA.myPets) || [];
   const [editing, setEditing] = useState(null);
+  const [memorializing, setMemorializing] = useState(null);
+  if (memorializing) return /* @__PURE__ */ React.createElement(MemorialForm, { pet: memorializing, onDone: () => setMemorializing(null), onCancel: () => setMemorializing(null) });
   if (editing) return /* @__PURE__ */ React.createElement(PetProfileForm, { pet: editing === "new" ? {} : editing, onDone: () => setEditing(null), onCancel: () => setEditing(null) });
   return /* @__PURE__ */ React.createElement("div", { style: { padding: 16 } },
     /* @__PURE__ */ React.createElement("button", { onClick: () => setEditing("new"), className: "bs-btn", style: { width: "100%", padding: "13px", borderRadius: 14, border: `1.5px dashed ${BS.borderStrong}`, background: BS.surface2, color: BS.brand, fontWeight: 800, fontSize: 14, cursor: "pointer", fontFamily: "inherit", marginBottom: pets.length ? 14 : 0 } }, t(["+ Agregar mascota", "+ Add a pet"])),
@@ -772,7 +808,7 @@ function MyPetsTab() {
         /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13, color: BS.ink2 } }, [pet.breed, pet.age].filter(Boolean).join(" \xB7 ")),
         pet.gotcha_date ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: BS.soft, marginTop: 3 } }, t(["En casa desde ", "Home since "]) + pet.gotcha_date) : null,
         pet.bio ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: BS.ink2, marginTop: 6, lineHeight: 1.5 } }, pet.bio) : null,
-        /* @__PURE__ */ React.createElement("button", { onClick: () => setEditing(pet), className: "bs-btn", style: { marginTop: 10, padding: "7px 14px", borderRadius: 9, border: `1.5px solid ${BS.borderStrong}`, background: BS.surface2, color: BS.ink, fontWeight: 700, fontSize: 12.5, cursor: "pointer", fontFamily: "inherit" } }, t(["Editar", "Edit"]))))
+        /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 8, marginTop: 10, flexWrap: "wrap", alignItems: "center" } }, /* @__PURE__ */ React.createElement("button", { onClick: () => setEditing(pet), className: "bs-btn", style: { padding: "7px 14px", borderRadius: 9, border: `1.5px solid ${BS.borderStrong}`, background: BS.surface2, color: BS.ink, fontWeight: 700, fontSize: 12.5, cursor: "pointer", fontFamily: "inherit" } }, t(["Editar", "Edit"])), !pet.is_memorial ? /* @__PURE__ */ React.createElement("button", { onClick: () => setMemorializing(pet), className: "bs-btn", style: { padding: "7px 12px", borderRadius: 9, border: "none", background: "none", color: BS.soft, fontWeight: 600, fontSize: 12, cursor: "pointer", fontFamily: "inherit" } }, t(["Ya no est\xE1 con nosotros", "No longer with us"])) : null)))
     ) : /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", color: BS.soft, padding: "26px 20px 8px", fontSize: 13.5, lineHeight: 1.55 } }, t(["A\xFAn no agregas mascotas. Crea el perfil de tu perro, gato u otra mascota.", "No pets yet. Create a profile for your dog, cat or other pet."])));
 }
 function ProfileScreen({ posts, setScreen }) {
