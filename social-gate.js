@@ -115,8 +115,6 @@
           t("Invitar a un amigo", "Invite a friend") + '</button>' +
       '</div>' +
       '<div style="margin-top:22px;font-size:13.5px;color:' + MUT + '">' +
-        '<a id="bpg-enter" href="#" style="color:' + ACC + ';text-decoration:none;font-weight:700">' + t("¿Ya tienes acceso? Entrar", "Already have access? Sign in") + '</a>' +
-        '<span style="opacity:.4;margin:0 10px">·</span>' +
         '<a href="/" style="color:' + MUT + ';text-decoration:none">' + t("Volver a bpuppy.us", "Back to bpuppy.us") + '</a>' +
       '</div>';
 
@@ -146,7 +144,6 @@
       }).catch(function () { btn.disabled = false; btn.textContent = t("Solicitar ser parte", "Request to join"); showErr(t("No se pudo enviar. Intenta de nuevo.", "Couldn't send. Try again.")); });
     };
     document.getElementById("bpg-invite").onclick = doInvite;
-    document.getElementById("bpg-enter").onclick = function (e) { e.preventDefault(); enterView(); };
   }
 
   function thanksView(already) {
@@ -155,10 +152,10 @@
       '<div style="width:66px;height:66px;border-radius:50%;background:rgba(168,95,45,0.10);border:1px solid rgba(168,95,45,0.35);display:flex;align-items:center;justify-content:center;margin:0 auto 18px">' +
         '<svg width="30" height="30" viewBox="0 0 24 24" fill="none" stroke="' + ACC + '" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
       '<h1 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;letter-spacing:-0.02em;font-size:clamp(25px,5vw,33px);margin:0 0 12px;color:' + INK + '">' +
-        (already === true ? t("Ya estás en la lista", "You’re already on the list") : t("¡Listo! Recibimos tu solicitud", "Done! We got your request")) + '</h1>' +
-      '<p style="color:' + MUT + ';line-height:1.65;font-size:15px;margin:0 auto 24px;max-width:38ch">' +
-        t("Te escribiremos por correo apenas abramos tu acceso a B Social. Mientras, invita a un amigo para que también sea parte.",
-          "We’ll email you as soon as we open your access to B Social. Meanwhile, invite a friend to join too.") + '</p>' +
+        (already === true ? t("Ya estás en la lista", "You’re already on the list") : t("¡Estamos muy emocionados!", "We’re so excited!")) + '</h1>' +
+      '<p style="color:' + MUT + ';line-height:1.65;font-size:15px;margin:0 auto 24px;max-width:39ch">' +
+        t("Gracias por querer ser parte de B Social. Te avisaremos por correo apenas puedas entrar. Mientras, invita a un amigo para que también sea parte.",
+          "Thanks for wanting to be part of B Social. We’ll email you the moment you can come in. Meanwhile, invite a friend to join too.") + '</p>' +
       '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">' +
         '<button id="bpg-invite" style="' + primaryCss() + ';width:auto;padding-left:26px;padding-right:26px">' + t("Invitar a un amigo", "Invite a friend") + '</button>' +
         '<a href="/" style="' + ghostCss() + '">' + t("Volver al inicio", "Back to home") + '</a>' +
@@ -283,9 +280,9 @@
   function pendingView(email) {
     inner().innerHTML =
       WORD + EYEBROW +
-      '<h1 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;letter-spacing:-0.02em;font-size:clamp(25px,5vw,33px);margin:0 0 12px;color:' + INK + '">' + t("Tu solicitud está en revisión", "Your request is under review") + '</h1>' +
-      '<p style="color:' + MUT + ';line-height:1.65;font-size:15px;margin:0 auto 8px;max-width:38ch">' +
-        t("Estamos abriendo el acceso poco a poco. Te avisaremos por correo apenas activemos tu cuenta.", "We’re opening access little by little. We’ll email you as soon as we activate your account.") + '</p>' +
+      '<h1 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;letter-spacing:-0.02em;font-size:clamp(25px,5vw,33px);margin:0 0 12px;color:' + INK + '">' + t("¡Estamos muy emocionados!", "We’re so excited!") + '</h1>' +
+      '<p style="color:' + MUT + ';line-height:1.65;font-size:15px;margin:0 auto 8px;max-width:39ch">' +
+        t("Gracias por querer ser parte de B Social. Te avisaremos por correo apenas puedas entrar ya.", "Thanks for wanting to be part of B Social. We’ll email you the moment you can come in.") + '</p>' +
       (email ? '<p style="color:#8a929e;font-size:13px;margin:0 0 24px">' + esc(email) + '</p>' : '<div style="height:16px"></div>') +
       '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">' +
         '<button id="bpg-invite" style="' + ghostCss() + '">' + t("Invitar a un amigo", "Invite a friend") + '</button>' +
@@ -317,6 +314,8 @@
       pendingView(sess.user.email);
       return;
     }
+    // Login OCULTO en público: solo se muestra con ?entrar=1 (para el correo de aprobación / cuando Luis lo comparta).
+    if (params.get("entrar") === "1") { enterView(); return; }
     landingView();
   }
 
