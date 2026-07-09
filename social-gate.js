@@ -166,27 +166,118 @@
     document.getElementById("bpg-invite").onclick = doInvite;
   }
 
+  var GOOGLE_SVG = '<svg width="18" height="18" viewBox="0 0 48 48" style="flex-shrink:0"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3c-1.6 4.7-6.1 8-11.3 8-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.3-.4-3.5z"/><path fill="#FF3D00" d="M6.3 14.7l6.6 4.8C14.7 16 19 13 24 13c3.1 0 5.9 1.2 8 3.1l5.7-5.7C34.6 6.1 29.6 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.5 0 10.5-2.1 14.3-5.5l-6.6-5.6C29.7 34.6 27 36 24 36c-5.2 0-9.6-3.3-11.3-7.9l-6.5 5C9.6 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.6 5.6C41.8 36.4 44 30.7 44 24c0-1.3-.1-2.3-.4-3.5z"/></svg>';
+  function googleBtnCss() { return "width:100%;display:flex;align-items:center;justify-content:center;gap:10px;padding:13px 16px;border-radius:12px;border:1px solid " + LINE + ";background:#fff;color:#3c4043;font-weight:700;font-size:15px;font-family:inherit;cursor:pointer;margin-bottom:6px"; }
+  function orDiv() { return '<div style="display:flex;align-items:center;gap:10px;margin:12px 0"><div style="flex:1;height:1px;background:' + LINE + '"></div><span style="font-size:11.5px;color:' + MUT + ';font-weight:700">' + t("o", "or") + '</span><div style="flex:1;height:1px;background:' + LINE + '"></div></div>'; }
+  function doGoogle() {
+    var s = sb(); if (!s) return;
+    var btn = document.getElementById("bpg-google"); if (btn) { btn.disabled = true; btn.style.opacity = ".7"; }
+    var er = document.getElementById("bpg-lerr");
+    function fail() { if (btn) { btn.disabled = false; btn.style.opacity = "1"; } if (er) { er.textContent = t("Google aún no está disponible aquí. Entra con tu correo.", "Google isn’t available here yet. Use your email."); er.style.display = "block"; } }
+    try {
+      // skipBrowserRedirect: controlamos la redirección para poder avisar si el proveedor no está activo.
+      s.auth.signInWithOAuth({ provider: "google", options: { redirectTo: location.origin + "/social", skipBrowserRedirect: true } }).then(function (res) {
+        if (res && res.error) return fail();
+        var url = res && res.data && res.data.url;
+        if (url) location.href = url; else fail();
+      }).catch(fail);
+    } catch (e) { fail(); }
+  }
   function enterView() {
     inner().innerHTML =
       WORD + EYEBROW +
       '<h1 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;letter-spacing:-0.02em;font-size:clamp(25px,5vw,35px);margin:0 0 12px;color:' + INK + '">' + t("Entrar a B Social", "Sign in to B Social") + '</h1>' +
-      '<p style="color:' + MUT + ';line-height:1.6;font-size:15px;margin:0 auto 20px;max-width:36ch">' + t("Si ya tienes acceso, te enviamos un enlace de entrada a tu correo.", "If you already have access, we’ll email you a sign-in link.") + '</p>' +
+      '<p style="color:' + MUT + ';line-height:1.6;font-size:15px;margin:0 auto 20px;max-width:36ch">' + t("Entra con Google o con tu correo y contraseña.", "Sign in with Google or with your email and password.") + '</p>' +
       '<div style="text-align:left;background:#fffdf9;border:1px solid ' + LINE + ';border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(52,34,16,0.08)">' +
+        '<button id="bpg-google" style="' + googleBtnCss() + '">' + GOOGLE_SVG + t("Continuar con Google", "Continue with Google") + '</button>' +
+        orDiv() +
         '<input id="bpg-lemail" type="email" style="' + fieldCss() + '" placeholder="' + t("Tu correo", "Your email") + '" autocomplete="email">' +
+        '<input id="bpg-lpass" type="password" style="' + fieldCss() + '" placeholder="' + t("Contraseña", "Password") + '" autocomplete="current-password">' +
         '<div id="bpg-lerr" style="color:#d33;font-size:13px;margin:-2px 0 10px;display:none"></div>' +
-        '<button id="bpg-lsend" style="' + primaryCss() + '">' + t("Enviarme el enlace", "Send me the link") + '</button>' +
+        '<button id="bpg-lsignin" style="' + primaryCss() + '">' + t("Entrar", "Sign in") + '</button>' +
+        '<div style="display:flex;justify-content:space-between;gap:10px;margin-top:12px;font-size:12.5px">' +
+          '<a id="bpg-create" href="#" style="color:' + ACC + ';text-decoration:none;font-weight:700">' + t("Crear contraseña", "Create a password") + '</a>' +
+          '<a id="bpg-magic" href="#" style="color:' + MUT + ';text-decoration:none">' + t("Enviarme un enlace", "Email me a link") + '</a>' +
+        '</div>' +
       '</div>' +
       '<div style="margin-top:20px;font-size:13.5px"><a id="bpg-back" href="#" style="color:' + MUT + ';text-decoration:none">' + t("← Volver", "← Back") + '</a></div>';
     var er = document.getElementById("bpg-lerr");
+    function showErr(m) { er.textContent = m; er.style.display = "block"; }
+    document.getElementById("bpg-google").onclick = doGoogle;
+    document.getElementById("bpg-lsignin").onclick = function () {
+      var email = (document.getElementById("bpg-lemail").value || "").trim().toLowerCase();
+      var pass = document.getElementById("bpg-lpass").value || "";
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) return showErr(t("Correo no válido.", "Invalid email."));
+      if (!pass) return showErr(t("Escribe tu contraseña.", "Enter your password."));
+      var b = document.getElementById("bpg-lsignin"); b.disabled = true; b.textContent = t("Entrando…", "Signing in…");
+      var s = sb(); if (!s) { b.disabled = false; b.textContent = t("Entrar", "Sign in"); return; }
+      s.auth.signInWithPassword({ email: email, password: pass }).then(function (r) {
+        if (r && r.error) { b.disabled = false; b.textContent = t("Entrar", "Sign in"); showErr(t("Correo o contraseña incorrectos. ¿Primera vez? Crea tu contraseña o entra con Google.", "Wrong email or password. First time? Create a password or use Google.")); return; }
+        myEmail = email; // en éxito, onAuthStateChange dispara decide()
+      }).catch(function () { b.disabled = false; b.textContent = t("Entrar", "Sign in"); showErr(t("No se pudo. Intenta de nuevo.", "Couldn’t sign in. Try again.")); });
+    };
+    document.getElementById("bpg-create").onclick = function (e) { e.preventDefault(); createView(); };
+    document.getElementById("bpg-magic").onclick = function (e) { e.preventDefault(); magicView(); };
+    document.getElementById("bpg-back").onclick = function (e) { e.preventDefault(); landingView(); };
+  }
+  function createView() {
+    inner().innerHTML =
+      WORD + EYEBROW +
+      '<h1 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;letter-spacing:-0.02em;font-size:clamp(24px,5vw,33px);margin:0 0 10px;color:' + INK + '">' + t("Crea tu contraseña", "Create your password") + '</h1>' +
+      '<p style="color:' + MUT + ';line-height:1.6;font-size:14.5px;margin:0 auto 18px;max-width:37ch">' + t("Así entras rápido, sin ir al correo. Tu acceso a B Social debe estar aprobado.", "So you can sign in fast, without email. Your B Social access must be approved.") + '</p>' +
+      '<div style="text-align:left;background:#fffdf9;border:1px solid ' + LINE + ';border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(52,34,16,0.08)">' +
+        '<input id="bpg-cemail" type="email" style="' + fieldCss() + '" placeholder="' + t("Tu correo", "Your email") + '" autocomplete="email">' +
+        '<input id="bpg-cpass" type="password" style="' + fieldCss() + '" placeholder="' + t("Contraseña (mín. 6)", "Password (min. 6)") + '" autocomplete="new-password">' +
+        '<input id="bpg-cpass2" type="password" style="' + fieldCss() + '" placeholder="' + t("Repite la contraseña", "Repeat the password") + '" autocomplete="new-password">' +
+        '<div id="bpg-cerr" style="color:#d33;font-size:13px;margin:-2px 0 10px;display:none"></div>' +
+        '<button id="bpg-csave" style="' + primaryCss() + '">' + t("Crear contraseña", "Create password") + '</button>' +
+      '</div>' +
+      '<div style="margin-top:20px;font-size:13.5px"><a id="bpg-back" href="#" style="color:' + MUT + ';text-decoration:none">' + t("← Volver", "← Back") + '</a></div>';
+    var er = document.getElementById("bpg-cerr");
+    function showErr(m) { er.textContent = m; er.style.display = "block"; }
+    document.getElementById("bpg-csave").onclick = function () {
+      var email = (document.getElementById("bpg-cemail").value || "").trim().toLowerCase();
+      var p1 = document.getElementById("bpg-cpass").value || "", p2 = document.getElementById("bpg-cpass2").value || "";
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) return showErr(t("Correo no válido.", "Invalid email."));
+      if (p1.length < 6) return showErr(t("La contraseña debe tener al menos 6 caracteres.", "Password must be at least 6 characters."));
+      if (p1 !== p2) return showErr(t("Las contraseñas no coinciden.", "Passwords don’t match."));
+      var b = document.getElementById("bpg-csave"); b.disabled = true; b.textContent = t("Creando…", "Creating…");
+      var s = sb(); if (!s) { b.disabled = false; b.textContent = t("Crear contraseña", "Create password"); return; }
+      s.auth.signUp({ email: email, password: p1, options: { emailRedirectTo: location.origin + "/social" } }).then(function (r) {
+        if (r && r.error) {
+          b.disabled = false; b.textContent = t("Crear contraseña", "Create password");
+          if (/already|registered|exists/i.test(r.error.message || "")) showErr(t("Ya hay una cuenta con ese correo. Usa “Entrar” o Google.", "There’s already an account with that email. Use “Sign in” or Google."));
+          else showErr(r.error.message || t("No se pudo crear.", "Couldn’t create."));
+          return;
+        }
+        myEmail = email;
+        if (r.data && r.data.session) { /* sesión creada → onAuthStateChange dispara decide() */ }
+        else { inner().innerHTML = WORD + '<h1 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;font-size:26px;margin:0 0 12px;color:' + INK + '">' + t("Revisa tu correo", "Check your email") + '</h1><p style="color:' + MUT + ';line-height:1.6;max-width:34ch;margin:0 auto">' + t("Te enviamos un correo para confirmar tu cuenta. Ábrelo y vuelve a entrar con tu contraseña.", "We sent you an email to confirm your account. Open it and sign in with your password.") + '</p>'; }
+      }).catch(function () { b.disabled = false; b.textContent = t("Crear contraseña", "Create password"); showErr(t("No se pudo. Intenta de nuevo.", "Couldn’t create. Try again.")); });
+    };
+    document.getElementById("bpg-back").onclick = function (e) { e.preventDefault(); enterView(); };
+  }
+  function magicView() {
+    inner().innerHTML =
+      WORD + EYEBROW +
+      '<h1 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;letter-spacing:-0.02em;font-size:clamp(25px,5vw,33px);margin:0 0 12px;color:' + INK + '">' + t("Entrar con un enlace", "Sign in with a link") + '</h1>' +
+      '<p style="color:' + MUT + ';line-height:1.6;font-size:15px;margin:0 auto 20px;max-width:36ch">' + t("Te enviamos un enlace de entrada a tu correo.", "We’ll email you a sign-in link.") + '</p>' +
+      '<div style="text-align:left;background:#fffdf9;border:1px solid ' + LINE + ';border-radius:18px;padding:18px;box-shadow:0 10px 30px rgba(52,34,16,0.08)">' +
+        '<input id="bpg-lemail2" type="email" style="' + fieldCss() + '" placeholder="' + t("Tu correo", "Your email") + '" autocomplete="email">' +
+        '<div id="bpg-lerr2" style="color:#d33;font-size:13px;margin:-2px 0 10px;display:none"></div>' +
+        '<button id="bpg-lsend" style="' + primaryCss() + '">' + t("Enviarme el enlace", "Send me the link") + '</button>' +
+      '</div>' +
+      '<div style="margin-top:20px;font-size:13.5px"><a id="bpg-back" href="#" style="color:' + MUT + ';text-decoration:none">' + t("← Volver", "← Back") + '</a></div>';
+    var er = document.getElementById("bpg-lerr2");
     document.getElementById("bpg-lsend").onclick = function () {
-      var email = (document.getElementById("bpg-lemail").value || "").trim();
+      var email = (document.getElementById("bpg-lemail2").value || "").trim();
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) { er.textContent = t("Correo no válido.", "Invalid email."); er.style.display = "block"; return; }
       var b = document.getElementById("bpg-lsend"); b.disabled = true; b.textContent = t("Enviando…", "Sending…");
       fetch(SU + "/functions/v1/portal_magiclink", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON }, body: JSON.stringify({ email: email, redirectTo: location.origin + "/social" }) })
         .then(function () { inner().innerHTML = WORD + '<h1 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;font-size:27px;margin:0 0 12px;color:' + INK + '">' + t("Revisa tu correo", "Check your email") + '</h1><p style="color:' + MUT + ';line-height:1.6;max-width:34ch;margin:0 auto">' + t("Te enviamos un enlace para entrar. Ábrelo desde este mismo dispositivo.", "We sent you a sign-in link. Open it on this same device.") + '</p>'; })
         .catch(function () { b.disabled = false; b.textContent = t("Enviarme el enlace", "Send me the link"); er.textContent = t("No se pudo enviar.", "Couldn't send."); er.style.display = "block"; });
     };
-    document.getElementById("bpg-back").onclick = function (e) { e.preventDefault(); landingView(); };
+    document.getElementById("bpg-back").onclick = function (e) { e.preventDefault(); enterView(); };
   }
 
   function pendingView(email) {
@@ -231,7 +322,20 @@
 
   function boot() {
     ov(); loadingView();
-    decide();
+    // Si volvimos de un OAuth con error (p.ej. Google aún no activo), limpiamos la URL y avisamos.
+    var oauthErr = "";
+    try {
+      var h = (location.hash || "").replace(/^#/, ""); var hp = new URLSearchParams(h);
+      oauthErr = hp.get("error_description") || hp.get("error") || params.get("error_description") || params.get("error") || "";
+      if (oauthErr) { history.replaceState(null, "", location.pathname); }
+    } catch (e) {}
+    if (oauthErr) {
+      enterView();
+      var er = document.getElementById("bpg-lerr");
+      if (er) { er.textContent = t("No se pudo entrar con Google. Prueba con tu correo o pide un enlace.", "Couldn’t sign in with Google. Try your email or request a link."); er.style.display = "block"; }
+    } else {
+      decide();
+    }
     var s = sb();
     if (s && s.auth && s.auth.onAuthStateChange) s.auth.onAuthStateChange(function () { if (document.getElementById(GID)) decide(); });
   }
