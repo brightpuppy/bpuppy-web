@@ -254,9 +254,13 @@ function App() {
     if (d.events && d.events.length) BSDATA.bpuppyEvents = d.events.map((e) => ({ id: e.id, title: e.title, date: dt(e.event_date, { weekday: "long", day: "numeric", month: "long" }) + " \xB7 " + dt(e.event_date, { hour: "numeric", minute: "2-digit" }), place: e.place, img: e.cover_url, attendees: e.attendees || 0 }));
     if (d.news && d.news.length) BSDATA.news = d.news.map((n) => ({ id: n.id, title: n.title, excerpt: n.excerpt, tag: n.tag, date: dt(n.created_at, { day: "numeric", month: "short", year: "numeric" }), img: n.cover_url }));
     if (d.videos && d.videos.length) BSDATA.videos = d.videos.map((v) => ({ id: v.id, title: v.title, dur: v.duration, thumb: v.thumb_url }));
-    BSDATA.community = (d.community || []).map((m) => ({ id: m.username, username: m.username, name: m.name, initials: m.initials, color: m.avatar_color, avatar: m.avatar_url, city: m.city, bio: m.bio, bpuppy: m.bpuppy, status: m.status || "nuevo", badges: m.badges || [], pet: { name: m.pet && m.pet.name || "", species: m.pet && m.pet.species || "", breed: m.pet && m.pet.breed || "", color: m.pet && m.pet.color || "", age: m.pet && m.pet.age || "", img: m.pet && m.pet.photo_url || "assets/photos/g01.webp" } }));
+    BSDATA.community = (d.community || []).map((m) => ({ id: m.username, username: m.username, name: m.name, initials: m.initials, color: m.avatar_color, avatar: m.avatar_url, city: m.city, bio: m.bio, bpuppy: m.bpuppy, status: m.status || "nuevo", badges: m.badges || [], pet: { name: m.pet && m.pet.name || "", species: m.pet && m.pet.species || "", breed: m.pet && m.pet.breed || "", color: m.pet && m.pet.color || "", age: m.pet && m.pet.age || "", img: m.pet && m.pet.photo_url || "assets/photos/g01.webp" }, pets: (m.pets || []) }));
     BSDATA.stories = (d.stories || []).map((s) => ({ id: s.id, username: s.name || s.username, initials: s.initials, color: s.avatar_color || s.color, avatar: s.avatar_url, img: s.media_url, hasNew: true }));
     if (d.suggestions) BSDATA.suggestions = d.suggestions.map((c) => ({ id: c.username, username: c.username, name: c.name, initials: c.initials, color: c.avatar_color, avatar: c.avatar_url, city: c.city, status: c.status || "nuevo", badges: c.badges || [], pet: c.pet && c.pet.breed || "" }));
+    BSDATA.spotlight = d.spotlight || null;
+    BSDATA.myPets = d.my_pets || [];
+    BSDATA.storiesLife = d.stories_life || [];
+    BSDATA.memorials = d.memorials || [];
     if (d.feed && d.feed.length) setPosts(d.feed.map((p) => ({ id: p.id, username: p.username, initials: p.initials, color: p.color, avatar: p.avatar_url, city: p.city, location: p.location || "", time: rel(p.created_at), verified: p.username === "brightpuppy", img: p.img, caption: p.caption, tags: [], likes: p.likes || 0, comments: 0, liked: false, saved: false })));
   };
   const refresh = async () => {

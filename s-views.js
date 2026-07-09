@@ -544,6 +544,28 @@ function PostDetail({ post, onClose }) {
     }
   ), /* @__PURE__ */ React.createElement("button", { onClick: send, disabled: !text.trim() || sending || !A.me, style: { width: 38, height: 38, borderRadius: "50%", border: "none", background: BS.brand, color: "#fff", cursor: text.trim() && A.me ? "pointer" : "default", opacity: text.trim() && A.me ? 1 : 0.5, display: "grid", placeItems: "center", flexShrink: 0 } }, /* @__PURE__ */ React.createElement("svg", { width: "17", height: "17", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M22 2L11 13" }), /* @__PURE__ */ React.createElement("path", { d: "M22 2l-7 20-4-9-9-4 20-7z" }))))))));
 }
+function SpotlightCard() {
+  const BS = useBS();
+  const t = useT();
+  const sp = (typeof BSDATA !== "undefined" && BSDATA.spotlight) || null;
+  if (!sp || !sp.pet || !sp.pet.photo_url) return null;
+  const pet = sp.pet, owner = sp.owner || {};
+  const species = (pet.species || "").toLowerCase();
+  const label = species === "gato" ? t(["Gato del d\xEDa", "Cat of the day"]) : (species === "otra" || species === "otro") ? t(["Mascota del d\xEDa", "Pet of the day"]) : t(["Perro del d\xEDa", "Dog of the day"]);
+  const meta = [pet.breed, pet.age].filter(Boolean).join(" \xB7 ");
+  return /* @__PURE__ */ React.createElement("div", { style: { padding: "12px 14px 2px", background: BS.bg } },
+    /* @__PURE__ */ React.createElement("div", { style: { position: "relative", borderRadius: 20, overflow: "hidden", border: `1px solid ${BS.border}`, boxShadow: BS.glow } },
+      /* @__PURE__ */ React.createElement("img", { src: pet.photo_url, alt: pet.name || "", style: { width: "100%", height: 224, objectFit: "cover", display: "block" } }),
+      /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, background: "linear-gradient(to top, rgba(26,18,12,0.86) 0%, rgba(26,18,12,0.12) 55%, rgba(26,18,12,0) 100%)" } }),
+      /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", top: 12, left: 12, display: "inline-flex", alignItems: "center", gap: 6, background: BS.grad, color: "#fff", fontSize: 10.5, fontWeight: 800, letterSpacing: "0.06em", textTransform: "uppercase", padding: "5px 11px", borderRadius: 999 } },
+        /* @__PURE__ */ React.createElement("svg", { width: "12", height: "12", viewBox: "0 0 24 24", fill: "#fff" }, /* @__PURE__ */ React.createElement("path", { d: "M12 2l2.9 6.3 6.9.7-5.1 4.7 1.4 6.8L12 17.8 5.9 21.2l1.4-6.8L2.2 9.7l6.9-.7z" })),
+        label),
+      /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", left: 14, right: 14, bottom: 12, color: "#fff" } },
+        /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Instrument Serif,Georgia,serif", fontStyle: "italic", fontSize: 14, opacity: 0.92, lineHeight: 1 } }, t(["Hoy brilla", "Today's star"])),
+        /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 26, fontWeight: 800, letterSpacing: "-0.02em", lineHeight: 1.05, marginTop: 2 } }, pet.name || t(["Sin nombre", "Unnamed"])),
+        meta ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, opacity: 0.9, marginTop: 3, fontWeight: 600 } }, meta) : null,
+        owner.name ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, opacity: 0.78, marginTop: 4 } }, t(["con ", "with "]) + owner.name + (owner.city ? " \xB7 " + owner.city : "")) : null)));
+}
 function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
   const BS = useBS();
   const t = useT();
@@ -568,7 +590,7 @@ function FeedScreen({ posts, toggleLike, toggleSave, setScreen, onOpenPost }) {
   }))), /* @__PURE__ */ React.createElement("div", { className: "bs-hscr", style: { background: BS.surface, padding: "8px 14px 10px", display: "flex", gap: 7, borderBottom: `1px solid ${BS.border}` } }, FEED_FILTERS.map((f) => {
     const on = filt === f.id;
     return /* @__PURE__ */ React.createElement("button", { key: f.id, onClick: () => setFilt(f.id), className: "bs-btn", style: { padding: "7px 16px", borderRadius: 999, border: `1.5px solid ${on ? BS.brand : BS.border}`, background: "transparent", color: on ? BS.brand : BS.ink2, fontSize: 12.5, fontWeight: on ? 700 : 600, cursor: "pointer", whiteSpace: "nowrap", fontFamily: "inherit" } }, f.label);
-  })), /* @__PURE__ */ React.createElement(StoriesBar, null), (() => {
+  })), /* @__PURE__ */ React.createElement(StoriesBar, null), /* @__PURE__ */ React.createElement(SpotlightCard, null), (() => {
     const shown = filt === "parati" ? posts : posts.filter((p) => {
       if (filt === "pack") return !!(p.pack || p.following || p.is_pack);
       if (filt === "razas") return !!(p.tags && p.tags.length || p.breed);
