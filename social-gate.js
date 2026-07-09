@@ -310,12 +310,14 @@
     if (sess && sess.user) {
       var me = null;
       try { me = await api("me", null, sess.access_token); } catch (e) {}
-      if (me && me.approved) { hide(); return; }
+      if (me && me.approved) { try { localStorage.setItem("bp_social_seen", "1"); } catch (e) {} hide(); return; }
       pendingView(sess.user.email);
       return;
     }
-    // Login OCULTO en público: solo se muestra con ?entrar=1 (para el correo de aprobación / cuando Luis lo comparta).
-    if (params.get("entrar") === "1") { enterView(); return; }
+    // Login OCULTO en público: solo se muestra con ?entrar=1 (correo de aprobación) o si este dispositivo ya
+    // fue de un miembro aprobado (bp_social_seen). El público nuevo solo ve "Solicitar ser parte".
+    var seen = false; try { seen = !!localStorage.getItem("bp_social_seen"); } catch (e) {}
+    if (params.get("entrar") === "1" || seen) { enterView(); return; }
     landingView();
   }
 
@@ -328,10 +330,16 @@
       oauthErr = hp.get("error_description") || hp.get("error") || params.get("error_description") || params.get("error") || "";
       if (oauthErr) { history.replaceState(null, "", location.pathname); }
     } catch (e) {}
+    var hasToken = false; try { hasToken = /access_token=|refresh_token=/.test(location.hash || ""); } catch (e) {}
     if (oauthErr) {
       enterView();
       var er = document.getElementById("bpg-lerr");
       if (er) { er.textContent = t("No se pudo entrar con Google. Prueba con tu correo o pide un enlace.", "Couldn’t sign in with Google. Try your email or request a link."); er.style.display = "block"; }
+    } else if (hasToken) {
+      // Llegamos de un enlace mágico / OAuth: hay token en la URL. Mostramos "cargando" mientras
+      // el cliente establece la sesión (evita el parpadeo del formulario). onAuthStateChange dispara decide().
+      loadingView();
+      setTimeout(function () { if (document.getElementById(GID)) decide(); }, 4000);
     } else {
       decide();
     }
