@@ -359,7 +359,8 @@ ${pickup ? isMember ? "\u{1F690} Pickup & Delivery: " + t(["Incluido (miembro)",
       plan: activeMembership ? activeMembership.plan : "",
       pickup,
       isMember,
-      email: me && me.email || ""
+      email: me && me.email || "",
+      lang: (typeof document !== "undefined" && document.documentElement.lang) || "es"
     };
     try {
       const r = await fetch("https://oqqwmcplljirbreowrll.supabase.co/functions/v1/grooming_book", {
