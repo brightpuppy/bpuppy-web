@@ -135,7 +135,7 @@
       var btn = document.getElementById("bpg-send"); btn.disabled = true; btn.textContent = t("Enviando…", "Sending…");
       api("request", {
         name: name, email: email, city: (document.getElementById("bpg-city").value || "").trim(),
-        source: "landing", referred_by: qref,
+        source: "landing", referred_by: qref, lang: EN ? "en" : "es",
         has_pet: petHas, pet_type: (petHas === true ? petType : ""),
         pet_name: (petHas === true ? (document.getElementById("bpg-petname").value || "").trim() : "")
       }).then(function (r) {

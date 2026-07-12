@@ -60,7 +60,7 @@
       var b = ov.querySelector("#bp-si-send"); b.disabled = true; b.textContent = t("Enviando…", "Sending…");
       var nm = "";
       try { var nf = document.querySelector('input[name*=name i], input[id*=name i], input[name*=nombre i]'); if (nf && nf.value) nm = nf.value; } catch (e) {}
-      fetch(SU + "/functions/v1/social_join", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON }, body: JSON.stringify({ action: "request", email: email, name: nm, source: source || "popup" }) })
+      fetch(SU + "/functions/v1/social_join", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON }, body: JSON.stringify({ action: "request", email: email, name: nm, source: source || "popup", lang: EN ? "en" : "es" }) })
         .then(function (r) { return r.json(); })
         .then(function () {
           ov.querySelector("div").innerHTML =
