@@ -137,7 +137,8 @@
         name: name, email: email, city: (document.getElementById("bpg-city").value || "").trim(),
         source: "landing", referred_by: qref, lang: EN ? "en" : "es",
         has_pet: petHas, pet_type: (petHas === true ? petType : ""),
-        pet_name: (petHas === true ? (document.getElementById("bpg-petname").value || "").trim() : "")
+        pet_name: (petHas === true ? (document.getElementById("bpg-petname").value || "").trim() : ""),
+        page: (location.href || "").slice(0, 300), referrer: (document.referrer || "").slice(0, 300)
       }).then(function (r) {
         if (r && r.ok) thanksView(r.already);
         else { btn.disabled = false; btn.textContent = t("Solicitar ser parte", "Request to join"); showErr(t("No se pudo enviar. Intenta de nuevo.", "Couldn't send. Try again.")); }

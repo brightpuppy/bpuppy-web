@@ -155,7 +155,7 @@
   if (!_isKidsGame) {
     try {
       var si = document.createElement('script');
-      si.src = '/bp-social-invite.js?v=1783885000000';
+      si.src = '/bp-social-invite.js?v=1783954200000';
       si.async = true;
       (document.head || document.documentElement).appendChild(si);
     } catch (e) {}
