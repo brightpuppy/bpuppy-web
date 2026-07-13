@@ -62,7 +62,7 @@ function bpRenderVaxCard(pup, cli, data, lang){
     return row(nm, en?v.ageEn:v.ageEs, !!e.applied, e.date, e.next, !v.core);
   }).join('');
   var custom=customs.map(function(c,i){ return usedC[i]?'':row(c.name, c.dose||'', true, c.date, c.next, false); }).join('');
-  var deworm=(data.deworming||[]).filter(function(d){return d&&(d.date||d.product);}).map(function(d){ return '<tr><td>'+esc(d.product||'—')+'</td><td style="color:#64748b">'+esc(fmtDate(d.date))+'</td></tr>'; }).join('');
+  var deworm=(data.deworming||[]).filter(function(d){return d&&(d.date||d.product);}).map(function(d){ return '<tr><td>'+esc(String(d.product==null?'':d.product).replace(/\s*\((?:desparasitaci[oó]n|deworming)\)\s*$/i,'').trim()||'—')+'</td><td style="color:#64748b">'+esc(fmtDate(d.date))+'</td></tr>'; }).join('');
   var field=function(lbl,val){ if(val==null||String(val).trim()==='') return ''; return '<div style="min-width:120px"><div class="vx-l">'+esc(lbl)+'</div><div class="vx-v">'+esc(val)+'</div></div>'; };
   var vc=data.vetcheck||{};
   var vcField=(vc.applied)?field(en?'Vet health exam':'Chequeo veterinario', vc.date? (fmtDate(vc.date)+(en?' · general checkup':' · revisión general')) : (en?'Done':'Realizado')):'';
