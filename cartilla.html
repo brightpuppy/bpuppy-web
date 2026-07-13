@@ -33,11 +33,7 @@ var VAX_SCHEDULE=[
   { id:'dhpp3', es:'DHPP / DA2PP (3ª dosis)', en:'DHPP / DA2PP (3rd dose)', ageEs:'16 semanas', ageEn:'16 weeks', core:true },
   { id:'dhpp_boost', es:'DHPP (refuerzo anual)', en:'DHPP (annual booster)', ageEs:'12 meses', ageEn:'12 months', core:true },
   { id:'rabies', es:'Rabia', en:'Rabies', ageEs:'16 semanas', ageEn:'16 weeks', core:true },
-  { id:'rabies_boost', es:'Rabia (refuerzo)', en:'Rabies (booster)', ageEs:'12 meses / 1–3 años', ageEn:'12 months / 1–3 yr', core:true },
-  { id:'bordetella', es:'Bordetella (tos de perreras)', en:'Bordetella (kennel cough)', ageEs:'8+ semanas', ageEn:'8+ weeks', core:false },
-  { id:'lepto', es:'Leptospirosis', en:'Leptospirosis', ageEs:'12+ semanas (2 dosis)', ageEn:'12+ weeks (2 doses)', core:false },
-  { id:'lyme', es:'Lyme', en:'Lyme', ageEs:'12+ semanas (2 dosis)', ageEn:'12+ weeks (2 doses)', core:false },
-  { id:'influenza', es:'Influenza canina', en:'Canine Influenza', ageEs:'8+ semanas (2 dosis)', ageEn:'8+ weeks (2 doses)', core:false }
+  { id:'rabies_boost', es:'Rabia (refuerzo)', en:'Rabies (booster)', ageEs:'12 meses / 1–3 años', ageEn:'12 months / 1–3 yr', core:true }
 ];
 function bpRenderVaxCard(pup, cli, data, lang){
   pup=pup||{}; cli=cli||{}; data=data||{};
@@ -58,8 +54,14 @@ function bpRenderVaxCard(pup, cli, data, lang){
   var std=data.standard||{};
   var ownerName=[cli.first_name,cli.last_name].filter(Boolean).join(' ');
   function row(nm,age,on,date,next,opt){ return '<tr'+(on?' style="background:#f0fdfa"':'')+'><td>'+esc(nm)+(opt?' <span style="font-size:9px;color:#94a3b8">('+T.opt+')</span>':'')+'</td><td style="color:#64748b">'+esc(age)+'</td><td style="text-align:center;font-size:16px">'+(on?'<span style="color:#0F766E;font-weight:800">☑</span>':'<span style="color:#cbd5e1">☐</span>')+'</td><td>'+esc(fmtDate(date))+'</td><td style="color:#64748b">'+esc(fmtDate(next))+'</td></tr>'; }
-  var rows=sched.filter(function(v){ var e=std[v.id]||{}; return v.core || !!e.applied; }).map(function(v){ var e=std[v.id]||{}; return row(en?v.en:v.es, en?v.ageEn:v.ageEs, !!e.applied, e.date, e.next, !v.core); }).join('');
-  var custom=(data.custom||[]).filter(function(c){return c&&c.name;}).map(function(c){ return row(c.name, c.dose||'', true, c.date, c.next, false); }).join('');
+  var customs=(data.custom||[]).filter(function(c){return c&&c.name;});
+  var usedC={};
+  var rows=sched.filter(function(v){ var e=std[v.id]||{}; return v.core || !!e.applied; }).map(function(v){
+    var e=std[v.id]||{}; var nm=en?v.en:v.es;
+    if(e.date){ customs.forEach(function(c,i){ if(!usedC[i] && c.date && c.date===e.date){ nm+=' + '+esc(c.name); usedC[i]=1; } }); }
+    return row(nm, en?v.ageEn:v.ageEs, !!e.applied, e.date, e.next, !v.core);
+  }).join('');
+  var custom=customs.map(function(c,i){ return usedC[i]?'':row(c.name, c.dose||'', true, c.date, c.next, false); }).join('');
   var deworm=(data.deworming||[]).filter(function(d){return d&&(d.date||d.product);}).map(function(d){ return '<tr><td>'+esc(d.product||'—')+'</td><td style="color:#64748b">'+esc(fmtDate(d.date))+'</td></tr>'; }).join('');
   var field=function(lbl,val){ if(val==null||String(val).trim()==='') return ''; return '<div style="min-width:120px"><div class="vx-l">'+esc(lbl)+'</div><div class="vx-v">'+esc(val)+'</div></div>'; };
   var vc=data.vetcheck||{};
