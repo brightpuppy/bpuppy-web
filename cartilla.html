@@ -43,18 +43,27 @@ function bpRenderVaxCard(pup, cli, data, lang){
   pup=pup||{}; cli=cli||{}; data=data||{};
   var en=(lang==='en'||lang==='english');
   var esc=function(s){ return String(s==null?'':s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); };
+  var fmtDate=function(v){
+    var m=/^(\d{4})-(\d{2})-(\d{2})/.exec(String(v==null?'':v)); if(!m) return String(v==null?'':v);
+    var y=+m[1], mo=+m[2]-1, da=+m[3];
+    var esM=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+    var enM=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    if(mo<0||mo>11||!da) return String(v);
+    if(en){ var s=['th','st','nd','rd'], vv=da%100; var ord=da+(s[(vv-20)%10]||s[vv]||s[0]); return enM[mo]+' '+ord+' '+y; }
+    return da+' de '+esM[mo]+' '+y;
+  };
   var sched=VAX_SCHEDULE;
   var T=en?{title:'VACCINATION RECORD',sub:'Puppy health & vaccination card',puppy:'PUPPY',owner:'OWNER',name:'Name',breed:'Breed',sex:'Sex',color:'Color',dob:'Date of birth',chip:'Microchip',phone:'Phone',vaccine:'Vaccine',dose:'Recommended age',given:'Given',date:'Date',next:'Next due',deworm:'DEWORMING',product:'Product',vet:'Veterinarian',clinic:'Clinic',notes:'Notes',sign:'Veterinarian signature & stamp',opt:'optional',foot:'Vaccination record — keep this document for your veterinarian.'}
               :{title:'REGISTRO DE VACUNACIÓN',sub:'Cartilla de salud y vacunas del cachorro',puppy:'CACHORRO',owner:'PROPIETARIO',name:'Nombre',breed:'Raza',sex:'Sexo',color:'Color',dob:'Fecha de nacimiento',chip:'Microchip',phone:'Teléfono',vaccine:'Vacuna',dose:'Edad recomendada',given:'Aplicada',date:'Fecha',next:'Próxima',deworm:'DESPARASITACIÓN',product:'Producto',vet:'Veterinario',clinic:'Clínica',notes:'Notas',sign:'Firma y sello del veterinario',opt:'opcional',foot:'Registro de vacunación — conserve este documento para su veterinario.'};
   var std=data.standard||{};
   var ownerName=[cli.first_name,cli.last_name].filter(Boolean).join(' ');
-  function row(nm,age,on,date,next,opt){ return '<tr'+(on?' style="background:#f0fdfa"':'')+'><td>'+esc(nm)+(opt?' <span style="font-size:9px;color:#94a3b8">('+T.opt+')</span>':'')+'</td><td style="color:#64748b">'+esc(age)+'</td><td style="text-align:center;font-size:16px">'+(on?'<span style="color:#0F766E;font-weight:800">☑</span>':'<span style="color:#cbd5e1">☐</span>')+'</td><td>'+esc(date||'')+'</td><td style="color:#64748b">'+esc(next||'')+'</td></tr>'; }
+  function row(nm,age,on,date,next,opt){ return '<tr'+(on?' style="background:#f0fdfa"':'')+'><td>'+esc(nm)+(opt?' <span style="font-size:9px;color:#94a3b8">('+T.opt+')</span>':'')+'</td><td style="color:#64748b">'+esc(age)+'</td><td style="text-align:center;font-size:16px">'+(on?'<span style="color:#0F766E;font-weight:800">☑</span>':'<span style="color:#cbd5e1">☐</span>')+'</td><td>'+esc(fmtDate(date))+'</td><td style="color:#64748b">'+esc(fmtDate(next))+'</td></tr>'; }
   var rows=sched.filter(function(v){ var e=std[v.id]||{}; return v.core || !!e.applied; }).map(function(v){ var e=std[v.id]||{}; return row(en?v.en:v.es, en?v.ageEn:v.ageEs, !!e.applied, e.date, e.next, !v.core); }).join('');
   var custom=(data.custom||[]).filter(function(c){return c&&c.name;}).map(function(c){ return row(c.name, c.dose||'', true, c.date, c.next, false); }).join('');
-  var deworm=(data.deworming||[]).filter(function(d){return d&&(d.date||d.product);}).map(function(d){ return '<tr><td>'+esc(d.product||'—')+'</td><td style="color:#64748b">'+esc(d.date||'')+'</td></tr>'; }).join('');
+  var deworm=(data.deworming||[]).filter(function(d){return d&&(d.date||d.product);}).map(function(d){ return '<tr><td>'+esc(d.product||'—')+'</td><td style="color:#64748b">'+esc(fmtDate(d.date))+'</td></tr>'; }).join('');
   var field=function(lbl,val){ if(val==null||String(val).trim()==='') return ''; return '<div style="min-width:120px"><div class="vx-l">'+esc(lbl)+'</div><div class="vx-v">'+esc(val)+'</div></div>'; };
   var vc=data.vetcheck||{};
-  var vcField=(vc.applied)?field(en?'Vet health exam':'Chequeo veterinario', vc.date? (vc.date+(en?' · general checkup':' · revisión general')) : (en?'Done':'Realizado')):'';
+  var vcField=(vc.applied)?field(en?'Vet health exam':'Chequeo veterinario', vc.date? (fmtDate(vc.date)+(en?' · general checkup':' · revisión general')) : (en?'Done':'Realizado')):'';
   var paw='<svg width="34" height="34" viewBox="0 0 24 24" fill="none" stroke="#0F766E" stroke-width="1.6"><circle cx="5.5" cy="10" r="1.8"/><circle cx="9.5" cy="6.5" r="1.8"/><circle cx="14.5" cy="6.5" r="1.8"/><circle cx="18.5" cy="10" r="1.8"/><path d="M8 14.5c0-2 1.8-3.5 4-3.5s4 1.5 4 3.5c0 2.2-1.8 3-4 3s-4-.8-4-3z"/></svg>';
   return '<html><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1"><title>'+esc(T.title)+(pup.name?(' — '+esc(pup.name)):'')+'</title><style>'
 <!-- Google tag (gtag.js) — Ads AW-11003229221 + GA4 G-BRLSXJ4V73. page_location sin query (no filtra tokens privados). -->
@@ -77,7 +86,7 @@ function bpRenderVaxCard(pup, cli, data, lang){
     +'</style></head><body>'
     +'<div class="vx-head">'+paw+'<div><h1 class="vx-t">'+T.title+'</h1><div class="vx-s">'+T.sub+'</div></div></div>'
     +'<div class="vx-sec">'+T.puppy+'</div><div class="vx-grid">'
-      +field(T.name,pup.name)+field(T.breed,pup.breed)+field(T.sex,pup.gender)+field(T.color,pup.color)+field(T.dob,pup.birth_date)+field(T.chip,pup.microchip)+vcField
+      +field(T.name,pup.name)+field(T.breed,pup.breed)+field(T.sex,pup.gender)+field(T.color,pup.color)+field(T.dob,fmtDate(pup.birth_date))+field(T.chip,pup.microchip)+vcField
     +'</div>'
     +'<div class="vx-sec">'+T.owner+'</div><div class="vx-grid">'+field(T.name,ownerName)+field(T.phone,cli.phone)+'</div>'
     +'<div class="vx-sec">'+T.vaccine.toUpperCase()+'</div>'
