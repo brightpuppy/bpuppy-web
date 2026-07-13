@@ -57,20 +57,10 @@
     ov.querySelector("#bp-si-send").onclick = function () {
       var email = (ov.querySelector("#bp-si-email").value || "").trim();
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) { errEl.textContent = t("Correo no válido.", "Invalid email."); errEl.style.display = "block"; return; }
-      var b = ov.querySelector("#bp-si-send"); b.disabled = true; b.textContent = t("Enviando…", "Sending…");
       var nm = "";
       try { var nf = document.querySelector('input[name*=name i], input[id*=name i], input[name*=nombre i]'); if (nf && nf.value) nm = nf.value; } catch (e) {}
-      fetch(SU + "/functions/v1/social_join", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON }, body: JSON.stringify({ action: "request", email: email, name: nm, source: source || "popup", lang: EN ? "en" : "es", page: (location.href || "").slice(0, 300), referrer: (document.referrer || "").slice(0, 300) }) })
-        .then(function (r) { return r.json(); })
-        .then(function () {
-          ov.querySelector("div").innerHTML =
-            '<div style="text-align:center;padding:6px 0">' +
-            '<div style="width:58px;height:58px;border-radius:50%;background:rgba(255,255,255,0.14);border:1px solid rgba(255,255,255,0.5);display:flex;align-items:center;justify-content:center;margin:0 auto 14px"><svg width="27" height="27" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg></div>' +
-            '<h2 style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;font-size:22px;margin:0 0 8px;color:#fff;text-shadow:0 2px 14px rgba(0,0,0,0.4)">' + t("¡Listo! Estás en la lista", "Done! You’re on the list") + '</h2>' +
-            '<p style="color:rgba(255,255,255,0.86);font-size:14px;line-height:1.55;margin:0 auto 16px;max-width:32ch;text-shadow:0 1px 8px rgba(0,0,0,0.35)">' + t("Te escribiremos por correo apenas abramos tu acceso a B Social.", "We’ll email you as soon as we open your access to B Social.") + '</p>' +
-            '<button onclick="document.getElementById(\'bp-si\').remove()" style="padding:13px 28px;border:none;border-radius:999px;background:linear-gradient(135deg,#FF9A3D,#FF5A1F);color:#fff;font-weight:800;font-size:14px;font-family:inherit;cursor:pointer;box-shadow:0 8px 22px rgba(255,90,31,0.5)">' + t("Cerrar", "Close") + '</button></div>';
-        })
-        .catch(function () { b.disabled = false; b.textContent = t("Solicitar mi acceso", "Request my access"); errEl.textContent = t("No se pudo enviar. Intenta de nuevo.", "Couldn’t send. Try again."); errEl.style.display = "block"; });
+      // B Social pide fecha de nacimiento, país y ciudad + ser mayor de 18 → se completa en el formulario.
+      location.href = "/social?e=" + encodeURIComponent(email) + (nm ? ("&n=" + encodeURIComponent(nm)) : "") + (EN ? "&lang=en" : "");
     };
   }
 

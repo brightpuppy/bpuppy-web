@@ -91,6 +91,9 @@
         '<div style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:700;font-size:16px;margin-bottom:14px;color:' + INK + '">' + t("Solicita ser parte", "Request to join") + '</div>' +
         '<input id="bpg-name" style="' + fieldCss() + '" placeholder="' + t("Tu nombre", "Your name") + '" autocomplete="name">' +
         '<input id="bpg-email" type="email" style="' + fieldCss() + '" placeholder="' + t("Tu correo", "Your email") + '" autocomplete="email">' +
+        lbl(t("Fecha de nacimiento", "Date of birth")) +
+        '<input id="bpg-dob" type="date" max="' + (new Date().toISOString().slice(0,10)) + '" style="' + fieldCss() + '" autocomplete="bday">' +
+        '<input id="bpg-country" style="' + fieldCss() + '" placeholder="' + t("Tu país", "Your country") + '" autocomplete="country-name">' +
         '<input id="bpg-city" style="' + fieldCss() + '" placeholder="' + t("Tu ciudad", "Your city") + '" autocomplete="address-level2">' +
         lbl(t("¿Tienes mascota?", "Do you have a pet?")) +
         '<div style="display:flex;gap:8px;margin-bottom:8px">' +
@@ -125,16 +128,34 @@
     var pts = document.querySelectorAll(".bpg-pt");
     for (var i = 0; i < pts.length; i++) pts[i].onclick = (function (b) { return function () { petType = b.getAttribute("data-t"); paintPills(); }; })(pts[i]);
     paintPills();
+    // Prefill (ej. cuando el pop-up de invitación redirige aquí con ?e=correo&n=nombre).
+    try { var _qe = (params.get("e") || "").trim(); if (_qe) { var _ee = document.getElementById("bpg-email"); if (_ee) _ee.value = _qe; }
+      var _qn = (params.get("n") || "").trim(); if (_qn) { var _ne = document.getElementById("bpg-name"); if (_ne && !_ne.value) _ne.value = _qn; } } catch (e) {}
 
+    function ageFromDob(s) {
+      var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(String(s || "")); if (!m) return null;
+      var b = new Date(+m[1], +m[2] - 1, +m[3]); if (isNaN(b.getTime())) return null;
+      var n = new Date(); var a = n.getFullYear() - b.getFullYear();
+      var mo = n.getMonth() - b.getMonth(); if (mo < 0 || (mo === 0 && n.getDate() < b.getDate())) a--;
+      return a;
+    }
     document.getElementById("bpg-send").onclick = function () {
       var email = (document.getElementById("bpg-email").value || "").trim();
       var name = (document.getElementById("bpg-name").value || "").trim();
+      var dob = (document.getElementById("bpg-dob").value || "").trim();
+      var country = (document.getElementById("bpg-country").value || "").trim();
+      var city = (document.getElementById("bpg-city").value || "").trim();
       if (!name) return showErr(t("Escribe tu nombre.", "Enter your name."));
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) return showErr(t("Correo no válido.", "Invalid email."));
+      var age = ageFromDob(dob);
+      if (!dob || age === null) return showErr(t("Escribe tu fecha de nacimiento.", "Enter your date of birth."));
+      if (age < 18) return showErr(t("Debes ser mayor de 18 años para ser parte de B Social.", "You must be 18 or older to join B Social."));
+      if (!country) return showErr(t("Escribe tu país.", "Enter your country."));
+      if (!city) return showErr(t("Escribe tu ciudad.", "Enter your city."));
       myEmail = email.toLowerCase();
       var btn = document.getElementById("bpg-send"); btn.disabled = true; btn.textContent = t("Enviando…", "Sending…");
       api("request", {
-        name: name, email: email, city: (document.getElementById("bpg-city").value || "").trim(),
+        name: name, email: email, dob: dob, country: country, city: city,
         source: "landing", referred_by: qref, lang: EN ? "en" : "es",
         has_pet: petHas, pet_type: (petHas === true ? petType : ""),
         pet_name: (petHas === true ? (document.getElementById("bpg-petname").value || "").trim() : ""),
