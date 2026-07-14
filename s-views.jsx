@@ -280,6 +280,7 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
   const [firstName, setFirstName] = useState(m.first_name||'');
   const [lastName, setLastName]   = useState(m.last_name||'');
   const [birthdate, setBirthdate] = useState(m.birthdate||'');
+  const [sex, setSex] = useState(m.sex||'');
   const ageY = (d) => { if(!d) return null; const b=new Date(d+'T00:00:00'); if(isNaN(b)) return null; const n=new Date(); let a=n.getFullYear()-b.getFullYear(); const mo=n.getMonth()-b.getMonth(); if(mo<0||(mo===0&&n.getDate()<b.getDate())) a--; return a; };
   const [bio, setBio]             = useState(m.bio || (pend && pend.story) || '');
   const [petSpecies, setPetSpecies] = useState(m.pet_species||'');
@@ -320,7 +321,7 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
       if (petFile)    pet_photo_url = await bsUpload(petFile, 'pets');
       if (coverFile)  cover_url = await bsUpload(coverFile, 'covers');
       const d = await onSave({
-        first_name:firstName.trim(), last_name:lastName.trim(), bio:bio.trim(), birthdate:birthdate||null,
+        first_name:firstName.trim(), last_name:lastName.trim(), bio:bio.trim(), birthdate:birthdate||null, sex:sex||null,
         pet_species:petSpecies, pet_name:petName.trim(), pet_breed:petBreed.trim(), pet_color:petColor.trim(), pet_age:petAge.trim(),
         address:address.trim(), city:city.trim(), state:stateV.trim(), zip:zip.trim(),
         avatar_url, pet_photo_url, cover_url, cover_pos:coverPos, is_public:isPublic,
@@ -374,6 +375,7 @@ function CreateProfileScreen({ me, onSave, onLogout, onDone }) {
           <div style={{ fontSize:12, fontWeight:700, color:BS.like||'#E5484D', background:'rgba(229,72,77,0.1)', border:'1px solid rgba(229,72,77,0.3)', borderRadius:10, padding:'8px 11px', marginTop:7, lineHeight:1.45 }}>{t(['Aún no puedes crear un perfil (debes tener 18+). ¡Pero puedes seguir jugando y guardar tu puntaje en el juego!','You can’t create a profile yet (you must be 18+). But you can keep playing and save your score in the game!'])}</div>
         )}
       </div>
+      <div style={grp}><div style={lbl}>{t(['Sexo','Sex'])}</div><select value={sex} onChange={e=>setSex(e.target.value)} style={fld}><option value="">{t(['Prefiero no decir','Prefer not to say'])}</option><option value="F">{t(['Femenino','Female'])}</option><option value="M">{t(['Masculino','Male'])}</option><option value="O">{t(['Otro','Other'])}</option></select></div>
       <div style={grp}><div style={lbl}>{t(['Bio (opcional)','Bio (optional)'])}</div><input value={bio} onChange={e=>setBio(e.target.value)} placeholder={t(['Amante de los Golden 🐾','Golden lover 🐾'])} style={fld}/></div>
 
       <div style={sectionTitle}>{t(['Tu mascota','Your pet'])}</div>
