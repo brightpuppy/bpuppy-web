@@ -269,6 +269,9 @@
 
   var LANG=(function(){try{return (window.__BP_LANG||localStorage.getItem('bpuppy-lang')||'es');}catch(e){return 'es';}})();
   function T(es,en){ return LANG==='en'? en : es; }
+  // Normaliza la etiqueta de nacimiento del texto "horneado" (ej. "Nacio April 21st") al idioma actual:
+  // EN → "Born April 21st", ES → "Nació April 21st". Si no empieza con Nació/Born (ej. "8 semanas"), lo deja igual.
+  function ageTextLoc(s){ s=String(s||''); if(!s) return ''; return s.replace(/^\s*(naci[oó]|born)\b[:.]?\s*/i, T('Nació','Born')+' '); }
   function money2(n){ return '$'+Number(Math.round(n)).toLocaleString('en-US'); }
 
   // ── Auto-merge de datos generales de la raza (enciclopedia local) ──
@@ -359,7 +362,7 @@
     var thumbs = photos.length>1 ? '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+photos.slice(0,8).map(function(u,idx){ return '<img src="'+esc(u)+'" referrerpolicy="no-referrer" onclick="var m=document.getElementById(\'dtl-main\');if(m){m.src=this.src;m.dataset.idx=\''+idx+'\';}" style="width:52px;height:52px;border-radius:8px;object-fit:cover;cursor:pointer;border:2px solid var(--line)">'; }).join('')+'</div>' : '';
     var facts=[];
     var g=genderEs(p.gender); if(g) facts.push([T('Sexo','Sex'),g]);
-    var a=p.age_text?esc(p.age_text):ageEs(p.age_weeks); if(a) facts.push([T('Edad','Age'),a]);
+    var a=p.age_text?esc(ageTextLoc(p.age_text)):ageEs(p.age_weeks); if(a) facts.push([T('Edad','Age'),a]);
     if(p.color) facts.push([T('Color','Color'),esc(p.color)]);
     if(p.born) facts.push([T('Nacimiento','Born'),esc(p.born)]);
     if(p.pedigree) facts.push([T('Pedigrí / registro','Pedigree'),(p.pedigree==='Sí'?T('Sí','Yes'):esc(p.pedigree))]);
@@ -492,7 +495,7 @@
       var meta = [];
       var g = genderEs(p.gender); if(g) meta.push(g);
       if(p.color) meta.push(esc(p.color));
-      var a = p.age_text ? esc(p.age_text) : ageEs(p.age_weeks); if(a) meta.push(a);
+      var a = p.age_text ? esc(ageTextLoc(p.age_text)) : ageEs(p.age_weeks); if(a) meta.push(a);
       var det=[];
       if(p.pedigree) det.push([T('Pedigrí','Pedigree'),(p.pedigree==='Sí'?T('Sí','Yes'):(p.pedigree==='No'?T('No','No'):esc(p.pedigree)))]);
       if(p.microchip) det.push([T('Microchip','Microchip'),(p.microchip==='Sí'?T('Sí','Yes'):(p.microchip==='No'?T('No','No'):esc(p.microchip)))]);
