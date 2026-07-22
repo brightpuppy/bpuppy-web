@@ -746,6 +746,7 @@ function MembershipPetModal({ buyFor, me, billing, onClose }) {
   const [notes, setNotes] = useState('');
   const [groomWeeks, setGroomWeeks] = useState('');
   const [sensitive, setSensitive] = useState(false);
+  const [agree, setAgree] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const t = useT();
@@ -757,6 +758,7 @@ function MembershipPetModal({ buyFor, me, billing, onClose }) {
     const em = (email || '').trim().toLowerCase();
     if (!name.trim()) { setErr(t(['Escribe el nombre de tu mascota','Enter your pet’s name'])); return; }
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) { setErr(t(['Escribe un correo válido para tu membresía','Enter a valid email for your membership'])); return; }
+    if (!agree) { setErr(t(['Acepta los Términos de membresía para continuar','Please accept the Membership Terms to continue'])); return; }
     setBusy(true); setErr('');
     const ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
     try {
@@ -806,6 +808,7 @@ function MembershipPetModal({ buyFor, me, billing, onClose }) {
         </div>
 
         {err && <div style={{ marginTop:10, fontSize:13, fontWeight:600, color:'#C0392B', background:'#f8e3df', borderRadius:10, padding:'9px 12px' }}>{err}</div>}
+        <label style={{ display:'flex', alignItems:'flex-start', gap:8, marginTop:12, cursor:'pointer' }}><input type="checkbox" checked={agree} onChange={e=>setAgree(e.target.checked)} style={{ width:16, height:16, marginTop:2, accentColor:'var(--orange)', flexShrink:0, cursor:'pointer' }}/><span style={{ fontSize:11.5, color:'var(--ink-2)', lineHeight:1.5 }}>{t(['Acepto que es una suscripción de cobro automático (mensual/anual) con permanencia mínima de 3 meses, y los ','I agree this is an auto-billing subscription (monthly/annual) with a 3-month minimum, and the '])}<a href="/terminos#membresias" target="_blank" rel="noopener" style={{ color:'var(--orange)', fontWeight:700 }}>{t(['Términos de membresía','Membership Terms'])}</a>{t(['. Precios de apertura por tiempo limitado.','. Limited-time opening prices.'])}</span></label>
         <button onClick={go} disabled={busy} style={{ width:'100%', marginTop:14, padding:14, borderRadius:13, border:'none', background: busy?'var(--line)':'var(--orange)', color:'#fff', fontFamily:'inherit', fontSize:15, fontWeight:800, cursor: busy?'default':'pointer' }}>{busy ? t(['Redirigiendo a pago seguro…','Redirecting to secure checkout…']) : t(['Continuar al pago →','Continue to payment →'])}</button>
         <p style={{ fontSize:10.5, color:'var(--ink-soft)', textAlign:'center', margin:'8px 0 0' }}>{t(['Pago seguro con Stripe. Tu mascota queda registrada al confirmar.','Secure payment with Stripe. Your pet is registered upon confirmation.'])}</p>
       </div>
