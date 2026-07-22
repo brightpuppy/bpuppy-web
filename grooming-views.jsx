@@ -747,6 +747,7 @@ function MembershipPetModal({ buyFor, me, billing, onClose }) {
   const [groomWeeks, setGroomWeeks] = useState('');
   const [sensitive, setSensitive] = useState(false);
   const [agree, setAgree] = useState(false);
+  const [lang, setLang] = useState((typeof navigator!=='undefined' && /^en/i.test(navigator.language||'')) ? 'en' : 'es');
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const t = useT();
@@ -764,7 +765,7 @@ function MembershipPetModal({ buyFor, me, billing, onClose }) {
     try {
       const r = await fetch('https://oqqwmcplljirbreowrll.supabase.co/functions/v1/stripe_membership', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY },
-        body: JSON.stringify({ action: 'checkout', plan_key: buyFor.planKey, client_email: em,
+        body: JSON.stringify({ action: 'checkout', plan_key: buyFor.planKey, client_email: em, lang,
           pet: { name: name.trim(), breed: breed.trim(), size, sex, weight_lbs: weight, groom_freq_weeks: groomWeeks, sensitive_skin: sensitive, notes: notes.trim() },
           success_url: 'https://bpuppy.us/grooming', cancel_url: location.href }),
       });
@@ -808,6 +809,7 @@ function MembershipPetModal({ buyFor, me, billing, onClose }) {
         </div>
 
         {err && <div style={{ marginTop:10, fontSize:13, fontWeight:600, color:'#C0392B', background:'#f8e3df', borderRadius:10, padding:'9px 12px' }}>{err}</div>}
+        <div style={{ display:'flex', alignItems:'center', gap:8, marginTop:12, flexWrap:'wrap' }}><span style={{ fontSize:12, fontWeight:700, color:'var(--ink-2)' }}>{t(['Idioma para tus correos:','Language for your emails:'])}</span>{['es','en'].map(L=>(<button key={L} type="button" onClick={()=>setLang(L)} style={{ padding:'5px 12px', borderRadius:999, border:'1.5px solid '+(lang===L?'var(--orange)':'var(--line)'), background: lang===L?'rgba(245,130,32,0.08)':'var(--bg)', color: lang===L?'var(--orange)':'var(--ink)', fontFamily:'inherit', fontWeight:700, fontSize:12, cursor:'pointer' }}>{L==='es'?'Español':'English'}</button>))}</div>
         <label style={{ display:'flex', alignItems:'flex-start', gap:8, marginTop:12, cursor:'pointer' }}><input type="checkbox" checked={agree} onChange={e=>setAgree(e.target.checked)} style={{ width:16, height:16, marginTop:2, accentColor:'var(--orange)', flexShrink:0, cursor:'pointer' }}/><span style={{ fontSize:11.5, color:'var(--ink-2)', lineHeight:1.5 }}>{t(['Acepto que es una suscripción de cobro automático (mensual/anual) con permanencia mínima de 3 meses, y los ','I agree this is an auto-billing subscription (monthly/annual) with a 3-month minimum, and the '])}<a href="/terminos#membresias" target="_blank" rel="noopener" style={{ color:'var(--orange)', fontWeight:700 }}>{t(['Términos de membresía','Membership Terms'])}</a>{t(['. Precios de apertura por tiempo limitado.','. Limited-time opening prices.'])}</span></label>
         <button onClick={go} disabled={busy} style={{ width:'100%', marginTop:14, padding:14, borderRadius:13, border:'none', background: busy?'var(--line)':'var(--orange)', color:'#fff', fontFamily:'inherit', fontSize:15, fontWeight:800, cursor: busy?'default':'pointer' }}>{busy ? t(['Redirigiendo a pago seguro…','Redirecting to secure checkout…']) : t(['Continuar al pago →','Continue to payment →'])}</button>
         <p style={{ fontSize:10.5, color:'var(--ink-soft)', textAlign:'center', margin:'8px 0 0' }}>{t(['Pago seguro con Stripe. Tu mascota queda registrada al confirmar.','Secure payment with Stripe. Your pet is registered upon confirmation.'])}</p>
