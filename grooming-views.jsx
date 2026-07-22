@@ -744,6 +744,8 @@ function MembershipPetModal({ buyFor, me, billing, onClose }) {
   const [sex, setSex] = useState('');
   const [weight, setWeight] = useState(presetPets[0] && presetPets[0].weight_lbs ? String(presetPets[0].weight_lbs) : '');
   const [notes, setNotes] = useState('');
+  const [groomWeeks, setGroomWeeks] = useState('');
+  const [sensitive, setSensitive] = useState(false);
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState('');
   const t = useT();
@@ -761,7 +763,7 @@ function MembershipPetModal({ buyFor, me, billing, onClose }) {
       const r = await fetch('https://oqqwmcplljirbreowrll.supabase.co/functions/v1/stripe_membership', {
         method: 'POST', headers: { 'Content-Type': 'application/json', 'apikey': ANON_KEY, 'Authorization': 'Bearer ' + ANON_KEY },
         body: JSON.stringify({ action: 'checkout', plan_key: buyFor.planKey, client_email: em,
-          pet: { name: name.trim(), breed: breed.trim(), size, sex, weight_lbs: weight, notes: notes.trim() },
+          pet: { name: name.trim(), breed: breed.trim(), size, sex, weight_lbs: weight, groom_freq_weeks: groomWeeks, sensitive_skin: sensitive, notes: notes.trim() },
           success_url: 'https://bpuppy.us/grooming', cancel_url: location.href }),
       });
       const c = await r.json();
@@ -797,6 +799,8 @@ function MembershipPetModal({ buyFor, me, billing, onClose }) {
           <div><div style={lbl}>{t(['Tamaño','Size'])}</div><select value={size} onChange={e=>setSize(e.target.value)} style={fld}><option value="">—</option><option value="Pequeño">{t(['Pequeño','Small'])}</option><option value="Mediano">{t(['Mediano','Medium'])}</option><option value="Grande">{t(['Grande','Large'])}</option><option value="XL">XL</option></select></div>
           <div><div style={lbl}>{t(['Sexo','Sex'])}</div><select value={sex} onChange={e=>setSex(e.target.value)} style={fld}><option value="">—</option><option value="Macho">{t(['Macho','Male'])}</option><option value="Hembra">{t(['Hembra','Female'])}</option></select></div>
           <div><div style={lbl}>{t(['Peso (lb)','Weight (lb)'])}</div><input value={weight} onChange={e=>setWeight(e.target.value)} type="number" min="0" placeholder={t(['Ej: 12','e.g. 12'])} style={fld}/></div>
+          <div><div style={lbl}>{t(['Baño/corte cada','Bath/haircut every'])}</div><select value={groomWeeks} onChange={e=>setGroomWeeks(e.target.value)} style={fld}><option value="">{t(['— elegir','— choose'])}</option><option value="4">{t(['Cada 4 semanas','Every 4 weeks'])}</option><option value="6">{t(['Cada 6 semanas','Every 6 weeks'])}</option><option value="8">{t(['Cada 8 semanas','Every 8 weeks'])}</option><option value="12">{t(['Cada 12 semanas','Every 12 weeks'])}</option></select></div>
+          <div style={{ display:'flex', alignItems:'center', gap:8, alignSelf:'end', paddingBottom:6 }}><input id="mp-sens" type="checkbox" checked={sensitive} onChange={e=>setSensitive(e.target.checked)} style={{ width:18, height:18, accentColor:'var(--orange)', cursor:'pointer' }}/><label htmlFor="mp-sens" style={{ fontSize:13, fontWeight:700, color:'var(--ink)', cursor:'pointer' }}>{t(['Piel sensible','Sensitive skin'])}</label></div>
           <div style={{ gridColumn:'1/-1' }}><div style={lbl}>{t(['Tu correo *','Your email *'])}</div><input value={email} onChange={e=>setEmail(e.target.value)} type="email" placeholder={t(['tu@correo.com','you@email.com'])} style={fld} disabled={!!(me && me.email)}/></div>
           <div style={{ gridColumn:'1/-1' }}><div style={lbl}>{t(['Notas (opcional)','Notes (optional)'])}</div><textarea value={notes} onChange={e=>setNotes(e.target.value)} placeholder={t(['Alergias, comportamiento...','Allergies, behavior...'])} rows={2} style={{ ...fld, resize:'vertical', minHeight:54 }}/></div>
         </div>
