@@ -4,630 +4,785 @@
 <meta charset="utf-8"/>
 <script>try{var _bl=localStorage.getItem('bpuppy-lang');if(!_bl){_bl=(((navigator.language||navigator.userLanguage||'')+'').toLowerCase().indexOf('es')===0)?'es':'en';localStorage.setItem('bpuppy-lang',_bl);}document.documentElement.lang=_bl;}catch(e){}/*bplangboot*/</script>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>Mi portal — BPuppy</title>
+<title>Mi perfil — BPuppy</title>
 <meta name="robots" content="noindex"/>
 <link rel="icon" href="assets/favicon.webp">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&family=Instrument+Serif:ital@0;1&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <style>
-:root{--orange:#F58220;--orange2:#C2521E;--ink:#2D2421;--ink2:#6f6055;--soft:#9a8c7e;--paper:#F7F1E6;--bg:#fff;--line:#e4d7bf;--green:#1EB87A;--grad:linear-gradient(135deg,#F55820 0%,#E83860 100%);--glow:0 8px 24px rgba(245,88,32,.28)}
+:root{
+  --orange:#F58220;--orange2:#C2521E;--ink:#241C18;--ink2:#6b5c50;--soft:#9d8e80;
+  --paper:#FBF7F0;--bg:#fff;--line:#EADFCE;--line2:#F2E9DA;
+  --green:#12A47A;--violet:#7C3AED;--blue:#2563EB;
+  --r:20px;--rs:14px;
+  --shadow:0 1px 2px rgba(36,28,24,.04), 0 8px 28px -14px rgba(36,28,24,.16);
+  --shadow-lift:0 2px 6px rgba(36,28,24,.06), 0 18px 44px -18px rgba(36,28,24,.28);
+}
 *{box-sizing:border-box;margin:0;padding:0}
-body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);min-height:100vh}
+body{font-family:'Plus Jakarta Sans',system-ui,sans-serif;color:var(--ink);background:var(--paper);min-height:100vh;-webkit-font-smoothing:antialiased}
+img{max-width:100%;display:block}
+a{color:inherit}
+
+/* ── animaciones ── */
 @keyframes sp{to{transform:rotate(360deg)}}
-@keyframes fadeIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
-@keyframes pop{from{opacity:0;transform:scale(.9)}to{opacity:1;transform:scale(1)}}
-.fade{animation:fadeIn .3s ease both}.pop{animation:pop .32s cubic-bezier(.34,1.56,.64,1) both}
-header{display:flex;align-items:center;justify-content:space-between;padding:14px 20px;border-bottom:1px solid var(--line);background:#fff;position:sticky;top:0;z-index:20}
-header img{height:32px}
-header a{text-decoration:none;font-size:13px;font-weight:700;color:var(--ink2)}
-header a:hover{color:var(--orange)}
+@keyframes rise{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+@keyframes pop{from{opacity:0;transform:scale(.9) translateY(16px)}to{opacity:1;transform:none}}
+@keyframes popout{from{opacity:1;transform:none}to{opacity:0;transform:scale(.94) translateY(8px)}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes hue{0%{filter:hue-rotate(0deg)}100%{filter:hue-rotate(360deg)}}
+@keyframes slide{0%{background-position:0% 50%}100%{background-position:200% 50%}}
+.rise{animation:rise .42s cubic-bezier(.2,.8,.3,1) both}
+.rise:nth-child(2){animation-delay:.05s}.rise:nth-child(3){animation-delay:.1s}.rise:nth-child(4){animation-delay:.15s}
 
-/* ---- logged-out hero (login) ---- */
-.hero{background:linear-gradient(135deg,#FFF3E6 0%,#FCE7CF 55%,#F8DCBE 100%);color:var(--ink);padding:60px 20px 58px;text-align:center;border-bottom:1px solid var(--line)}
-.hero .eyebrow{font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--orange2);font-weight:800}
-.hero h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(34px,5vw,56px);line-height:1.05;margin:10px 0 6px;color:var(--ink)}
-.hero h1 em{font-style:italic;color:var(--orange2)}
-.hero p{color:var(--ink2);max-width:48ch;margin:0 auto;font-size:15px;line-height:1.6}
+/* ── header ── */
+header{position:sticky;top:0;z-index:40;display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:11px 18px;background:rgba(251,247,240,.86);backdrop-filter:blur(12px);border-bottom:1px solid var(--line2)}
+header .brand{display:flex;align-items:center;gap:9px;text-decoration:none;font-weight:800;font-size:15px;letter-spacing:-.01em}
+header .brand img{height:28px}
+.hbtn{display:inline-flex;align-items:center;gap:6px;padding:8px 15px;border-radius:999px;border:1px solid var(--line);
+  background:var(--bg);font-family:inherit;font-size:12.5px;font-weight:700;color:var(--ink2);text-decoration:none;cursor:pointer;
+  transition:border-color .16s,color .16s,transform .16s}
+.hbtn:hover{border-color:var(--orange);color:var(--orange2);transform:translateY(-1px)}
+.hbtn.ghost{border-style:dashed}
 
-.wrap{max-width:1020px;margin:0 auto;padding:0 18px 70px;position:relative;z-index:2}
-.login-wrap{max-width:460px;margin:34px auto 0}
-.card{background:#fff;border:1px solid var(--line);border-radius:18px;padding:20px;box-shadow:0 14px 40px rgba(45,36,33,.10);margin-bottom:16px}
+.wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
 
-/* ---- profile header ---- */
-.phead{position:relative;margin:0 -18px 0;background:var(--grad);height:128px;border-radius:0 0 26px 26px}
-.phead .pat{position:absolute;inset:0;opacity:.16;background-image:radial-gradient(circle at 20% 30%,#fff 2px,transparent 2px),radial-gradient(circle at 70% 60%,#fff 2px,transparent 2px),radial-gradient(circle at 45% 85%,#fff 1.5px,transparent 1.5px);background-size:80px 80px;border-radius:0 0 26px 26px}
-.pcard{margin-top:-58px;position:relative;z-index:2}
-.pcard .avatar{width:84px;height:84px;border-radius:50%;background:var(--grad);display:grid;place-items:center;color:#fff;font-size:30px;font-weight:800;font-family:'Bricolage Grotesque',sans-serif;border:4px solid #fff;box-shadow:0 8px 22px rgba(45,36,33,.18)}
-.pcard h1{font-family:'Bricolage Grotesque',sans-serif;font-size:25px;font-weight:800;letter-spacing:-.02em;margin:12px 0 2px;color:var(--ink)}
-.pcard .sub{font-size:13.5px;color:var(--ink2)}
-.pcard .vipchip{display:inline-flex;align-items:center;gap:5px;margin-top:9px;padding:5px 13px;border-radius:999px;background:rgba(245,130,32,.12);color:var(--orange2);font-size:12px;font-weight:800}
-.pstats{display:flex;gap:10px;margin-top:14px}
-.pstat{flex:1;background:var(--paper);border-radius:14px;padding:12px 8px;text-align:center}
-.pstat b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:800;color:var(--ink);line-height:1}
-.pstat span{font-size:10.5px;color:var(--soft);font-weight:600}
+/* ── portada + avatar ── */
+.cover{position:relative;height:190px;border-radius:0 0 26px 26px;overflow:hidden;background:
+  linear-gradient(135deg,#FFE9D2,#FFD9E4 45%,#E4E7FF);border:1px solid var(--line);border-top:none}
+.cover img{width:100%;height:100%;object-fit:cover}
+.cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(36,28,24,.35))}
+.cover .dots{position:absolute;inset:0;opacity:.35;
+  background-image:radial-gradient(circle at 18% 28%,#fff 1.6px,transparent 1.6px),radial-gradient(circle at 68% 62%,#fff 1.6px,transparent 1.6px),radial-gradient(circle at 44% 84%,#fff 1.2px,transparent 1.2px);
+  background-size:78px 78px}
+.camchip{position:absolute;right:14px;bottom:14px;display:inline-flex;align-items:center;gap:6px;
+  padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.5);background:rgba(36,28,24,.5);
+  color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(6px);transition:background .16s}
+.camchip:hover{background:rgba(36,28,24,.72)}
 
-/* ---- tabs ---- */
-.tabs{display:flex;gap:6px;margin:18px 0 16px;overflow-x:auto;scrollbar-width:none}
+.idcard{position:relative;margin:-60px 0 0;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);
+  padding:0 24px 22px;box-shadow:var(--shadow);overflow:hidden}
+.idcard .rainbow{height:3px;margin:0 -24px 0;background:linear-gradient(90deg,#F55820,#E83860,#7C3AED,#2563EB,#12A47A,#F5A623,#F55820);
+  background-size:200% 100%;animation:slide 9s linear infinite}
+.av{position:relative;width:96px;height:96px;margin:-46px 0 0;border-radius:50%;border:4px solid var(--bg);
+  background:linear-gradient(135deg,#F55820,#E83860);display:grid;place-items:center;color:#fff;
+  font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;overflow:hidden;box-shadow:0 8px 22px -8px rgba(36,28,24,.4)}
+.av img{width:100%;height:100%;object-fit:cover}
+.av .pen{position:absolute;right:-2px;bottom:-2px;width:30px;height:30px;border-radius:50%;border:2.5px solid var(--bg);
+  background:var(--ink);color:#fff;display:grid;place-items:center;cursor:pointer;transition:transform .16s}
+.av .pen:hover{transform:scale(1.12)}
+h1.nm{font-family:'Bricolage Grotesque',sans-serif;font-size:27px;font-weight:800;letter-spacing:-.02em;margin:14px 0 3px;line-height:1.1}
+.sub{font-size:13.5px;color:var(--ink2)}
+.memchip{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:999px;font-size:12px;font-weight:800;
+  border:1.5px solid;background:var(--bg);margin-top:10px}
+
+/* ── stats ── */
+.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:18px}
+.stat{border:1px solid var(--line);border-radius:var(--rs);padding:13px 10px;text-align:center;background:var(--bg);
+  transition:border-color .16s,transform .16s}
+.stat:hover{border-color:var(--orange);transform:translateY(-2px)}
+.stat b{display:block;font-family:'Bricolage Grotesque',sans-serif;font-size:23px;font-weight:800;line-height:1}
+.stat span{display:block;font-size:10.5px;color:var(--soft);font-weight:700;margin-top:4px;letter-spacing:.01em}
+
+/* ── insignias ── */
+.bgrid{display:flex;gap:8px;flex-wrap:wrap;margin-top:16px}
+.bdg{display:inline-flex;align-items:center;gap:7px;padding:7px 13px;border-radius:999px;border:1px solid var(--line);
+  background:var(--bg);font-size:12px;font-weight:700;cursor:default;transition:transform .16s,border-color .16s}
+.bdg:hover{transform:translateY(-2px);border-color:var(--orange)}
+.bdg .em{font-size:15px;line-height:1}
+.bdg.lock{opacity:.5;border-style:dashed;color:var(--soft);filter:grayscale(1)}
+.bdg.lock:hover{opacity:.85;filter:none}
+
+/* ── tabs (outline, sin relleno) ── */
+.tabs{display:flex;gap:8px;margin:22px 0 18px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px}
 .tabs::-webkit-scrollbar{display:none}
-.tab{flex:0 0 auto;display:flex;align-items:center;gap:7px;padding:10px 17px;border-radius:999px;border:none;background:#fff;border:1px solid var(--line);color:var(--ink2);font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:all .16s;white-space:nowrap}
+.tab{flex:0 0 auto;display:inline-flex;align-items:center;gap:7px;padding:10px 17px;border-radius:999px;
+  border:1.5px solid var(--line);background:var(--bg);color:var(--ink2);font-family:inherit;font-size:13.5px;
+  font-weight:700;cursor:pointer;white-space:nowrap;transition:all .16s}
 .tab:hover{border-color:var(--orange);color:var(--ink)}
-.tab.on{background:var(--grad);color:#fff;border-color:transparent;box-shadow:var(--glow)}
-.tab .n{background:rgba(0,0,0,.10);border-radius:999px;padding:1px 7px;font-size:11px}
-.tab.on .n{background:rgba(255,255,255,.25)}
-.tabpane{display:none}.tabpane.on{display:block}
+.tab.on{border-color:var(--orange);color:var(--orange2);box-shadow:inset 0 0 0 1px var(--orange)}
+.tab .n{background:var(--paper);border-radius:999px;padding:1px 7px;font-size:11px;color:var(--ink2)}
+.pane{display:none}.pane.on{display:block;animation:fade .25s ease both}
 
-.cards-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:16px;align-items:start;margin-bottom:16px}
-.cards-grid .card{margin-bottom:0}
-.card.plan-card{transition:transform .15s ease,box-shadow .15s ease}
-.card.plan-card:hover{transform:translateY(-3px);box-shadow:0 18px 46px rgba(45,36,33,.14)}
+/* ── tarjetas ── */
+.card{background:var(--bg);border:1px solid var(--line);border-radius:var(--r);padding:20px;box-shadow:var(--shadow);margin-bottom:14px}
+.card.tint{border-left:3px solid var(--orange)}
+.ttl{font-family:'Bricolage Grotesque',sans-serif;font-size:16.5px;font-weight:800;letter-spacing:-.01em}
+.lb{font-size:10.5px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.5px}
+.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line2);font-size:13.5px}
+.row:last-child{border-bottom:none}
+.row .k{color:var(--ink2)}.row .v{font-weight:700;text-align:right}
+.muted{font-size:12.5px;color:var(--ink2);line-height:1.65}
 
-/* ---- pet cards ---- */
-.pets-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:14px}
-.pet{background:#fff;border:1px solid var(--line);border-radius:18px;overflow:hidden;box-shadow:0 10px 30px rgba(45,36,33,.08);transition:transform .15s,box-shadow .15s}
-.pet:hover{transform:translateY(-3px);box-shadow:0 16px 40px rgba(45,36,33,.13)}
-.pet .ph{height:120px;background:linear-gradient(135deg,#FFE7CE,#FCD9B8);display:grid;place-items:center;font-size:46px;position:relative}
+/* ── mascotas ── */
+.pets{display:grid;grid-template-columns:repeat(auto-fill,minmax(215px,1fr));gap:13px}
+.pet{background:var(--bg);border:1px solid var(--line);border-radius:18px;overflow:hidden;cursor:pointer;
+  transition:transform .18s cubic-bezier(.2,.8,.3,1),box-shadow .18s,border-color .18s}
+.pet:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--orange)}
+.pet .ph{height:132px;background:linear-gradient(135deg,#FFEEDC,#FFE1EA);display:grid;place-items:center;position:relative;overflow:hidden}
 .pet .ph img{width:100%;height:100%;object-fit:cover}
-.pet .bd{padding:13px 15px 15px}
-.pet .nm{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:var(--ink)}
-.pet .br{display:inline-block;margin-top:5px;font-size:11.5px;font-weight:700;color:var(--orange2);background:rgba(245,130,32,.12);padding:2px 10px;border-radius:999px}
-.pet .mt{font-size:12px;color:var(--soft);margin-top:6px}
-.addtile{border:2px dashed var(--line);border-radius:18px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;min-height:170px;color:var(--ink2);cursor:pointer;background:#fffdf9;font-weight:700;font-size:14px;transition:all .16s}
-.addtile:hover{border-color:var(--orange);color:var(--orange);background:#fff}
-.addtile .plus{width:40px;height:40px;border-radius:50%;background:var(--paper);display:grid;place-items:center;font-size:22px}
+.pet .bd{padding:12px 14px 14px}
+.pet .nm2{font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:800}
+.pet .br{display:inline-block;margin-top:4px;font-size:11.5px;font-weight:700;color:var(--orange2);
+  border:1px solid var(--line);border-radius:999px;padding:2px 9px}
+.pet .mt{font-size:11.5px;color:var(--soft);margin-top:6px}
+.tag{display:inline-block;font-size:10px;font-weight:800;border-radius:999px;padding:3px 9px;letter-spacing:.02em}
+.tag.warn{background:#FFF4E0;color:#8A5A00;border:1px solid #F2D9A6}
+.tag.ok{background:#E6F7F1;color:#0B6B4F;border:1px solid #B8E6D5}
+.addtile{border:1.5px dashed var(--line);border-radius:18px;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:9px;min-height:190px;color:var(--ink2);cursor:pointer;background:transparent;
+  font-weight:700;font-size:13.5px;transition:all .18s}
+.addtile:hover{border-color:var(--orange);color:var(--orange2);background:var(--bg)}
+.addtile .plus{width:42px;height:42px;border-radius:50%;border:1.5px solid var(--line);display:grid;place-items:center;font-size:21px}
 
-/* ---- grooming hero card ---- */
-.gbook{background:var(--grad);border-radius:20px;padding:22px 22px 24px;color:#fff;box-shadow:var(--glow);margin-bottom:16px;position:relative;overflow:hidden}
-.gbook .em{position:absolute;right:-8px;top:-6px;font-size:84px;opacity:.18;transform:rotate(-12deg)}
-.gbook h2{font-family:'Bricolage Grotesque',sans-serif;font-size:22px;font-weight:800;margin-bottom:4px;position:relative}
-.gbook p{font-size:13.5px;opacity:.92;max-width:42ch;line-height:1.5;position:relative}
-.gbook .go{display:inline-flex;align-items:center;gap:8px;margin-top:16px;padding:13px 24px;border-radius:999px;background:#fff;color:var(--orange2);font-weight:800;font-size:14.5px;text-decoration:none;position:relative;transition:transform .14s}
-.gbook .go:hover{transform:translateY(-2px)}
+/* ── botones ── */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:13px 22px;border-radius:14px;
+  border:1.5px solid var(--line);background:var(--bg);color:var(--ink);font-family:inherit;font-size:14px;font-weight:800;
+  cursor:pointer;text-decoration:none;transition:all .16s}
+.btn:hover{border-color:var(--orange);color:var(--orange2);transform:translateY(-2px)}
+.btn.pri{border-color:transparent;background:linear-gradient(135deg,#F55820,#E83860);color:#fff;box-shadow:0 10px 24px -12px rgba(245,88,32,.9)}
+.btn.pri:hover{color:#fff;filter:brightness(1.06)}
+.btn.w{width:100%}
+.btn.sm{padding:8px 14px;font-size:12.5px;border-radius:11px}
 
-label{display:block;font-size:13px;font-weight:700;color:var(--ink2);margin:0 0 6px}
-input{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);outline:none}
-input:focus{border-color:var(--orange)}
-.cta{display:block;width:100%;margin-top:14px;padding:14px;border-radius:13px;border:none;background:var(--grad);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px -8px rgba(245,130,32,.5)}
-.pf-editbtn{margin-top:14px;display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
-.pf-editbtn:hover{background:rgba(255,255,255,.22)}
-.pf-nudge{margin-top:12px;font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.9);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:9px 13px}
-.pf-nudge b{color:#fff}
-.bdg-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
-.bdg{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);color:#fff;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px}
-.bdg-i{font-size:13px;line-height:1}
-/* Citas: reprogramar */
-.bk{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:11px 13px;border:1px solid var(--line,#eee2d6);border-radius:12px;margin-bottom:8px;background:#fff}
-.bk-w{font-size:13px;color:var(--ink2,#6f6055)}
-.bk-b{padding:8px 15px;border-radius:999px;border:1.5px solid var(--orange,#F58220);background:transparent;color:var(--orange,#F58220);font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
-/* Buena noticia: insignia desbloqueada */
-.pf-win{margin-top:14px;text-align:center;background:linear-gradient(135deg,#FFF7ED,#FFEDD5);border:1.5px solid #F58220;border-radius:14px;padding:16px 14px}
-.pf-win .em{font-size:30px;line-height:1}
-.pf-win .t{font-weight:900;color:#2D2421;font-size:16px;margin-top:4px}
-.pf-win .s{font-size:13px;color:#6f6055;margin-top:4px;line-height:1.5}
-.cta:disabled{opacity:.55;cursor:default;box-shadow:none}
-.ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--line);box-shadow:none}
-.msg{margin-top:12px;font-size:14px;font-weight:600;border-radius:12px;padding:12px 14px;line-height:1.5}
-.msg.ok{background:#E3F4EC;color:#0f7a52}.msg.err{background:#f8e3df;color:#C0392B}.msg.info{background:#FCEFD9;color:var(--orange2)}
-.step-label{font-size:11px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin-bottom:10px}
-.row{display:flex;justify-content:space-between;gap:12px;padding:8px 0;border-bottom:1px dashed var(--line);font-size:14px}
-.row:last-child{border:none}
-.row .k{color:var(--ink2);font-weight:600}.row .v{font-weight:700;text-align:right}
-.badge{display:inline-block;padding:3px 11px;border-radius:999px;font-size:11px;font-weight:800;letter-spacing:.04em;text-transform:uppercase}
-.b-active{background:#E3F4EC;color:var(--green)}.b-lead{background:#FCEFD9;color:var(--orange2)}.b-done{background:#E8EEF6;color:#2c5d8f}.b-cancel{background:#f3e2df;color:#C0392B}
-.bar{height:8px;background:var(--paper);border-radius:999px;overflow:hidden;margin:8px 0 4px}.bar>span{display:block;height:100%;background:linear-gradient(90deg,var(--orange),#FFB877)}
-.center{text-align:center;padding:30px;color:var(--ink2)}
-.empty{text-align:center;padding:40px 24px;color:var(--ink2)}
-.empty .ico{font-size:46px;margin-bottom:12px}
-.empty .t{font-family:'Bricolage Grotesque',sans-serif;font-size:18px;font-weight:800;color:var(--ink);margin-bottom:6px}
-.spin{width:30px;height:30px;border:3px solid var(--line);border-top-color:var(--orange);border-radius:50%;animation:sp .8s linear infinite;margin:0 auto 12px}
-.muted{font-size:12px;color:var(--soft);margin-top:8px}
-.pay{display:inline-block;margin-top:8px;padding:9px 14px;background:var(--orange);color:#fff;border-radius:999px;font-size:12.5px;font-weight:800;text-decoration:none;cursor:pointer;border:none;font-family:inherit}
-.b-pending{background:#FCEFD9;color:var(--orange2)}
-.modal-bg{position:fixed;inset:0;background:rgba(45,36,33,.55);backdrop-filter:blur(3px);display:flex;align-items:flex-start;justify-content:center;padding:40px 16px;z-index:50;overflow-y:auto}
-.modal{background:#fff;border-radius:20px;width:100%;max-width:480px;padding:24px;box-shadow:0 30px 80px rgba(45,36,33,.3)}
-.modal h3{font-family:'Bricolage Grotesque',sans-serif;font-size:21px;font-weight:800;color:var(--ink);margin-bottom:4px}
-.modal .x{float:right;border:none;background:var(--paper);width:32px;height:32px;border-radius:50%;font-size:18px;line-height:1;cursor:pointer;color:var(--ink2)}
-.fgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin:14px 0 4px}
-.fgrid .full{grid-column:1/-1}
-.fgrid label{margin:0 0 6px}
-select{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);outline:none}
-select:focus{border-color:var(--orange)}
-textarea{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);outline:none;resize:vertical;min-height:62px}
-textarea:focus{border-color:var(--orange)}
-footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-top:1px solid var(--line)}
+/* ── descubre ── */
+.disc{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:11px}
+.dl{display:flex;align-items:center;gap:12px;padding:15px;border:1px solid var(--line);border-radius:var(--rs);
+  background:var(--bg);text-decoration:none;transition:all .18s}
+.dl:hover{border-color:var(--orange);transform:translateX(4px)}
+.dl .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;font-size:18px;border:1px solid var(--line)}
+.dl .t{font-weight:800;font-size:13.5px}
+.dl .d{font-size:11.5px;color:var(--soft);margin-top:1px;line-height:1.4}
+
+/* ── formularios / modales ── */
+label{display:block;font-size:10.5px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.5px;margin:12px 0 5px}
+input,select,textarea{width:100%;padding:12px 14px;border-radius:12px;border:1.5px solid var(--line);font-family:inherit;
+  font-size:15px;color:var(--ink);background:var(--bg);outline:none;transition:border-color .16s}
+input:focus,select:focus,textarea:focus{border-color:var(--orange)}
+textarea{min-height:88px;resize:vertical;font-size:14px}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ov{position:fixed;inset:0;z-index:120;background:rgba(36,28,24,.55);backdrop-filter:blur(4px);display:flex;
+  align-items:flex-start;justify-content:center;padding:24px 14px;overflow:auto;animation:fade .16s ease both}
+.ov.out{animation:fade .14s ease reverse both}
+.modal{background:var(--bg);border-radius:24px;max-width:520px;width:100%;padding:24px;box-shadow:0 30px 80px -20px rgba(36,28,24,.6);
+  animation:pop .3s cubic-bezier(.34,1.56,.64,1) both}
+.ov.out .modal{animation:popout .14s ease both}
+.mh{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:6px}
+.x{border:none;background:var(--paper);width:34px;height:34px;border-radius:50%;font-size:17px;cursor:pointer;color:var(--ink2);transition:transform .14s}
+.x:hover{transform:rotate(90deg);background:#FDE7E7;color:#B4232A}
+.msg{border-radius:12px;padding:11px 14px;font-size:13.5px;margin-top:12px;line-height:1.5}
+.msg.err{background:#FDECEC;color:#9B1C1C;border:1px solid #F5C2C2}
+.msg.ok{background:#E6F7F1;color:#0B6B4F;border:1px solid #B8E6D5}
+.msg.info{background:#EEF2FF;color:#3730A3;border:1px solid #C7D2FE}
+.nudge{border:1px dashed var(--orange);background:#FFF8F1;border-radius:var(--rs);padding:12px 15px;font-size:13px;
+  color:var(--orange2);margin-top:14px;line-height:1.55}
+.spin{width:26px;height:26px;border:3px solid var(--line);border-top-color:var(--orange);border-radius:50%;
+  animation:sp .8s linear infinite;margin:0 auto 12px}
+.center{text-align:center;padding:34px 10px;color:var(--ink2)}
+.empty{text-align:center;padding:30px 16px}
+.empty .ic{font-size:34px;opacity:.5;margin-bottom:8px}
+.empty .t{font-weight:800;font-size:15px;margin-bottom:4px}
+.empty .d{font-size:13px;color:var(--ink2);line-height:1.6}
+.bar{height:7px;background:var(--paper);border-radius:999px;overflow:hidden;margin:10px 0 5px}
+.bar span{display:block;height:100%;background:linear-gradient(90deg,#F55820,#E83860);border-radius:999px}
+.bk{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:12px 14px;border:1px solid var(--line);
+  border-radius:var(--rs);margin-bottom:9px;transition:border-color .16s}
+.bk:hover{border-color:var(--orange)}
+.cardpm{display:flex;align-items:center;gap:13px;padding:15px;border:1px solid var(--line);border-radius:var(--rs);background:var(--paper)}
+.cardpm .chip{width:46px;height:31px;border-radius:6px;background:linear-gradient(135deg,#241C18,#4a3b31);color:#fff;
+  display:grid;place-items:center;font-size:10px;font-weight:800;letter-spacing:.04em}
+
+/* ── login ── */
+.login{max-width:430px;margin:56px auto 0}
+.hero{text-align:center;padding:44px 20px 10px}
+.hero .eyebrow{font-size:11.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--orange2);font-weight:800}
+.hero h1{font-family:'Instrument Serif',serif;font-weight:400;font-size:clamp(32px,6vw,50px);line-height:1.05;margin:10px 0 8px}
+.hero h1 em{font-style:italic;color:var(--orange2)}
+.hero p{color:var(--ink2);max-width:44ch;margin:0 auto;font-size:15px;line-height:1.6}
+
+footer{text-align:center;padding:28px 16px 40px;font-size:12.5px;color:var(--soft);line-height:1.7}
+footer a{color:var(--orange2);text-decoration:none;font-weight:700}
+
+@media(max-width:640px){
+  .wrap{padding:0 12px 70px}
+  .cover{height:150px;border-radius:0 0 20px 20px}
+  .idcard{padding:0 17px 18px;border-radius:18px}
+  .idcard .rainbow{margin:0 -17px}
+  .av{width:80px;height:80px;margin-top:-40px;font-size:27px}
+  h1.nm{font-size:23px}
+  .stats{grid-template-columns:repeat(2,1fr)}
+  .g2{grid-template-columns:1fr}
+  .modal{padding:19px;border-radius:19px}
+}
 </style>
 </head>
 <body>
+
 <header>
-  <a href="/"><img src="assets/logo-clean.webp" alt="BPuppy" onerror="this.style.display='none';this.parentNode.textContent='BPuppy'"></a>
-  <a href="#" id="logout" style="display:none" data-es="Cerrar sesión" data-en="Sign out">Cerrar sesión</a>
+  <a class="brand" href="/"><img src="assets/logo-clean.webp" alt="" onerror="this.style.display='none'"><span>BPuppy</span></a>
+  <div style="display:flex;gap:8px;align-items:center">
+    <a class="hbtn" href="/" data-es="← Volver a B Puppy" data-en="← Back to B Puppy">← Volver a B Puppy</a>
+    <a class="hbtn ghost" href="#" id="logout" style="display:none" data-es="Salir" data-en="Sign out">Salir</a>
+  </div>
 </header>
 
 <section class="hero" id="hero">
-  <div class="eyebrow" data-es="BPuppy · Mi cuenta" data-en="BPuppy · My account">BPuppy · Mi cuenta</div>
-  <h1 data-es="Bienvenido a &lt;em&gt;tu mundo&lt;/em&gt;" data-en="Welcome to &lt;em&gt;your world&lt;/em&gt;">Bienvenido a <em>tu mundo</em></h1>
-  <p data-es="Tus mascotas, citas de grooming, planes de pago y guardados — todo en un solo lugar." data-en="Your pets, grooming appointments, payment plans and saved items — all in one place.">Tus mascotas, citas de grooming, planes de pago y guardados — todo en un solo lugar.</p>
+  <div class="eyebrow" data-es="Mi perfil" data-en="My profile">Mi perfil</div>
+  <h1 data-es="Todo tuyo, en &lt;em&gt;un solo lugar&lt;/em&gt;" data-en="All yours, in &lt;em&gt;one place&lt;/em&gt;">Todo tuyo, en <em>un solo lugar</em></h1>
+  <p data-es="Tus mascotas, tus citas, tu plan y tus insignias." data-en="Your pets, your appointments, your plan and your badges.">Tus mascotas, tus citas, tu plan y tus insignias.</p>
 </section>
 
+<div id="coverhost"></div>
 <div class="wrap" id="root">
   <div class="card"><div class="center"><div class="spin"></div>Cargando…</div></div>
 </div>
 
-<footer id="pf-foot">BPuppy · <span data-es="¿Dudas? Escríbenos por SMS o WhatsApp" data-en="Questions? Text us or WhatsApp">¿Dudas? Escríbenos por SMS o WhatsApp</span> <a href="sms:+19294287300" style="color:var(--orange)">+1 (929) 428-7300</a> · <a href="/" style="color:var(--orange)" data-es="Volver al sitio" data-en="Back to the site">Volver al sitio</a></footer>
+<footer>
+  <span data-es="¿Dudas? Escríbenos por SMS o WhatsApp" data-en="Questions? Text us or WhatsApp">¿Dudas? Escríbenos por SMS o WhatsApp</span>
+  <a href="sms:+19294287300">+1 (929) 428-7300</a><br>
+  <a href="/" data-es="Volver a bpuppy.us" data-en="Back to bpuppy.us">Volver a bpuppy.us</a>
+</footer>
+
+<input type="file" id="upfile" accept="image/*" style="display:none">
 
 <script>
 (function(){
   var SUPA='https://oqqwmcplljirbreowrll.supabase.co';
   var ANON='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
   var sb=window.supabase.createClient(SUPA, ANON);
-  var root=document.getElementById('root');
+  var root=document.getElementById('root'), coverHost=document.getElementById('coverhost');
+  var D=null; // ultimo portal_data
+
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
-  function money(n){return '$'+Number(n||0).toLocaleString('en-US');}
-  // REGLA: todo lo que ve el cliente va en SU idioma (clients.contact_lang manda; si no, el del navegador).
-  var PLANG = (((document.documentElement.lang||'es')+'').indexOf('en')===0) ? 'en' : 'es';
-  function PT(es, en){ return PLANG === 'en' ? en : es; }
+  function money(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+  /* Todo lo que ve el cliente va en SU idioma (clients.contact_lang manda). */
+  var PLANG=(((document.documentElement.lang||'es')+'').indexOf('en')===0)?'en':'es';
+  function PT(es,en){return PLANG==='en'?en:es;}
   function setPlangFrom(c){
-    try{
-      var v = String((c && (c.contact_lang || c.language)) || '').toLowerCase();
-      if(v) PLANG = (v.indexOf('en')===0) ? 'en' : 'es';
-      document.documentElement.lang = PLANG;
-      applyStaticLang();
+    try{ var v=String((c&&(c.contact_lang||c.language))||'').toLowerCase();
+      if(v) PLANG=(v.indexOf('en')===0)?'en':'es';
+      document.documentElement.lang=PLANG; applyStatic();
     }catch(e){}
   }
-  // Textos fijos del HTML (header/hero/footer) en el idioma del cliente
-  function applyStaticLang(){
-    try{
-      document.querySelectorAll('[data-es][data-en]').forEach(function(el){
-        var v = PLANG === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-es');
-        if(v != null) el.innerHTML = v;
-      });
-    }catch(e){}
+  function applyStatic(){
+    try{ document.querySelectorAll('[data-es][data-en]').forEach(function(el){
+      var v=PLANG==='en'?el.getAttribute('data-en'):el.getAttribute('data-es'); if(v!=null) el.innerHTML=v;
+    }); }catch(e){}
   }
-  function fmtD(d){if(!d)return '—';try{return new Date(d+'T12:00:00').toLocaleDateString(PLANG==='en'?'en-US':'es-US',{day:'numeric',month:'long',year:'numeric'});}catch(e){return d;}}
-  // Contacto: muchos clientes no usan WhatsApp -> siempre ofrecer SMS tambien.
-  var BP_TEL = '+1 (929) 428-7300';
-  function contactLine(){ return PT('Contáctanos: SMS o WhatsApp ','Contact us: text or WhatsApp ') + BP_TEL; }
+  function fmtD(d){ if(!d) return '—';
+    try{ return new Date(String(d).length<=10?(d+'T12:00:00'):d).toLocaleDateString(PLANG==='en'?'en-US':'es-US',{day:'numeric',month:'long',year:'numeric'}); }catch(e){ return d; } }
+  function fmtShort(d){ if(!d) return '—';
+    try{ return new Date(String(d).length<=10?(d+'T12:00:00'):d).toLocaleDateString(PLANG==='en'?'en-US':'es-US',{day:'numeric',month:'short'}); }catch(e){ return d; } }
+
   var IC={
-    mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/>',
     paw:'<circle cx="7" cy="9" r="1.6"/><circle cx="12" cy="7.4" r="1.6"/><circle cx="17" cy="9" r="1.6"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/>',
-    bath:'<path d="M4 13h16v2a4 4 0 0 1-4 4H8a4 4 0 0 1-4-4z"/><path d="M6 13V6.5A2.5 2.5 0 0 1 8.5 4 2.5 2.5 0 0 1 11 6.5"/><path d="M6.5 19l-1 2M17.5 19l1 2"/>',
-    card:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/>',
-    bookmark:'<path d="M6 4h12v16l-6-4-6 4z"/>',
     scissors:'<circle cx="6" cy="6" r="2.2"/><circle cx="6" cy="18" r="2.2"/><path d="M20 4 8.5 15.5M8.5 8.5 20 20M7.6 7.6 12 12"/>',
-    star:'<path d="M12 3l2.5 5.2 5.5 .8-4 3.9 .9 5.6L12 21l-5.4 2.5L7.5 18l-4-3.9 5.5-.8z"/>'
+    card:'<rect x="3" y="6" width="18" height="12" rx="2"/><path d="M3 10h18"/>',
+    compass:'<circle cx="12" cy="12" r="9"/><path d="M15.5 8.5 13.5 13.5 8.5 15.5 10.5 10.5z"/>',
+    mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/>',
+    cam:'<path d="M4 8h3l1.5-2h7L17 8h3v11H4z"/><circle cx="12" cy="13" r="3.2"/>',
+    pen:'<path d="M4 20h4L19 9a2.1 2.1 0 0 0-3-3L5 17z"/>',
+    star:'<path d="M12 3.5l2.6 5.3 5.9.9-4.3 4.1 1 5.7L12 16.8 6.8 19.5l1-5.7L3.5 9.7l5.9-.9z"/>'
   };
-  function svg(name,s){s=s||22;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle">'+(IC[name]||'')+'</svg>';}
-  function badge(st){
-    if(st==='active'||st==='scheduled'||st==='confirmed') return '<span class="badge b-active">'+PT('Activo','Active')+'</span>';
-    if(st==='lead') return '<span class="badge b-lead">'+PT('Reservado','Booked')+'</span>';
-    if(st==='completed') return '<span class="badge b-done">'+PT('Completado','Completed')+'</span>';
-    if(st==='cancelled'||st==='refunded') return '<span class="badge b-cancel">'+esc(st)+'</span>';
-    return '<span class="badge b-lead">'+esc(st||'—')+'</span>';
-  }
+  function svg(n,s,st){ s=s||20; return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(st||1.7)+'" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle">'+(IC[n]||'')+'</svg>'; }
 
-  function showLogin(prefMsg){
-    var hero=document.getElementById('hero'); if(hero) hero.style.display='';
-    root.innerHTML = '<div class="login-wrap"><div class="card"><div class="step-label">'+PT('Entra a tu cuenta','Sign in to your account')+'</div>'+
-      '<p style="font-size:14px;color:var(--ink2);margin-bottom:14px">'+PT('Te enviamos un <b>enlace mágico</b> a tu correo — sin contraseñas. Toca el enlace y entras automáticamente.','We email you a <b>magic link</b> — no passwords. Tap the link and you are in.')+'</p>'+
-      '<label>'+PT('Tu correo','Your email')+'</label><input id="le" type="email" placeholder="'+PT('tu@correo.com','you@email.com')+'" autocomplete="email">'+
-      '<button class="cta" id="lb">'+PT('Enviarme mi enlace','Send me my link')+'</button>'+
-      (prefMsg?('<div id="lm" class="msg '+prefMsg.k+'">'+prefMsg.t+'</div>'):'<div id="lm"></div>')+
-      '<p class="muted">'+PT('Usa el mismo correo con el que reservaste tu plan o tu membresía.','Use the same email you booked your plan or membership with.')+'</p></div></div>';
-    document.getElementById('lb').onclick=function(){
-      var em=(document.getElementById('le').value||'').trim();
-      var m=document.getElementById('lm');
-      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ m.className='msg err'; m.textContent=PT('Escribe un correo válido.','Enter a valid email.'); return; }
-      var btn=document.getElementById('lb'); btn.disabled=true; btn.textContent=PT('Enviando…','Sending…');
-      fetch(SUPA+'/functions/v1/portal_magiclink',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({email:em, redirectTo: window.location.origin + '/portal'})})
-        .then(function(r){return r.json();}).then(function(d){
-          btn.disabled=false; btn.textContent=PT('Enviarme mi enlace','Send me my link');
-          if(d.error){ m.className='msg err'; m.textContent=d.error; return; }
-          m.className='msg ok'; m.innerHTML='<span style="color:var(--green);vertical-align:middle;margin-right:4px">'+svg('mail',16)+'</span>'+PT('Revisa tu correo (<b>'+esc(em)+'</b>) y toca el enlace para entrar.','Check your inbox (<b>'+esc(em)+'</b>) and tap the link to sign in.');
-        }).catch(function(){ btn.disabled=false; btn.textContent=PT('Enviarme mi enlace','Send me my link'); m.className='msg err'; m.textContent=PT('No se pudo enviar el enlace. Intenta de nuevo.','We could not send the link. Try again.'); });
+  /* ═══ modal animado ═══ */
+  function modal(title, html, w){
+    var ov=document.createElement('div'); ov.className='ov';
+    ov.innerHTML='<div class="modal" style="max-width:'+(w||520)+'px"><div class="mh"><div class="ttl">'+title+'</div><button class="x" data-x="1">✕</button></div><div class="mbody">'+html+'</div></div>';
+    document.body.appendChild(ov);
+    ov.close=function(){ ov.classList.add('out'); setTimeout(function(){ try{ov.remove();}catch(e){} },150); };
+    ov.addEventListener('click',function(e){ if(e.target===ov||(e.target.getAttribute&&e.target.getAttribute('data-x'))) ov.close(); });
+    ov.body=function(){ return ov.querySelector('.mbody'); };
+    return ov;
+  }
+  window._pmodal=modal;
+
+  /* ═══ subir foto ═══ */
+  function pickPhoto(cb){
+    var inp=document.getElementById('upfile');
+    inp.value='';
+    inp.onchange=async function(){
+      var f=inp.files&&inp.files[0]; if(!f) return;
+      if(f.size>8*1024*1024){ alert(PT('La foto es muy grande (máx. 8 MB).','That photo is too big (8 MB max).')); return; }
+      try{
+        var ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
+        var path=(D&&D.client&&D.client.id?D.client.id:'anon')+'/'+Date.now()+'.'+ext;
+        var up=await sb.storage.from('portal-photos').upload(path,f,{upsert:true,contentType:f.type||'image/jpeg'});
+        if(up.error) throw up.error;
+        var pub=sb.storage.from('portal-photos').getPublicUrl(path);
+        cb(pub.data.publicUrl);
+      }catch(e){ alert(PT('No se pudo subir la foto.','We could not upload the photo.')); }
     };
+    inp.click();
+  }
+  async function api(body){
+    var s=await sb.auth.getSession();
+    var tok=s.data&&s.data.session&&s.data.session.access_token;
+    if(!tok) return {error:'no_auth'};
+    var r=await fetch(SUPA+'/functions/v1/portal_data',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify(body||{})});
+    return await r.json();
   }
 
-  function renderPlan(p, pays){
-    var paid=Number(p.paid_total||0), est=Number(p.est_price||0), bal=Math.max(0,est-paid), pct=est>0?Math.min(100,Math.round(paid/est*100)):0;
-    var rows=(pays||[]).filter(function(x){return x.plan_id===p.id;}).sort(function(a,b){return a.created_at<b.created_at?-1:1;});
-    var html='<div class="card plan-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">'+PT('Plan de pagos','Payment plan')+'</div>'+badge(p.status)+'</div>'+
-      '<div class="row"><span class="k">'+PT('Raza','Breed')+'</span><span class="v">'+esc(p.breed||'—')+'</span></div>'+
-      '<div class="row"><span class="k">'+PT('Plan','Plan')+'</span><span class="v">'+(p.months||'—')+PT(' meses · ',' months · ')+money(p.monthly_amount)+PT('/mes','/mo')+'</span></div>'+
-      '<div class="row"><span class="k">'+PT('Total estimado','Estimated total')+'</span><span class="v">'+money(est)+'</span></div>'+
-      '<div class="row"><span class="k">'+PT('Abonado','Paid so far')+'</span><span class="v" style="color:var(--green)">'+money(paid)+'</span></div>'+
-      '<div class="row"><span class="k">'+PT('Restante','Remaining')+'</span><span class="v">'+money(bal)+'</span></div>'+
-      '<div class="row"><span class="k">'+PT('Tu gran día','Your big day')+'</span><span class="v">'+esc(fmtD(p.target_date))+'</span></div>'+
-      '<div class="bar"><span style="width:'+pct+'%"></span></div><div style="font-size:11px;color:var(--ink2);text-align:right">'+pct+PT('% completado','% complete')+'</div>';
-    if(bal>0 && p.status!=='cancelled'){
-      html+='<button class="pay" data-plan="'+esc(p.id)+'" data-amt="monthly">'+PT('Hacer abono (','Make a payment (')+money(p.monthly_amount)+')</button> '+
-            '<button class="pay" style="background:var(--ink2)" data-plan="'+esc(p.id)+'" data-amt="all">'+PT('Pagar restante (','Pay the rest (')+money(bal)+')</button>';
-    }
-    if(rows.length){
-      html+='<div style="margin-top:14px"><div class="step-label">'+PT('Tus abonos','Your payments')+'</div>'+rows.map(function(x){return '<div class="row"><span class="k">'+esc(fmtD((x.created_at||'').slice(0,10)))+'</span><span class="v">'+money(x.amount)+' · '+esc(x.method||'')+'</span></div>';}).join('')+'</div>';
-    }
-    html+='</div>';
-    return html;
-  }
-
-  function petEmoji(breed){
-    return '<span style="color:var(--orange)">'+svg('paw',44)+'</span>';
-  }
-  function renderPetCard(p){
-    var pending = p.status==='pending';
-    var age = p.birthdate ? fmtD(p.birthdate) : '';
-    var meta=[p.sex, age, (p.weight_lbs?(p.weight_lbs+' lb'):'')].filter(Boolean).map(esc).join(' · ');
-    var ph = p.photo_url
-      ? '<img src="'+esc(p.photo_url)+'" alt="">'
-      : petEmoji(p.breed);
-    var action = pending
-      ? '<span class="badge b-pending" style="display:inline-block;margin-top:11px">'+PT('Pendiente de confirmar','Pending confirmation')+'</span>'
-      : '<a href="/grooming.html" class="pay" style="margin-top:11px;background:var(--paper);color:var(--orange2)">'+PT('Agendar para ','Book for ')+esc((p.name||'').split(' ')[0]||PT('mi mascota','my pet'))+'</a>';
-    return '<div class="pet pop"'+(pending?' style="opacity:.82"':'')+'><div class="ph">'+ph+'</div><div class="bd">'+
-      '<div class="nm">'+esc(p.name||PT('Mi mascota','My pet'))+'</div>'+
-      (p.breed?('<span class="br">'+esc(p.breed)+(p.size?(' · '+esc(p.size)):'')+'</span>'):'')+
-      (meta?('<div class="mt">'+meta+'</div>'):'')+
-      action+
-      '</div></div>';
-  }
-  function renderPetsTab(pets){
-    var cards=(pets||[]).map(renderPetCard).join('');
-    cards+='<div class="addtile js-add-pet"><div class="plus">+</div>'+PT('Agregar otra mascota','Add another pet')+'</div>';
-    if(!(pets&&pets.length)){
-      return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('paw',40)+'</div><div class="t">'+PT('Aún no tienes mascotas registradas','No pets registered yet')+'</div><div>'+PT('Registra a tu mascota y nuestro equipo la confirma.','Add your pet and our team will confirm it.')+'</div><br><button class="pay js-add-pet" style="text-decoration:none">'+PT('Agregar mi mascota','Add my pet')+'</button></div></div>';
-    }
-    return '<div class="pets-grid">'+cards+'</div>';
-  }
-  // Insignias ganadas (vienen de portal_data.badges)
-  function bdgHtml(list){
-    if(!list || !list.length) return '';
-    var en = PLANG === 'en';
-    return '<div class="bdg-row">'+list.slice(0,8).map(function(b){
-      var nm = en ? (b.name_en||b.name_es||'') : (b.name_es||b.name_en||'');
-      return '<span class="bdg" title="'+esc(b.description||'')+'"><span class="bdg-i">'+esc(b.icon||'')+'</span>'+esc(nm)+'</span>';
-    }).join('')+'</div>';
-  }
-  // Perfil completo = nombre, apellido, telefono, direccion, ciudad y ZIP.
-  // Si portal_data todavia no devuelve address/zip, caemos a la marca local que dejamos al guardar.
-  function pfIsComplete(c){
-    if(!c) return false;
-    var hasAddrFields = ('address' in c) || ('zip' in c);
-    if(!hasAddrFields){ try{ return localStorage.getItem('bp_pf_done')==='1'; }catch(e){ return false; } }
-    var need = ['first_name','last_name','phone','address','city','zip'];
-    for(var i=0;i<need.length;i++){ if(!String(c[need[i]]||'').trim()) return false; }
-    return true;
-  }
-  function openProfileModal(c){
-    c = c || {};
-    var wasComplete = pfIsComplete(c);
-    var bg=document.createElement('div'); bg.className='modal-bg';
-    bg.innerHTML='<div class="modal pop">'+
-      '<button class="x" id="epx">×</button>'+
-      '<h3>'+PT('Editar mi perfil','Edit my profile')+'</h3>'+
-      '<p style="font-size:13px;color:var(--ink2)">'+PT('Con tus datos completos agendas más rápido y te llega todo a la dirección correcta.','With your details complete you book faster and everything reaches the right address.')+'</p>'+
-      '<div class="fgrid">'+
-        '<div><label>'+PT('Nombre *','First name *')+'</label><input id="ep_first" value="'+esc(c.first_name||'')+'" placeholder="'+PT('Ej: Luis','e.g. Luis')+'"></div>'+
-        '<div><label>'+PT('Apellido *','Last name *')+'</label><input id="ep_last" value="'+esc(c.last_name||'')+'" placeholder="'+PT('Ej: Guzmán','e.g. Smith')+'"></div>'+
-        '<div class="full"><label>'+PT('Teléfono *','Phone *')+'</label><input id="ep_phone" value="'+esc(c.phone||'')+'" placeholder="+1 (305) 000-0000"></div>'+
-        '<div class="full"><label>'+PT('Dirección *','Address *')+'</label><input id="ep_addr" value="'+esc(c.address||'')+'" placeholder="'+PT('Calle y número','Street and number')+'"></div>'+
-        '<div><label>'+PT('Ciudad *','City *')+'</label><input id="ep_city" value="'+esc(c.city||'')+'"></div>'+
-        '<div><label>'+PT('Estado','State')+'</label><input id="ep_state" value="'+esc(c.state||'FL')+'"></div>'+
-        '<div><label>ZIP *</label><input id="ep_zip" value="'+esc(c.zip||'')+'" inputmode="numeric"></div>'+
-        '<div><label>'+PT('Idioma','Language')+'</label><select id="ep_lang"><option value="Spanish">Español</option><option value="English">English</option></select></div>'+
-      '</div>'+
-      '<button class="cta" id="ep_save">'+PT('Guardar mi perfil','Save my profile')+'</button>'+
-      '<div id="ep_msg"></div>'+
-    '</div>';
-    document.body.appendChild(bg);
-    try{ var cl=String(c.contact_lang||c.language||'').toLowerCase(); bg.querySelector('#ep_lang').value = (cl.indexOf('en')===0)?'English':'Spanish'; }catch(e){}
-    function close(){ bg.remove(); }
-    bg.querySelector('#epx').onclick=close;
-    bg.onclick=function(e){ if(e.target===bg) close(); };
-    bg.querySelector('#ep_save').onclick=function(){
-      var m=bg.querySelector('#ep_msg'), btn=bg.querySelector('#ep_save');
-      var v=function(id){ return (bg.querySelector(id).value||'').trim(); };
-      var payload={ first_name:v('#ep_first'), last_name:v('#ep_last'), phone:v('#ep_phone'), address:v('#ep_addr'), city:v('#ep_city'), state:v('#ep_state'), zip:v('#ep_zip'), lang:bg.querySelector('#ep_lang').value };
-      if(!payload.first_name || !payload.last_name){ m.className='msg err'; m.textContent=PT('Escribe tu nombre y apellido.','Enter your first and last name.'); return; }
-      btn.disabled=true; btn.textContent=PT('Guardando…','Saving…');
-      sb.auth.getSession().then(function(s){
-        var tok=s.data&&s.data.session&&s.data.session.access_token;
-        if(!tok){ m.className='msg err'; m.textContent=PT('Sesión expirada. Vuelve a entrar.','Session expired. Please sign in again.'); btn.disabled=false; btn.textContent=PT('Guardar mi perfil','Save my profile'); return; }
-        fetch(SUPA+'/functions/v1/portal_profile',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify(payload)})
-          .then(function(r){return r.json();}).then(function(d){
-            if(!d.ok){ m.className='msg err'; m.textContent=d.detail||d.error||PT('No se pudo guardar.','We could not save it.'); btn.disabled=false; btn.textContent=PT('Guardar mi perfil','Save my profile'); return; }
-            var nowComplete = ['first_name','last_name','phone','address','city','zip'].every(function(k){ return String(payload[k]||'').trim(); });
-            try{ if(nowComplete) localStorage.setItem('bp_pf_done','1'); }catch(e){}
-            if(nowComplete && !wasComplete){
-              // Buena noticia: insignia desbloqueada
-              bg.querySelector('.modal').innerHTML='<div class="pf-win"><div class="em">🏅</div>'+
-                '<div class="t">'+PT('¡Insignia desbloqueada: Perfil Completo!','Badge unlocked: Complete Profile!')+'</div>'+
-                '<div class="s">'+PT('Gracias '+esc(payload.first_name)+'. Ya tienes todo listo: la próxima vez agendas en segundos y podemos llegar a tu dirección.','Thanks '+esc(payload.first_name)+'. You are all set: next time you book in seconds and we can reach your address.')+'</div>'+
-                '</div><button class="cta" id="ep_done">'+PT('Ver mi perfil','See my profile')+'</button>';
-              bg.querySelector('#ep_done').onclick=function(){ close(); showDashboard(); };
-              return;
-            }
-            m.className='msg ok'; m.textContent=PT('¡Listo! Tu perfil quedó actualizado.','Done! Your profile is updated.');
-            btn.textContent=PT('Guardado','Saved');
-            setTimeout(function(){ close(); showDashboard(); }, 1200);
-          }).catch(function(){ m.className='msg err'; m.textContent=PT('No se pudo guardar. Intenta de nuevo.','We could not save it. Try again.'); btn.disabled=false; btn.textContent=PT('Guardar mi perfil','Save my profile'); });
-      });
-    };
-  }
-  function openPetModal(){
-    var bg=document.createElement('div'); bg.className='modal-bg';
-    bg.innerHTML='<div class="modal pop">'+
-      '<button class="x" id="pmx">×</button>'+
-      '<h3>'+PT('Agregar mascota','Add pet')+'</h3>'+
-      '<p style="font-size:13px;color:var(--ink2)">'+PT('La registramos y nuestro equipo la confirma. Te avisamos cuando esté lista para agendar.','We register it and our team confirms it. We let you know when it is ready to book.')+'</p>'+
-      '<div class="fgrid">'+
-        '<div class="full"><label>'+PT('Nombre *','Name *')+'</label><input id="pf_name" placeholder="'+PT('Ej: Max','e.g. Max')+'"></div>'+
-        '<div><label>'+PT('Raza','Breed')+'</label><input id="pf_breed" placeholder="'+PT('Ej: Poodle','e.g. Poodle')+'"></div>'+
-        '<div><label>'+PT('Tamaño','Size')+'</label><select id="pf_size"><option value="">—</option><option>'+PT('Pequeño','Small')+'</option><option>'+PT('Mediano','Medium')+'</option><option>'+PT('Grande','Large')+'</option><option>XL</option></select></div>'+
-        '<div><label>'+PT('Sexo','Sex')+'</label><select id="pf_sex"><option value="">—</option><option>'+PT('Macho','Male')+'</option><option>'+PT('Hembra','Female')+'</option></select></div>'+
-        '<div><label>'+PT('Peso (lb)','Weight (lb)')+'</label><input id="pf_weight" type="number" min="0" placeholder="'+PT('Ej: 12','e.g. 12')+'"></div>'+
-        '<div><label>'+PT('Pelaje','Coat')+'</label><input id="pf_coat" placeholder="'+PT('Ej: Rizado','e.g. Curly')+'"></div>'+
-        '<div><label>'+PT('Nacimiento','Birthdate')+'</label><input id="pf_birth" type="date"></div>'+
-        '<div class="full"><label>'+PT('Notas','Notes')+'</label><textarea id="pf_notes" placeholder="'+PT('Alergias, comportamiento, preferencias...','Allergies, behavior, preferences...')+'"></textarea></div>'+
-      '</div>'+
-      '<button class="cta" id="pf_save">'+PT('Guardar mascota','Save pet')+'</button>'+
-      '<div id="pf_msg"></div>'+
-    '</div>';
-    document.body.appendChild(bg);
-    function close(){ bg.remove(); }
-    bg.querySelector('#pmx').onclick=close;
-    bg.onclick=function(e){ if(e.target===bg) close(); };
-    bg.querySelector('#pf_save').onclick=function(){
-      var name=(bg.querySelector('#pf_name').value||'').trim();
-      var m=bg.querySelector('#pf_msg');
-      if(!name){ m.className='msg err'; m.textContent=PT('El nombre es obligatorio.','The name is required.'); return; }
-      var payload={ name:name, breed:(bg.querySelector('#pf_breed').value||'').trim(), size:bg.querySelector('#pf_size').value, sex:bg.querySelector('#pf_sex').value, coat:(bg.querySelector('#pf_coat').value||'').trim(), weight_lbs:bg.querySelector('#pf_weight').value, birthdate:bg.querySelector('#pf_birth').value, notes:(bg.querySelector('#pf_notes').value||'').trim() };
-      var btn=bg.querySelector('#pf_save'); btn.disabled=true; btn.textContent=PT('Guardando…','Saving…');
-      sb.auth.getSession().then(function(s){
-        var tok=s.data&&s.data.session&&s.data.session.access_token;
-        if(!tok){ m.className='msg err'; m.textContent=PT('Sesión expirada. Vuelve a entrar.','Session expired. Please sign in again.'); btn.disabled=false; btn.textContent=PT('Guardar mascota','Save pet'); return; }
-        fetch(SUPA+'/functions/v1/portal_add_pet',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify(payload)})
-          .then(function(r){return r.json();}).then(function(d){
-            if(d.error){ m.className='msg err'; m.textContent=d.error; btn.disabled=false; btn.textContent=PT('Guardar mascota','Save pet'); return; }
-            m.className='msg ok'; m.textContent=PT('¡Listo! '+esc(name)+' quedó registrada. Te avisamos al confirmarla.','Done! '+esc(name)+' is registered. We will let you know once confirmed.');
-            btn.textContent=PT('Guardada','Saved');
-            setTimeout(function(){ close(); showDashboard(); }, 1500);
-          }).catch(function(){ m.className='msg err'; m.textContent=PT('No se pudo guardar. Intenta de nuevo.','We could not save it. Try again.'); btn.disabled=false; btn.textContent=PT('Guardar mascota','Save pet'); });
-      });
-    };
-  }
-
-  // Lo que incluye cada plan, en corto. Las políticas completas van por link.
+  /* ═══ plan: color, nombre y lo que incluye ═══ */
   function planInfo(plan){
     var s=String(plan||'').toLowerCase();
-    var billing = (s.indexOf('year')>=0||s.indexOf('anual')>=0||s.indexOf('annual')>=0) ? PT('anual','yearly') : PT('mensual','monthly');
-    if(s.indexOf('vip')>=0) return { label:'VIP', color:'#7C3AED', billing:billing, perks:[
+    var billing=(s.indexOf('year')>=0||s.indexOf('anual')>=0||s.indexOf('annual')>=0)?PT('anual','yearly'):PT('mensual','monthly');
+    if(s.indexOf('vip')>=0) return {label:'VIP',color:'#7C3AED',soft:'#F4EDFF',billing:billing,perks:[
       PT('Spa VIP completo cada mes','Full VIP spa every month'),
       PT('Pickup & delivery ilimitado','Unlimited pickup & delivery'),
-      PT('20% de descuento en todo servicio extra','20% off every extra service'),
+      PT('20% de descuento en servicios extra','20% off extra services'),
       PT('Agenda reservada siempre para ti','Priority slots always held for you'),
-      PT('Reporte de pelaje y regalo de cumpleaños','Coat report and birthday gift')
-    ]};
-    if(s.indexOf('total')>=0) return { label:'Total', color:'#F58220', billing:billing, perks:[
+      PT('Reporte de pelaje y regalo de cumpleaños','Coat report and birthday gift')]};
+    if(s.indexOf('total')>=0) return {label:'Total',color:'#C2521E',soft:'#FFF2E6',billing:billing,perks:[
       PT('1 baño + corte al mes','1 bath + haircut per month'),
       PT('Uñas y oídos incluidos','Nails and ears included'),
       PT('Pickup & delivery incluido (10 millas)','Pickup & delivery included (10 miles)'),
       PT('15% de descuento en servicios extra','15% off extra services'),
-      PT('Prioridad en agenda y foto mensual','Priority booking and a monthly photo')
-    ]};
-    return { label:'Esencial', color:'#1EB87A', billing:billing, perks:[
+      PT('Prioridad en agenda y foto mensual','Priority booking and a monthly photo')]};
+    return {label:'Esencial',color:'#12A47A',soft:'#E7F7F1',billing:billing,perks:[
       PT('1 baño completo al mes','1 full bath per month'),
       PT('Uñas incluidas','Nails included'),
       PT('10% de descuento en servicios extra','10% off extra services'),
-      PT('Recordatorios automáticos de tu cita','Automatic appointment reminders')
-    ]};
+      PT('Recordatorios automáticos de tu cita','Automatic appointment reminders')]};
   }
-  function renderMembership(m){
-    var info=planInfo(m.plan);
-    return '<div class="card plan-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">'+PT('Membresía','Membership')+'</div>'+badge(m.status)+'</div>'+
-      '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><span style="font-family:\'Bricolage Grotesque\',sans-serif;font-size:19px;font-weight:800;color:'+info.color+'">'+PT('Plan ','Plan ')+esc(info.label)+'</span><span style="font-size:12px;color:var(--soft)">'+esc(info.billing)+'</span></div>'+
-      '<ul style="margin:0 0 12px;padding-left:17px;font-size:12.5px;color:var(--ink2);line-height:1.75">'+info.perks.map(function(p){ return '<li>'+esc(p)+'</li>'; }).join('')+'</ul>'+
-      '<div style="background:var(--paper);border-radius:11px;padding:9px 12px;font-size:11.5px;color:var(--ink2);line-height:1.6;margin-bottom:12px">'+
-        '<b>'+PT('Lo importante:','The fine print:')+'</b> '+PT('1 grooming incluido al mes (no se acumula). Los extras llevan tu descuento. Permanencia mínima 3 meses y, si cancelas antes, se cobra 1 mes. Reservas y cambios con 24 horas de antelación.','1 grooming included per month (it does not roll over). Extras get your discount. 3-month minimum term and, if you cancel earlier, one month is charged. Bookings and changes need 24 hours notice.')+
-        ' <a href="https://bpuppy.us/terminos#membresias" target="_blank" style="color:var(--orange2);font-weight:700;text-decoration:none;white-space:nowrap">'+PT('Ver políticas completas →','See full policies →')+'</a>'+
-      '</div>'+
-      '<div class="row"><span class="k">'+PT('Plan','Plan')+'</span><span class="v">'+esc(m.plan||'—')+' ('+esc(m.billing||'—')+')</span></div>'+
-      '<div class="row"><span class="k">'+PT('Mascota','Pet')+'</span><span class="v">'+esc(m.pet_name||'—')+(m.pet_size?(' · '+esc(m.pet_size)):'')+'</span></div>'+
-      '<div class="row"><span class="k">'+PT('Baños disponibles','Baths available')+'</span><span class="v" style="color:var(--orange2);font-size:18px">'+(m.credits_balance||0)+'</span></div>'+
-      '<div class="row"><span class="k">'+PT('Próxima renovación','Next renewal')+'</span><span class="v">'+esc(fmtD(m.renew_date))+'</span></div>'+
-      '</div>';
+  function topPlan(ms){
+    var order={VIP:3,Total:2,Esencial:1}, best=null;
+    (ms||[]).forEach(function(m){ if(String(m.status||'active')==='cancelled') return;
+      var i=planInfo(m.plan); if(!best||order[i.label]>order[best.label]) best=i; });
+    return best;
   }
 
-  function initials(d){
-    var f=(d.client&&d.client.first_name)||'', l=(d.client&&d.client.last_name)||'';
-    var s=((f[0]||'')+(l[0]||'')).toUpperCase();
-    if(s) return s;
-    return (d.email||'?').slice(0,2).toUpperCase();
-  }
-  // Citas activas del cliente con opcion de reprogramar (usa grooming_manage: regla de 6h)
-  function bkHtml(d){
-    var list=(d.bookings||[]).filter(function(b){
-      var st=String(b.status||'').toLowerCase();
-      return st!=='cancelled' && st!=='completed' && b.appointment_date;
-    });
-    if(!list.length) return '';
-    return '<div class="card"><div class="step-label">'+PT('Tus citas','Your appointments')+'</div>'+list.slice(0,6).map(function(b){
-      var svc=Array.isArray(b.services)?b.services.join(', '):(b.services||'');
-      return '<div class="bk"><div><div style="font-weight:600">'+esc(b.pet_name||PT('Tu mascota','Your pet'))+'</div>'+
-        '<div class="bk-w">'+esc(fmtD(b.appointment_date))+(b.appointment_time?(' · '+esc(b.appointment_time)):'')+(svc?(' · '+esc(svc)):'')+'</div></div>'+
-        '<button class="bk-b js-resched" data-id="'+esc(b.id)+'" data-d="'+esc(b.appointment_date)+'" data-t="'+esc(b.appointment_time||'')+'">'+PT('Reprogramar','Reschedule')+'</button></div>';
-    }).join('')+'</div>';
-  }
-  function openReschedModal(id, curDate, curTime){
-    var bg=document.createElement('div'); bg.className='modal-bg';
-    var times=['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
-    bg.innerHTML='<div class="modal pop"><button class="x" id="rsx">×</button>'+
-      '<h3>'+PT('Reprogramar cita','Reschedule appointment')+'</h3>'+
-      '<p style="font-size:13px;color:var(--ink2)">'+PT('Elige la nueva fecha y hora. Debe ser con al menos 24 horas de antelación.','Pick the new date and time. It must be at least 24 hours in advance.')+'</p>'+
-      '<div class="fgrid">'+
-        '<div><label>'+PT('Nueva fecha','New date')+'</label><input id="rs_d" type="date" value="'+esc(curDate||'')+'"></div>'+
-        '<div><label>'+PT('Nueva hora','New time')+'</label><select id="rs_t">'+times.map(function(t){return '<option'+(t===curTime?' selected':'')+'>'+t+'</option>';}).join('')+'</select></div>'+
-      '</div>'+
-      '<button class="cta" id="rs_go">'+PT('Confirmar cambio','Confirm change')+'</button><div id="rs_msg"></div></div>';
-    document.body.appendChild(bg);
-    function close(){ bg.remove(); }
-    bg.querySelector('#rsx').onclick=close;
-    bg.onclick=function(e){ if(e.target===bg) close(); };
-    bg.querySelector('#rs_go').onclick=function(){
-      var m=bg.querySelector('#rs_msg'), btn=bg.querySelector('#rs_go');
-      var nd=bg.querySelector('#rs_d').value, nt=bg.querySelector('#rs_t').value;
-      if(!nd){ m.className='msg err'; m.textContent=PT('Elige una fecha.','Pick a date.'); return; }
-      btn.disabled=true; btn.textContent=PT('Guardando…','Saving…');
-      fetch(SUPA+'/functions/v1/grooming_manage',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'reschedule',id:id,appointment_date:nd,appointment_time:nt,lang:PLANG})})
-        .then(function(r){return r.json();}).then(function(x){
-          if(x.error){ m.className='msg err'; m.textContent=x.error; btn.disabled=false; btn.textContent=PT('Confirmar cambio','Confirm change'); return; }
-          m.className='msg ok'; m.textContent=PT('¡Listo! Tu cita quedó para el '+nd+' a las '+nt+'.','Done! Your appointment is set for '+nd+' at '+nt+'.');
-          btn.textContent=PT('Cambiada','Changed');
-          setTimeout(function(){ close(); showDashboard(); }, 1400);
-        }).catch(function(){ m.className='msg err'; m.textContent=PT('No se pudo cambiar. Intenta de nuevo.','We could not change it. Try again.'); btn.disabled=false; btn.textContent=PT('Confirmar cambio','Confirm change'); });
+  /* ═══ LOGIN ═══ */
+  function showLogin(pre){
+    var hero=document.getElementById('hero'); if(hero) hero.style.display='';
+    coverHost.innerHTML='';
+    root.innerHTML='<div class="login"><div class="card">'+
+      '<div class="lb">'+PT('Entra a tu cuenta','Sign in')+'</div>'+
+      '<p class="muted" style="margin:8px 0 4px">'+PT('Te enviamos un <b>enlace mágico</b> a tu correo — sin contraseñas.','We email you a <b>magic link</b> — no passwords.')+'</p>'+
+      '<label>'+PT('Tu correo','Your email')+'</label>'+
+      '<input id="le" type="email" placeholder="'+PT('tu@correo.com','you@email.com')+'" autocomplete="email" inputmode="email">'+
+      '<button class="btn pri w" id="lb" style="margin-top:14px">'+PT('Enviarme mi enlace','Send me my link')+'</button>'+
+      (pre?('<div class="msg '+pre.k+'">'+pre.t+'</div>'):'<div id="lm"></div>')+
+      '<p class="muted" style="margin-top:12px;text-align:center">'+PT('Usa el mismo correo con el que reservaste.','Use the same email you booked with.')+'</p>'+
+      '</div></div>';
+    document.getElementById('lb').onclick=function(){
+      var em=(document.getElementById('le').value||'').trim();
+      var m=document.getElementById('lm')||document.querySelector('.msg');
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ m.className='msg err'; m.textContent=PT('Escribe un correo válido.','Enter a valid email.'); return; }
+      var btn=this; btn.disabled=true; btn.textContent=PT('Enviando…','Sending…');
+      fetch(SUPA+'/functions/v1/portal_magiclink',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({email:em,redirectTo:window.location.origin+'/portal'})})
+        .then(function(r){return r.json();}).then(function(d){
+          btn.disabled=false; btn.textContent=PT('Enviarme mi enlace','Send me my link');
+          if(d.error){ m.className='msg err'; m.textContent=d.error; return; }
+          m.className='msg ok'; m.innerHTML=PT('Revisa tu correo (<b>'+esc(em)+'</b>) y toca el enlace.','Check your inbox (<b>'+esc(em)+'</b>) and tap the link.');
+        }).catch(function(){ btn.disabled=false; btn.textContent=PT('Enviarme mi enlace','Send me my link'); m.className='msg err'; m.textContent=PT('No se pudo enviar. Intenta de nuevo.','Could not send. Try again.'); });
     };
   }
-  function renderGroomingTab(d){
-    var ms=d.memberships||[];
-    var html=bkHtml(d)+'<div class="gbook"><div class="em" style="color:#fff">'+svg('scissors',84)+'</div>'+
-      '<h2>'+PT('Agenda tu próxima cita','Book your next appointment')+'</h2>'+
-      '<p>'+PT('Reserva baño, corte o spa para tu mascota en segundos. ','Book a bath, haircut or spa for your pet in seconds. ')+(ms.length?PT('Tus baños de membresía se aplican automáticamente.','Your membership baths apply automatically.'):PT('Elige el servicio y la fecha que más te convenga.','Pick the service and date that works best for you.'))+'</p>'+
-      '<a href="/grooming.html" class="go">'+PT('Agendar grooming →','Book grooming →')+'</a></div>';
-    if(ms.length){
-      var cards=ms.map(renderMembership).join('');
-      html+='<div class="cards-grid">'+cards+'</div>';
-    } else {
-      html+='<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('bath',40)+'</div><div class="t">'+PT('Aún no tienes membresía de grooming','No grooming membership yet')+'</div><div>'+PT('Con una membresía ahorras en cada baño y recibes beneficios VIP. Mira los planes al reservar.','With a membership you save on every bath and get VIP perks. See the plans when you book.')+'</div></div></div>';
-    }
-    return html;
+
+  /* ═══ MASCOTAS ═══ */
+  function petCard(p){
+    var pend=String(p.status||'')==='pending';
+    var meta=[p.sex,p.weight_lbs?(p.weight_lbs+' lb'):'',p.birthdate?fmtShort(p.birthdate):''].filter(Boolean).map(esc).join(' · ');
+    var ph=p.photo_url?('<img src="'+esc(p.photo_url)+'" alt="">'):('<span style="color:var(--orange);opacity:.6">'+svg('paw',52,1.5)+'</span>');
+    return '<div class="pet" onclick="petOpen(\''+p.id+'\')">'+
+      '<div class="ph">'+ph+'</div><div class="bd">'+
+      '<div class="nm2">'+esc(p.name||PT('Mi mascota','My pet'))+'</div>'+
+      (p.breed?('<span class="br">'+esc(p.breed)+(p.size?(' · '+esc(p.size)):'')+'</span>'):'')+
+      (meta?('<div class="mt">'+meta+'</div>'):'')+
+      '<div style="margin-top:9px">'+(pend
+        ? '<span class="tag warn">'+PT('En revisión','Under review')+'</span>'
+        : '<span class="tag ok">'+PT('Confirmada','Confirmed')+'</span>')+'</div>'+
+      '</div></div>';
   }
-  function renderPagosTab(d){
-    var cards='';
-    if(d.plans && d.plans.length){ d.plans.forEach(function(p){ cards+=renderPlan(p, d.payments); }); }
-    if(cards) return '<div class="cards-grid">'+cards+'</div>';
-    return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('card',40)+'</div><div class="t">'+PT('No tienes planes de pago activos','No active payment plans')+'</div><div>'+PT('¿Buscas un cachorro? Arma un plan de pagos a tu medida.','Looking for a puppy? Build a payment plan that fits you.')+'</div><br><a href="/plan" class="pay" style="text-decoration:none">'+PT('Armar mi plan','Build my plan')+'</a></div></div>';
-  }
-  function renderGuardadosTab(){
-    return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('bookmark',40)+'</div><div class="t">'+PT('Tus guardados llegan pronto','Your saved items are coming soon')+'</div><div>'+PT('Aquí podrás guardar tus razas favoritas y artículos del blog para verlos después.','Here you will be able to save your favorite breeds and blog posts for later.')+'</div></div></div>';
-  }
-  function renderCuentaTab(d){
-    var petNm=(d.pets&&d.pets[0]&&(d.pets[0].name||d.pets[0].pet_name))||'';
-    var petReason=petNm?PT('Mi mascota ('+esc(petNm)+') ya no está con nosotros','My pet ('+esc(petNm)+') is no longer with us'):PT('Mi mascota ya no está con nosotros','My pet is no longer with us');
-    if(d.email_opted_out){
-      return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('mail',40)+'</div>'+
-        '<div class="t">'+PT('Correos detenidos','Emails paused')+'</div>'+
-        '<div>'+PT('Ahora mismo no te enviamos correos automáticos. Puedes reactivarlos cuando quieras.','We are not sending you automatic emails right now. You can turn them back on anytime.')+'</div><br>'+
-        '<button class="go" id="pf-resume" style="border:none;cursor:pointer">'+PT('Reactivar mis correos','Resume my emails')+'</button></div></div>';
-    }
-    return '<div class="card"><div class="empty" style="text-align:left"><div class="ico" style="color:var(--orange)">'+svg('mail',40)+'</div>'+
-      '<div class="t">'+PT('Correos y notificaciones','Emails and notifications')+'</div>'+
-      '<div style="margin-bottom:14px">'+PT('Si ya no quieres recibir nuestros correos (novedades, recordatorios, cumpleaños de tu mascota), puedes detenerlos aquí. Cuéntanos por qué, así mejoramos.','If you no longer want our emails (news, reminders, your pet\'s birthday), you can stop them here. Tell us why so we can improve.')+'</div>'+
-      '<label style="display:block;font-size:12px;font-weight:700;color:#6b5a4e;margin-bottom:6px">'+PT('Motivo','Reason')+'</label>'+
-      '<select id="pf-reason" style="width:100%;padding:11px 12px;border:1px solid #e5d9cc;border-radius:12px;font-size:14px;margin-bottom:14px;background:#fff">'+
-        '<option value="Demasiados correos">'+PT('Recibo demasiados correos','I get too many emails')+'</option>'+
-        '<option value="No me interesa el contenido">'+PT('El contenido no me interesa','The content is not for me')+'</option>'+
-        '<option value="Nunca me suscribí">'+PT('Nunca me suscribí','I never signed up')+'</option>'+
-        '<option value="'+petReason.replace(/"/g,'&quot;')+'">'+petReason+'</option>'+
-        '<option value="Otro">'+PT('Otro motivo','Another reason')+'</option>'+
-      '</select>'+
-      '<button id="pf-stop" style="background:#dc2626;border:none;cursor:pointer;color:#fff;width:100%;padding:12px;border-radius:12px;font-weight:800;font-size:14px">'+PT('Detener mis correos','Stop my emails')+'</button></div></div>';
-  }
+  window.petOpen=function(id){
+    var p=(D.pets||[]).find(function(x){return x.id===id;}); if(!p) return;
+    var pend=String(p.status||'')==='pending';
+    var ov=modal(esc(p.name||PT('Mi mascota','My pet')),
+      '<div id="pv-ph" style="height:170px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#FFEEDC,#FFE1EA);display:grid;place-items:center;position:relative;margin-bottom:6px">'+
+        (p.photo_url?('<img src="'+esc(p.photo_url)+'" style="width:100%;height:100%;object-fit:cover">'):('<span style="color:var(--orange);opacity:.55">'+svg('paw',60,1.4)+'</span>'))+
+        '<button class="camchip" id="pv-cam">'+svg('cam',15)+' '+PT('Cambiar foto','Change photo')+'</button>'+
+      '</div>'+
+      (pend?('<div class="msg info">'+PT('<b>En revisión</b> quiere decir que ya la registramos y nuestro equipo la está confirmando (raza, tamaño y cuidados). En cuanto quede lista te avisamos y podrás agendar con ella.','<b>Under review</b> means we registered your pet and our team is confirming the details (breed, size, care). We\'ll let you know the moment it\'s ready to book.')+'</div>'):'')+
+      '<div class="g2"><div><label>'+PT('Nombre','Name')+'</label><input id="pv-name" value="'+esc(p.name||'')+'"></div>'+
+      '<div><label>'+PT('Raza','Breed')+'</label><input id="pv-breed" value="'+esc(p.breed||'')+'"></div></div>'+
+      '<div class="g2"><div><label>'+PT('Tamaño','Size')+'</label><select id="pv-size">'+
+        ['','Pequeño','Mediano','Grande','XL'].map(function(s){return '<option'+(String(p.size||'')===s?' selected':'')+'>'+(s||'—')+'</option>';}).join('')+'</select></div>'+
+      '<div><label>'+PT('Sexo','Sex')+'</label><select id="pv-sex">'+
+        ['','Macho','Hembra'].map(function(s){return '<option'+(String(p.sex||'')===s?' selected':'')+'>'+(s||'—')+'</option>';}).join('')+'</select></div></div>'+
+      '<div class="g2"><div><label>'+PT('Peso (lb)','Weight (lb)')+'</label><input id="pv-w" type="number" min="0" value="'+esc(p.weight_lbs||'')+'"></div>'+
+      '<div><label>'+PT('Nacimiento','Birthdate')+'</label><input id="pv-b" type="date" value="'+esc((p.birthdate||'').slice(0,10))+'"></div></div>'+
+      '<label>'+PT('Cuidados y detalles','Care and details')+'</label>'+
+      '<textarea id="pv-notes" placeholder="'+PT('Piel sensible, no le gusta el secador, alergias…','Sensitive skin, hates the dryer, allergies…')+'">'+esc(p.notes||'')+'</textarea>'+
+      '<button class="btn pri w" id="pv-save" style="margin-top:16px">'+PT('Guardar cambios','Save changes')+'</button>'+
+      '<a class="btn w" href="/grooming.html" style="margin-top:9px">'+svg('scissors',16)+' '+PT('Agendar para ','Book for ')+esc((p.name||'').split(' ')[0])+'</a>'+
+      '<div id="pv-msg"></div>', 540);
+    var photo=p.photo_url||'';
+    ov.querySelector('#pv-cam').onclick=function(){ pickPhoto(function(url){ photo=url;
+      ov.querySelector('#pv-ph').innerHTML='<img src="'+esc(url)+'" style="width:100%;height:100%;object-fit:cover"><button class="camchip" id="pv-cam2">'+svg('cam',15)+' '+PT('Cambiar foto','Change photo')+'</button>';
+      ov.querySelector('#pv-cam2').onclick=arguments.callee; }); };
+    ov.querySelector('#pv-save').onclick=async function(){
+      var b=this; b.disabled=true; b.textContent=PT('Guardando…','Saving…');
+      var v=function(id){ var e=ov.querySelector(id); return e?e.value:''; };
+      var r=await api({action:'save_pet',id:id,name:v('#pv-name'),breed:v('#pv-breed'),
+        size:(v('#pv-size')==='—'?'':v('#pv-size')),sex:(v('#pv-sex')==='—'?'':v('#pv-sex')),
+        weight_lbs:v('#pv-w'),birthdate:v('#pv-b'),notes:v('#pv-notes'),photo_url:photo});
+      var m=ov.querySelector('#pv-msg');
+      if(r&&r.ok){ m.className='msg ok'; m.textContent=PT('¡Listo! Guardado.','Saved!'); setTimeout(function(){ ov.close(); load(); },800); }
+      else { m.className='msg err'; m.textContent=(r&&r.error)||PT('No se pudo guardar.','Could not save.'); b.disabled=false; b.textContent=PT('Guardar cambios','Save changes'); }
+    };
+  };
 
-  function showDashboard(email){
-    document.getElementById('logout').style.display='inline';
-    var hero=document.getElementById('hero'); if(hero) hero.style.display='none';
-    root.innerHTML='<div class="card"><div class="center"><div class="spin"></div>'+PT('Cargando tu portal…','Loading your portal…')+'</div></div>';
-    sb.auth.getSession().then(function(s){
-      var tok = s.data && s.data.session && s.data.session.access_token;
-      if(!tok){ showLogin({k:'err',t:PT('Sesión expirada, vuelve a entrar.','Session expired, please sign in again.')}); return; }
-      fetch(SUPA+'/functions/v1/portal_data',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:'{}'})
-        .then(function(r){return r.json();}).then(function(d){
-          if(d.error){ root.innerHTML='<div class="card"><div class="msg err">'+esc(d.error)+'</div></div>'; return; }
-          setPlangFrom(d.client);
-          var emailName = (d.email||'').split('@')[0].replace(/[._]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
-          var name = (d.client && d.client.first_name) ? (d.client.first_name+(d.client.last_name?(' '+d.client.last_name):'')) : (emailName||d.email);
-          var loc = d.client ? [d.client.city,d.client.state].filter(Boolean).join(', ') : '';
-          var nPets=(d.pets||[]).length, nMs=(d.memberships||[]).length, baths=(d.memberships||[]).reduce(function(a,m){return a+(m.credits_balance||0);},0);
-          var vip=(d.memberships||[]).some(function(m){return /vip|total/i.test(m.plan||'');});
+  window.petAdd=function(){
+    var ov=modal(PT('Agregar mascota','Add pet'),
+      '<p class="muted">'+PT('La registramos y nuestro equipo la confirma. Te avisamos cuando esté lista para agendar.','We register it and our team confirms it. We let you know when it is ready to book.')+'</p>'+
+      '<div class="g2"><div><label>'+PT('Nombre *','Name *')+'</label><input id="np-name" placeholder="'+PT('Ej: Max','e.g. Max')+'"></div>'+
+      '<div><label>'+PT('Raza','Breed')+'</label><input id="np-breed"></div></div>'+
+      '<div class="g2"><div><label>'+PT('Tamaño','Size')+'</label><select id="np-size"><option value="">—</option><option>'+PT('Pequeño','Small')+'</option><option>'+PT('Mediano','Medium')+'</option><option>'+PT('Grande','Large')+'</option><option>XL</option></select></div>'+
+      '<div><label>'+PT('Sexo','Sex')+'</label><select id="np-sex"><option value="">—</option><option>'+PT('Macho','Male')+'</option><option>'+PT('Hembra','Female')+'</option></select></div></div>'+
+      '<label>'+PT('Notas','Notes')+'</label><textarea id="np-notes" placeholder="'+PT('Alergias, comportamiento…','Allergies, behavior…')+'"></textarea>'+
+      '<button class="btn pri w" id="np-save" style="margin-top:16px">'+PT('Guardar mascota','Save pet')+'</button><div id="np-msg"></div>', 520);
+    ov.querySelector('#np-save').onclick=async function(){
+      var name=(ov.querySelector('#np-name').value||'').trim();
+      var m=ov.querySelector('#np-msg');
+      if(!name){ m.className='msg err'; m.textContent=PT('El nombre es obligatorio.','The name is required.'); return; }
+      var b=this; b.disabled=true; b.textContent=PT('Guardando…','Saving…');
+      var s=await sb.auth.getSession(); var tok=s.data&&s.data.session&&s.data.session.access_token;
+      try{
+        var r=await fetch(SUPA+'/functions/v1/portal_add_pet',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},
+          body:JSON.stringify({name:name,breed:(ov.querySelector('#np-breed').value||''),size:ov.querySelector('#np-size').value,sex:ov.querySelector('#np-sex').value,notes:(ov.querySelector('#np-notes').value||'')})});
+        var d=await r.json();
+        if(d.error) throw new Error(d.error);
+        m.className='msg ok'; m.textContent=PT('¡Listo! Te avisamos al confirmarla.','Done! We\'ll let you know once confirmed.');
+        setTimeout(function(){ ov.close(); load(); },1100);
+      }catch(e){ m.className='msg err'; m.textContent=PT('No se pudo guardar.','Could not save.'); b.disabled=false; b.textContent=PT('Guardar mascota','Save pet'); }
+    };
+  };
 
-          var head='<div class="phead"><div class="pat"></div></div>'+
-            '<div class="pcard fade"><div class="avatar">'+esc(initials(d))+'</div>'+
-            '<h1>'+PT('Hola, ','Hi, ')+esc((name||'').split(' ')[0]||name)+'</h1>'+
-            '<div class="sub">'+esc(d.email)+(loc?(' · '+esc(loc)):'')+'</div>'+
-            (vip?'<div class="vipchip">'+svg('star',13)+PT(' Cliente VIP',' VIP client')+'</div>':'')+
-            '<div class="pstats">'+
-              '<div class="pstat"><b>'+nPets+'</b><span>'+(nPets===1?PT('mascota','pet'):PT('mascotas','pets'))+'</span></div>'+
-              '<div class="pstat"><b>'+baths+'</b><span>'+PT('baños disp.','baths avail.')+'</span></div>'+
-              '<div class="pstat"><b>'+nMs+'</b><span>'+(nMs===1?PT('membresía','membership'):PT('membresías','memberships'))+'</span></div>'+
-            '</div>'+
-            bdgHtml(d.badges)+
-            (pfIsComplete(d.client)?'':'<div class="pf-nudge">'+PT('Completa tu perfil y desbloquea tu insignia <b>Perfil Completo</b>.','Complete your profile and unlock your <b>Complete Profile</b> badge.')+'</div>')+
-            '<button class="js-edit-profile pf-editbtn">'+svg('bookmark',15)+PT(' Editar mi perfil',' Edit my profile')+'</button>'+
-            '</div>';
+  /* ═══ PERFIL ═══ */
+  window.profileEdit=function(){
+    var c=(D&&D.client)||{};
+    var ov=modal(PT('Editar mi perfil','Edit my profile'),
+      '<div class="g2"><div><label>'+PT('Nombre *','First name *')+'</label><input id="ep-f" value="'+esc(c.first_name||'')+'"></div>'+
+      '<div><label>'+PT('Apellido *','Last name *')+'</label><input id="ep-l" value="'+esc(c.last_name||'')+'"></div></div>'+
+      '<label>'+PT('Teléfono *','Phone *')+'</label><input id="ep-p" type="tel" inputmode="tel" value="'+esc(c.phone||'')+'">'+
+      '<label>'+PT('Dirección *','Address *')+'</label><input id="ep-a" value="'+esc(c.address||'')+'">'+
+      '<div class="g2"><div><label>'+PT('Ciudad *','City *')+'</label><input id="ep-c" value="'+esc(c.city||'')+'"></div>'+
+      '<div><label>'+PT('Estado','State')+'</label><input id="ep-s" value="'+esc(c.state||'FL')+'"></div></div>'+
+      '<div class="g2"><div><label>ZIP *</label><input id="ep-z" inputmode="numeric" value="'+esc(c.zip||'')+'"></div>'+
+      '<div><label>'+PT('Idioma','Language')+'</label><select id="ep-lang"><option value="Spanish">Español</option><option value="English">English</option></select></div></div>'+
+      '<button class="btn pri w" id="ep-save" style="margin-top:16px">'+PT('Guardar mi perfil','Save my profile')+'</button>'+
+      '<p class="muted" style="margin-top:10px;text-align:center">'+PT('Cada cambio importante te llega por correo, por seguridad.','Every important change is emailed to you, for security.')+'</p>'+
+      '<div id="ep-msg"></div>', 520);
+    try{ var cl=String(c.contact_lang||c.language||'').toLowerCase(); ov.querySelector('#ep-lang').value=(cl.indexOf('en')===0)?'English':'Spanish'; }catch(e){}
+    ov.querySelector('#ep-save').onclick=async function(){
+      var v=function(id){ return (ov.querySelector(id).value||'').trim(); };
+      var m=ov.querySelector('#ep-msg'), b=this;
+      if(!v('#ep-f')||!v('#ep-l')){ m.className='msg err'; m.textContent=PT('Escribe tu nombre y apellido.','Enter your first and last name.'); return; }
+      b.disabled=true; b.textContent=PT('Guardando…','Saving…');
+      var s=await sb.auth.getSession(); var tok=s.data&&s.data.session&&s.data.session.access_token;
+      try{
+        var r=await fetch(SUPA+'/functions/v1/portal_profile',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},
+          body:JSON.stringify({first_name:v('#ep-f'),last_name:v('#ep-l'),phone:v('#ep-p'),address:v('#ep-a'),city:v('#ep-c'),state:v('#ep-s'),zip:v('#ep-z'),lang:ov.querySelector('#ep-lang').value})});
+        var d=await r.json();
+        if(!d.ok) throw new Error(d.detail||d.error||'');
+        m.className='msg ok'; m.textContent=PT('¡Listo! Tu perfil quedó actualizado.','Done! Your profile is updated.');
+        setTimeout(function(){ ov.close(); load(); },900);
+      }catch(e){ m.className='msg err'; m.textContent=PT('No se pudo guardar.','Could not save.'); b.disabled=false; b.textContent=PT('Guardar mi perfil','Save my profile'); }
+    };
+  };
 
-          var tabs='<div class="tabs">'+
-            '<button class="tab on" data-t="mascotas">'+svg('paw',16)+PT(' Mascotas',' Pets')+(nPets?'<span class="n">'+nPets+'</span>':'')+'</button>'+
-            '<button class="tab" data-t="grooming">'+svg('scissors',16)+' Grooming</button>'+
-            '<button class="tab" data-t="pagos">'+svg('card',16)+PT(' Pagos',' Payments')+((d.plans||[]).length?'<span class="n">'+d.plans.length+'</span>':'')+'</button>'+
-            '<button class="tab" data-t="guardados">'+svg('bookmark',16)+PT(' Guardados',' Saved')+'</button>'+
-            '<button class="tab" data-t="cuenta">'+svg('mail',16)+PT(' Cuenta',' Account')+'</button>'+
-          '</div>';
-
-          var panes='<div class="tabpane on" data-p="mascotas">'+renderPetsTab(d.pets)+'</div>'+
-            '<div class="tabpane" data-p="grooming">'+renderGroomingTab(d)+'</div>'+
-            '<div class="tabpane" data-p="pagos">'+renderPagosTab(d)+'</div>'+
-            '<div class="tabpane" data-p="guardados">'+renderGuardadosTab()+'</div>'+
-            '<div class="tabpane" data-p="cuenta">'+renderCuentaTab(d)+'</div>';
-
-          root.innerHTML=head+tabs+panes;
-
-          // tab switching
-          root.querySelectorAll('.tab').forEach(function(btn){
-            btn.onclick=function(){
-              var t=btn.getAttribute('data-t');
-              root.querySelectorAll('.tab').forEach(function(b){b.classList.toggle('on',b===btn);});
-              root.querySelectorAll('.tabpane').forEach(function(p){p.classList.toggle('on',p.getAttribute('data-p')===t);});
-            };
-          });
-          // wire create-pet buttons
-          root.querySelectorAll('.js-add-pet').forEach(function(b){ b.onclick=function(e){ e.preventDefault(); openPetModal(); }; });
-          // wire editar-perfil (nombre, direccion, etc.)
-          root.querySelectorAll('.js-edit-profile').forEach(function(b){ b.onclick=function(e){ e.preventDefault(); openProfileModal(d.client||{}); }; });
-          // wire reprogramar cita
-          root.querySelectorAll('.js-resched').forEach(function(b){ b.onclick=function(e){ e.preventDefault(); openReschedModal(b.getAttribute('data-id'), b.getAttribute('data-d'), b.getAttribute('data-t')); }; });
-          // wire correos (detener / reactivar) — pestaña Cuenta
-          function pfEmail(action, reason, btn){
-            if(btn){ btn.disabled=true; btn.dataset.txt=btn.textContent; btn.textContent=PT('Guardando…','Saving…'); }
-            sb.auth.getSession().then(function(s){
-              var tok=s.data&&s.data.session&&s.data.session.access_token;
-              if(!tok){ showLogin({k:'err',t:PT('Sesión expirada, vuelve a entrar.','Session expired, please sign in again.')}); return; }
-              fetch(SUPA+'/functions/v1/portal_data',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:action,reason:reason})})
-                .then(function(r){return r.json();}).then(function(x){ if(x&&x.ok){ showDashboard(d.email); } else { if(btn){btn.disabled=false;btn.textContent=btn.dataset.txt;} alert((x&&x.error)||PT('No se pudo, intenta de nuevo.','It did not work, please try again.')); } })
-                .catch(function(){ if(btn){btn.disabled=false;btn.textContent=btn.dataset.txt;} alert(PT('No se pudo, intenta de nuevo.','It did not work, please try again.')); });
-            });
-          }
-          var pfStop=root.querySelector('#pf-stop');
-          if(pfStop) pfStop.onclick=function(){ var rs=(root.querySelector('#pf-reason')||{}).value||''; if(!confirm(PT('¿Detener todos los correos automáticos?','Stop all automatic emails?'))) return; pfEmail('stop_emails', rs, pfStop); };
-          var pfResume=root.querySelector('#pf-resume');
-          if(pfResume) pfResume.onclick=function(){ pfEmail('resume_emails', '', pfResume); };
-          // wire pay buttons (plan abonos)
-          root.querySelectorAll('button.pay[data-plan]').forEach(function(btn){
-            btn.onclick=function(){ var pid=btn.getAttribute('data-plan'); var t=btn; t.disabled=true; t.textContent=PT('Redirigiendo...','Redirecting...');
-              fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({type:'plan_abono',plan_id:pid,success_url:window.location.origin+'/portal',cancel_url:window.location.origin+'/portal'})})
-                .then(function(r){return r.json();}).then(function(c){ if(c.url){window.location.href=c.url;} else { t.disabled=false; t.textContent=PT('Reintentar','Try again'); alert(c.error||'Error'); } });
-            };
-          });
-        }).catch(function(){ root.innerHTML='<div class="card"><div class="msg err">'+PT('No pudimos cargar tu portal. Intenta de nuevo.','We could not load your portal. Please try again.')+'</div></div>'; });
+  window.setPhoto=function(kind){
+    pickPhoto(async function(url){
+      var r=await api({action:'save_photo',kind:kind,url:url});
+      if(r&&r.ok) load(); else alert(PT('No se pudo guardar la foto.','Could not save the photo.'));
     });
+  };
+
+  /* ═══ REPROGRAMAR ═══ */
+  window.reschedule=function(id,d0,t0){
+    var times=['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
+    var ov=modal(PT('Reprogramar cita','Reschedule'),
+      '<p class="muted">'+PT('Elige la nueva fecha y hora. Debe ser con al menos 24 horas de antelación.','Pick the new date and time. It must be at least 24 hours in advance.')+'</p>'+
+      '<div class="g2"><div><label>'+PT('Nueva fecha','New date')+'</label><input id="rs-d" type="date" value="'+esc((d0||'').slice(0,10))+'"></div>'+
+      '<div><label>'+PT('Nueva hora','New time')+'</label><select id="rs-t">'+times.map(function(t){return '<option'+(t===t0?' selected':'')+'>'+t+'</option>';}).join('')+'</select></div></div>'+
+      '<button class="btn pri w" id="rs-go" style="margin-top:16px">'+PT('Confirmar cambio','Confirm change')+'</button><div id="rs-msg"></div>', 460);
+    ov.querySelector('#rs-go').onclick=function(){
+      var m=ov.querySelector('#rs-msg'), b=this;
+      var nd=ov.querySelector('#rs-d').value, nt=ov.querySelector('#rs-t').value;
+      if(!nd){ m.className='msg err'; m.textContent=PT('Elige una fecha.','Pick a date.'); return; }
+      b.disabled=true; b.textContent=PT('Guardando…','Saving…');
+      fetch(SUPA+'/functions/v1/grooming_manage',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'reschedule',id:id,appointment_date:nd,appointment_time:nt,lang:PLANG})})
+        .then(function(r){return r.json();}).then(function(x){
+          if(x.error){ m.className='msg err'; m.textContent=x.error; b.disabled=false; b.textContent=PT('Confirmar cambio','Confirm change'); return; }
+          m.className='msg ok'; m.textContent=PT('¡Listo! Tu cita cambió.','Done! Your appointment moved.');
+          setTimeout(function(){ ov.close(); load(); },1000);
+        }).catch(function(){ m.className='msg err'; m.textContent=PT('No se pudo cambiar.','Could not change it.'); b.disabled=false; b.textContent=PT('Confirmar cambio','Confirm change'); });
+    };
+  };
+
+  /* ═══ PAGOS: tarjeta guardada ═══ */
+  async function loadCard(){
+    var host=document.getElementById('pm-box'); if(!host) return;
+    var s=await sb.auth.getSession(); var tok=s.data&&s.data.session&&s.data.session.access_token;
+    try{
+      var r=await fetch(SUPA+'/functions/v1/portal_billing',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'card'})});
+      var d=await r.json();
+      if(d&&d.card){
+        host.innerHTML='<div class="cardpm"><div class="chip">'+esc(String(d.card.brand||'card').toUpperCase().slice(0,6))+'</div>'+
+          '<div style="flex:1;min-width:0"><div style="font-weight:800;font-size:14px">•••• •••• •••• '+esc(d.card.last4||'')+'</div>'+
+          '<div class="muted" style="font-size:12px">'+PT('Vence','Expires')+' '+esc(String(d.card.exp_month||'').padStart(2,'0'))+'/'+esc(String(d.card.exp_year||'').slice(-2))+
+          (d.next_charge_at?(' · '+PT('próximo cobro','next charge')+' '+fmtShort(new Date(d.next_charge_at*1000).toISOString())+(d.next_charge_amount?(' · '+money(d.next_charge_amount)):'')):'')+'</div></div></div>'+
+          '<button class="btn w" style="margin-top:10px" onclick="openBilling()">'+PT('Cambiar tarjeta o ver facturas','Update card or see invoices')+'</button>';
+      } else {
+        host.innerHTML='<div class="msg info">'+PT('Todavía no hay una tarjeta guardada. Se guarda sola cuando contratas un plan.','No saved card yet. It gets saved automatically when you start a plan.')+'</div>'+
+          '<a class="btn w" style="margin-top:10px" href="/grooming.html#memberships">'+PT('Ver los planes','See the plans')+'</a>';
+      }
+    }catch(e){ host.innerHTML='<div class="muted">'+PT('No pudimos leer tu método de pago.','We could not read your payment method.')+'</div>'; }
+  }
+  window.openBilling=async function(){
+    var s=await sb.auth.getSession(); var tok=s.data&&s.data.session&&s.data.session.access_token;
+    try{
+      var r=await fetch(SUPA+'/functions/v1/portal_billing',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'portal'})});
+      var d=await r.json();
+      if(d&&d.url) window.location.href=d.url; else alert(PT('No se pudo abrir. Escríbenos y lo resolvemos.','Could not open it. Message us and we\'ll sort it out.'));
+    }catch(e){ alert(PT('No se pudo abrir.','Could not open it.')); }
+  };
+
+  /* ═══ PANELES ═══ */
+  function paneMascotas(d){
+    var cards=(d.pets||[]).map(petCard).join('');
+    cards+='<div class="addtile" onclick="petAdd()"><div class="plus">+</div>'+PT('Agregar otra mascota','Add another pet')+'</div>';
+    return '<div class="pets">'+cards+'</div>';
+  }
+  function paneGrooming(d){
+    var ms=(d.memberships||[]).filter(function(m){return String(m.status||'')!=='cancelled';});
+    var out='';
+    var bks=(d.bookings||[]).filter(function(b){ var s=String(b.status||'').toLowerCase(); return s!=='cancelled'&&s!=='completed'&&b.appointment_date; });
+    if(bks.length){
+      out+='<div class="card"><div class="ttl" style="margin-bottom:12px">'+PT('Tus citas','Your appointments')+'</div>'+
+        bks.slice(0,6).map(function(b){
+          var svc=Array.isArray(b.services)?b.services.join(', '):(b.services||'');
+          return '<div class="bk"><div style="min-width:0"><div style="font-weight:800">'+esc(b.pet_name||PT('Tu mascota','Your pet'))+'</div>'+
+            '<div class="muted" style="font-size:12px">'+esc(fmtD(b.appointment_date))+(b.appointment_time?(' · '+esc(b.appointment_time)):'')+(svc?(' · '+esc(svc)):'')+'</div></div>'+
+            '<button class="btn sm" onclick="reschedule(\''+b.id+'\',\''+esc(b.appointment_date)+'\',\''+esc(b.appointment_time||'')+'\')">'+PT('Cambiar','Change')+'</button></div>';
+        }).join('')+'</div>';
+    }
+    out+='<div class="card tint"><div class="ttl">'+PT('Agenda tu próxima cita','Book your next appointment')+'</div>'+
+      '<p class="muted" style="margin:6px 0 14px">'+(ms.length
+        ? PT('Tus baños de membresía se aplican automáticamente.','Your membership baths apply automatically.')
+        : PT('Elige el servicio y la fecha que más te convenga.','Pick the service and date that suit you best.'))+'</p>'+
+      '<a class="btn pri" href="/grooming.html">'+svg('scissors',16)+' '+PT('Agendar grooming','Book grooming')+'</a></div>';
+
+    if(ms.length){
+      ms.forEach(function(m){
+        var i=planInfo(m.plan), saldo=(m.credits_balance||0);
+        out+='<div class="card" style="border-left:3px solid '+i.color+'">'+
+          '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">'+
+            '<div><div class="ttl" style="color:'+i.color+'">'+PT('Plan ','Plan ')+esc(i.label)+'</div>'+
+            '<div class="muted" style="font-size:12.5px">'+esc(i.billing)+' · '+esc(m.pet_name||'')+(m.pet_size?(' · '+esc(m.pet_size)):'')+'</div></div>'+
+            '<div style="text-align:right"><div style="font-family:Bricolage Grotesque,sans-serif;font-size:26px;font-weight:800;color:'+i.color+';line-height:1">'+saldo+'</div>'+
+            '<div class="lb">'+PT(saldo===1?'baño disp.':'baños disp.',saldo===1?'bath left':'baths left')+'</div></div>'+
+          '</div>'+
+          '<ul style="margin:13px 0 0;padding-left:17px;font-size:12.5px;color:var(--ink2);line-height:1.8">'+
+            i.perks.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'+
+          '<div style="background:var(--paper);border-radius:12px;padding:11px 13px;font-size:11.5px;color:var(--ink2);line-height:1.6;margin-top:13px">'+
+            '<b>'+PT('Lo importante:','The fine print:')+'</b> '+PT('1 grooming incluido al mes (no se acumula). Los extras llevan tu descuento. Permanencia mínima 3 meses; si cancelas antes se cobra 1 mes. Reservas y cambios con 24 horas de antelación.','1 grooming included per month (it does not roll over). Extras get your discount. 3-month minimum term; cancelling earlier charges one month. Bookings and changes need 24 hours notice.')+
+            ' <a href="https://bpuppy.us/terminos#membresias" target="_blank" style="color:var(--orange2);font-weight:700;text-decoration:none;white-space:nowrap">'+PT('Ver políticas →','See policies →')+'</a></div>'+
+          '<div class="row" style="margin-top:10px"><span class="k">'+PT('Precio','Price')+'</span><span class="v">'+money(m.price)+' / '+esc(i.billing)+'</span></div>'+
+          (m.renew_date?('<div class="row"><span class="k">'+PT('Próxima renovación','Next renewal')+'</span><span class="v">'+esc(fmtD(m.renew_date))+'</span></div>'):'')+
+          '</div>';
+      });
+    } else {
+      out+='<div class="card"><div class="empty"><div class="ic">'+svg('star',34)+'</div>'+
+        '<div class="t">'+PT('Aún no tienes membresía','No membership yet')+'</div>'+
+        '<div class="d">'+PT('Con un plan ahorras en cada baño, tienes prioridad en la agenda y pickup incluido.','With a plan you save on every bath, get priority booking and pickup included.')+'</div>'+
+        '<a class="btn pri" style="margin-top:14px" href="/grooming.html#memberships">'+PT('Ver los planes','See the plans')+'</a></div></div>';
+    }
+    return out;
+  }
+  function panePagos(d){
+    var out='<div class="card"><div class="ttl" style="margin-bottom:12px">'+PT('Método de pago','Payment method')+'</div>'+
+      '<p class="muted" style="margin-bottom:12px">'+PT('Con esta tarjeta se cobra tu plan automáticamente. La maneja Stripe: nosotros nunca vemos tu número.','Your plan is charged to this card automatically. Stripe handles it: we never see your number.')+'</p>'+
+      '<div id="pm-box"><div class="muted">'+PT('Cargando…','Loading…')+'</div></div></div>';
+    (d.plans||[]).forEach(function(p){
+      var paid=Number(p.paid_total||0), est=Number(p.est_price||0), bal=Math.max(0,est-paid), pct=est>0?Math.min(100,Math.round(paid/est*100)):0;
+      out+='<div class="card"><div class="ttl">'+PT('Plan de pagos','Payment plan')+'</div>'+
+        '<div class="row"><span class="k">'+PT('Raza','Breed')+'</span><span class="v">'+esc(p.breed||'—')+'</span></div>'+
+        '<div class="row"><span class="k">'+PT('Abonado','Paid so far')+'</span><span class="v" style="color:var(--green)">'+money(paid)+'</span></div>'+
+        '<div class="row"><span class="k">'+PT('Restante','Remaining')+'</span><span class="v">'+money(bal)+'</span></div>'+
+        '<div class="bar"><span style="width:'+pct+'%"></span></div>'+
+        '<div class="muted" style="text-align:right;font-size:11.5px">'+pct+PT('% completado','% complete')+'</div></div>';
+    });
+    if(!(d.plans||[]).length && !(d.memberships||[]).length){
+      out+='<div class="card"><div class="empty"><div class="ic">'+svg('card',34)+'</div>'+
+        '<div class="t">'+PT('Sin pagos pendientes','Nothing pending')+'</div>'+
+        '<div class="d">'+PT('Aquí verás tus planes de pago y tus cobros automáticos.','Your payment plans and automatic charges will show up here.')+'</div></div></div>';
+    }
+    return out;
+  }
+  function paneDescubre(){
+    var L=[
+      ['/cachorros.html','🐶',PT('Cachorros disponibles','Available puppies'),PT('Mira quién está buscando casa esta semana','See who is looking for a home this week')],
+      ['/grooming.html#memberships','✂️',PT('Planes de grooming','Grooming plans'),PT('Ahorra hasta 20% con pickup incluido','Save up to 20% with pickup included')],
+      ['/social','💬',PT('B Social','B Social'),PT('La comunidad: fotos, consejos y eventos','The community: photos, tips and events')],
+      ['/blog.html','📖',PT('Blog y consejos','Blog and tips'),PT('Cuidado, alimentación y crianza','Care, feeding and training')],
+      ['/razas.html','🔎',PT('Guía de razas','Breed guide'),PT('Cómo es cada raza de verdad','What each breed is really like')],
+      ['/juego.html','🎮',PT('El juego de BPuppy','The BPuppy game'),PT('Para los niños de la casa','For the kids at home')],
+      ['/adopciones.html','🏡',PT('Adopciones','Adoptions'),PT('Historias de los que ya encontraron casa','Stories of those who found a home')],
+      ['/entregados.html','📸',PT('Entregados','Delivered'),PT('Nuestras familias y sus cachorros','Our families and their puppies')]
+    ];
+    return '<div class="disc">'+L.map(function(x){
+      return '<a class="dl" href="'+x[0]+'"><span class="ic">'+x[1]+'</span><span><span class="t">'+esc(x[2])+'</span><span class="d">'+esc(x[3])+'</span></span></a>';
+    }).join('')+'</div>';
+  }
+  function paneCuenta(d){
+    var petNm=(d.pets&&d.pets[0]&&d.pets[0].name)||'';
+    var petReason=petNm?PT('Mi mascota ('+esc(petNm)+') ya no está con nosotros','My pet ('+esc(petNm)+') is no longer with us'):PT('Mi mascota ya no está con nosotros','My pet is no longer with us');
+    var out='<div class="card"><div class="ttl" style="margin-bottom:6px">'+PT('Mis datos','My details')+'</div>'+
+      '<div class="row"><span class="k">'+PT('Nombre','Name')+'</span><span class="v">'+esc(((d.client&&d.client.first_name)||'')+' '+((d.client&&d.client.last_name)||''))+'</span></div>'+
+      '<div class="row"><span class="k">'+PT('Correo','Email')+'</span><span class="v">'+esc(d.email||'')+'</span></div>'+
+      '<div class="row"><span class="k">'+PT('Teléfono','Phone')+'</span><span class="v">'+esc((d.client&&d.client.phone)||'—')+'</span></div>'+
+      '<div class="row"><span class="k">'+PT('Dirección','Address')+'</span><span class="v">'+esc([(d.client&&d.client.address),(d.client&&d.client.city),(d.client&&d.client.state),(d.client&&d.client.zip)].filter(Boolean).join(', ')||'—')+'</span></div>'+
+      '<div class="row"><span class="k">'+PT('Idioma','Language')+'</span><span class="v">'+esc((d.client&&(d.client.contact_lang||d.client.language))||'Spanish')+'</span></div>'+
+      '<button class="btn w" style="margin-top:14px" onclick="profileEdit()">'+svg('pen',16)+' '+PT('Editar mis datos','Edit my details')+'</button></div>';
+
+    if(d.email_opted_out){
+      out+='<div class="card"><div class="ttl">'+PT('Correos detenidos','Emails paused')+'</div>'+
+        '<p class="muted" style="margin:8px 0 14px">'+PT('Ahora mismo no te enviamos correos automáticos.','We are not sending you automatic emails right now.')+'</p>'+
+        '<button class="btn pri w" id="pf-resume">'+PT('Reactivar mis correos','Resume my emails')+'</button></div>';
+    } else {
+      out+='<div class="card"><div class="ttl">'+PT('Correos y notificaciones','Emails and notifications')+'</div>'+
+        '<p class="muted" style="margin:8px 0 12px">'+PT('Si ya no quieres recibir novedades, recordatorios o el cumpleaños de tu mascota, puedes detenerlos aquí.','If you no longer want news, reminders or your pet\'s birthday, you can stop them here.')+'</p>'+
+        '<label>'+PT('Motivo','Reason')+'</label>'+
+        '<select id="pf-reason">'+
+          '<option value="Demasiados correos">'+PT('Recibo demasiados correos','I get too many emails')+'</option>'+
+          '<option value="No me interesa el contenido">'+PT('El contenido no me interesa','The content is not for me')+'</option>'+
+          '<option value="Nunca me suscribí">'+PT('Nunca me suscribí','I never signed up')+'</option>'+
+          '<option value="'+petReason.replace(/"/g,'&quot;')+'">'+petReason+'</option>'+
+          '<option value="Otro">'+PT('Otro motivo','Another reason')+'</option>'+
+        '</select>'+
+        '<button class="btn w" id="pf-stop" style="margin-top:14px;border-color:#F5C2C2;color:#9B1C1C">'+PT('Detener mis correos','Stop my emails')+'</button></div>';
+    }
+    return out;
   }
 
-  document.getElementById('logout').onclick=function(e){ e.preventDefault(); sb.auth.signOut().then(function(){ showLogin({k:'info',t:PT('Sesión cerrada.','Signed out.')}); document.getElementById('logout').style.display='none'; }); };
+  /* ═══ RENDER ═══ */
+  function render(d){
+    D=d; setPlangFrom(d.client);
+    var hero=document.getElementById('hero'); if(hero) hero.style.display='none';
+    document.getElementById('logout').style.display='';
 
-  // arranque
-  sb.auth.getSession().then(function(s){
-    if(s.data && s.data.session && s.data.session.user){ showDashboard(s.data.session.user.email); }
-    else { showLogin(null); }
-  });
-  // capturar el hash del magic link al volver (#access_token=...)
-  sb.auth.onAuthStateChange(function(_evt, session){ if(session && session.user){ showDashboard(session.user.email); } });
+    var c=d.client||{};
+    var emailName=(d.email||'').split('@')[0].replace(/[._]+/g,' ').replace(/\b\w/g,function(x){return x.toUpperCase();});
+    var name=(c.first_name?((c.first_name+' '+(c.last_name||'')).trim()):(emailName||d.email));
+    var loc=[c.city,c.state].filter(Boolean).join(', ');
+    var initials=((c.first_name||'?')[0]+((c.last_name||'')[0]||'')).toUpperCase();
+    var nPets=(d.pets||[]).length;
+    var ms=(d.memberships||[]).filter(function(m){return String(m.status||'')!=='cancelled';});
+    var baths=ms.reduce(function(a,m){return a+(m.credits_balance||0);},0);
+    var earned=(d.badges||[]).length;
+    var top=topPlan(ms);
+
+    /* portada */
+    coverHost.innerHTML='<div class="wrap" style="padding-bottom:0"><div class="cover">'+
+      (c.cover_url?('<img src="'+esc(c.cover_url)+'" alt="">'):'<div class="dots"></div>')+
+      '<div class="scrim"></div>'+
+      '<button class="camchip" onclick="setPhoto(\'cover\')">'+svg('cam',15)+' '+PT('Cambiar portada','Change cover')+'</button>'+
+      '</div></div>';
+
+    var html='<div class="idcard rise"><div class="rainbow"></div>'+
+      '<div class="av">'+(c.photo_url?('<img src="'+esc(c.photo_url)+'" alt="">'):esc(initials))+
+        '<button class="pen" onclick="setPhoto(\'avatar\')" title="'+PT('Cambiar foto','Change photo')+'">'+svg('cam',14,2)+'</button></div>'+
+      '<h1 class="nm">'+PT('Hola, ','Hi, ')+esc(String(name||'').split(' ')[0]||name)+'</h1>'+
+      '<div class="sub">'+esc(d.email)+(loc?(' · '+esc(loc)):'')+'</div>'+
+      (top?('<div class="memchip" style="border-color:'+top.color+';color:'+top.color+'">'+svg('star',13,2)+' '+PT('Miembro ','Member ')+esc(top.label)+'</div>'):'')+
+      '<div class="stats">'+
+        '<div class="stat"><b style="color:var(--orange2)">'+nPets+'</b><span>'+PT(nPets===1?'MASCOTA':'MASCOTAS',nPets===1?'PET':'PETS')+'</span></div>'+
+        '<div class="stat"><b style="color:var(--green)">'+baths+'</b><span>'+PT('BAÑOS DISP.','BATHS LEFT')+'</span></div>'+
+        '<div class="stat"><b style="color:var(--violet)">'+ms.length+'</b><span>'+PT(ms.length===1?'PLAN':'PLANES',ms.length===1?'PLAN':'PLANS')+'</span></div>'+
+        '<div class="stat"><b style="color:var(--blue)">'+earned+'</b><span>'+PT('INSIGNIAS','BADGES')+'</span></div>'+
+      '</div>'+
+      badgesHtml(d)+
+      (profileComplete(c)?'':'<div class="nudge">'+PT('Completa tu perfil y desbloqueas la insignia <b>Perfil Completo</b>.','Complete your profile and unlock the <b>Complete Profile</b> badge.')+'</div>')+
+      '<button class="btn sm" style="margin-top:14px" onclick="profileEdit()">'+svg('pen',14)+' '+PT('Editar mi perfil','Edit my profile')+'</button>'+
+      '</div>';
+
+    var tabs=[['mascotas','paw',PT('Mascotas','Pets'),nPets],
+              ['grooming','scissors','Grooming',0],
+              ['pagos','card',PT('Pagos','Payments'),0],
+              ['descubre','compass',PT('Descubre','Discover'),0],
+              ['cuenta','mail',PT('Cuenta','Account'),0]];
+    html+='<div class="tabs">'+tabs.map(function(t,i){
+      return '<button class="tab'+(i===0?' on':'')+'" data-t="'+t[0]+'">'+svg(t[1],16)+' '+esc(t[2])+(t[3]?('<span class="n">'+t[3]+'</span>'):'')+'</button>';
+    }).join('')+'</div>';
+
+    html+='<div class="pane on" data-p="mascotas">'+paneMascotas(d)+'</div>'+
+      '<div class="pane" data-p="grooming">'+paneGrooming(d)+'</div>'+
+      '<div class="pane" data-p="pagos">'+panePagos(d)+'</div>'+
+      '<div class="pane" data-p="descubre">'+paneDescubre()+'</div>'+
+      '<div class="pane" data-p="cuenta">'+paneCuenta(d)+'</div>';
+
+    root.innerHTML=html;
+
+    root.querySelectorAll('.tab').forEach(function(b){
+      b.onclick=function(){
+        var t=b.getAttribute('data-t');
+        root.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on',x===b); });
+        root.querySelectorAll('.pane').forEach(function(p){ p.classList.toggle('on',p.getAttribute('data-p')===t); });
+        if(t==='pagos') loadCard();
+      };
+    });
+
+    var stop=document.getElementById('pf-stop');
+    if(stop) stop.onclick=function(){
+      var rs=(document.getElementById('pf-reason')||{}).value||'';
+      if(!confirm(PT('¿Detener todos los correos automáticos?','Stop all automatic emails?'))) return;
+      api({action:'stop_emails',reason:rs}).then(function(){ load(); });
+    };
+    var res=document.getElementById('pf-resume');
+    if(res) res.onclick=function(){ api({action:'resume_emails'}).then(function(){ load(); }); };
+  }
+
+  function profileComplete(c){
+    if(!c) return false;
+    var need=['first_name','last_name','phone','address','city','zip'];
+    for(var i=0;i<need.length;i++){ if(!String(c[need[i]]||'').trim()) return false; }
+    return true;
+  }
+  function badgesHtml(d){
+    var all=d.badges_all||d.badges||[];
+    if(!all.length) return '';
+    var en=PLANG==='en';
+    return '<div class="bgrid">'+all.map(function(b){
+      var nm=en?(b.name_en||b.name_es||''):(b.name_es||b.name_en||'');
+      var got=(b.earned===undefined)?true:!!b.earned;
+      return '<span class="bdg'+(got?'':' lock')+'" title="'+esc(b.description||'')+(got?'':(' — '+PT('aún no la tienes','not yet earned')))+'">'+
+        '<span class="em">'+esc(b.icon||'')+'</span>'+esc(nm)+(got?'':' 🔒')+'</span>';
+    }).join('')+'</div>';
+  }
+
+  async function load(){
+    root.innerHTML='<div class="card"><div class="center"><div class="spin"></div>'+PT('Cargando tu perfil…','Loading your profile…')+'</div></div>';
+    var s=await sb.auth.getSession();
+    var tok=s.data&&s.data.session&&s.data.session.access_token;
+    if(!tok){ showLogin({k:'err',t:PT('Sesión expirada, vuelve a entrar.','Session expired, sign in again.')}); return; }
+    try{
+      var r=await fetch(SUPA+'/functions/v1/portal_data',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:'{}'});
+      var d=await r.json();
+      if(d.error){ root.innerHTML='<div class="card"><div class="msg err">'+esc(d.error)+'</div></div>'; return; }
+      render(d);
+    }catch(e){ root.innerHTML='<div class="card"><div class="msg err">'+PT('No pudimos cargar tu perfil. Intenta de nuevo.','We could not load your profile. Try again.')+'</div></div>'; }
+  }
+
+  document.getElementById('logout').onclick=function(e){ e.preventDefault();
+    sb.auth.signOut().then(function(){ showLogin({k:'info',t:PT('Sesión cerrada.','Signed out.')}); document.getElementById('logout').style.display='none'; }); };
+
+  applyStatic();
+  sb.auth.getSession().then(function(s){ if(s.data&&s.data.session&&s.data.session.user) load(); else showLogin(null); });
+  sb.auth.onAuthStateChange(function(_e,session){ if(session&&session.user) load(); });
 })();
 </script>
   <script src="bp-cookies.js?v=1783375000000"></script>
