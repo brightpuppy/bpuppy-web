@@ -560,26 +560,86 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     });
   };
 
-  /* ═══ REPROGRAMAR ═══ */
+  /* ═══ REPROGRAMAR — conectado al CRM: calendario de días + horas disponibles (bloques de 2h) ═══ */
+  var GROOM_CALL='808-492-8294'; // línea para "agendar hoy" (misma que el negocio)
+  function slotMin(t){ var m=String(t).match(/(\d+):(\d+)\s*(AM|PM)/i); if(!m) return 0; var h=(+m[1])%12; if(/pm/i.test(m[3])) h+=12; return h*60+(+m[2]); }
+  function ymdLocal(dt){ return dt.getFullYear()+'-'+String(dt.getMonth()+1).padStart(2,'0')+'-'+String(dt.getDate()).padStart(2,'0'); }
   window.reschedule=function(id,d0,t0){
-    var times=['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
+    var st={ slots:['9:00 AM','11:00 AM','1:00 PM','3:00 PM','5:00 PM'], closed:[0], cap:1, day:'', time:'' };
     var ov=modal(PT('Reprogramar cita','Reschedule'),
-      '<p class="muted">'+PT('Elige la nueva fecha y hora. Debe ser con al menos 24 horas de antelación.','Pick the new date and time. It must be at least 24 hours in advance.')+'</p>'+
-      '<div class="g2"><div><label>'+PT('Nueva fecha','New date')+'</label><input id="rs-d" type="date" value="'+esc((d0||'').slice(0,10))+'"></div>'+
-      '<div><label>'+PT('Nueva hora','New time')+'</label><select id="rs-t">'+times.map(function(t){return '<option'+(t===t0?' selected':'')+'>'+t+'</option>';}).join('')+'</select></div></div>'+
-      '<button class="btn pri w" id="rs-go" style="margin-top:16px">'+PT('Confirmar cambio','Confirm change')+'</button><div id="rs-msg"></div>', 460);
-    ov.querySelector('#rs-go').onclick=function(){
+      '<p class="muted">'+PT('Elige un día y una hora disponibles. Cada cita ocupa un bloque de 2 horas.','Pick an available day and time. Each appointment takes a 2-hour block.')+'</p>'+
+      '<div style="font-size:11px;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">'+PT('Día','Day')+'</div>'+
+      '<div id="rs-days" style="display:flex;gap:7px;overflow-x:auto;padding-bottom:6px;-webkit-overflow-scrolling:touch"></div>'+
+      '<div id="rs-slotwrap" style="margin-top:12px;display:none"><div style="font-size:11px;font-weight:800;color:var(--ink2);text-transform:uppercase;letter-spacing:.4px;margin-bottom:6px">'+PT('Hora','Time')+'</div><div id="rs-slots" style="display:flex;gap:7px;flex-wrap:wrap"></div></div>'+
+      '<div id="rs-note" style="font-size:12px;color:var(--ink2);margin-top:10px;line-height:1.5"></div>'+
+      '<button class="btn pri w" id="rs-go" style="margin-top:14px" disabled>'+PT('Solicitar cambio','Request change')+'</button><div id="rs-msg"></div>', 500);
+    var daysEl=ov.querySelector('#rs-days'), slotsEl=ov.querySelector('#rs-slots'), slotWrap=ov.querySelector('#rs-slotwrap'), noteEl=ov.querySelector('#rs-note'), goBtn=ov.querySelector('#rs-go');
+    function renderDays(){
+      var today=new Date(); today.setHours(0,0,0,0);
+      var html=''; var n=0, i=0;
+      while(n<14 && i<40){
+        var dt=new Date(today.getTime()+i*864e5); i++;
+        if(st.closed.indexOf(dt.getDay())>=0) continue;
+        var ds=ymdLocal(dt);
+        var wd=[PT('Dom','Sun'),PT('Lun','Mon'),PT('Mar','Tue'),PT('Mié','Wed'),PT('Jue','Thu'),PT('Vie','Fri'),PT('Sáb','Sat')][dt.getDay()];
+        var lbl=(i===1?PT('Hoy','Today'):wd);
+        html+='<button type="button" class="rs-day" data-d="'+ds+'" style="flex:0 0 auto;min-width:56px;border:1.5px solid var(--line);background:var(--bg);border-radius:12px;padding:8px 6px;text-align:center;cursor:pointer;font-family:inherit"><div style="font-size:10.5px;color:var(--ink2);font-weight:700">'+lbl+'</div><div style="font-size:17px;font-weight:800;color:var(--ink)">'+dt.getDate()+'</div></button>';
+        n++;
+      }
+      daysEl.innerHTML=html;
+      Array.prototype.forEach.call(daysEl.querySelectorAll('.rs-day'), function(b){ b.onclick=function(){ pickDay(b.getAttribute('data-d'), b); }; });
+    }
+    function pickDay(ds, btn){
+      st.day=ds; st.time=''; goBtn.disabled=true;
+      Array.prototype.forEach.call(daysEl.querySelectorAll('.rs-day'), function(b){ var on=b===btn; b.style.borderColor=on?'var(--orange)':'var(--line)'; b.style.background=on?'rgba(245,130,32,.08)':'var(--bg)'; });
+      slotWrap.style.display='none'; slotsEl.innerHTML=''; noteEl.textContent=PT('Buscando horas…','Loading times…'); noteEl.style.color='var(--ink2)';
+      fetch(SUPA+'/functions/v1/grooming_slots',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json','Authorization':'Bearer '+ANON},body:JSON.stringify({date:ds})})
+        .then(function(r){return r.json();}).then(function(d){
+          var taken=(d&&d.taken)||[]; var closed=!!(d&&d.closed);
+          var all=(d&&d.times&&d.times.length)?d.times:st.slots;
+          var free=closed?[]:all.filter(function(t){ return taken.indexOf(t)<0; });
+          // Regla de HOY: solo horas ≥1h de anticipación y antes de las 2 PM (3h antes del último slot 5 PM).
+          var todayS=ymdLocal(new Date());
+          if(ds===todayS){
+            var now=new Date(); var nowMin=now.getHours()*60+now.getMinutes();
+            var lastSlot=all.length?slotMin(all[all.length-1]):1020; var cutoff=lastSlot-180;
+            if(nowMin>=cutoff){ free=[]; }
+            else { free=free.filter(function(t){ return slotMin(t) >= nowMin+60; }); }
+          }
+          renderSlots(free, ds===todayS);
+        }).catch(function(){ noteEl.textContent=PT('No se pudo cargar. Intenta de nuevo.','Could not load. Try again.'); noteEl.style.color='#C0392B'; });
+    }
+    function renderSlots(free, isToday){
+      if(!free.length){
+        slotWrap.style.display='none';
+        noteEl.style.color=isToday?'#C2521E':'var(--ink2)';
+        noteEl.innerHTML = isToday
+          ? PT('Para hoy ya no hay reserva en línea. Si deseas agendar para hoy, llámanos al ','No online booking left for today. To book for today, call us at ')+'<a href="tel:'+GROOM_CALL.replace(/[^0-9]/g,'')+'" style="color:var(--orange);font-weight:700">'+GROOM_CALL+'</a>. '+PT('Nuestra última reserva es a las 5 PM.','Our last appointment is at 5 PM.')
+          : PT('No quedan horas libres ese día. Elige otro.','No free times that day. Pick another.');
+        return;
+      }
+      slotWrap.style.display='block'; noteEl.textContent='';
+      slotsEl.innerHTML=free.map(function(t){ return '<button type="button" class="rs-slot" data-t="'+t+'" style="border:1.5px solid var(--line);background:var(--bg);border-radius:11px;padding:9px 14px;cursor:pointer;font-family:inherit;font-weight:700;font-size:13.5px;color:var(--ink)">'+t+'</button>'; }).join('');
+      Array.prototype.forEach.call(slotsEl.querySelectorAll('.rs-slot'), function(b){ b.onclick=function(){
+        st.time=b.getAttribute('data-t'); goBtn.disabled=false;
+        Array.prototype.forEach.call(slotsEl.querySelectorAll('.rs-slot'), function(x){ var on=x===b; x.style.borderColor=on?'var(--orange)':'var(--line)'; x.style.background=on?'var(--orange)':'var(--bg)'; x.style.color=on?'#fff':'var(--ink)'; });
+      }; });
+    }
+    goBtn.onclick=function(){
       var m=ov.querySelector('#rs-msg'), b=this;
-      var nd=ov.querySelector('#rs-d').value, nt=ov.querySelector('#rs-t').value;
-      if(!nd){ m.className='msg err'; m.textContent=PT('Elige una fecha.','Pick a date.'); return; }
-      b.disabled=true; b.textContent=PT('Guardando…','Saving…');
-      fetch(SUPA+'/functions/v1/grooming_manage',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'reschedule',id:id,appointment_date:nd,appointment_time:nt,lang:PLANG})})
+      if(!st.day||!st.time){ m.className='msg err'; m.textContent=PT('Elige día y hora.','Pick day and time.'); return; }
+      b.disabled=true; b.textContent=PT('Enviando…','Sending…');
+      fetch(SUPA+'/functions/v1/grooming_manage',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'reschedule',id:id,appointment_date:st.day,appointment_time:st.time,lang:PLANG})})
         .then(function(r){return r.json();}).then(function(x){
-          if(x.error){ m.className='msg err'; m.textContent=x.error; b.disabled=false; b.textContent=PT('Confirmar cambio','Confirm change'); return; }
-          m.className='msg ok'; m.textContent=PT('¡Listo! Tu cita cambió.','Done! Your appointment moved.');
-          setTimeout(function(){ ov.close(); load(); },1000);
-        }).catch(function(){ m.className='msg err'; m.textContent=PT('No se pudo cambiar.','Could not change it.'); b.disabled=false; b.textContent=PT('Confirmar cambio','Confirm change'); });
+          if(x.error){ m.className='msg err'; m.textContent=x.error; b.disabled=false; b.textContent=PT('Solicitar cambio','Request change'); return; }
+          m.className='msg ok'; m.textContent=PT('¡Solicitud enviada! Te confirmamos el nuevo horario en breve.','Request sent! We\'ll confirm your new time shortly.');
+          setTimeout(function(){ ov.close(); load(); },1400);
+        }).catch(function(){ m.className='msg err'; m.textContent=PT('No se pudo enviar.','Could not send it.'); b.disabled=false; b.textContent=PT('Solicitar cambio','Request change'); });
     };
+    // Config del CRM (horas reales + días cerrados), luego pinta el calendario.
+    fetch(SUPA+'/functions/v1/grooming_slots',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json','Authorization':'Bearer '+ANON},body:'{}'})
+      .then(function(r){return r.json();}).then(function(cf){ if(cf){ if(cf.times&&cf.times.length) st.slots=cf.times; if(cf.closed_days) st.closed=cf.closed_days; if(cf.cap) st.cap=cf.cap; } renderDays(); })
+      .catch(function(){ renderDays(); });
   };
 
   /* ═══ PAGOS: tarjeta guardada ═══ */

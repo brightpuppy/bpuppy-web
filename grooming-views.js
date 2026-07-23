@@ -1040,7 +1040,10 @@ function IntroOfferBanner() {
   const price = size === "gra" ? 70 : size ? 50 : 0;
   const total = price + (pickup ? 20 : 0);
   const todayISO = new Date().toISOString().slice(0, 10);
-  const tomorrowISO = new Date(Date.now() + 864e5).toISOString().slice(0, 10);
+  const GROOM_CALL = "808-492-8294";
+  function bkMin(tm) { var mm = String(tm).match(/(\d+):(\d+)\s*(AM|PM)/i); if (!mm) return 0; var h = (+mm[1]) % 12; if (/pm/i.test(mm[3])) h += 12; return h * 60 + (+mm[2]); }
+  // Mismo día permitido solo antes de las 2 PM (3h antes del último slot 5 PM) y con al menos 1h de anticipación.
+  function todayOk(tm) { if (day !== todayISO) return true; var nowD = new Date(); var nm = nowD.getHours() * 60 + nowD.getMinutes(); if (nm >= 840) return false; return bkMin(tm) >= nm + 60; }
   function pickDate(v) {
     setDay(v); setTime(""); setTaken([]); setErr("");
     if (!v) return;
@@ -1054,7 +1057,8 @@ function IntroOfferBanner() {
     if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return t(["Correo inv\xE1lido.", "Invalid email."]);
     if (!size) return t(["Elige el tama\xF1o de tu mascota.", "Choose your pet’s size."]);
     if (!day || !time) return t(["Elige fecha y hora.", "Choose date and time."]);
-    if (day <= todayISO) return t(["Para hoy no se reserva en l\xEDnea — ll\xE1manos al +1 (929) 428-7300 para confirmar disponibilidad. En l\xEDnea puedes reservar desde ma\xF1ana.", "Same-day booking isn't available online — call us at +1 (929) 428-7300 to check availability. Online booking starts tomorrow."]);
+    if (day < todayISO) return t(["Elige una fecha v\xE1lida.", "Pick a valid date."]);
+    if (!todayOk(time)) return t(["Para hoy a esa hora ya no se reserva en l\xEDnea. Ll\xE1manos al 808-492-8294 (\xFAltima reserva 5 PM), o elige otra hora/d\xEDa.", "That time today isn't available online. Call us at 808-492-8294 (last appointment 5 PM), or pick another time/day."]);
     var d = new Date(day + "T00:00:00");
     if (closedDays.indexOf(d.getDay()) >= 0) return t(["Ese día estamos cerrados.", "We are closed that day."]);
     if (blocked.indexOf(day) >= 0) return t(["Esa fecha no est\xE1 disponible. Elige otra.", "That date is unavailable. Pick another."]);
@@ -1115,8 +1119,8 @@ function IntroOfferBanner() {
             _offerField(t(["Direcci\xF3n", "Address"]), address, setAddr)
           ),
           /* @__PURE__ */ React.createElement("div", { className: "offer-grid" },
-            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Fecha", "Date"])), /* @__PURE__ */ React.createElement("input", { className: "offer-in", type: "date", min: tomorrowISO, value: day, onChange: function(e) { pickDate(e.target.value); } }), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: "var(--ink-soft)", marginTop: 5, lineHeight: 1.45 } }, t(["\xBFPara hoy? En l\xEDnea se reserva desde ma\xF1ana. Para hoy, ll\xE1manos al ", "Same-day? Online booking starts tomorrow. For today, call us at "]), /* @__PURE__ */ React.createElement("a", { href: "sms:+19294287300", style: { color: "var(--orange)", fontWeight: 700, textDecoration: "none" } }, "+1 (929) 428-7300"), t([" y confirmamos disponibilidad.", " to check availability."]))),
-            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Hora", "Time"])), /* @__PURE__ */ React.createElement("select", { className: "offer-in", value: time, onChange: function(e) { setTime(e.target.value); } }, /* @__PURE__ */ React.createElement("option", { value: "" }, "—"), times.filter(function(tm) { return takenTimes.indexOf(tm) < 0; }).map(function(tm) { return /* @__PURE__ */ React.createElement("option", { key: tm, value: tm }, tm); }), day && times.filter(function(tm) { return takenTimes.indexOf(tm) < 0; }).length === 0 ? /* @__PURE__ */ React.createElement("option", { value: "", disabled: true }, t(["D\xEDa lleno — elige otra fecha", "Day full — pick another date"])) : null))
+            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Fecha", "Date"])), /* @__PURE__ */ React.createElement("input", { className: "offer-in", type: "date", min: todayISO, value: day, onChange: function(e) { pickDate(e.target.value); } }), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: "var(--ink-soft)", marginTop: 5, lineHeight: 1.45 } }, t(["Cada cita ocupa un bloque de 2 horas. \xBFPara hoy y ya es tarde? Ll\xE1manos al ", "Each appointment takes a 2-hour block. Booking for today and it's late? Call us at "]), /* @__PURE__ */ React.createElement("a", { href: "tel:8084928294", style: { color: "var(--orange)", fontWeight: 700, textDecoration: "none" } }, GROOM_CALL), t([" — \xFAltima reserva 5 PM.", " — last appointment 5 PM."]))),
+            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Hora", "Time"])), /* @__PURE__ */ React.createElement("select", { className: "offer-in", value: time, onChange: function(e) { setTime(e.target.value); } }, /* @__PURE__ */ React.createElement("option", { value: "" }, "—"), times.filter(function(tm) { return takenTimes.indexOf(tm) < 0 && todayOk(tm); }).map(function(tm) { return /* @__PURE__ */ React.createElement("option", { key: tm, value: tm }, tm); }), day && times.filter(function(tm) { return takenTimes.indexOf(tm) < 0 && todayOk(tm); }).length === 0 ? /* @__PURE__ */ React.createElement("option", { value: "", disabled: true }, t(["D\xEDa lleno — elige otra fecha", "Day full — pick another date"])) : null))
           ),
           /* @__PURE__ */ React.createElement("label", { className: "offer-pickup" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: pickup, onChange: function(e) { setPickup(e.target.checked); } }), t(["Recogida y entrega a domicilio (+$20)", "Home pickup & delivery (+$20)"])),
           /* @__PURE__ */ React.createElement("input", { className: "offer-in", style: { marginTop: 10 }, placeholder: t(["Notas (opcional)", "Notes (optional)"]), value: notes, onChange: function(e) { setNotes(e.target.value); } }),
