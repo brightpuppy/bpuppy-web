@@ -88,6 +88,15 @@ label{display:block;font-size:13px;font-weight:700;color:var(--ink2);margin:0 0 
 input{width:100%;padding:13px 15px;border-radius:13px;border:1.5px solid var(--line);font-family:inherit;font-size:15px;color:var(--ink);background:var(--bg);outline:none}
 input:focus{border-color:var(--orange)}
 .cta{display:block;width:100%;margin-top:14px;padding:14px;border-radius:13px;border:none;background:var(--grad);color:#fff;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;box-shadow:0 10px 26px -8px rgba(245,130,32,.5)}
+.pf-editbtn{margin-top:14px;display:inline-flex;align-items:center;gap:7px;padding:10px 20px;border-radius:999px;border:1.5px solid rgba(255,255,255,.35);background:rgba(255,255,255,.12);color:#fff;font-family:inherit;font-size:13.5px;font-weight:700;cursor:pointer;transition:.15s}
+.pf-editbtn:hover{background:rgba(255,255,255,.22)}
+.pf-nudge{margin-top:12px;font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.9);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:9px 13px}
+.pf-nudge b{color:#fff}
+/* Buena noticia: insignia desbloqueada */
+.pf-win{margin-top:14px;text-align:center;background:linear-gradient(135deg,#FFF7ED,#FFEDD5);border:1.5px solid #F58220;border-radius:14px;padding:16px 14px}
+.pf-win .em{font-size:30px;line-height:1}
+.pf-win .t{font-weight:900;color:#2D2421;font-size:16px;margin-top:4px}
+.pf-win .s{font-size:13px;color:#6f6055;margin-top:4px;line-height:1.5}
 .cta:disabled{opacity:.55;cursor:default;box-shadow:none}
 .ghost{background:transparent;color:var(--ink2);border:1.5px solid var(--line);box-shadow:none}
 .msg{margin-top:12px;font-size:14px;font-weight:600;border-radius:12px;padding:12px 14px;line-height:1.5}
@@ -238,6 +247,72 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
     }
     return '<div class="pets-grid">'+cards+'</div>';
   }
+  // Perfil completo = nombre, apellido, telefono, direccion, ciudad y ZIP.
+  // Si portal_data todavia no devuelve address/zip, caemos a la marca local que dejamos al guardar.
+  function pfIsComplete(c){
+    if(!c) return false;
+    var hasAddrFields = ('address' in c) || ('zip' in c);
+    if(!hasAddrFields){ try{ return localStorage.getItem('bp_pf_done')==='1'; }catch(e){ return false; } }
+    var need = ['first_name','last_name','phone','address','city','zip'];
+    for(var i=0;i<need.length;i++){ if(!String(c[need[i]]||'').trim()) return false; }
+    return true;
+  }
+  function openProfileModal(c){
+    c = c || {};
+    var wasComplete = pfIsComplete(c);
+    var bg=document.createElement('div'); bg.className='modal-bg';
+    bg.innerHTML='<div class="modal pop">'+
+      '<button class="x" id="epx">×</button>'+
+      '<h3>Editar mi perfil</h3>'+
+      '<p style="font-size:13px;color:var(--ink2)">Con tus datos completos agendas más rápido y te llega todo a la dirección correcta.</p>'+
+      '<div class="fgrid">'+
+        '<div><label>Nombre *</label><input id="ep_first" value="'+esc(c.first_name||'')+'" placeholder="Ej: Luis"></div>'+
+        '<div><label>Apellido *</label><input id="ep_last" value="'+esc(c.last_name||'')+'" placeholder="Ej: Guzmán"></div>'+
+        '<div class="full"><label>Teléfono *</label><input id="ep_phone" value="'+esc(c.phone||'')+'" placeholder="+1 (305) 000-0000"></div>'+
+        '<div class="full"><label>Dirección *</label><input id="ep_addr" value="'+esc(c.address||'')+'" placeholder="Calle y número"></div>'+
+        '<div><label>Ciudad *</label><input id="ep_city" value="'+esc(c.city||'')+'"></div>'+
+        '<div><label>Estado</label><input id="ep_state" value="'+esc(c.state||'FL')+'"></div>'+
+        '<div><label>ZIP *</label><input id="ep_zip" value="'+esc(c.zip||'')+'" inputmode="numeric"></div>'+
+        '<div><label>Idioma</label><select id="ep_lang"><option value="Spanish">Español</option><option value="English">English</option></select></div>'+
+      '</div>'+
+      '<button class="cta" id="ep_save">Guardar mi perfil</button>'+
+      '<div id="ep_msg"></div>'+
+    '</div>';
+    document.body.appendChild(bg);
+    try{ var cl=String(c.contact_lang||c.language||'').toLowerCase(); bg.querySelector('#ep_lang').value = (cl.indexOf('en')===0)?'English':'Spanish'; }catch(e){}
+    function close(){ bg.remove(); }
+    bg.querySelector('#epx').onclick=close;
+    bg.onclick=function(e){ if(e.target===bg) close(); };
+    bg.querySelector('#ep_save').onclick=function(){
+      var m=bg.querySelector('#ep_msg'), btn=bg.querySelector('#ep_save');
+      var v=function(id){ return (bg.querySelector(id).value||'').trim(); };
+      var payload={ first_name:v('#ep_first'), last_name:v('#ep_last'), phone:v('#ep_phone'), address:v('#ep_addr'), city:v('#ep_city'), state:v('#ep_state'), zip:v('#ep_zip'), lang:bg.querySelector('#ep_lang').value };
+      if(!payload.first_name || !payload.last_name){ m.className='msg err'; m.textContent='Escribe tu nombre y apellido.'; return; }
+      btn.disabled=true; btn.textContent='Guardando…';
+      sb.auth.getSession().then(function(s){
+        var tok=s.data&&s.data.session&&s.data.session.access_token;
+        if(!tok){ m.className='msg err'; m.textContent='Sesión expirada. Vuelve a entrar.'; btn.disabled=false; btn.textContent='Guardar mi perfil'; return; }
+        fetch(SUPA+'/functions/v1/portal_profile',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify(payload)})
+          .then(function(r){return r.json();}).then(function(d){
+            if(!d.ok){ m.className='msg err'; m.textContent=d.detail||d.error||'No se pudo guardar.'; btn.disabled=false; btn.textContent='Guardar mi perfil'; return; }
+            var nowComplete = ['first_name','last_name','phone','address','city','zip'].every(function(k){ return String(payload[k]||'').trim(); });
+            try{ if(nowComplete) localStorage.setItem('bp_pf_done','1'); }catch(e){}
+            if(nowComplete && !wasComplete){
+              // Buena noticia: insignia desbloqueada
+              bg.querySelector('.modal').innerHTML='<div class="pf-win"><div class="em">🏅</div>'+
+                '<div class="t">¡Insignia desbloqueada: Perfil Completo!</div>'+
+                '<div class="s">Gracias '+esc(payload.first_name)+'. Ya tienes todo listo: la próxima vez agendas en segundos y podemos llegar a tu dirección.</div>'+
+                '</div><button class="cta" id="ep_done">Ver mi perfil</button>';
+              bg.querySelector('#ep_done').onclick=function(){ close(); showDashboard(); };
+              return;
+            }
+            m.className='msg ok'; m.textContent='¡Listo! Tu perfil quedó actualizado.';
+            btn.textContent='Guardado';
+            setTimeout(function(){ close(); showDashboard(); }, 1200);
+          }).catch(function(){ m.className='msg err'; m.textContent='No se pudo guardar. Intenta de nuevo.'; btn.disabled=false; btn.textContent='Guardar mi perfil'; });
+      });
+    };
+  }
   function openPetModal(){
     var bg=document.createElement('div'); bg.className='modal-bg';
     bg.innerHTML='<div class="modal pop">'+
@@ -367,7 +442,10 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
               '<div class="pstat"><b>'+nPets+'</b><span>'+(nPets===1?'mascota':'mascotas')+'</span></div>'+
               '<div class="pstat"><b>'+baths+'</b><span>baños disp.</span></div>'+
               '<div class="pstat"><b>'+nMs+'</b><span>'+(nMs===1?'membresía':'membresías')+'</span></div>'+
-            '</div></div>';
+            '</div>'+
+            (pfIsComplete(d.client)?'':'<div class="pf-nudge">Completa tu perfil y desbloquea tu insignia <b>Perfil Completo</b>.</div>')+
+            '<button class="js-edit-profile pf-editbtn">'+svg('bookmark',15)+' Editar mi perfil</button>'+
+            '</div>';
 
           var tabs='<div class="tabs">'+
             '<button class="tab on" data-t="mascotas">'+svg('paw',16)+' Mascotas'+(nPets?'<span class="n">'+nPets+'</span>':'')+'</button>'+
@@ -395,6 +473,8 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
           });
           // wire create-pet buttons
           root.querySelectorAll('.js-add-pet').forEach(function(b){ b.onclick=function(e){ e.preventDefault(); openPetModal(); }; });
+          // wire editar-perfil (nombre, direccion, etc.)
+          root.querySelectorAll('.js-edit-profile').forEach(function(b){ b.onclick=function(e){ e.preventDefault(); openProfileModal(d.client||{}); }; });
           // wire correos (detener / reactivar) — pestaña Cuenta
           function pfEmail(action, reason, btn){
             if(btn){ btn.disabled=true; btn.dataset.txt=btn.textContent; btn.textContent='Guardando…'; }
