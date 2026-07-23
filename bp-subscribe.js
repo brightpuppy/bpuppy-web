@@ -27,7 +27,7 @@
         '<div style="font-family:\'Bricolage Grotesque\',system-ui,sans-serif;font-weight:800;font-size:clamp(20px,4vw,27px);color:' + INK + ';letter-spacing:-0.02em;margin:0 0 6px">' + t("Únete a la comunidad B Puppy", "Join the B Puppy community") + '</div>' +
         '<p style="color:' + MUT + ';font-size:14.5px;line-height:1.55;margin:0 auto 16px;max-width:52ch">' + t("¡Suscríbete y entérate de las novedades, ofertas y noticias importantes de la comunidad B Puppy!", "Subscribe and stay up to date with news, offers and everything happening in the B Puppy community!") + '</p>' +
         '<form id="bp-sub-form" style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;max-width:560px;margin:0 auto">' +
-          '<input id="bp-sub-name" placeholder="' + t("Tu nombre (opcional)", "Your name (optional)") + '" autocomplete="name" style="flex:1 1 220px;min-width:200px;padding:13px 15px;border-radius:12px;border:1px solid ' + LINE + ';font-size:15px;font-family:inherit;background:#fff;color:' + INK + ';outline:none">' +
+          '<input id="bp-sub-name" placeholder="' + t("Tu nombre", "Your name") + '" autocomplete="name" style="flex:1 1 220px;min-width:200px;padding:13px 15px;border-radius:12px;border:1px solid ' + LINE + ';font-size:15px;font-family:inherit;background:#fff;color:' + INK + ';outline:none">' +
           '<input id="bp-sub-email" type="email" placeholder="' + t("Tu correo", "Your email") + '" autocomplete="email" required style="flex:1 1 220px;min-width:200px;padding:13px 15px;border-radius:12px;border:1px solid ' + LINE + ';font-size:15px;font-family:inherit;background:#fff;color:' + INK + ';outline:none">' +
           '<button type="submit" id="bp-sub-btn" style="padding:13px 26px;border:none;border-radius:999px;background:' + ACC + ';color:#fff;font-weight:800;font-size:15px;font-family:inherit;cursor:pointer;box-shadow:0 8px 20px rgba(245,130,32,0.28)">' + t("Suscribirme", "Subscribe") + '</button>' +
         '</form>' +
@@ -41,12 +41,13 @@
       ev.preventDefault();
       var email = (band.querySelector("#bp-sub-email").value || "").trim();
       var name = (band.querySelector("#bp-sub-name").value || "").trim();
+      if (!name) { msg.style.color = "#c0392b"; msg.textContent = t("Escribe tu nombre.", "Enter your name."); band.querySelector("#bp-sub-name").focus(); return; }
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) { msg.style.color = "#c0392b"; msg.textContent = t("Correo no válido.", "Invalid email."); return; }
       var btn = band.querySelector("#bp-sub-btn"); btn.disabled = true; btn.textContent = t("Enviando…", "Sending…");
       fetch(SU + "/rest/v1/website_leads", {
         method: "POST",
         headers: { "Content-Type": "application/json", "apikey": ANON, "Authorization": "Bearer " + ANON, "Prefer": "return=minimal" },
-        body: JSON.stringify({ full_name: (name || email.split("@")[0]), email: email, source: "subscribe", followup_stage: 0, email_consent: true, sms_consent: false, consent_ts: new Date().toISOString(), consent_source: "web_subscribe_footer", contact_lang: (EN ? "English" : "Español"), message: "Suscripción desde el footer del sitio" })
+        body: JSON.stringify({ full_name: name, email: email, source: "subscribe", followup_stage: 0, email_consent: true, sms_consent: false, consent_ts: new Date().toISOString(), consent_source: "web_subscribe_footer", contact_lang: (EN ? "English" : "Español"), message: "Suscripción desde el footer del sitio" })
       }).then(function (r) {
         if (!r.ok) throw new Error("http " + r.status);
         try { localStorage.setItem(KEY, "1"); } catch (e) {}
