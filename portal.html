@@ -92,6 +92,13 @@ input:focus{border-color:var(--orange)}
 .pf-editbtn:hover{background:rgba(255,255,255,.22)}
 .pf-nudge{margin-top:12px;font-size:12.5px;line-height:1.5;color:rgba(255,255,255,.9);background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:12px;padding:9px 13px}
 .pf-nudge b{color:#fff}
+.bdg-row{display:flex;flex-wrap:wrap;gap:6px;justify-content:center;margin-top:12px}
+.bdg{display:inline-flex;align-items:center;gap:5px;background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.28);color:#fff;font-size:11.5px;font-weight:700;padding:5px 11px;border-radius:999px}
+.bdg-i{font-size:13px;line-height:1}
+/* Citas: reprogramar */
+.bk{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;padding:11px 13px;border:1px solid var(--line,#eee2d6);border-radius:12px;margin-bottom:8px;background:#fff}
+.bk-w{font-size:13px;color:var(--ink2,#6f6055)}
+.bk-b{padding:8px 15px;border-radius:999px;border:1.5px solid var(--orange,#F58220);background:transparent;color:var(--orange,#F58220);font-family:inherit;font-size:12.5px;font-weight:800;cursor:pointer}
 /* Buena noticia: insignia desbloqueada */
 .pf-win{margin-top:14px;text-align:center;background:linear-gradient(135deg,#FFF7ED,#FFEDD5);border:1.5px solid #F58220;border-radius:14px;padding:16px 14px}
 .pf-win .em{font-size:30px;line-height:1}
@@ -247,6 +254,15 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
     }
     return '<div class="pets-grid">'+cards+'</div>';
   }
+  // Insignias ganadas (vienen de portal_data.badges)
+  function bdgHtml(list){
+    if(!list || !list.length) return '';
+    var en = (document.documentElement.lang||'es').indexOf('en')===0;
+    return '<div class="bdg-row">'+list.slice(0,8).map(function(b){
+      var nm = en ? (b.name_en||b.name_es||'') : (b.name_es||b.name_en||'');
+      return '<span class="bdg" title="'+esc(b.description||'')+'"><span class="bdg-i">'+esc(b.icon||'')+'</span>'+esc(nm)+'</span>';
+    }).join('')+'</div>';
+  }
   // Perfil completo = nombre, apellido, telefono, direccion, ciudad y ZIP.
   // Si portal_data todavia no devuelve address/zip, caemos a la marca local que dejamos al guardar.
   function pfIsComplete(c){
@@ -371,9 +387,52 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
     if(s) return s;
     return (d.email||'?').slice(0,2).toUpperCase();
   }
+  // Citas activas del cliente con opcion de reprogramar (usa grooming_manage: regla de 6h)
+  function bkHtml(d){
+    var list=(d.bookings||[]).filter(function(b){
+      var st=String(b.status||'').toLowerCase();
+      return st!=='cancelled' && st!=='completed' && b.appointment_date;
+    });
+    if(!list.length) return '';
+    return '<div class="card"><div class="step-label">Tus citas</div>'+list.slice(0,6).map(function(b){
+      var svc=Array.isArray(b.services)?b.services.join(', '):(b.services||'');
+      return '<div class="bk"><div><div style="font-weight:600">'+esc(b.pet_name||'Tu mascota')+'</div>'+
+        '<div class="bk-w">'+esc(fmtD(b.appointment_date))+(b.appointment_time?(' · '+esc(b.appointment_time)):'')+(svc?(' · '+esc(svc)):'')+'</div></div>'+
+        '<button class="bk-b js-resched" data-id="'+esc(b.id)+'" data-d="'+esc(b.appointment_date)+'" data-t="'+esc(b.appointment_time||'')+'">Reprogramar</button></div>';
+    }).join('')+'</div>';
+  }
+  function openReschedModal(id, curDate, curTime){
+    var bg=document.createElement('div'); bg.className='modal-bg';
+    var times=['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
+    bg.innerHTML='<div class="modal pop"><button class="x" id="rsx">×</button>'+
+      '<h3>Reprogramar cita</h3>'+
+      '<p style="font-size:13px;color:var(--ink2)">Elige la nueva fecha y hora. Debe ser con al menos 6 horas de antelación.</p>'+
+      '<div class="fgrid">'+
+        '<div><label>Nueva fecha</label><input id="rs_d" type="date" value="'+esc(curDate||'')+'"></div>'+
+        '<div><label>Nueva hora</label><select id="rs_t">'+times.map(function(t){return '<option'+(t===curTime?' selected':'')+'>'+t+'</option>';}).join('')+'</select></div>'+
+      '</div>'+
+      '<button class="cta" id="rs_go">Confirmar cambio</button><div id="rs_msg"></div></div>';
+    document.body.appendChild(bg);
+    function close(){ bg.remove(); }
+    bg.querySelector('#rsx').onclick=close;
+    bg.onclick=function(e){ if(e.target===bg) close(); };
+    bg.querySelector('#rs_go').onclick=function(){
+      var m=bg.querySelector('#rs_msg'), btn=bg.querySelector('#rs_go');
+      var nd=bg.querySelector('#rs_d').value, nt=bg.querySelector('#rs_t').value;
+      if(!nd){ m.className='msg err'; m.textContent='Elige una fecha.'; return; }
+      btn.disabled=true; btn.textContent='Guardando…';
+      fetch(SUPA+'/functions/v1/grooming_manage',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'reschedule',id:id,appointment_date:nd,appointment_time:nt})})
+        .then(function(r){return r.json();}).then(function(x){
+          if(x.error){ m.className='msg err'; m.textContent=x.error; btn.disabled=false; btn.textContent='Confirmar cambio'; return; }
+          m.className='msg ok'; m.textContent='¡Listo! Tu cita quedó para el '+nd+' a las '+nt+'.';
+          btn.textContent='Cambiada';
+          setTimeout(function(){ close(); showDashboard(); }, 1400);
+        }).catch(function(){ m.className='msg err'; m.textContent='No se pudo cambiar. Intenta de nuevo.'; btn.disabled=false; btn.textContent='Confirmar cambio'; });
+    };
+  }
   function renderGroomingTab(d){
     var ms=d.memberships||[];
-    var html='<div class="gbook"><div class="em" style="color:#fff">'+svg('scissors',84)+'</div>'+
+    var html=bkHtml(d)+'<div class="gbook"><div class="em" style="color:#fff">'+svg('scissors',84)+'</div>'+
       '<h2>Agenda tu próxima cita</h2>'+
       '<p>Reserva baño, corte o spa para tu mascota en segundos. '+(ms.length?'Tus baños de membresía se aplican automáticamente.':'Elige el servicio y la fecha que más te convenga.')+'</p>'+
       '<a href="/grooming.html" class="go">Agendar grooming →</a></div>';
@@ -443,6 +502,7 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
               '<div class="pstat"><b>'+baths+'</b><span>baños disp.</span></div>'+
               '<div class="pstat"><b>'+nMs+'</b><span>'+(nMs===1?'membresía':'membresías')+'</span></div>'+
             '</div>'+
+            bdgHtml(d.badges)+
             (pfIsComplete(d.client)?'':'<div class="pf-nudge">Completa tu perfil y desbloquea tu insignia <b>Perfil Completo</b>.</div>')+
             '<button class="js-edit-profile pf-editbtn">'+svg('bookmark',15)+' Editar mi perfil</button>'+
             '</div>';
@@ -475,6 +535,8 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
           root.querySelectorAll('.js-add-pet').forEach(function(b){ b.onclick=function(e){ e.preventDefault(); openPetModal(); }; });
           // wire editar-perfil (nombre, direccion, etc.)
           root.querySelectorAll('.js-edit-profile').forEach(function(b){ b.onclick=function(e){ e.preventDefault(); openProfileModal(d.client||{}); }; });
+          // wire reprogramar cita
+          root.querySelectorAll('.js-resched').forEach(function(b){ b.onclick=function(e){ e.preventDefault(); openReschedModal(b.getAttribute('data-id'), b.getAttribute('data-d'), b.getAttribute('data-t')); }; });
           // wire correos (detener / reactivar) — pestaña Cuenta
           function pfEmail(action, reason, btn){
             if(btn){ btn.disabled=true; btn.dataset.txt=btn.textContent; btn.textContent='Guardando…'; }
