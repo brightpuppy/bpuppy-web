@@ -115,14 +115,13 @@
         if (n && x.name && !n.value) n.value = x.name;
         if (e && x.email && !e.value) e.value = x.email;
         if (p && x.phone && !p.value) p.value = x.phone;
-        if (x.name || x.email) {
-          var hint = document.createElement("div");
-          hint.style.cssText = "font-size:12px;color:#16a34a;font-weight:700;margin:-2px 0 10px";
-          hint.textContent = T("Ya tenemos tus datos — corrígelos si algo cambió.", "We already have your details — fix anything that changed.");
-          try { n.parentNode.insertBefore(hint, n); } catch (err) {}
-          // Si ya está completo, el foco va al botón para que entre de una
-          try { if (n.value && e.value) ov.querySelector("#cg-go").focus(); } catch (err) {}
-        }
+        // Sin avisos: se prellena calladito. El foco cae en el primer campo vacio
+        // (casi siempre el correo, porque al armar el catalogo rara vez se escribe).
+        try {
+          if (n && !n.value) n.focus();
+          else if (e && !e.value) e.focus();
+          else ov.querySelector("#cg-go").focus();
+        } catch (err) {}
       }).catch(function () {});
     }
     setTimeout(function () { try { var n = ov.querySelector("#cg-name"); if (n && !n.value) n.focus(); } catch (e) {} }, 250);
