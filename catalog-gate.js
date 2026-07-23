@@ -52,10 +52,11 @@
     ov.innerHTML =
       '<div class="cg-card">' +
         '<div style="font-size:34px;line-height:1">🐶</div>' +
-        "<h2>" + T("Este catálogo es privado", "This catalog is private") + "</h2>" +
+        "<h2>" + T("Coloca tu nombre y correo para ver los cachorros disponibles",
+                   "Enter your name and email to see the available puppies") + "</h2>" +
         '<p class="cg-p">' + T(
-          "Déjanos tu nombre y correo para abrirlo. Así sabemos a quién le estamos mostrando estos cachorros y te podemos avisar si alguno se reserva.",
-          "Leave your name and email to open it. That way we know who we're showing these puppies to, and we can tell you if one gets reserved."
+          "Es un catálogo privado. Así sabemos a quién se lo estamos mostrando y te avisamos si alguno se reserva.",
+          "This is a private catalog. That way we know who we're showing it to, and we can tell you if one gets reserved."
         ) + "</p>" +
         '<div id="cg-err" class="cg-err" style="display:none"></div>' +
         '<input class="cg-in" id="cg-name" placeholder="' + T("Tu nombre", "Your name") + '" autocomplete="name">' +
@@ -101,7 +102,30 @@
         close();
       });
     };
-    setTimeout(function () { try { ov.querySelector("#cg-name").focus(); } catch (e) {} }, 250);
+    // Si el catálogo se armó para un cliente del CRM, le prellenamos lo que ya sabemos.
+    // Sigue siendo editable: puede corregirlo ahí mismo antes de entrar.
+    var tk = qs("t") || qs("token");
+    if (tk) {
+      fetch(SUPA + "/functions/v1/catalog_capture", {
+        method: "POST", headers: { "Content-Type": "application/json", apikey: ANON },
+        body: JSON.stringify({ action: "prefill", token: tk })
+      }).then(function (r) { return r.json(); }).then(function (x) {
+        if (!x || !x.ok) return;
+        var n = ov.querySelector("#cg-name"), e = ov.querySelector("#cg-email"), p = ov.querySelector("#cg-phone");
+        if (n && x.name && !n.value) n.value = x.name;
+        if (e && x.email && !e.value) e.value = x.email;
+        if (p && x.phone && !p.value) p.value = x.phone;
+        if (x.name || x.email) {
+          var hint = document.createElement("div");
+          hint.style.cssText = "font-size:12px;color:#16a34a;font-weight:700;margin:-2px 0 10px";
+          hint.textContent = T("Ya tenemos tus datos — corrígelos si algo cambió.", "We already have your details — fix anything that changed.");
+          try { n.parentNode.insertBefore(hint, n); } catch (err) {}
+          // Si ya está completo, el foco va al botón para que entre de una
+          try { if (n.value && e.value) ov.querySelector("#cg-go").focus(); } catch (err) {}
+        }
+      }).catch(function () {});
+    }
+    setTimeout(function () { try { var n = ov.querySelector("#cg-name"); if (n && !n.value) n.focus(); } catch (e) {} }, 250);
   }
 
   /* ── 2. Lista de espera al final del catálogo ── */
