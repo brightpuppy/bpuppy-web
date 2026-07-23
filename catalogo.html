@@ -340,6 +340,7 @@
       + (price? '<div style="font-family:var(--display);font-weight:800;font-size:24px;margin-top:8px">'+money2(price)+' <span style="font-size:13px;color:var(--ink-soft);font-weight:600">USD</span></div>':'')
       + planH
       + '<div style="background:var(--paper,#faf5ee);border:1px solid var(--line);border-radius:12px;padding:11px 13px;font-size:12.5px;color:var(--ink-2);margin:13px 0;line-height:1.55">'+T('Puedes aplicar con <b>Klarna</b>, <b>Afterpay</b> o <b>Affirm</b> en la página de pago. Consultar tu elegibilidad con estas compañías <b>normalmente no afecta tu puntaje de crédito</b> (es una consulta suave) — puedes probar con varias para ver cuál te aprueba.','You can apply with <b>Klarna</b>, <b>Afterpay</b> or <b>Affirm</b> on the payment page. Checking your eligibility with these companies <b>usually does not affect your credit score</b> (it is a soft check) — you can try several.')+'</div>'
+      + '<div style="margin:0 0 11px"><label style="display:block;font-size:11.5px;font-weight:700;color:var(--ink-2);margin-bottom:4px">'+T('¿Tienes un código promocional?','Have a promo code?')+'</label><input id="finPromo" placeholder="'+T('Código','Code')+'" style="width:100%;padding:11px 13px;border:1.5px solid var(--line);border-radius:11px;font-family:inherit;font-size:14px;text-transform:uppercase;box-sizing:border-box;background:var(--bg)"></div>'
       + '<button id="finGo" style="width:100%;background:linear-gradient(135deg,#F58220,#FF9800);color:#fff;border:none;border-radius:12px;padding:14px;font-weight:800;font-size:15px;cursor:pointer;font-family:inherit">'+T('Continuar al pago / financiamiento →','Continue to payment / financing →')+'</button>'
       + '<div style="font-size:12px;color:var(--ink-soft);margin-top:10px;text-align:center">'+T('También aceptamos tarjeta, Cash App, Zelle y transferencia.','We also accept card, Cash App, Zelle and transfer.')+'</div>'
       + '</div>';
@@ -347,7 +348,7 @@
     ov.addEventListener('click', function(e){ if(e.target===ov) ov.remove(); });
     document.getElementById('finGo').onclick=function(){
       var btn=this; btn.disabled=true; btn.textContent=T('Conectando con el pago seguro…','Connecting to secure payment…');
-      fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({type:'finance',token:token,puppy_id:p.id,lang:LANG})})
+      fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({type:'finance',token:token,puppy_id:p.id,lang:LANG,promo_code:((document.getElementById('finPromo')||{}).value||'').trim()})})
         .then(function(r){return r.json();}).then(function(d){ if(d&&d.url){ location.href=d.url; } else { btn.disabled=false; btn.textContent=T('Continuar al pago / financiamiento →','Continue to payment / financing →'); alert((d&&d.error)||T('No se pudo iniciar el pago. Escríbenos por WhatsApp.','Could not start payment. Message us on WhatsApp.')); } })
         .catch(function(){ btn.disabled=false; btn.textContent=T('Continuar al pago / financiamiento →','Continue to payment / financing →'); alert(T('Error de conexión. Intenta de nuevo.','Connection error. Try again.')); });
     };
