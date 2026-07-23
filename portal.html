@@ -140,20 +140,20 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
 <body>
 <header>
   <a href="/"><img src="assets/logo-clean.webp" alt="BPuppy" onerror="this.style.display='none';this.parentNode.textContent='BPuppy'"></a>
-  <a href="#" id="logout" style="display:none">Cerrar sesión</a>
+  <a href="#" id="logout" style="display:none" data-es="Cerrar sesión" data-en="Sign out">Cerrar sesión</a>
 </header>
 
 <section class="hero" id="hero">
-  <div class="eyebrow">BPuppy · Mi cuenta</div>
-  <h1>Bienvenido a <em>tu mundo</em></h1>
-  <p>Tus mascotas, citas de grooming, planes de pago y guardados — todo en un solo lugar.</p>
+  <div class="eyebrow" data-es="BPuppy · Mi cuenta" data-en="BPuppy · My account">BPuppy · Mi cuenta</div>
+  <h1 data-es="Bienvenido a &lt;em&gt;tu mundo&lt;/em&gt;" data-en="Welcome to &lt;em&gt;your world&lt;/em&gt;">Bienvenido a <em>tu mundo</em></h1>
+  <p data-es="Tus mascotas, citas de grooming, planes de pago y guardados — todo en un solo lugar." data-en="Your pets, grooming appointments, payment plans and saved items — all in one place.">Tus mascotas, citas de grooming, planes de pago y guardados — todo en un solo lugar.</p>
 </section>
 
 <div class="wrap" id="root">
   <div class="card"><div class="center"><div class="spin"></div>Cargando…</div></div>
 </div>
 
-<footer>BPuppy · ¿Dudas? WhatsApp +1 (929) 428-7300 · <a href="/" style="color:var(--orange)">Volver al sitio</a></footer>
+<footer id="pf-foot">BPuppy · <span data-es="¿Dudas? Escríbenos por SMS o WhatsApp" data-en="Questions? Text us or WhatsApp">¿Dudas? Escríbenos por SMS o WhatsApp</span> <a href="sms:+19294287300" style="color:var(--orange)">+1 (929) 428-7300</a> · <a href="/" style="color:var(--orange)" data-es="Volver al sitio" data-en="Back to the site">Volver al sitio</a></footer>
 
 <script>
 (function(){
@@ -163,7 +163,30 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   var root=document.getElementById('root');
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
   function money(n){return '$'+Number(n||0).toLocaleString('en-US');}
-  function fmtD(d){if(!d)return '—';try{return new Date(d+'T12:00:00').toLocaleDateString('es-US',{day:'numeric',month:'long',year:'numeric'});}catch(e){return d;}}
+  // REGLA: todo lo que ve el cliente va en SU idioma (clients.contact_lang manda; si no, el del navegador).
+  var PLANG = (((document.documentElement.lang||'es')+'').indexOf('en')===0) ? 'en' : 'es';
+  function PT(es, en){ return PLANG === 'en' ? en : es; }
+  function setPlangFrom(c){
+    try{
+      var v = String((c && (c.contact_lang || c.language)) || '').toLowerCase();
+      if(v) PLANG = (v.indexOf('en')===0) ? 'en' : 'es';
+      document.documentElement.lang = PLANG;
+      applyStaticLang();
+    }catch(e){}
+  }
+  // Textos fijos del HTML (header/hero/footer) en el idioma del cliente
+  function applyStaticLang(){
+    try{
+      document.querySelectorAll('[data-es][data-en]').forEach(function(el){
+        var v = PLANG === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-es');
+        if(v != null) el.innerHTML = v;
+      });
+    }catch(e){}
+  }
+  function fmtD(d){if(!d)return '—';try{return new Date(d+'T12:00:00').toLocaleDateString(PLANG==='en'?'en-US':'es-US',{day:'numeric',month:'long',year:'numeric'});}catch(e){return d;}}
+  // Contacto: muchos clientes no usan WhatsApp -> siempre ofrecer SMS tambien.
+  var BP_TEL = '+1 (929) 428-7300';
+  function contactLine(){ return PT('Contáctanos: SMS o WhatsApp ','Contact us: text or WhatsApp ') + BP_TEL; }
   var IC={
     mail:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M4 7l8 6 8-6"/>',
     paw:'<circle cx="7" cy="9" r="1.6"/><circle cx="12" cy="7.4" r="1.6"/><circle cx="17" cy="9" r="1.6"/><path d="M12 12c-2.4 0-4.3 1.9-4.3 3.9 0 1.5 1.2 2.4 2.6 2.4 .8 0 1.1-.4 1.7-.4s.9 .4 1.7 .4c1.4 0 2.6-.9 2.6-2.4 0-2-1.9-3.9-4.3-3.9z"/>',
@@ -175,52 +198,52 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   };
   function svg(name,s){s=s||22;return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle">'+(IC[name]||'')+'</svg>';}
   function badge(st){
-    if(st==='active'||st==='scheduled'||st==='confirmed') return '<span class="badge b-active">Activo</span>';
-    if(st==='lead') return '<span class="badge b-lead">Reservado</span>';
-    if(st==='completed') return '<span class="badge b-done">Completado</span>';
+    if(st==='active'||st==='scheduled'||st==='confirmed') return '<span class="badge b-active">'+PT('Activo','Active')+'</span>';
+    if(st==='lead') return '<span class="badge b-lead">'+PT('Reservado','Booked')+'</span>';
+    if(st==='completed') return '<span class="badge b-done">'+PT('Completado','Completed')+'</span>';
     if(st==='cancelled'||st==='refunded') return '<span class="badge b-cancel">'+esc(st)+'</span>';
     return '<span class="badge b-lead">'+esc(st||'—')+'</span>';
   }
 
   function showLogin(prefMsg){
     var hero=document.getElementById('hero'); if(hero) hero.style.display='';
-    root.innerHTML = '<div class="login-wrap"><div class="card"><div class="step-label">Entra a tu cuenta</div>'+
-      '<p style="font-size:14px;color:var(--ink2);margin-bottom:14px">Te enviamos un <b>enlace mágico</b> a tu correo — sin contraseñas. Toca el enlace y entras automáticamente.</p>'+
-      '<label>Tu correo</label><input id="le" type="email" placeholder="tu@correo.com" autocomplete="email">'+
-      '<button class="cta" id="lb">Enviarme mi enlace</button>'+
+    root.innerHTML = '<div class="login-wrap"><div class="card"><div class="step-label">'+PT('Entra a tu cuenta','Sign in to your account')+'</div>'+
+      '<p style="font-size:14px;color:var(--ink2);margin-bottom:14px">'+PT('Te enviamos un <b>enlace mágico</b> a tu correo — sin contraseñas. Toca el enlace y entras automáticamente.','We email you a <b>magic link</b> — no passwords. Tap the link and you are in.')+'</p>'+
+      '<label>'+PT('Tu correo','Your email')+'</label><input id="le" type="email" placeholder="'+PT('tu@correo.com','you@email.com')+'" autocomplete="email">'+
+      '<button class="cta" id="lb">'+PT('Enviarme mi enlace','Send me my link')+'</button>'+
       (prefMsg?('<div id="lm" class="msg '+prefMsg.k+'">'+prefMsg.t+'</div>'):'<div id="lm"></div>')+
-      '<p class="muted">Usa el mismo correo con el que reservaste tu plan o tu membresía.</p></div></div>';
+      '<p class="muted">'+PT('Usa el mismo correo con el que reservaste tu plan o tu membresía.','Use the same email you booked your plan or membership with.')+'</p></div></div>';
     document.getElementById('lb').onclick=function(){
       var em=(document.getElementById('le').value||'').trim();
       var m=document.getElementById('lm');
-      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ m.className='msg err'; m.textContent='Escribe un correo válido.'; return; }
-      var btn=document.getElementById('lb'); btn.disabled=true; btn.textContent='Enviando…';
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ m.className='msg err'; m.textContent=PT('Escribe un correo válido.','Enter a valid email.'); return; }
+      var btn=document.getElementById('lb'); btn.disabled=true; btn.textContent=PT('Enviando…','Sending…');
       fetch(SUPA+'/functions/v1/portal_magiclink',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({email:em, redirectTo: window.location.origin + '/portal'})})
         .then(function(r){return r.json();}).then(function(d){
-          btn.disabled=false; btn.textContent='Enviarme mi enlace';
+          btn.disabled=false; btn.textContent=PT('Enviarme mi enlace','Send me my link');
           if(d.error){ m.className='msg err'; m.textContent=d.error; return; }
-          m.className='msg ok'; m.innerHTML='<span style="color:var(--green);vertical-align:middle;margin-right:4px">'+svg('mail',16)+'</span>Revisa tu correo (<b>'+esc(em)+'</b>) y toca el enlace para entrar.';
-        }).catch(function(){ btn.disabled=false; btn.textContent='Enviarme mi enlace'; m.className='msg err'; m.textContent='No se pudo enviar el enlace. Intenta de nuevo.'; });
+          m.className='msg ok'; m.innerHTML='<span style="color:var(--green);vertical-align:middle;margin-right:4px">'+svg('mail',16)+'</span>'+PT('Revisa tu correo (<b>'+esc(em)+'</b>) y toca el enlace para entrar.','Check your inbox (<b>'+esc(em)+'</b>) and tap the link to sign in.');
+        }).catch(function(){ btn.disabled=false; btn.textContent=PT('Enviarme mi enlace','Send me my link'); m.className='msg err'; m.textContent=PT('No se pudo enviar el enlace. Intenta de nuevo.','We could not send the link. Try again.'); });
     };
   }
 
   function renderPlan(p, pays){
     var paid=Number(p.paid_total||0), est=Number(p.est_price||0), bal=Math.max(0,est-paid), pct=est>0?Math.min(100,Math.round(paid/est*100)):0;
     var rows=(pays||[]).filter(function(x){return x.plan_id===p.id;}).sort(function(a,b){return a.created_at<b.created_at?-1:1;});
-    var html='<div class="card plan-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">Plan de pagos</div>'+badge(p.status)+'</div>'+
-      '<div class="row"><span class="k">Raza</span><span class="v">'+esc(p.breed||'—')+'</span></div>'+
-      '<div class="row"><span class="k">Plan</span><span class="v">'+(p.months||'—')+' meses · '+money(p.monthly_amount)+'/mes</span></div>'+
-      '<div class="row"><span class="k">Total estimado</span><span class="v">'+money(est)+'</span></div>'+
-      '<div class="row"><span class="k">Abonado</span><span class="v" style="color:var(--green)">'+money(paid)+'</span></div>'+
-      '<div class="row"><span class="k">Restante</span><span class="v">'+money(bal)+'</span></div>'+
-      '<div class="row"><span class="k">Tu gran día</span><span class="v">'+esc(fmtD(p.target_date))+'</span></div>'+
-      '<div class="bar"><span style="width:'+pct+'%"></span></div><div style="font-size:11px;color:var(--ink2);text-align:right">'+pct+'% completado</div>';
+    var html='<div class="card plan-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">'+PT('Plan de pagos','Payment plan')+'</div>'+badge(p.status)+'</div>'+
+      '<div class="row"><span class="k">'+PT('Raza','Breed')+'</span><span class="v">'+esc(p.breed||'—')+'</span></div>'+
+      '<div class="row"><span class="k">'+PT('Plan','Plan')+'</span><span class="v">'+(p.months||'—')+PT(' meses · ',' months · ')+money(p.monthly_amount)+PT('/mes','/mo')+'</span></div>'+
+      '<div class="row"><span class="k">'+PT('Total estimado','Estimated total')+'</span><span class="v">'+money(est)+'</span></div>'+
+      '<div class="row"><span class="k">'+PT('Abonado','Paid so far')+'</span><span class="v" style="color:var(--green)">'+money(paid)+'</span></div>'+
+      '<div class="row"><span class="k">'+PT('Restante','Remaining')+'</span><span class="v">'+money(bal)+'</span></div>'+
+      '<div class="row"><span class="k">'+PT('Tu gran día','Your big day')+'</span><span class="v">'+esc(fmtD(p.target_date))+'</span></div>'+
+      '<div class="bar"><span style="width:'+pct+'%"></span></div><div style="font-size:11px;color:var(--ink2);text-align:right">'+pct+PT('% completado','% complete')+'</div>';
     if(bal>0 && p.status!=='cancelled'){
-      html+='<button class="pay" data-plan="'+esc(p.id)+'" data-amt="monthly">Hacer abono ('+money(p.monthly_amount)+')</button> '+
-            '<button class="pay" style="background:var(--ink2)" data-plan="'+esc(p.id)+'" data-amt="all">Pagar restante ('+money(bal)+')</button>';
+      html+='<button class="pay" data-plan="'+esc(p.id)+'" data-amt="monthly">'+PT('Hacer abono (','Make a payment (')+money(p.monthly_amount)+')</button> '+
+            '<button class="pay" style="background:var(--ink2)" data-plan="'+esc(p.id)+'" data-amt="all">'+PT('Pagar restante (','Pay the rest (')+money(bal)+')</button>';
     }
     if(rows.length){
-      html+='<div style="margin-top:14px"><div class="step-label">Tus abonos</div>'+rows.map(function(x){return '<div class="row"><span class="k">'+esc(fmtD((x.created_at||'').slice(0,10)))+'</span><span class="v">'+money(x.amount)+' · '+esc(x.method||'')+'</span></div>';}).join('')+'</div>';
+      html+='<div style="margin-top:14px"><div class="step-label">'+PT('Tus abonos','Your payments')+'</div>'+rows.map(function(x){return '<div class="row"><span class="k">'+esc(fmtD((x.created_at||'').slice(0,10)))+'</span><span class="v">'+money(x.amount)+' · '+esc(x.method||'')+'</span></div>';}).join('')+'</div>';
     }
     html+='</div>';
     return html;
@@ -237,10 +260,10 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
       ? '<img src="'+esc(p.photo_url)+'" alt="">'
       : petEmoji(p.breed);
     var action = pending
-      ? '<span class="badge b-pending" style="display:inline-block;margin-top:11px">Pendiente de confirmar</span>'
-      : '<a href="/grooming.html" class="pay" style="margin-top:11px;background:var(--paper);color:var(--orange2)">Agendar para '+esc((p.name||'').split(' ')[0]||'mi mascota')+'</a>';
+      ? '<span class="badge b-pending" style="display:inline-block;margin-top:11px">'+PT('Pendiente de confirmar','Pending confirmation')+'</span>'
+      : '<a href="/grooming.html" class="pay" style="margin-top:11px;background:var(--paper);color:var(--orange2)">'+PT('Agendar para ','Book for ')+esc((p.name||'').split(' ')[0]||PT('mi mascota','my pet'))+'</a>';
     return '<div class="pet pop"'+(pending?' style="opacity:.82"':'')+'><div class="ph">'+ph+'</div><div class="bd">'+
-      '<div class="nm">'+esc(p.name||'Mi mascota')+'</div>'+
+      '<div class="nm">'+esc(p.name||PT('Mi mascota','My pet'))+'</div>'+
       (p.breed?('<span class="br">'+esc(p.breed)+(p.size?(' · '+esc(p.size)):'')+'</span>'):'')+
       (meta?('<div class="mt">'+meta+'</div>'):'')+
       action+
@@ -248,16 +271,16 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
   }
   function renderPetsTab(pets){
     var cards=(pets||[]).map(renderPetCard).join('');
-    cards+='<div class="addtile js-add-pet"><div class="plus">+</div>Agregar otra mascota</div>';
+    cards+='<div class="addtile js-add-pet"><div class="plus">+</div>'+PT('Agregar otra mascota','Add another pet')+'</div>';
     if(!(pets&&pets.length)){
-      return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('paw',40)+'</div><div class="t">Aún no tienes mascotas registradas</div><div>Registra a tu mascota y nuestro equipo la confirma.</div><br><button class="pay js-add-pet" style="text-decoration:none">Agregar mi mascota</button></div></div>';
+      return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('paw',40)+'</div><div class="t">'+PT('Aún no tienes mascotas registradas','No pets registered yet')+'</div><div>'+PT('Registra a tu mascota y nuestro equipo la confirma.','Add your pet and our team will confirm it.')+'</div><br><button class="pay js-add-pet" style="text-decoration:none">'+PT('Agregar mi mascota','Add my pet')+'</button></div></div>';
     }
     return '<div class="pets-grid">'+cards+'</div>';
   }
   // Insignias ganadas (vienen de portal_data.badges)
   function bdgHtml(list){
     if(!list || !list.length) return '';
-    var en = (document.documentElement.lang||'es').indexOf('en')===0;
+    var en = PLANG === 'en';
     return '<div class="bdg-row">'+list.slice(0,8).map(function(b){
       var nm = en ? (b.name_en||b.name_es||'') : (b.name_es||b.name_en||'');
       return '<span class="bdg" title="'+esc(b.description||'')+'"><span class="bdg-i">'+esc(b.icon||'')+'</span>'+esc(nm)+'</span>';
@@ -279,19 +302,19 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
     var bg=document.createElement('div'); bg.className='modal-bg';
     bg.innerHTML='<div class="modal pop">'+
       '<button class="x" id="epx">×</button>'+
-      '<h3>Editar mi perfil</h3>'+
-      '<p style="font-size:13px;color:var(--ink2)">Con tus datos completos agendas más rápido y te llega todo a la dirección correcta.</p>'+
+      '<h3>'+PT('Editar mi perfil','Edit my profile')+'</h3>'+
+      '<p style="font-size:13px;color:var(--ink2)">'+PT('Con tus datos completos agendas más rápido y te llega todo a la dirección correcta.','With your details complete you book faster and everything reaches the right address.')+'</p>'+
       '<div class="fgrid">'+
-        '<div><label>Nombre *</label><input id="ep_first" value="'+esc(c.first_name||'')+'" placeholder="Ej: Luis"></div>'+
-        '<div><label>Apellido *</label><input id="ep_last" value="'+esc(c.last_name||'')+'" placeholder="Ej: Guzmán"></div>'+
-        '<div class="full"><label>Teléfono *</label><input id="ep_phone" value="'+esc(c.phone||'')+'" placeholder="+1 (305) 000-0000"></div>'+
-        '<div class="full"><label>Dirección *</label><input id="ep_addr" value="'+esc(c.address||'')+'" placeholder="Calle y número"></div>'+
-        '<div><label>Ciudad *</label><input id="ep_city" value="'+esc(c.city||'')+'"></div>'+
-        '<div><label>Estado</label><input id="ep_state" value="'+esc(c.state||'FL')+'"></div>'+
+        '<div><label>'+PT('Nombre *','First name *')+'</label><input id="ep_first" value="'+esc(c.first_name||'')+'" placeholder="'+PT('Ej: Luis','e.g. Luis')+'"></div>'+
+        '<div><label>'+PT('Apellido *','Last name *')+'</label><input id="ep_last" value="'+esc(c.last_name||'')+'" placeholder="'+PT('Ej: Guzmán','e.g. Smith')+'"></div>'+
+        '<div class="full"><label>'+PT('Teléfono *','Phone *')+'</label><input id="ep_phone" value="'+esc(c.phone||'')+'" placeholder="+1 (305) 000-0000"></div>'+
+        '<div class="full"><label>'+PT('Dirección *','Address *')+'</label><input id="ep_addr" value="'+esc(c.address||'')+'" placeholder="'+PT('Calle y número','Street and number')+'"></div>'+
+        '<div><label>'+PT('Ciudad *','City *')+'</label><input id="ep_city" value="'+esc(c.city||'')+'"></div>'+
+        '<div><label>'+PT('Estado','State')+'</label><input id="ep_state" value="'+esc(c.state||'FL')+'"></div>'+
         '<div><label>ZIP *</label><input id="ep_zip" value="'+esc(c.zip||'')+'" inputmode="numeric"></div>'+
-        '<div><label>Idioma</label><select id="ep_lang"><option value="Spanish">Español</option><option value="English">English</option></select></div>'+
+        '<div><label>'+PT('Idioma','Language')+'</label><select id="ep_lang"><option value="Spanish">Español</option><option value="English">English</option></select></div>'+
       '</div>'+
-      '<button class="cta" id="ep_save">Guardar mi perfil</button>'+
+      '<button class="cta" id="ep_save">'+PT('Guardar mi perfil','Save my profile')+'</button>'+
       '<div id="ep_msg"></div>'+
     '</div>';
     document.body.appendChild(bg);
@@ -303,29 +326,29 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
       var m=bg.querySelector('#ep_msg'), btn=bg.querySelector('#ep_save');
       var v=function(id){ return (bg.querySelector(id).value||'').trim(); };
       var payload={ first_name:v('#ep_first'), last_name:v('#ep_last'), phone:v('#ep_phone'), address:v('#ep_addr'), city:v('#ep_city'), state:v('#ep_state'), zip:v('#ep_zip'), lang:bg.querySelector('#ep_lang').value };
-      if(!payload.first_name || !payload.last_name){ m.className='msg err'; m.textContent='Escribe tu nombre y apellido.'; return; }
-      btn.disabled=true; btn.textContent='Guardando…';
+      if(!payload.first_name || !payload.last_name){ m.className='msg err'; m.textContent=PT('Escribe tu nombre y apellido.','Enter your first and last name.'); return; }
+      btn.disabled=true; btn.textContent=PT('Guardando…','Saving…');
       sb.auth.getSession().then(function(s){
         var tok=s.data&&s.data.session&&s.data.session.access_token;
-        if(!tok){ m.className='msg err'; m.textContent='Sesión expirada. Vuelve a entrar.'; btn.disabled=false; btn.textContent='Guardar mi perfil'; return; }
+        if(!tok){ m.className='msg err'; m.textContent=PT('Sesión expirada. Vuelve a entrar.','Session expired. Please sign in again.'); btn.disabled=false; btn.textContent=PT('Guardar mi perfil','Save my profile'); return; }
         fetch(SUPA+'/functions/v1/portal_profile',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify(payload)})
           .then(function(r){return r.json();}).then(function(d){
-            if(!d.ok){ m.className='msg err'; m.textContent=d.detail||d.error||'No se pudo guardar.'; btn.disabled=false; btn.textContent='Guardar mi perfil'; return; }
+            if(!d.ok){ m.className='msg err'; m.textContent=d.detail||d.error||PT('No se pudo guardar.','We could not save it.'); btn.disabled=false; btn.textContent=PT('Guardar mi perfil','Save my profile'); return; }
             var nowComplete = ['first_name','last_name','phone','address','city','zip'].every(function(k){ return String(payload[k]||'').trim(); });
             try{ if(nowComplete) localStorage.setItem('bp_pf_done','1'); }catch(e){}
             if(nowComplete && !wasComplete){
               // Buena noticia: insignia desbloqueada
               bg.querySelector('.modal').innerHTML='<div class="pf-win"><div class="em">🏅</div>'+
-                '<div class="t">¡Insignia desbloqueada: Perfil Completo!</div>'+
-                '<div class="s">Gracias '+esc(payload.first_name)+'. Ya tienes todo listo: la próxima vez agendas en segundos y podemos llegar a tu dirección.</div>'+
-                '</div><button class="cta" id="ep_done">Ver mi perfil</button>';
+                '<div class="t">'+PT('¡Insignia desbloqueada: Perfil Completo!','Badge unlocked: Complete Profile!')+'</div>'+
+                '<div class="s">'+PT('Gracias '+esc(payload.first_name)+'. Ya tienes todo listo: la próxima vez agendas en segundos y podemos llegar a tu dirección.','Thanks '+esc(payload.first_name)+'. You are all set: next time you book in seconds and we can reach your address.')+'</div>'+
+                '</div><button class="cta" id="ep_done">'+PT('Ver mi perfil','See my profile')+'</button>';
               bg.querySelector('#ep_done').onclick=function(){ close(); showDashboard(); };
               return;
             }
-            m.className='msg ok'; m.textContent='¡Listo! Tu perfil quedó actualizado.';
-            btn.textContent='Guardado';
+            m.className='msg ok'; m.textContent=PT('¡Listo! Tu perfil quedó actualizado.','Done! Your profile is updated.');
+            btn.textContent=PT('Guardado','Saved');
             setTimeout(function(){ close(); showDashboard(); }, 1200);
-          }).catch(function(){ m.className='msg err'; m.textContent='No se pudo guardar. Intenta de nuevo.'; btn.disabled=false; btn.textContent='Guardar mi perfil'; });
+          }).catch(function(){ m.className='msg err'; m.textContent=PT('No se pudo guardar. Intenta de nuevo.','We could not save it. Try again.'); btn.disabled=false; btn.textContent=PT('Guardar mi perfil','Save my profile'); });
       });
     };
   }
@@ -333,19 +356,19 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
     var bg=document.createElement('div'); bg.className='modal-bg';
     bg.innerHTML='<div class="modal pop">'+
       '<button class="x" id="pmx">×</button>'+
-      '<h3>Agregar mascota</h3>'+
-      '<p style="font-size:13px;color:var(--ink2)">La registramos y nuestro equipo la confirma. Te avisamos cuando esté lista para agendar.</p>'+
+      '<h3>'+PT('Agregar mascota','Add pet')+'</h3>'+
+      '<p style="font-size:13px;color:var(--ink2)">'+PT('La registramos y nuestro equipo la confirma. Te avisamos cuando esté lista para agendar.','We register it and our team confirms it. We let you know when it is ready to book.')+'</p>'+
       '<div class="fgrid">'+
-        '<div class="full"><label>Nombre *</label><input id="pf_name" placeholder="Ej: Max"></div>'+
-        '<div><label>Raza</label><input id="pf_breed" placeholder="Ej: Poodle"></div>'+
-        '<div><label>Tamaño</label><select id="pf_size"><option value="">—</option><option>Pequeño</option><option>Mediano</option><option>Grande</option><option>XL</option></select></div>'+
-        '<div><label>Sexo</label><select id="pf_sex"><option value="">—</option><option>Macho</option><option>Hembra</option></select></div>'+
-        '<div><label>Peso (lb)</label><input id="pf_weight" type="number" min="0" placeholder="Ej: 12"></div>'+
-        '<div><label>Pelaje</label><input id="pf_coat" placeholder="Ej: Rizado"></div>'+
-        '<div><label>Nacimiento</label><input id="pf_birth" type="date"></div>'+
-        '<div class="full"><label>Notas</label><textarea id="pf_notes" placeholder="Alergias, comportamiento, preferencias..."></textarea></div>'+
+        '<div class="full"><label>'+PT('Nombre *','Name *')+'</label><input id="pf_name" placeholder="'+PT('Ej: Max','e.g. Max')+'"></div>'+
+        '<div><label>'+PT('Raza','Breed')+'</label><input id="pf_breed" placeholder="'+PT('Ej: Poodle','e.g. Poodle')+'"></div>'+
+        '<div><label>'+PT('Tamaño','Size')+'</label><select id="pf_size"><option value="">—</option><option>'+PT('Pequeño','Small')+'</option><option>'+PT('Mediano','Medium')+'</option><option>'+PT('Grande','Large')+'</option><option>XL</option></select></div>'+
+        '<div><label>'+PT('Sexo','Sex')+'</label><select id="pf_sex"><option value="">—</option><option>'+PT('Macho','Male')+'</option><option>'+PT('Hembra','Female')+'</option></select></div>'+
+        '<div><label>'+PT('Peso (lb)','Weight (lb)')+'</label><input id="pf_weight" type="number" min="0" placeholder="'+PT('Ej: 12','e.g. 12')+'"></div>'+
+        '<div><label>'+PT('Pelaje','Coat')+'</label><input id="pf_coat" placeholder="'+PT('Ej: Rizado','e.g. Curly')+'"></div>'+
+        '<div><label>'+PT('Nacimiento','Birthdate')+'</label><input id="pf_birth" type="date"></div>'+
+        '<div class="full"><label>'+PT('Notas','Notes')+'</label><textarea id="pf_notes" placeholder="'+PT('Alergias, comportamiento, preferencias...','Allergies, behavior, preferences...')+'"></textarea></div>'+
       '</div>'+
-      '<button class="cta" id="pf_save">Guardar mascota</button>'+
+      '<button class="cta" id="pf_save">'+PT('Guardar mascota','Save pet')+'</button>'+
       '<div id="pf_msg"></div>'+
     '</div>';
     document.body.appendChild(bg);
@@ -355,29 +378,29 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
     bg.querySelector('#pf_save').onclick=function(){
       var name=(bg.querySelector('#pf_name').value||'').trim();
       var m=bg.querySelector('#pf_msg');
-      if(!name){ m.className='msg err'; m.textContent='El nombre es obligatorio.'; return; }
+      if(!name){ m.className='msg err'; m.textContent=PT('El nombre es obligatorio.','The name is required.'); return; }
       var payload={ name:name, breed:(bg.querySelector('#pf_breed').value||'').trim(), size:bg.querySelector('#pf_size').value, sex:bg.querySelector('#pf_sex').value, coat:(bg.querySelector('#pf_coat').value||'').trim(), weight_lbs:bg.querySelector('#pf_weight').value, birthdate:bg.querySelector('#pf_birth').value, notes:(bg.querySelector('#pf_notes').value||'').trim() };
-      var btn=bg.querySelector('#pf_save'); btn.disabled=true; btn.textContent='Guardando…';
+      var btn=bg.querySelector('#pf_save'); btn.disabled=true; btn.textContent=PT('Guardando…','Saving…');
       sb.auth.getSession().then(function(s){
         var tok=s.data&&s.data.session&&s.data.session.access_token;
-        if(!tok){ m.className='msg err'; m.textContent='Sesión expirada. Vuelve a entrar.'; btn.disabled=false; btn.textContent='Guardar mascota'; return; }
+        if(!tok){ m.className='msg err'; m.textContent=PT('Sesión expirada. Vuelve a entrar.','Session expired. Please sign in again.'); btn.disabled=false; btn.textContent=PT('Guardar mascota','Save pet'); return; }
         fetch(SUPA+'/functions/v1/portal_add_pet',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify(payload)})
           .then(function(r){return r.json();}).then(function(d){
-            if(d.error){ m.className='msg err'; m.textContent=d.error; btn.disabled=false; btn.textContent='Guardar mascota'; return; }
-            m.className='msg ok'; m.textContent='¡Listo! '+esc(name)+' quedó registrada. Te avisamos al confirmarla.';
-            btn.textContent='Guardada';
+            if(d.error){ m.className='msg err'; m.textContent=d.error; btn.disabled=false; btn.textContent=PT('Guardar mascota','Save pet'); return; }
+            m.className='msg ok'; m.textContent=PT('¡Listo! '+esc(name)+' quedó registrada. Te avisamos al confirmarla.','Done! '+esc(name)+' is registered. We will let you know once confirmed.');
+            btn.textContent=PT('Guardada','Saved');
             setTimeout(function(){ close(); showDashboard(); }, 1500);
-          }).catch(function(){ m.className='msg err'; m.textContent='No se pudo guardar. Intenta de nuevo.'; btn.disabled=false; btn.textContent='Guardar mascota'; });
+          }).catch(function(){ m.className='msg err'; m.textContent=PT('No se pudo guardar. Intenta de nuevo.','We could not save it. Try again.'); btn.disabled=false; btn.textContent=PT('Guardar mascota','Save pet'); });
       });
     };
   }
 
   function renderMembership(m){
-    return '<div class="card plan-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">Membresía</div>'+badge(m.status)+'</div>'+
-      '<div class="row"><span class="k">Plan</span><span class="v">'+esc(m.plan||'—')+' ('+esc(m.billing||'—')+')</span></div>'+
-      '<div class="row"><span class="k">Mascota</span><span class="v">'+esc(m.pet_name||'—')+(m.pet_size?(' · '+esc(m.pet_size)):'')+'</span></div>'+
-      '<div class="row"><span class="k">Baños disponibles</span><span class="v" style="color:var(--orange2);font-size:18px">'+(m.credits_balance||0)+'</span></div>'+
-      '<div class="row"><span class="k">Próxima renovación</span><span class="v">'+esc(fmtD(m.renew_date))+'</span></div>'+
+    return '<div class="card plan-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">'+PT('Membresía','Membership')+'</div>'+badge(m.status)+'</div>'+
+      '<div class="row"><span class="k">'+PT('Plan','Plan')+'</span><span class="v">'+esc(m.plan||'—')+' ('+esc(m.billing||'—')+')</span></div>'+
+      '<div class="row"><span class="k">'+PT('Mascota','Pet')+'</span><span class="v">'+esc(m.pet_name||'—')+(m.pet_size?(' · '+esc(m.pet_size)):'')+'</span></div>'+
+      '<div class="row"><span class="k">'+PT('Baños disponibles','Baths available')+'</span><span class="v" style="color:var(--orange2);font-size:18px">'+(m.credits_balance||0)+'</span></div>'+
+      '<div class="row"><span class="k">'+PT('Próxima renovación','Next renewal')+'</span><span class="v">'+esc(fmtD(m.renew_date))+'</span></div>'+
       '</div>';
   }
 
@@ -394,24 +417,24 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
       return st!=='cancelled' && st!=='completed' && b.appointment_date;
     });
     if(!list.length) return '';
-    return '<div class="card"><div class="step-label">Tus citas</div>'+list.slice(0,6).map(function(b){
+    return '<div class="card"><div class="step-label">'+PT('Tus citas','Your appointments')+'</div>'+list.slice(0,6).map(function(b){
       var svc=Array.isArray(b.services)?b.services.join(', '):(b.services||'');
-      return '<div class="bk"><div><div style="font-weight:600">'+esc(b.pet_name||'Tu mascota')+'</div>'+
+      return '<div class="bk"><div><div style="font-weight:600">'+esc(b.pet_name||PT('Tu mascota','Your pet'))+'</div>'+
         '<div class="bk-w">'+esc(fmtD(b.appointment_date))+(b.appointment_time?(' · '+esc(b.appointment_time)):'')+(svc?(' · '+esc(svc)):'')+'</div></div>'+
-        '<button class="bk-b js-resched" data-id="'+esc(b.id)+'" data-d="'+esc(b.appointment_date)+'" data-t="'+esc(b.appointment_time||'')+'">Reprogramar</button></div>';
+        '<button class="bk-b js-resched" data-id="'+esc(b.id)+'" data-d="'+esc(b.appointment_date)+'" data-t="'+esc(b.appointment_time||'')+'">'+PT('Reprogramar','Reschedule')+'</button></div>';
     }).join('')+'</div>';
   }
   function openReschedModal(id, curDate, curTime){
     var bg=document.createElement('div'); bg.className='modal-bg';
     var times=['9:00 AM','10:00 AM','11:00 AM','12:00 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
     bg.innerHTML='<div class="modal pop"><button class="x" id="rsx">×</button>'+
-      '<h3>Reprogramar cita</h3>'+
-      '<p style="font-size:13px;color:var(--ink2)">Elige la nueva fecha y hora. Debe ser con al menos 6 horas de antelación.</p>'+
+      '<h3>'+PT('Reprogramar cita','Reschedule appointment')+'</h3>'+
+      '<p style="font-size:13px;color:var(--ink2)">'+PT('Elige la nueva fecha y hora. Debe ser con al menos 24 horas de antelación.','Pick the new date and time. It must be at least 24 hours in advance.')+'</p>'+
       '<div class="fgrid">'+
-        '<div><label>Nueva fecha</label><input id="rs_d" type="date" value="'+esc(curDate||'')+'"></div>'+
-        '<div><label>Nueva hora</label><select id="rs_t">'+times.map(function(t){return '<option'+(t===curTime?' selected':'')+'>'+t+'</option>';}).join('')+'</select></div>'+
+        '<div><label>'+PT('Nueva fecha','New date')+'</label><input id="rs_d" type="date" value="'+esc(curDate||'')+'"></div>'+
+        '<div><label>'+PT('Nueva hora','New time')+'</label><select id="rs_t">'+times.map(function(t){return '<option'+(t===curTime?' selected':'')+'>'+t+'</option>';}).join('')+'</select></div>'+
       '</div>'+
-      '<button class="cta" id="rs_go">Confirmar cambio</button><div id="rs_msg"></div></div>';
+      '<button class="cta" id="rs_go">'+PT('Confirmar cambio','Confirm change')+'</button><div id="rs_msg"></div></div>';
     document.body.appendChild(bg);
     function close(){ bg.remove(); }
     bg.querySelector('#rsx').onclick=close;
@@ -419,28 +442,28 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
     bg.querySelector('#rs_go').onclick=function(){
       var m=bg.querySelector('#rs_msg'), btn=bg.querySelector('#rs_go');
       var nd=bg.querySelector('#rs_d').value, nt=bg.querySelector('#rs_t').value;
-      if(!nd){ m.className='msg err'; m.textContent='Elige una fecha.'; return; }
-      btn.disabled=true; btn.textContent='Guardando…';
-      fetch(SUPA+'/functions/v1/grooming_manage',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'reschedule',id:id,appointment_date:nd,appointment_time:nt})})
+      if(!nd){ m.className='msg err'; m.textContent=PT('Elige una fecha.','Pick a date.'); return; }
+      btn.disabled=true; btn.textContent=PT('Guardando…','Saving…');
+      fetch(SUPA+'/functions/v1/grooming_manage',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'reschedule',id:id,appointment_date:nd,appointment_time:nt,lang:PLANG})})
         .then(function(r){return r.json();}).then(function(x){
-          if(x.error){ m.className='msg err'; m.textContent=x.error; btn.disabled=false; btn.textContent='Confirmar cambio'; return; }
-          m.className='msg ok'; m.textContent='¡Listo! Tu cita quedó para el '+nd+' a las '+nt+'.';
-          btn.textContent='Cambiada';
+          if(x.error){ m.className='msg err'; m.textContent=x.error; btn.disabled=false; btn.textContent=PT('Confirmar cambio','Confirm change'); return; }
+          m.className='msg ok'; m.textContent=PT('¡Listo! Tu cita quedó para el '+nd+' a las '+nt+'.','Done! Your appointment is set for '+nd+' at '+nt+'.');
+          btn.textContent=PT('Cambiada','Changed');
           setTimeout(function(){ close(); showDashboard(); }, 1400);
-        }).catch(function(){ m.className='msg err'; m.textContent='No se pudo cambiar. Intenta de nuevo.'; btn.disabled=false; btn.textContent='Confirmar cambio'; });
+        }).catch(function(){ m.className='msg err'; m.textContent=PT('No se pudo cambiar. Intenta de nuevo.','We could not change it. Try again.'); btn.disabled=false; btn.textContent=PT('Confirmar cambio','Confirm change'); });
     };
   }
   function renderGroomingTab(d){
     var ms=d.memberships||[];
     var html=bkHtml(d)+'<div class="gbook"><div class="em" style="color:#fff">'+svg('scissors',84)+'</div>'+
-      '<h2>Agenda tu próxima cita</h2>'+
-      '<p>Reserva baño, corte o spa para tu mascota en segundos. '+(ms.length?'Tus baños de membresía se aplican automáticamente.':'Elige el servicio y la fecha que más te convenga.')+'</p>'+
-      '<a href="/grooming.html" class="go">Agendar grooming →</a></div>';
+      '<h2>'+PT('Agenda tu próxima cita','Book your next appointment')+'</h2>'+
+      '<p>'+PT('Reserva baño, corte o spa para tu mascota en segundos. ','Book a bath, haircut or spa for your pet in seconds. ')+(ms.length?PT('Tus baños de membresía se aplican automáticamente.','Your membership baths apply automatically.'):PT('Elige el servicio y la fecha que más te convenga.','Pick the service and date that works best for you.'))+'</p>'+
+      '<a href="/grooming.html" class="go">'+PT('Agendar grooming →','Book grooming →')+'</a></div>';
     if(ms.length){
       var cards=ms.map(renderMembership).join('');
       html+='<div class="cards-grid">'+cards+'</div>';
     } else {
-      html+='<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('bath',40)+'</div><div class="t">Aún no tienes membresía de grooming</div><div>Con una membresía ahorras en cada baño y recibes beneficios VIP. Mira los planes al reservar.</div></div></div>';
+      html+='<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('bath',40)+'</div><div class="t">'+PT('Aún no tienes membresía de grooming','No grooming membership yet')+'</div><div>'+PT('Con una membresía ahorras en cada baño y recibes beneficios VIP. Mira los planes al reservar.','With a membership you save on every bath and get VIP perks. See the plans when you book.')+'</div></div></div>';
     }
     return html;
   }
@@ -448,44 +471,45 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
     var cards='';
     if(d.plans && d.plans.length){ d.plans.forEach(function(p){ cards+=renderPlan(p, d.payments); }); }
     if(cards) return '<div class="cards-grid">'+cards+'</div>';
-    return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('card',40)+'</div><div class="t">No tienes planes de pago activos</div><div>¿Buscas un cachorro? Arma un plan de pagos a tu medida.</div><br><a href="/plan" class="pay" style="text-decoration:none">Armar mi plan</a></div></div>';
+    return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('card',40)+'</div><div class="t">'+PT('No tienes planes de pago activos','No active payment plans')+'</div><div>'+PT('¿Buscas un cachorro? Arma un plan de pagos a tu medida.','Looking for a puppy? Build a payment plan that fits you.')+'</div><br><a href="/plan" class="pay" style="text-decoration:none">'+PT('Armar mi plan','Build my plan')+'</a></div></div>';
   }
   function renderGuardadosTab(){
-    return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('bookmark',40)+'</div><div class="t">Tus guardados llegan pronto</div><div>Aquí podrás guardar tus razas favoritas y artículos del blog para verlos después.</div></div></div>';
+    return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('bookmark',40)+'</div><div class="t">'+PT('Tus guardados llegan pronto','Your saved items are coming soon')+'</div><div>'+PT('Aquí podrás guardar tus razas favoritas y artículos del blog para verlos después.','Here you will be able to save your favorite breeds and blog posts for later.')+'</div></div></div>';
   }
   function renderCuentaTab(d){
     var petNm=(d.pets&&d.pets[0]&&(d.pets[0].name||d.pets[0].pet_name))||'';
-    var petReason=petNm?('Mi mascota ('+esc(petNm)+') ya no está con nosotros'):'Mi mascota ya no está con nosotros';
+    var petReason=petNm?PT('Mi mascota ('+esc(petNm)+') ya no está con nosotros','My pet ('+esc(petNm)+') is no longer with us'):PT('Mi mascota ya no está con nosotros','My pet is no longer with us');
     if(d.email_opted_out){
       return '<div class="card"><div class="empty"><div class="ico" style="color:var(--orange)">'+svg('mail',40)+'</div>'+
-        '<div class="t">Correos detenidos</div>'+
-        '<div>Ahora mismo no te enviamos correos automáticos. Puedes reactivarlos cuando quieras.</div><br>'+
-        '<button class="go" id="pf-resume" style="border:none;cursor:pointer">Reactivar mis correos</button></div></div>';
+        '<div class="t">'+PT('Correos detenidos','Emails paused')+'</div>'+
+        '<div>'+PT('Ahora mismo no te enviamos correos automáticos. Puedes reactivarlos cuando quieras.','We are not sending you automatic emails right now. You can turn them back on anytime.')+'</div><br>'+
+        '<button class="go" id="pf-resume" style="border:none;cursor:pointer">'+PT('Reactivar mis correos','Resume my emails')+'</button></div></div>';
     }
     return '<div class="card"><div class="empty" style="text-align:left"><div class="ico" style="color:var(--orange)">'+svg('mail',40)+'</div>'+
-      '<div class="t">Correos y notificaciones</div>'+
-      '<div style="margin-bottom:14px">Si ya no quieres recibir nuestros correos (novedades, recordatorios, cumpleaños de tu mascota), puedes detenerlos aquí. Cuéntanos por qué, así mejoramos.</div>'+
-      '<label style="display:block;font-size:12px;font-weight:700;color:#6b5a4e;margin-bottom:6px">Motivo</label>'+
+      '<div class="t">'+PT('Correos y notificaciones','Emails and notifications')+'</div>'+
+      '<div style="margin-bottom:14px">'+PT('Si ya no quieres recibir nuestros correos (novedades, recordatorios, cumpleaños de tu mascota), puedes detenerlos aquí. Cuéntanos por qué, así mejoramos.','If you no longer want our emails (news, reminders, your pet\'s birthday), you can stop them here. Tell us why so we can improve.')+'</div>'+
+      '<label style="display:block;font-size:12px;font-weight:700;color:#6b5a4e;margin-bottom:6px">'+PT('Motivo','Reason')+'</label>'+
       '<select id="pf-reason" style="width:100%;padding:11px 12px;border:1px solid #e5d9cc;border-radius:12px;font-size:14px;margin-bottom:14px;background:#fff">'+
-        '<option value="Demasiados correos">Recibo demasiados correos</option>'+
-        '<option value="No me interesa el contenido">El contenido no me interesa</option>'+
-        '<option value="Nunca me suscribí">Nunca me suscribí</option>'+
+        '<option value="Demasiados correos">'+PT('Recibo demasiados correos','I get too many emails')+'</option>'+
+        '<option value="No me interesa el contenido">'+PT('El contenido no me interesa','The content is not for me')+'</option>'+
+        '<option value="Nunca me suscribí">'+PT('Nunca me suscribí','I never signed up')+'</option>'+
         '<option value="'+petReason.replace(/"/g,'&quot;')+'">'+petReason+'</option>'+
-        '<option value="Otro">Otro motivo</option>'+
+        '<option value="Otro">'+PT('Otro motivo','Another reason')+'</option>'+
       '</select>'+
-      '<button id="pf-stop" style="background:#dc2626;border:none;cursor:pointer;color:#fff;width:100%;padding:12px;border-radius:12px;font-weight:800;font-size:14px">Detener mis correos</button></div></div>';
+      '<button id="pf-stop" style="background:#dc2626;border:none;cursor:pointer;color:#fff;width:100%;padding:12px;border-radius:12px;font-weight:800;font-size:14px">'+PT('Detener mis correos','Stop my emails')+'</button></div></div>';
   }
 
   function showDashboard(email){
     document.getElementById('logout').style.display='inline';
     var hero=document.getElementById('hero'); if(hero) hero.style.display='none';
-    root.innerHTML='<div class="card"><div class="center"><div class="spin"></div>Cargando tu portal…</div></div>';
+    root.innerHTML='<div class="card"><div class="center"><div class="spin"></div>'+PT('Cargando tu portal…','Loading your portal…')+'</div></div>';
     sb.auth.getSession().then(function(s){
       var tok = s.data && s.data.session && s.data.session.access_token;
-      if(!tok){ showLogin({k:'err',t:'Sesión expirada, vuelve a entrar.'}); return; }
+      if(!tok){ showLogin({k:'err',t:PT('Sesión expirada, vuelve a entrar.','Session expired, please sign in again.')}); return; }
       fetch(SUPA+'/functions/v1/portal_data',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:'{}'})
         .then(function(r){return r.json();}).then(function(d){
           if(d.error){ root.innerHTML='<div class="card"><div class="msg err">'+esc(d.error)+'</div></div>'; return; }
+          setPlangFrom(d.client);
           var emailName = (d.email||'').split('@')[0].replace(/[._]+/g,' ').replace(/\b\w/g,function(c){return c.toUpperCase();});
           var name = (d.client && d.client.first_name) ? (d.client.first_name+(d.client.last_name?(' '+d.client.last_name):'')) : (emailName||d.email);
           var loc = d.client ? [d.client.city,d.client.state].filter(Boolean).join(', ') : '';
@@ -494,25 +518,25 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
 
           var head='<div class="phead"><div class="pat"></div></div>'+
             '<div class="pcard fade"><div class="avatar">'+esc(initials(d))+'</div>'+
-            '<h1>Hola, '+esc((name||'').split(' ')[0]||name)+'</h1>'+
+            '<h1>'+PT('Hola, ','Hi, ')+esc((name||'').split(' ')[0]||name)+'</h1>'+
             '<div class="sub">'+esc(d.email)+(loc?(' · '+esc(loc)):'')+'</div>'+
-            (vip?'<div class="vipchip">'+svg('star',13)+' Cliente VIP</div>':'')+
+            (vip?'<div class="vipchip">'+svg('star',13)+PT(' Cliente VIP',' VIP client')+'</div>':'')+
             '<div class="pstats">'+
-              '<div class="pstat"><b>'+nPets+'</b><span>'+(nPets===1?'mascota':'mascotas')+'</span></div>'+
-              '<div class="pstat"><b>'+baths+'</b><span>baños disp.</span></div>'+
-              '<div class="pstat"><b>'+nMs+'</b><span>'+(nMs===1?'membresía':'membresías')+'</span></div>'+
+              '<div class="pstat"><b>'+nPets+'</b><span>'+(nPets===1?PT('mascota','pet'):PT('mascotas','pets'))+'</span></div>'+
+              '<div class="pstat"><b>'+baths+'</b><span>'+PT('baños disp.','baths avail.')+'</span></div>'+
+              '<div class="pstat"><b>'+nMs+'</b><span>'+(nMs===1?PT('membresía','membership'):PT('membresías','memberships'))+'</span></div>'+
             '</div>'+
             bdgHtml(d.badges)+
-            (pfIsComplete(d.client)?'':'<div class="pf-nudge">Completa tu perfil y desbloquea tu insignia <b>Perfil Completo</b>.</div>')+
-            '<button class="js-edit-profile pf-editbtn">'+svg('bookmark',15)+' Editar mi perfil</button>'+
+            (pfIsComplete(d.client)?'':'<div class="pf-nudge">'+PT('Completa tu perfil y desbloquea tu insignia <b>Perfil Completo</b>.','Complete your profile and unlock your <b>Complete Profile</b> badge.')+'</div>')+
+            '<button class="js-edit-profile pf-editbtn">'+svg('bookmark',15)+PT(' Editar mi perfil',' Edit my profile')+'</button>'+
             '</div>';
 
           var tabs='<div class="tabs">'+
-            '<button class="tab on" data-t="mascotas">'+svg('paw',16)+' Mascotas'+(nPets?'<span class="n">'+nPets+'</span>':'')+'</button>'+
+            '<button class="tab on" data-t="mascotas">'+svg('paw',16)+PT(' Mascotas',' Pets')+(nPets?'<span class="n">'+nPets+'</span>':'')+'</button>'+
             '<button class="tab" data-t="grooming">'+svg('scissors',16)+' Grooming</button>'+
-            '<button class="tab" data-t="pagos">'+svg('card',16)+' Pagos'+((d.plans||[]).length?'<span class="n">'+d.plans.length+'</span>':'')+'</button>'+
-            '<button class="tab" data-t="guardados">'+svg('bookmark',16)+' Guardados</button>'+
-            '<button class="tab" data-t="cuenta">'+svg('mail',16)+' Cuenta</button>'+
+            '<button class="tab" data-t="pagos">'+svg('card',16)+PT(' Pagos',' Payments')+((d.plans||[]).length?'<span class="n">'+d.plans.length+'</span>':'')+'</button>'+
+            '<button class="tab" data-t="guardados">'+svg('bookmark',16)+PT(' Guardados',' Saved')+'</button>'+
+            '<button class="tab" data-t="cuenta">'+svg('mail',16)+PT(' Cuenta',' Account')+'</button>'+
           '</div>';
 
           var panes='<div class="tabpane on" data-p="mascotas">'+renderPetsTab(d.pets)+'</div>'+
@@ -539,31 +563,31 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
           root.querySelectorAll('.js-resched').forEach(function(b){ b.onclick=function(e){ e.preventDefault(); openReschedModal(b.getAttribute('data-id'), b.getAttribute('data-d'), b.getAttribute('data-t')); }; });
           // wire correos (detener / reactivar) — pestaña Cuenta
           function pfEmail(action, reason, btn){
-            if(btn){ btn.disabled=true; btn.dataset.txt=btn.textContent; btn.textContent='Guardando…'; }
+            if(btn){ btn.disabled=true; btn.dataset.txt=btn.textContent; btn.textContent=PT('Guardando…','Saving…'); }
             sb.auth.getSession().then(function(s){
               var tok=s.data&&s.data.session&&s.data.session.access_token;
-              if(!tok){ showLogin({k:'err',t:'Sesión expirada, vuelve a entrar.'}); return; }
+              if(!tok){ showLogin({k:'err',t:PT('Sesión expirada, vuelve a entrar.','Session expired, please sign in again.')}); return; }
               fetch(SUPA+'/functions/v1/portal_data',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:action,reason:reason})})
-                .then(function(r){return r.json();}).then(function(x){ if(x&&x.ok){ showDashboard(d.email); } else { if(btn){btn.disabled=false;btn.textContent=btn.dataset.txt;} alert((x&&x.error)||'No se pudo, intenta de nuevo.'); } })
-                .catch(function(){ if(btn){btn.disabled=false;btn.textContent=btn.dataset.txt;} alert('No se pudo, intenta de nuevo.'); });
+                .then(function(r){return r.json();}).then(function(x){ if(x&&x.ok){ showDashboard(d.email); } else { if(btn){btn.disabled=false;btn.textContent=btn.dataset.txt;} alert((x&&x.error)||PT('No se pudo, intenta de nuevo.','It did not work, please try again.')); } })
+                .catch(function(){ if(btn){btn.disabled=false;btn.textContent=btn.dataset.txt;} alert(PT('No se pudo, intenta de nuevo.','It did not work, please try again.')); });
             });
           }
           var pfStop=root.querySelector('#pf-stop');
-          if(pfStop) pfStop.onclick=function(){ var rs=(root.querySelector('#pf-reason')||{}).value||''; if(!confirm('¿Detener todos los correos automáticos?')) return; pfEmail('stop_emails', rs, pfStop); };
+          if(pfStop) pfStop.onclick=function(){ var rs=(root.querySelector('#pf-reason')||{}).value||''; if(!confirm(PT('¿Detener todos los correos automáticos?','Stop all automatic emails?'))) return; pfEmail('stop_emails', rs, pfStop); };
           var pfResume=root.querySelector('#pf-resume');
           if(pfResume) pfResume.onclick=function(){ pfEmail('resume_emails', '', pfResume); };
           // wire pay buttons (plan abonos)
           root.querySelectorAll('button.pay[data-plan]').forEach(function(btn){
-            btn.onclick=function(){ var pid=btn.getAttribute('data-plan'); var t=btn; t.disabled=true; t.textContent='Redirigiendo...';
+            btn.onclick=function(){ var pid=btn.getAttribute('data-plan'); var t=btn; t.disabled=true; t.textContent=PT('Redirigiendo...','Redirecting...');
               fetch(SUPA+'/functions/v1/stripe_checkout',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({type:'plan_abono',plan_id:pid,success_url:window.location.origin+'/portal',cancel_url:window.location.origin+'/portal'})})
-                .then(function(r){return r.json();}).then(function(c){ if(c.url){window.location.href=c.url;} else { t.disabled=false; t.textContent='Reintentar'; alert(c.error||'Error'); } });
+                .then(function(r){return r.json();}).then(function(c){ if(c.url){window.location.href=c.url;} else { t.disabled=false; t.textContent=PT('Reintentar','Try again'); alert(c.error||'Error'); } });
             };
           });
-        }).catch(function(){ root.innerHTML='<div class="card"><div class="msg err">No pudimos cargar tu portal. Intenta de nuevo.</div></div>'; });
+        }).catch(function(){ root.innerHTML='<div class="card"><div class="msg err">'+PT('No pudimos cargar tu portal. Intenta de nuevo.','We could not load your portal. Please try again.')+'</div></div>'; });
     });
   }
 
-  document.getElementById('logout').onclick=function(e){ e.preventDefault(); sb.auth.signOut().then(function(){ showLogin({k:'info',t:'Sesión cerrada.'}); document.getElementById('logout').style.display='none'; }); };
+  document.getElementById('logout').onclick=function(e){ e.preventDefault(); sb.auth.signOut().then(function(){ showLogin({k:'info',t:PT('Sesión cerrada.','Signed out.')}); document.getElementById('logout').style.display='none'; }); };
 
   // arranque
   sb.auth.getSession().then(function(s){
