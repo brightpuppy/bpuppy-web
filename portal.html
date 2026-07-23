@@ -355,32 +355,93 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     return best;
   }
 
-  /* ═══ LOGIN ═══ */
+  /* ═══ LOGIN ═══
+     Orden pensado para que nadie tenga que ir al correo:
+       1) Google  — un toque, sin salir de la pagina (ya activo en Supabase)
+       2) Contraseña — instantaneo para quien ya la creo dentro de su perfil
+       3) Enlace al correo — solo como respaldo (primera vez o si olvido todo)
+     La contraseña NO se puede crear desde aqui a proposito: si se pudiera, cualquiera
+     entraria poniendo el correo de otro cliente y veria sus datos. Se crea DENTRO del
+     perfil, cuando ya se probo que el correo es suyo. */
   function showLogin(pre){
     var hero=document.getElementById('hero'); if(hero) hero.style.display='';
     coverHost.innerHTML='';
+    var G='<svg width="18" height="18" viewBox="0 0 48 48" style="vertical-align:middle"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9 3.6l6.7-6.7C35.6 2.6 30.2 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.8 6.1C12.3 13.2 17.7 9.5 24 9.5z"/><path fill="#4285F4" d="M46.1 24.6c0-1.6-.1-3.2-.4-4.6H24v9.1h12.4c-.5 2.9-2.1 5.3-4.6 7l7.6 5.9c4.4-4.1 6.7-10.1 6.7-17.4z"/><path fill="#FBBC05" d="M10.4 28.7c-.5-1.4-.8-2.9-.8-4.7s.3-3.3.8-4.7l-7.8-6.1C.9 16.4 0 20.1 0 24s.9 7.6 2.6 10.8l7.8-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.8 2.3-8.3 2.3-6.3 0-11.7-3.7-13.6-9.8l-7.8 6.1C6.5 42.6 14.6 48 24 48z"/></svg>';
     root.innerHTML='<div class="login"><div class="card">'+
-      '<div class="lb">'+PT('Entra a tu cuenta','Sign in')+'</div>'+
-      '<p class="muted" style="margin:8px 0 4px">'+PT('Te enviamos un <b>enlace mágico</b> a tu correo — sin contraseñas.','We email you a <b>magic link</b> — no passwords.')+'</p>'+
-      '<label>'+PT('Tu correo','Your email')+'</label>'+
+      '<div class="ttl">'+PT('Entra a tu perfil','Sign in')+'</div>'+
+      '<p class="muted" style="margin:6px 0 16px">'+PT('Con Google entras de una, sin ir al correo.','With Google you are in right away, no email trip.')+'</p>'+
+      '<button class="btn w" id="lg-google" style="gap:10px">'+G+' '+PT('Continuar con Google','Continue with Google')+'</button>'+
+      '<div style="display:flex;align-items:center;gap:10px;margin:16px 0 4px"><span style="flex:1;height:1px;background:var(--line)"></span>'+
+        '<span class="lb" style="margin:0">'+PT('o con tu correo','or with your email')+'</span>'+
+        '<span style="flex:1;height:1px;background:var(--line)"></span></div>'+
+      '<label>'+PT('Correo','Email')+'</label>'+
       '<input id="le" type="email" placeholder="'+PT('tu@correo.com','you@email.com')+'" autocomplete="email" inputmode="email">'+
-      '<button class="btn pri w" id="lb" style="margin-top:14px">'+PT('Enviarme mi enlace','Send me my link')+'</button>'+
+      '<label>'+PT('Contraseña','Password')+'</label>'+
+      '<input id="lp" type="password" placeholder="'+PT('Si ya creaste una','If you created one')+'" autocomplete="current-password">'+
+      '<button class="btn pri w" id="lg-pass" style="margin-top:14px">'+PT('Entrar','Sign in')+'</button>'+
+      '<button class="btn w" id="lb" style="margin-top:9px">'+PT('No tengo contraseña — mándame un enlace','No password — email me a link')+'</button>'+
       (pre?('<div class="msg '+pre.k+'">'+pre.t+'</div>'):'<div id="lm"></div>')+
-      '<p class="muted" style="margin-top:12px;text-align:center">'+PT('Usa el mismo correo con el que reservaste.','Use the same email you booked with.')+'</p>'+
+      '<p class="muted" style="margin-top:14px;text-align:center;font-size:12px">'+PT('Usa el mismo correo con el que reservaste. Tu contraseña la creas dentro de tu perfil.','Use the same email you booked with. You create your password inside your profile.')+'</p>'+
       '</div></div>';
+
+    function msg(){ return document.getElementById('lm')||document.querySelector('.login .msg'); }
+    function show(k,t){ var m=msg(); if(!m) return; m.className='msg '+k; m.innerHTML=t; }
+
+    document.getElementById('lg-google').onclick=function(){
+      var b=this; b.disabled=true; b.textContent=PT('Abriendo Google…','Opening Google…');
+      sb.auth.signInWithOAuth({ provider:'google', options:{ redirectTo: window.location.origin+'/portal' } })
+        .then(function(r){ if(r && r.error){ b.disabled=false; show('err', esc(r.error.message||PT('No se pudo abrir Google.','Could not open Google.'))); } })
+        .catch(function(){ b.disabled=false; show('err', PT('No se pudo abrir Google.','Could not open Google.')); });
+    };
+
+    document.getElementById('lg-pass').onclick=function(){
+      var em=(document.getElementById('le').value||'').trim();
+      var pw=document.getElementById('lp').value||'';
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ show('err',PT('Escribe un correo válido.','Enter a valid email.')); return; }
+      if(!pw){ show('err',PT('Escribe tu contraseña, o pide el enlace por correo.','Enter your password, or ask for the email link.')); return; }
+      var b=this; b.disabled=true; b.textContent=PT('Entrando…','Signing in…');
+      sb.auth.signInWithPassword({ email:em, password:pw }).then(function(r){
+        b.disabled=false; b.textContent=PT('Entrar','Sign in');
+        if(r.error){ show('err', PT('Correo o contraseña incorrectos. Si nunca creaste contraseña, pide el enlace.','Wrong email or password. If you never created a password, ask for the link.')); return; }
+        load();
+      });
+    };
+
     document.getElementById('lb').onclick=function(){
       var em=(document.getElementById('le').value||'').trim();
-      var m=document.getElementById('lm')||document.querySelector('.msg');
-      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ m.className='msg err'; m.textContent=PT('Escribe un correo válido.','Enter a valid email.'); return; }
+      if(!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)){ show('err',PT('Escribe un correo válido.','Enter a valid email.')); return; }
       var btn=this; btn.disabled=true; btn.textContent=PT('Enviando…','Sending…');
       fetch(SUPA+'/functions/v1/portal_magiclink',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON},body:JSON.stringify({email:em,redirectTo:window.location.origin+'/portal'})})
         .then(function(r){return r.json();}).then(function(d){
-          btn.disabled=false; btn.textContent=PT('Enviarme mi enlace','Send me my link');
-          if(d.error){ m.className='msg err'; m.textContent=d.error; return; }
-          m.className='msg ok'; m.innerHTML=PT('Revisa tu correo (<b>'+esc(em)+'</b>) y toca el enlace.','Check your inbox (<b>'+esc(em)+'</b>) and tap the link.');
-        }).catch(function(){ btn.disabled=false; btn.textContent=PT('Enviarme mi enlace','Send me my link'); m.className='msg err'; m.textContent=PT('No se pudo enviar. Intenta de nuevo.','Could not send. Try again.'); });
+          btn.disabled=false; btn.textContent=PT('No tengo contraseña — mándame un enlace','No password — email me a link');
+          if(d.error){ show('err', esc(d.error)); return; }
+          show('ok', PT('Revisa tu correo (<b>'+esc(em)+'</b>) y toca el enlace.','Check your inbox (<b>'+esc(em)+'</b>) and tap the link.'));
+        }).catch(function(){ btn.disabled=false; btn.textContent=PT('No tengo contraseña — mándame un enlace','No password — email me a link'); show('err',PT('No se pudo enviar. Intenta de nuevo.','Could not send. Try again.')); });
     };
   }
+
+  /* Crear o cambiar contraseña DESDE DENTRO del perfil (ya probó que el correo es suyo) */
+  window.setPassword=function(){
+    var ov=modal(PT('Mi contraseña','My password'),
+      '<p class="muted">'+PT('Créala una vez y la próxima entras al instante, sin ir al correo.','Set it once and next time you are in instantly, no email trip.')+'</p>'+
+      '<label>'+PT('Nueva contraseña','New password')+'</label>'+
+      '<input id="pw1" type="password" autocomplete="new-password" placeholder="'+PT('Mínimo 8 caracteres','At least 8 characters')+'">'+
+      '<label>'+PT('Repítela','Repeat it')+'</label>'+
+      '<input id="pw2" type="password" autocomplete="new-password">'+
+      '<button class="btn pri w" id="pw-save" style="margin-top:16px">'+PT('Guardar contraseña','Save password')+'</button><div id="pw-msg"></div>', 460);
+    ov.querySelector('#pw-save').onclick=function(){
+      var a=ov.querySelector('#pw1').value||'', b2=ov.querySelector('#pw2').value||'';
+      var m=ov.querySelector('#pw-msg'), btn=this;
+      if(a.length<8){ m.className='msg err'; m.textContent=PT('Usa al menos 8 caracteres.','Use at least 8 characters.'); return; }
+      if(a!==b2){ m.className='msg err'; m.textContent=PT('Las dos no coinciden.','They do not match.'); return; }
+      btn.disabled=true; btn.textContent=PT('Guardando…','Saving…');
+      sb.auth.updateUser({ password:a }).then(function(r){
+        if(r.error){ m.className='msg err'; m.textContent=esc(r.error.message||PT('No se pudo guardar.','Could not save.')); btn.disabled=false; btn.textContent=PT('Guardar contraseña','Save password'); return; }
+        m.className='msg ok'; m.textContent=PT('¡Listo! La próxima vez entras con tu correo y esta contraseña.','Done! Next time sign in with your email and this password.');
+        setTimeout(function(){ ov.close(); }, 1600);
+      });
+    };
+  };
 
   /* ═══ MASCOTAS ═══ */
   function petCard(p){
@@ -647,7 +708,10 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<div class="row"><span class="k">'+PT('Teléfono','Phone')+'</span><span class="v">'+esc((d.client&&d.client.phone)||'—')+'</span></div>'+
       '<div class="row"><span class="k">'+PT('Dirección','Address')+'</span><span class="v">'+esc([(d.client&&d.client.address),(d.client&&d.client.city),(d.client&&d.client.state),(d.client&&d.client.zip)].filter(Boolean).join(', ')||'—')+'</span></div>'+
       '<div class="row"><span class="k">'+PT('Idioma','Language')+'</span><span class="v">'+esc((d.client&&(d.client.contact_lang||d.client.language))||'Spanish')+'</span></div>'+
-      '<button class="btn w" style="margin-top:14px" onclick="profileEdit()">'+svg('pen',16)+' '+PT('Editar mis datos','Edit my details')+'</button></div>';
+      '<button class="btn w" style="margin-top:14px" onclick="profileEdit()">'+svg('pen',16)+' '+PT('Editar mis datos','Edit my details')+'</button></div>'+
+      '<div class="card"><div class="ttl">'+PT('Cómo entras a tu perfil','How you sign in')+'</div>'+
+      '<p class="muted" style="margin:8px 0 14px">'+PT('Crea una contraseña y la próxima vez entras al instante, sin tener que ir a tu correo. También puedes entrar siempre con Google.','Set a password and next time you are in instantly, without going to your email. You can also always sign in with Google.')+'</p>'+
+      '<button class="btn pri w" onclick="setPassword()">'+PT('Crear o cambiar mi contraseña','Set or change my password')+'</button></div>';
 
     if(d.email_opted_out){
       out+='<div class="card"><div class="ttl">'+PT('Correos detenidos','Emails paused')+'</div>'+
