@@ -395,8 +395,40 @@ footer{text-align:center;padding:24px;color:var(--ink2);font-size:13px;border-to
     };
   }
 
+  // Lo que incluye cada plan, en corto. Las políticas completas van por link.
+  function planInfo(plan){
+    var s=String(plan||'').toLowerCase();
+    var billing = (s.indexOf('year')>=0||s.indexOf('anual')>=0||s.indexOf('annual')>=0) ? PT('anual','yearly') : PT('mensual','monthly');
+    if(s.indexOf('vip')>=0) return { label:'VIP', color:'#7C3AED', billing:billing, perks:[
+      PT('Spa VIP completo cada mes','Full VIP spa every month'),
+      PT('Pickup & delivery ilimitado','Unlimited pickup & delivery'),
+      PT('20% de descuento en todo servicio extra','20% off every extra service'),
+      PT('Agenda reservada siempre para ti','Priority slots always held for you'),
+      PT('Reporte de pelaje y regalo de cumpleaños','Coat report and birthday gift')
+    ]};
+    if(s.indexOf('total')>=0) return { label:'Total', color:'#F58220', billing:billing, perks:[
+      PT('1 baño + corte al mes','1 bath + haircut per month'),
+      PT('Uñas y oídos incluidos','Nails and ears included'),
+      PT('Pickup & delivery incluido (10 millas)','Pickup & delivery included (10 miles)'),
+      PT('15% de descuento en servicios extra','15% off extra services'),
+      PT('Prioridad en agenda y foto mensual','Priority booking and a monthly photo')
+    ]};
+    return { label:'Esencial', color:'#1EB87A', billing:billing, perks:[
+      PT('1 baño completo al mes','1 full bath per month'),
+      PT('Uñas incluidas','Nails included'),
+      PT('10% de descuento en servicios extra','10% off extra services'),
+      PT('Recordatorios automáticos de tu cita','Automatic appointment reminders')
+    ]};
+  }
   function renderMembership(m){
+    var info=planInfo(m.plan);
     return '<div class="card plan-card"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px"><div class="step-label" style="margin:0">'+PT('Membresía','Membership')+'</div>'+badge(m.status)+'</div>'+
+      '<div style="display:flex;align-items:baseline;gap:8px;margin-bottom:6px"><span style="font-family:\'Bricolage Grotesque\',sans-serif;font-size:19px;font-weight:800;color:'+info.color+'">'+PT('Plan ','Plan ')+esc(info.label)+'</span><span style="font-size:12px;color:var(--soft)">'+esc(info.billing)+'</span></div>'+
+      '<ul style="margin:0 0 12px;padding-left:17px;font-size:12.5px;color:var(--ink2);line-height:1.75">'+info.perks.map(function(p){ return '<li>'+esc(p)+'</li>'; }).join('')+'</ul>'+
+      '<div style="background:var(--paper);border-radius:11px;padding:9px 12px;font-size:11.5px;color:var(--ink2);line-height:1.6;margin-bottom:12px">'+
+        '<b>'+PT('Lo importante:','The fine print:')+'</b> '+PT('1 grooming incluido al mes (no se acumula). Los extras llevan tu descuento. Permanencia mínima 3 meses y, si cancelas antes, se cobra 1 mes. Reservas y cambios con 24 horas de antelación.','1 grooming included per month (it does not roll over). Extras get your discount. 3-month minimum term and, if you cancel earlier, one month is charged. Bookings and changes need 24 hours notice.')+
+        ' <a href="https://bpuppy.us/terminos#membresias" target="_blank" style="color:var(--orange2);font-weight:700;text-decoration:none;white-space:nowrap">'+PT('Ver políticas completas →','See full policies →')+'</a>'+
+      '</div>'+
       '<div class="row"><span class="k">'+PT('Plan','Plan')+'</span><span class="v">'+esc(m.plan||'—')+' ('+esc(m.billing||'—')+')</span></div>'+
       '<div class="row"><span class="k">'+PT('Mascota','Pet')+'</span><span class="v">'+esc(m.pet_name||'—')+(m.pet_size?(' · '+esc(m.pet_size)):'')+'</span></div>'+
       '<div class="row"><span class="k">'+PT('Baños disponibles','Baths available')+'</span><span class="v" style="color:var(--orange2);font-size:18px">'+(m.credits_balance||0)+'</span></div>'+
