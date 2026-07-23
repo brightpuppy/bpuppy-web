@@ -11,8 +11,11 @@
   // nombre · "Raza · Ciudad, ST". Reales al inicio; el resto son ejemplos realistas
   // (razas más vendidas entre latinos + ciudades comunes de la costa este).
   var POOL = [
+    // Reales (los que tenemos con ciudad de entrega)
     { n: "Valentino", m: "Yorkshire · Queens, NY" },
     { n: "Tommy",     m: "Poodle · Queens, NY" },
+    { n: "Harley",    m: "Shih Tzu · Miami, FL" },
+    // Ejemplos realistas: razas mas vendidas + ciudades de la costa este
     { n: "Max",       m: "French Bulldog · Miami, FL" },
     { n: "Luna",      m: "Pomeranian · Newark, NJ" },
     { n: "Rocky",     m: "Yorkie · Boston, MA" },
@@ -24,7 +27,53 @@
     { n: "Kira",      m: "Pomeranian · Allentown, PA" },
     { n: "Milo",      m: "French Bulldog · Hialeah, FL" },
     { n: "Chloe",     m: "Yorkie · Providence, RI" },
-    { n: "Zeus",      m: "Poodle · Elizabeth, NJ" }
+    { n: "Zeus",      m: "Poodle · Elizabeth, NJ" },
+    { n: "Canela",    m: "Cocker Spaniel · Tampa, FL" },
+    { n: "Thor",      m: "Husky Siberiano · Filadelfia, PA" },
+    { n: "Maya",      m: "Bichon Frise · Union City, NJ" },
+    { n: "Lucas",     m: "Beagle · Raleigh, NC" },
+    { n: "Sasha",     m: "Schnauzer Mini · Doral, FL" },
+    { n: "Toby",      m: "Cavapoo · Stamford, CT" },
+    { n: "Mia",       m: "Havanese · Kissimmee, FL" },
+    { n: "Rex",       m: "Pastor Aleman · Brooklyn, NY" },
+    { n: "Lola",      m: "Cavalier King Charles · Alexandria, VA" },
+    { n: "Duke",      m: "Boxer · Baltimore, MD" },
+    { n: "Nala",      m: "Corgi · Jersey City, NJ" },
+    { n: "Benji",     m: "Shih Poo · Lawrence, MA" },
+    { n: "Emma",      m: "Goldendoodle · Atlanta, GA" },
+    { n: "Rambo",     m: "Pug · Yonkers, NY" },
+    { n: "Sofi",      m: "Pomsky · Reading, PA" },
+    { n: "Bruce",     m: "Dachshund · Norwalk, CT" },
+    { n: "Kiara",     m: "Shiba Inu · Fort Lauderdale, FL" },
+    { n: "Manchas",   m: "Dalmata · Springfield, MA" },
+    { n: "Frida",     m: "Chihuahua · Camden, NJ" },
+    { n: "Toño",    m: "Bulldog Ingles · Bridgeport, CT" },
+    { n: "Pelusa",    m: "Bichon Maltes · Perth Amboy, NJ" },
+    { n: "Diego",     m: "Labrador · Richmond, VA" },
+    { n: "Salem",     m: "Frenchie · West New York, NJ" },
+    { n: "Motita",    m: "Poodle Toy · Lowell, MA" },
+    { n: "Apolo",     m: "Rottweiler · Newburgh, NY" },
+    { n: "Suri",      m: "Yorkie Teacup · Kendall, FL" },
+    { n: "Chispa",    m: "Chihuahua · New Haven, CT" },
+    { n: "Rocco",     m: "Cane Corso · Passaic, NJ" },
+    { n: "Dulce",     m: "Maltipoo · Winter Garden, FL" },
+    { n: "Bella Rosa",m: "Cockapoo · Danbury, CT" },
+    { n: "Peluche",   m: "Pomerania · Haines City, FL" },
+    { n: "Zoe",       m: "Border Collie · Durham, NC" },
+    { n: "Chico",     m: "Boston Terrier · Trenton, NJ" },
+    { n: "Nube",      m: "Samoyedo · Nashua, NH" },
+    { n: "Tito",      m: "Basset Hound · Wilmington, DE" },
+    { n: "Amber",     m: "Golden Retriever · Sarasota, FL" },
+    { n: "Onix",      m: "Doberman · Worcester, MA" },
+    { n: "Perla",     m: "Coton de Tulear · Waterbury, CT" },
+    { n: "Tyson",     m: "American Bully · Filadelfia, PA" },
+    { n: "Kiwi",      m: "Papillon · Cape Coral, FL" },
+    { n: "Bimba",     m: "Westie · Providence, RI" },
+    { n: "Copito",    m: "Bichon · Lakeland, FL" },
+    { n: "Blue",      m: "Pitbull Blue · Bronx, NY" },
+    { n: "Estrella",  m: "Pomsky · Manassas, VA" },
+    { n: "Ozzy",      m: "Frenchie Merle · Hoboken, NJ" },
+    { n: "Kenai",     m: "Alaskan Malamute · Albany, NY" }
   ];
 
   // Baraja (Fisher-Yates) para que no salgan siempre en el mismo orden.
@@ -74,7 +123,7 @@
     setInterval(function () {
       idx = (idx + slots.length) % order.length;
       paint(true);
-    }, 3800);
+    }, 60000); // 1 minuto: se nota el cambio sin distraer
     return true;
   }
 
