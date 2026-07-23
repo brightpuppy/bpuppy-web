@@ -1025,6 +1025,8 @@ function IntroOfferBanner() {
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState("");
   const [takenTimes, setTaken] = useState([]);
+  const [extras, setExtras] = useState([]);
+  const [showAvail, setShowAvail] = useState(false);
   const TIMES = ["9:00 AM", "10:00 AM", "11:00 AM", "12:00 PM", "2:00 PM", "3:00 PM", "4:00 PM", "5:00 PM"];
   const [times, setTimes] = useState(TIMES);
   const [closedDays, setClosedDays] = useState([0]);
@@ -1038,12 +1040,24 @@ function IntroOfferBanner() {
     if (me && me.client) { if (!firstName) setFirst(me.client.first_name || ""); if (!lastName) setLast(me.client.last_name || ""); if (!phone) setPhone(me.client.phone || ""); if (!email) setEmail(me.email || me.client.email || ""); }
   }, [open]);
   const price = size === "gra" ? 70 : size ? 50 : 0;
-  const total = price + (pickup ? 20 : 0);
+  const EXTRA_OFFERS = [
+    { k: "deshed", es: "Deslanado", en: "De-shedding", p: 20 },
+    { k: "teeth", es: "Cepillado de dientes", en: "Teeth brushing", p: 10 },
+    { k: "sensitive", es: "Champú piel sensible", en: "Sensitive-skin shampoo", p: 10 },
+    { k: "flea", es: "Tratamiento antipulgas", en: "Flea & tick treatment", p: 15 },
+    { k: "nailpolish", es: "Uñas pintadas", en: "Nail polish", p: 8 }
+  ];
+  const toggleExtra = (k) => setExtras(function(prev) { return prev.indexOf(k) >= 0 ? prev.filter(function(x) { return x !== k; }) : prev.concat([k]); });
+  const extrasTotal = EXTRA_OFFERS.reduce(function(s, e) { return s + (extras.indexOf(e.k) >= 0 ? e.p : 0); }, 0);
+  const extrasPayload = EXTRA_OFFERS.filter(function(e) { return extras.indexOf(e.k) >= 0; }).map(function(e) { return { name: e.es, name_en: e.en, price: e.p }; });
+  const total = price + (pickup ? 20 : 0) + extrasTotal;
   const todayISO = new Date().toISOString().slice(0, 10);
   const GROOM_CALL = "808-492-8294";
   function bkMin(tm) { var mm = String(tm).match(/(\d+):(\d+)\s*(AM|PM)/i); if (!mm) return 0; var h = (+mm[1]) % 12; if (/pm/i.test(mm[3])) h += 12; return h * 60 + (+mm[2]); }
   // Mismo día permitido solo antes de las 2 PM (3h antes del último slot 5 PM) y con al menos 1h de anticipación.
   function todayOk(tm) { if (day !== todayISO) return true; var nowD = new Date(); var nm = nowD.getHours() * 60 + nowD.getMinutes(); if (nm >= 840) return false; return bkMin(tm) >= nm + 60; }
+  function ymdL(dt) { return dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") + "-" + String(dt.getDate()).padStart(2, "0"); }
+  function availDays() { var out = []; var base = new Date(); base.setHours(0, 0, 0, 0); var i = 0; while (out.length < 14 && i < 40) { var dt = new Date(base.getTime() + i * 864e5); i++; if (closedDays.indexOf(dt.getDay()) >= 0) continue; out.push({ ds: ymdL(dt), d: dt, first: i === 1 }); } return out; }
   function pickDate(v) {
     setDay(v); setTime(""); setTaken([]); setErr("");
     if (!v) return;
@@ -1073,7 +1087,7 @@ function IntroOfferBanner() {
       var dd = new Date(day + "T00:00:00");
       var lng = document.documentElement.lang === "en" ? "en-US" : "es-US";
       var dateStr = dd.toLocaleDateString(lng, { day: "numeric", month: "long", year: "numeric" });
-      var br = await fetch(URL2 + "/functions/v1/offer_book", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON2, "Authorization": "Bearer " + ANON2 }, body: JSON.stringify({ firstName, lastName, petName, address, phone, email, size: sizeLabel, dateISO: day, dateStr, time, pickup, notes }) });
+      var br = await fetch(URL2 + "/functions/v1/offer_book", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON2, "Authorization": "Bearer " + ANON2 }, body: JSON.stringify({ firstName, lastName, petName, address, phone, email, size: sizeLabel, dateISO: day, dateStr, time, pickup, notes, extras: extrasPayload }) });
       var bd = await br.json().catch(function() { return {}; });
       if (!br.ok || !bd.ok) { setBusy(false); setErr(bd.already ? t(["Esta oferta de introducci\xF3n solo puede reclamarse una vez por cliente.", "This intro offer can only be claimed once per client."]) : bd.error || t(["No se pudo reservar. Intenta de nuevo.", "Could not book. Try again."])); return; }
       var pr = await fetch(URL2 + "/functions/v1/stripe_checkout", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON2, "Authorization": "Bearer " + ANON2 }, body: JSON.stringify({ type: "grooming", grooming_id: bd.grooming_id }) });
@@ -1118,10 +1132,19 @@ function IntroOfferBanner() {
             _offerField(t(["Correo", "Email"]), email, setEmail, "email"),
             _offerField(t(["Direcci\xF3n", "Address"]), address, setAddr)
           ),
-          /* @__PURE__ */ React.createElement("div", { className: "offer-grid" },
-            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Fecha", "Date"])), /* @__PURE__ */ React.createElement("input", { className: "offer-in", type: "date", min: todayISO, value: day, onChange: function(e) { pickDate(e.target.value); } }), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: "var(--ink-soft)", marginTop: 5, lineHeight: 1.45 } }, t(["Cada cita ocupa un bloque de 2 horas. \xBFPara hoy y ya es tarde? Ll\xE1manos al ", "Each appointment takes a 2-hour block. Booking for today and it's late? Call us at "]), /* @__PURE__ */ React.createElement("a", { href: "tel:8084928294", style: { color: "var(--orange)", fontWeight: 700, textDecoration: "none" } }, GROOM_CALL), t([" — \xFAltima reserva 5 PM.", " — last appointment 5 PM."]))),
-            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Hora", "Time"])), /* @__PURE__ */ React.createElement("select", { className: "offer-in", value: time, onChange: function(e) { setTime(e.target.value); } }, /* @__PURE__ */ React.createElement("option", { value: "" }, "—"), times.filter(function(tm) { return takenTimes.indexOf(tm) < 0 && todayOk(tm); }).map(function(tm) { return /* @__PURE__ */ React.createElement("option", { key: tm, value: tm }, tm); }), day && times.filter(function(tm) { return takenTimes.indexOf(tm) < 0 && todayOk(tm); }).length === 0 ? /* @__PURE__ */ React.createElement("option", { value: "", disabled: true }, t(["D\xEDa lleno — elige otra fecha", "Day full — pick another date"])) : null))
+          /* @__PURE__ */ React.createElement("label", { className: "offer-lbl", style: { marginTop: 4 } }, t(["Extras (opcional)", "Add-ons (optional)"])),
+          /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 8, marginBottom: 14 } }, EXTRA_OFFERS.map(function(e) { var on = extras.indexOf(e.k) >= 0; return /* @__PURE__ */ React.createElement("button", { key: e.k, type: "button", onClick: function() { toggleExtra(e.k); }, style: { padding: "8px 13px", borderRadius: 999, border: "1.5px solid " + (on ? "var(--orange)" : "var(--line)"), background: on ? "rgba(245,130,32,0.08)" : "var(--bg)", color: on ? "var(--orange)" : "var(--ink-2)", fontFamily: "inherit", fontWeight: 700, fontSize: 12.5, cursor: "pointer" } }, t([e.es, e.en]) + " +$" + e.p); })),
+          /* @__PURE__ */ React.createElement("button", { type: "button", onClick: function() { setShowAvail(function(v) { return !v; }); }, style: { width: "100%", padding: "11px", borderRadius: 12, border: "1.5px dashed var(--orange)", background: "rgba(245,130,32,0.06)", color: "var(--orange)", fontFamily: "inherit", fontWeight: 800, fontSize: 13.5, cursor: "pointer", marginBottom: 10 } }, showAvail ? t(["Ocultar calendario", "Hide calendar"]) : t(["\u{1F4C5} Ver d\xEDas y horas disponibles", "\u{1F4C5} See available days & times"])),
+          showAvail && /* @__PURE__ */ React.createElement("div", { style: { border: "1px solid var(--line)", borderRadius: 14, padding: 12, marginBottom: 12, background: "var(--paper,#faf5ee)" } },
+            /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 800, color: "var(--ink-soft)", textTransform: "uppercase", letterSpacing: ".4px", marginBottom: 6 } }, t(["Elige el d\xEDa", "Pick the day"])),
+            /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 7, overflowX: "auto", paddingBottom: 6 } }, availDays().map(function(o) { var on = day === o.ds; return /* @__PURE__ */ React.createElement("button", { key: o.ds, type: "button", onClick: function() { pickDate(o.ds); }, style: { flex: "0 0 auto", minWidth: 54, border: "1.5px solid " + (on ? "var(--orange)" : "var(--line)"), background: on ? "rgba(245,130,32,0.08)" : "var(--bg)", borderRadius: 11, padding: "7px 5px", cursor: "pointer", fontFamily: "inherit", textAlign: "center" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 10, fontWeight: 700, color: "var(--ink-soft)" } }, o.first ? t(["Hoy", "Today"]) : [t(["Dom", "Sun"]), t(["Lun", "Mon"]), t(["Mar", "Tue"]), t(["Mi\xE9", "Wed"]), t(["Jue", "Thu"]), t(["Vie", "Fri"]), t(["S\xE1b", "Sat"])][o.d.getDay()]), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 16, fontWeight: 800, color: "var(--ink)" } }, o.d.getDate())); })),
+            day && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 800, color: "var(--ink-soft)", textTransform: "uppercase", letterSpacing: ".4px", marginBottom: 6 } }, t(["Elige la hora", "Pick the time"])), (function() { var free = times.filter(function(tm) { return takenTimes.indexOf(tm) < 0 && todayOk(tm); }); if (!free.length) return /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: "#C2521E", lineHeight: 1.5 } }, t(["No quedan horas ese d\xEDa. Para hoy, llama al 808-492-8294.", "No free times that day. For today, call 808-492-8294."])); return /* @__PURE__ */ React.createElement("div", { style: { display: "flex", flexWrap: "wrap", gap: 7 } }, free.map(function(tm) { var on = time === tm; return /* @__PURE__ */ React.createElement("button", { key: tm, type: "button", onClick: function() { setTime(tm); setShowAvail(false); }, style: { border: "1.5px solid " + (on ? "var(--orange)" : "var(--line)"), background: on ? "var(--orange)" : "var(--bg)", color: on ? "#fff" : "var(--ink)", borderRadius: 10, padding: "8px 13px", cursor: "pointer", fontFamily: "inherit", fontWeight: 700, fontSize: 13 } }, tm); })); })())
           ),
+          /* @__PURE__ */ React.createElement("div", { className: "offer-grid" },
+            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Fecha", "Date"])), /* @__PURE__ */ React.createElement("input", { className: "offer-in", type: "date", min: todayISO, value: day, onChange: function(e) { pickDate(e.target.value); } })),
+            /* @__PURE__ */ React.createElement("div", { className: "offer-fg" }, /* @__PURE__ */ React.createElement("label", { className: "offer-lbl" }, t(["Hora", "Time"])), /* @__PURE__ */ React.createElement("select", { className: "offer-in", value: time, onChange: function(e) { setTime(e.target.value); } }, /* @__PURE__ */ React.createElement("option", { value: "" }, "—"), times.filter(function(tm) { return takenTimes.indexOf(tm) < 0 && todayOk(tm); }).map(function(tm) { return /* @__PURE__ */ React.createElement("option", { key: tm, value: tm }, tm); })))
+          ),
+          /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11.5, color: "var(--ink-soft)", margin: "2px 0 6px", lineHeight: 1.45, textAlign: "center" } }, t(["Cada cita ocupa un bloque de 2 horas. \xBFPara hoy y ya es tarde? Ll\xE1manos al ", "Each appointment takes a 2-hour block. Booking for today and it's late? Call us at "]), /* @__PURE__ */ React.createElement("a", { href: "tel:8084928294", style: { color: "var(--orange)", fontWeight: 700, textDecoration: "none" } }, GROOM_CALL), t([" — \xFAltima reserva 5 PM.", " — last appointment 5 PM."])),
           /* @__PURE__ */ React.createElement("label", { className: "offer-pickup" }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: pickup, onChange: function(e) { setPickup(e.target.checked); } }), t(["Recogida y entrega a domicilio (+$20)", "Home pickup & delivery (+$20)"])),
           /* @__PURE__ */ React.createElement("input", { className: "offer-in", style: { marginTop: 10 }, placeholder: t(["Notas (opcional)", "Notes (optional)"]), value: notes, onChange: function(e) { setNotes(e.target.value); } }),
           err && /* @__PURE__ */ React.createElement("div", { className: "offer-err" }, err),
