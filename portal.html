@@ -48,24 +48,21 @@ header .brand img{height:28px}
 
 .wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
 
-/* ── portada + avatar ── */
-.cover{position:relative;height:190px;border-radius:0 0 26px 26px;overflow:hidden;background:
+/* ── avatar (sin foto de portada) ── */
+/* Banda de color suave arriba, solo para dar aire. El avatar YA no se recorta:
+   la tarjeta deja de tener overflow:hidden y el avatar cabe completo dentro. */
+.topband{height:96px;border-radius:0 0 26px 26px;background:
   linear-gradient(135deg,#FFE9D2,#FFD9E4 45%,#E4E7FF);border:1px solid var(--line);border-top:none}
-.cover img{width:100%;height:100%;object-fit:cover}
-.cover .scrim{position:absolute;inset:0;background:linear-gradient(180deg,transparent 40%,rgba(36,28,24,.35))}
-.cover .dots{position:absolute;inset:0;opacity:.35;
-  background-image:radial-gradient(circle at 18% 28%,#fff 1.6px,transparent 1.6px),radial-gradient(circle at 68% 62%,#fff 1.6px,transparent 1.6px),radial-gradient(circle at 44% 84%,#fff 1.2px,transparent 1.2px);
-  background-size:78px 78px}
 .camchip{position:absolute;right:14px;bottom:14px;display:inline-flex;align-items:center;gap:6px;
   padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.5);background:rgba(36,28,24,.5);
   color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(6px);transition:background .16s}
 .camchip:hover{background:rgba(36,28,24,.72)}
 
-.idcard{position:relative;margin:-60px 0 0;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);
-  padding:0 24px 22px;box-shadow:var(--shadow);overflow:hidden}
-.idcard .rainbow{height:3px;margin:0 -24px 0;background:linear-gradient(90deg,#F55820,#E83860,#7C3AED,#2563EB,#12A47A,#F5A623,#F55820);
+.idcard{position:relative;margin:-34px 0 0;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);
+  padding:0 24px 22px;box-shadow:var(--shadow)}
+.idcard .rainbow{height:3px;margin:0 -24px 0;border-radius:var(--r) var(--r) 0 0;background:linear-gradient(90deg,#F55820,#E83860,#7C3AED,#2563EB,#12A47A,#F5A623,#F55820);
   background-size:200% 100%;animation:slide 9s linear infinite}
-.av{position:relative;width:96px;height:96px;margin:-46px 0 0;border-radius:50%;border:4px solid var(--bg);
+.av{position:relative;width:96px;height:96px;margin:-44px 0 0;border-radius:50%;border:4px solid var(--bg);
   background:linear-gradient(135deg,#F55820,#E83860);display:grid;place-items:center;color:#fff;
   font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;overflow:hidden;box-shadow:0 8px 22px -8px rgba(36,28,24,.4)}
 .av img{width:100%;height:100%;object-fit:cover}
@@ -206,10 +203,10 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 
 @media(max-width:640px){
   .wrap{padding:0 12px 70px}
-  .cover{height:150px;border-radius:0 0 20px 20px}
+  .topband{height:78px;border-radius:0 0 20px 20px}
   .idcard{padding:0 17px 18px;border-radius:18px}
   .idcard .rainbow{margin:0 -17px}
-  .av{width:80px;height:80px;margin-top:-40px;font-size:27px}
+  .av{width:80px;height:80px;margin-top:-38px;font-size:27px}
   h1.nm{font-size:23px}
   .stats{grid-template-columns:repeat(2,1fr)}
   .g2{grid-template-columns:1fr}
@@ -750,12 +747,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     var earned=(d.badges||[]).length;
     var top=topPlan(ms);
 
-    /* portada */
-    coverHost.innerHTML='<div class="wrap" style="padding-bottom:0"><div class="cover">'+
-      (c.cover_url?('<img src="'+esc(c.cover_url)+'" alt="">'):'<div class="dots"></div>')+
-      '<div class="scrim"></div>'+
-      '<button class="camchip" onclick="setPhoto(\'cover\')">'+svg('cam',15)+' '+PT('Cambiar portada','Change cover')+'</button>'+
-      '</div></div>';
+    /* Sin foto de portada — solo un aire de color arriba para que la tarjeta respire. */
+    coverHost.innerHTML='<div class="topband"></div>';
 
     var html='<div class="idcard rise"><div class="rainbow"></div>'+
       '<div class="av">'+(c.photo_url?('<img src="'+esc(c.photo_url)+'" alt="">'):esc(initials))+
