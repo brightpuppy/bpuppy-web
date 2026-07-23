@@ -386,7 +386,13 @@ ${pickup ? isMember ? "\u{1F690} Pickup & Delivery: " + t(["Incluido (miembro)",
       });
       const d = await r.json();
       if (d && d.ok) setBookStatus("sent");
-      else {
+      else if (d && d.code === "plan_limit") {
+        // Ya uso el grooming que incluye su plan: se le ofrece el extra CON su descuento
+        setBookStatus("idle");
+        setBookErr("");
+        if (window.bpExtraBath) window.bpExtraBath({ plan: d.plan || (activeMembership && activeMembership.plan) || "", pet_size: d.size || sizeKey, pet_name: petName, client_email: (email || me && me.email || ""), client_name: ownerName }, me);
+        else { setBookErr(d.error); setBookStatus("error"); }
+      } else {
         setBookErr(d && d.error || t(["No se pudo enviar la solicitud", "We could not send your request"]));
         setBookStatus("error");
       }
