@@ -621,6 +621,8 @@ function MembershipPetModal({ buyFor, me, billing, onClose }) {
       });
       const c = await r.json();
       if (c.url) {
+        // Guardamos lo ya ingresado para prellenar el perfil al volver del pago
+        try { localStorage.setItem("bp_sub_pending", JSON.stringify({ email: em, pet: name.trim(), breed: breed.trim(), size: size, lang: lang, plan: groomT(t, m.name) })); } catch (e2) {}
         location.href = c.url;
         return;
       }
@@ -648,11 +650,96 @@ function MembershipPetModal({ buyFor, me, billing, onClose }) {
     return /* @__PURE__ */ React.createElement("button", { key: i, onClick: () => pickPreset(p), style: { padding: "7px 13px", borderRadius: 999, border: `2px solid ${sel ? "var(--orange)" : "var(--line)"}`, background: sel ? "rgba(245,130,32,0.08)" : "var(--bg)", cursor: "pointer", fontFamily: "inherit", fontSize: 12.5, fontWeight: 700, color: sel ? "var(--orange)" : "var(--ink)" } }, p.name);
   })), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 } }, /* @__PURE__ */ React.createElement("div", { style: { gridColumn: "1/-1" } }, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Nombre de la mascota *", "Pet\u2019s name *"])), /* @__PURE__ */ React.createElement("input", { value: name, onChange: (e) => setName(e.target.value), placeholder: t(["Ej: Max", "e.g. Max"]), style: fld })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Raza *", "Breed *"])), /* @__PURE__ */ React.createElement("input", { value: breed, onChange: (e) => setBreed(e.target.value), placeholder: t(["Ej: Poodle", "e.g. Poodle"]), style: fld })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Tama\xF1o *", "Size *"])), /* @__PURE__ */ React.createElement("select", { value: size, onChange: (e) => setSize(e.target.value), style: fld }, /* @__PURE__ */ React.createElement("option", { value: "" }, "\u2014"), /* @__PURE__ */ React.createElement("option", { value: "Peque\xF1o" }, t(["Peque\xF1o", "Small"])), /* @__PURE__ */ React.createElement("option", { value: "Mediano" }, t(["Mediano", "Medium"])), /* @__PURE__ */ React.createElement("option", { value: "Grande" }, t(["Grande", "Large"])), /* @__PURE__ */ React.createElement("option", { value: "XL" }, "XL"))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Sexo *", "Sex *"])), /* @__PURE__ */ React.createElement("select", { value: sex, onChange: (e) => setSex(e.target.value), style: fld }, /* @__PURE__ */ React.createElement("option", { value: "" }, "\u2014"), /* @__PURE__ */ React.createElement("option", { value: "Macho" }, t(["Macho", "Male"])), /* @__PURE__ */ React.createElement("option", { value: "Hembra" }, t(["Hembra", "Female"])))), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Peso aprox. *", "Approx. weight *"])), /* @__PURE__ */ React.createElement("input", { value: weight, onChange: (e) => setWeight(e.target.value), type: "number", min: "0", placeholder: t(["Ej: 12", "e.g. 12"]), style: fld })), /* @__PURE__ */ React.createElement("div", { style: { gridColumn: "1/-1", display: "flex", alignItems: "flex-start", gap: 8, padding: "9px 11px", borderRadius: 10, background: "rgba(245,130,32,0.06)", border: "1px solid rgba(245,130,32,0.2)" } }, /* @__PURE__ */ React.createElement("input", { id: "mp-sens", type: "checkbox", checked: sensitive, onChange: (e) => setSensitive(e.target.checked), style: { width: 18, height: 18, marginTop: 2, accentColor: "var(--orange)", cursor: "pointer", flexShrink: 0 } }), /* @__PURE__ */ React.createElement("label", { htmlFor: "mp-sens", style: { fontSize: 12.5, fontWeight: 700, color: "var(--ink)", cursor: "pointer", lineHeight: 1.45 } }, t(["Piel sensible — productos especiales para su condici\xF3n ", "Sensitive skin — special products for the condition "]), /* @__PURE__ */ React.createElement("span", { style: { color: "var(--orange)" } }, t(["(+$10/mes)", "(+$10/mo)"])))), /* @__PURE__ */ React.createElement("div", { style: { gridColumn: "1/-1" } }, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Tu correo *", "Your email *"])), /* @__PURE__ */ React.createElement("input", { value: email, onChange: (e) => setEmail(e.target.value), type: "email", placeholder: t(["tu@correo.com", "you@email.com"]), style: fld, disabled: !!(me && me.email) })), /* @__PURE__ */ React.createElement("div", { style: { gridColumn: "1/-1" } }, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Notas (opcional)", "Notes (optional)"])), /* @__PURE__ */ React.createElement("textarea", { value: notes, onChange: (e) => setNotes(e.target.value), placeholder: t(["Alergias, comportamiento...", "Allergies, behavior..."]), rows: 2, style: { ...fld, resize: "vertical", minHeight: 54 } }))), err && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 10, fontSize: 13, fontWeight: 600, color: "#C0392B", background: "#f8e3df", borderRadius: 10, padding: "9px 12px" } }, err), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, marginTop: 12, flexWrap: "wrap" } }, /* @__PURE__ */ React.createElement("span", { style: { fontSize: 12, fontWeight: 700, color: "var(--ink-2)" } }, t(["Idioma de comunicaci\xF3n preferido:", "Preferred communication language:"])), /* @__PURE__ */ React.createElement("button", { type: "button", onClick: () => setLang("es"), style: { padding: "5px 12px", borderRadius: 999, border: "1.5px solid " + (lang === "es" ? "var(--orange)" : "var(--line)"), background: lang === "es" ? "rgba(245,130,32,0.08)" : "var(--bg)", color: lang === "es" ? "var(--orange)" : "var(--ink)", fontFamily: "inherit", fontWeight: 700, fontSize: 12, cursor: "pointer" } }, "Espa\xF1ol"), /* @__PURE__ */ React.createElement("button", { type: "button", onClick: () => setLang("en"), style: { padding: "5px 12px", borderRadius: 999, border: "1.5px solid " + (lang === "en" ? "var(--orange)" : "var(--line)"), background: lang === "en" ? "rgba(245,130,32,0.08)" : "var(--bg)", color: lang === "en" ? "var(--orange)" : "var(--ink)", fontFamily: "inherit", fontWeight: 700, fontSize: 12, cursor: "pointer" } }, "English")), /* @__PURE__ */ React.createElement("label", { style: { display: "flex", alignItems: "flex-start", gap: 8, marginTop: 12, cursor: "pointer" } }, /* @__PURE__ */ React.createElement("input", { type: "checkbox", checked: agree, onChange: (e) => setAgree(e.target.checked), style: { width: 16, height: 16, marginTop: 2, accentColor: "var(--orange)", flexShrink: 0, cursor: "pointer" } }), /* @__PURE__ */ React.createElement("span", { style: { fontSize: 11.5, color: "var(--ink-2)", lineHeight: 1.5 } }, t(["Acepto que es una suscripci\xF3n de cobro autom\xE1tico (mensual/anual) con permanencia m\xEDnima de 3 meses, y los ", "I agree this is an auto-billing subscription (monthly/annual) with a 3-month minimum, and the "]), /* @__PURE__ */ React.createElement("a", { href: "/terminos#membresias", target: "_blank", rel: "noopener", style: { color: "var(--orange)", fontWeight: 700 } }, t(["T\xE9rminos de membres\xEDa", "Membership Terms"])), t([". Precios de apertura por tiempo limitado.", ". Limited-time opening prices."]))), /* @__PURE__ */ React.createElement("div", { style: { marginTop: 14, background: "var(--bg)", border: "1px solid var(--line)", borderRadius: 12, padding: "12px 14px" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--ink-2)", marginBottom: 5 } }, groomT(t, m.name) + (size ? " \xB7 " + size : ""), "$" + basePrice), sensitive && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--ink-2)", marginBottom: 5 } }, t(["Piel sensible", "Sensitive skin"]), "+$10"), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 13, color: "var(--ink-2)", marginBottom: 7 } }, t(["Impuesto FL", "FL sales tax"]) + " " + Math.round(TAX_RATE * 100) + "%", "$" + taxAmt.toFixed(2)), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", fontSize: 15, fontWeight: 800, color: "var(--ink)", borderTop: "1px solid var(--line)", paddingTop: 7 } }, t(["Total hoy", "Total today"]), "$" + grandAmt.toFixed(2) + " " + perLbl)), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 11, color: "var(--ink-soft)", margin: "8px 0 0", lineHeight: 1.5 } }, t(["Permanencia m\xEDnima de 3 meses. Cancelar antes conlleva un cargo de cancelaci\xF3n de 1 mes del plan. Impuesto de venta de Florida incluido.", "3-month minimum commitment. Canceling earlier carries a cancellation fee of 1 month of the plan. Florida sales tax included."])), /* @__PURE__ */ React.createElement("button", { onClick: go, disabled: busy, style: { width: "100%", marginTop: 12, padding: 14, borderRadius: 13, border: "none", background: busy ? "var(--line)" : "var(--orange)", color: "#fff", fontFamily: "inherit", fontSize: 15, fontWeight: 800, cursor: busy ? "default" : "pointer" } }, busy ? t(["Redirigiendo a pago seguro\u2026", "Redirecting to secure checkout\u2026"]) : (t(["Pagar", "Pay"]) + " $" + grandAmt.toFixed(2) + " " + perLbl + " \u2192")), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 10.5, color: "var(--ink-soft)", textAlign: "center", margin: "8px 0 0" } }, t(["Pago seguro con Stripe. Tu mascota queda registrada al confirmar.", "Secure payment with Stripe. Your pet is registered upon confirmation."]))));
 }
+// Tras pagar la membresia (?sub=1): agradece, prellena lo que ya escribio y pide solo lo que falta + contrasena.
+function PostCheckoutProfile({ onClose }) {
+  const t = useT();
+  const ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
+  const [pend] = useState(() => { try { return JSON.parse(localStorage.getItem("bp_sub_pending") || "{}"); } catch (e) { return {}; } });
+  const [first, setFirst] = useState("");
+  const [last, setLast] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
+  const [city, setCity] = useState("");
+  const [stateV, setStateV] = useState("FL");
+  const [zip, setZip] = useState("");
+  const [pass, setPass] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState("");
+  const [done, setDone] = useState(false);
+  const email = pend.email || "";
+  const fld = { width: "100%", padding: "11px 13px", borderRadius: 11, border: "1.5px solid var(--line)", fontFamily: "inherit", fontSize: 14, color: "var(--ink)", background: "var(--bg)", outline: "none", boxSizing: "border-box" };
+  const lbl = { fontSize: 11.5, fontWeight: 700, color: "var(--ink-2)", marginBottom: 4 };
+  const save = async () => {
+    if (!first.trim() || !last.trim()) { setErr(t(["Escribe tu nombre y apellido", "Enter your first and last name"])); return; }
+    if (!phone.trim()) { setErr(t(["Escribe tu tel\xE9fono", "Enter your phone"])); return; }
+    if (!address.trim()) { setErr(t(["Escribe tu direcci\xF3n", "Enter your address"])); return; }
+    if (pass && pass.length < 6) { setErr(t(["La contrase\xF1a debe tener al menos 6 caracteres", "Password must be at least 6 characters"])); return; }
+    setBusy(true); setErr("");
+    try {
+      const sb = window._groomSb;
+      let session = null;
+      if (sb) {
+        try { const cur = await sb.auth.getSession(); session = cur && cur.data ? cur.data.session : null; } catch (e) {}
+        if (!session && pass && email) {
+          const su = await sb.auth.signUp({ email: email, password: pass });
+          if (su.error && !/already|registered/i.test(su.error.message || "")) { setErr(su.error.message); setBusy(false); return; }
+          session = su.data && su.data.session ? su.data.session : null;
+          if (!session) { try { const si = await sb.auth.signInWithPassword({ email: email, password: pass }); session = si.data ? si.data.session : null; } catch (e) {} }
+        }
+      }
+      if (!session) {
+        setErr(t(["Tu plan ya qued\xF3 activo. Para crear tu acceso revisa tu correo (te enviamos un enlace) o entra con \xABYa soy cliente\xBB.", "Your plan is active. To create your login check your email (we sent you a link) or use “Already a client”."]));
+        setBusy(false); return;
+      }
+      const r = await fetch("https://oqqwmcplljirbreowrll.supabase.co/functions/v1/portal_profile", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "apikey": ANON_KEY, "Authorization": "Bearer " + session.access_token },
+        body: JSON.stringify({ first_name: first, last_name: last, phone: phone, address: address, city: city, state: stateV, zip: zip, lang: pend.lang || "es" })
+      });
+      const d = await r.json();
+      if (!d.ok) { setErr(d.detail || d.error || t(["No se pudo guardar", "Could not save"])); setBusy(false); return; }
+      try { localStorage.removeItem("bp_sub_pending"); } catch (e) {}
+      setDone(true); setBusy(false);
+    } catch (e) { setErr(t(["Error de red, intenta de nuevo", "Network error, please try again"])); setBusy(false); }
+  };
+  return /* @__PURE__ */ React.createElement("div", { onClick: (e) => { if (e.target === e.currentTarget) onClose(); }, style: { position: "fixed", inset: 0, background: "rgba(45,36,33,0.55)", backdropFilter: "blur(3px)", display: "flex", alignItems: "flex-start", justifyContent: "center", padding: "40px 16px", zIndex: 1200, overflowY: "auto" } },
+    /* @__PURE__ */ React.createElement("div", { style: { background: "#fff", borderRadius: 20, width: "100%", maxWidth: 480, padding: 24, boxShadow: "0 30px 80px rgba(45,36,33,0.3)" } },
+      done
+        ? /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", padding: "10px 0" } },
+            /* @__PURE__ */ React.createElement("div", { style: { width: 62, height: 62, borderRadius: "50%", background: "rgba(30,184,122,0.12)", color: "#1EB87A", display: "grid", placeItems: "center", margin: "0 auto 12px" } }, /* @__PURE__ */ React.createElement(Icon, { name: "check", size: 32 })),
+            /* @__PURE__ */ React.createElement("h3", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 21, fontWeight: 800, color: "var(--ink)", margin: "0 0 8px" } }, t(["\xA1Perfil listo!", "Profile ready!"])),
+            /* @__PURE__ */ React.createElement("p", { style: { fontSize: 14, color: "var(--ink-2)", lineHeight: 1.6, margin: "0 0 18px" } }, t(["La pr\xF3xima vez entras con tu correo y agendas en segundos.", "Next time just sign in with your email and book in seconds."])),
+            /* @__PURE__ */ React.createElement("a", { href: "/portal", style: { display: "inline-block", padding: "12px 24px", borderRadius: 12, background: "var(--orange)", color: "#fff", fontWeight: 800, fontSize: 14.5, textDecoration: "none" } }, t(["Ir a mi cuenta →", "Go to my account →"])),
+            /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("button", { onClick: onClose, style: { marginTop: 12, background: "none", border: "none", color: "var(--ink-2)", fontSize: 13, cursor: "pointer", fontFamily: "inherit", textDecoration: "underline" } }, t(["Cerrar", "Close"]))))
+        : /* @__PURE__ */ React.createElement(React.Fragment, null,
+            /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "flex-start" } },
+              /* @__PURE__ */ React.createElement("h3", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 21, fontWeight: 800, color: "var(--ink)", margin: 0 } }, t(["\xA1Gracias! Tu plan est\xE1 activo", "Thank you! Your plan is active"])),
+              /* @__PURE__ */ React.createElement("button", { onClick: onClose, style: { border: "none", background: "var(--paper)", width: 30, height: 30, borderRadius: "50%", fontSize: 18, lineHeight: 1, cursor: "pointer", color: "var(--ink-2)", flexShrink: 0 } }, "\xD7")),
+            /* @__PURE__ */ React.createElement("p", { style: { fontSize: 13, color: "var(--ink-2)", margin: "6px 0 14px", lineHeight: 1.55 } }, t(["Completa tu perfil para que la pr\xF3xima vez sea m\xE1s f\xE1cil: te autollenamos todo al agendar.", "Complete your profile so next time is easier: we autofill everything when you book."])),
+            (email || pend.pet) && /* @__PURE__ */ React.createElement("div", { style: { background: "var(--bg)", border: "1px solid var(--line)", borderRadius: 12, padding: "10px 13px", fontSize: 12.5, color: "var(--ink-2)", marginBottom: 14 } },
+              pend.plan ? /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("b", { style: { color: "var(--ink)" } }, pend.plan)) : null,
+              pend.pet ? /* @__PURE__ */ React.createElement("div", null, t(["Mascota", "Pet"]), ": ", pend.pet, pend.breed ? " \xB7 " + pend.breed : "", pend.size ? " \xB7 " + pend.size : "") : null,
+              email ? /* @__PURE__ */ React.createElement("div", null, t(["Correo", "Email"]), ": ", email) : null),
+            /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 10 } },
+              /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Nombre *", "First name *"])), /* @__PURE__ */ React.createElement("input", { value: first, onChange: (e) => setFirst(e.target.value), style: fld })),
+              /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Apellido *", "Last name *"])), /* @__PURE__ */ React.createElement("input", { value: last, onChange: (e) => setLast(e.target.value), style: fld })),
+              /* @__PURE__ */ React.createElement("div", { style: { gridColumn: "1/-1" } }, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Tel\xE9fono *", "Phone *"])), /* @__PURE__ */ React.createElement("input", { value: phone, onChange: (e) => setPhone(e.target.value), placeholder: "+1 (305) 000-0000", style: fld })),
+              /* @__PURE__ */ React.createElement("div", { style: { gridColumn: "1/-1" } }, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Direcci\xF3n *", "Address *"])), /* @__PURE__ */ React.createElement("input", { value: address, onChange: (e) => setAddress(e.target.value), placeholder: t(["Calle y n\xFAmero", "Street and number"]), style: fld })),
+              /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Ciudad", "City"])), /* @__PURE__ */ React.createElement("input", { value: city, onChange: (e) => setCity(e.target.value), style: fld })),
+              /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "1fr 1fr", gap: 8 } },
+                /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Estado", "State"])), /* @__PURE__ */ React.createElement("input", { value: stateV, onChange: (e) => setStateV(e.target.value), style: fld })),
+                /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: lbl }, "ZIP"), /* @__PURE__ */ React.createElement("input", { value: zip, onChange: (e) => setZip(e.target.value), inputMode: "numeric", style: fld }))),
+              /* @__PURE__ */ React.createElement("div", { style: { gridColumn: "1/-1" } }, /* @__PURE__ */ React.createElement("div", { style: lbl }, t(["Crea una contrase\xF1a (para entrar la pr\xF3xima vez)", "Create a password (to sign in next time)"])), /* @__PURE__ */ React.createElement("input", { value: pass, onChange: (e) => setPass(e.target.value), type: "password", placeholder: t(["M\xEDnimo 6 caracteres", "At least 6 characters"]), style: fld }))),
+            err && /* @__PURE__ */ React.createElement("div", { style: { marginTop: 10, fontSize: 12.5, fontWeight: 600, color: "#C0392B", background: "#f8e3df", borderRadius: 10, padding: "9px 12px", lineHeight: 1.5 } }, err),
+            /* @__PURE__ */ React.createElement("button", { onClick: save, disabled: busy, style: { width: "100%", marginTop: 14, padding: 14, borderRadius: 13, border: "none", background: busy ? "var(--line)" : "var(--orange)", color: "#fff", fontFamily: "inherit", fontSize: 15, fontWeight: 800, cursor: busy ? "default" : "pointer" } }, busy ? t(["Guardando…", "Saving…"]) : t(["Guardar mi perfil", "Save my profile"])),
+            /* @__PURE__ */ React.createElement("button", { onClick: onClose, style: { width: "100%", marginTop: 8, padding: 10, borderRadius: 12, border: "none", background: "none", color: "var(--ink-2)", fontFamily: "inherit", fontSize: 13, cursor: "pointer" } }, t(["Ahora no", "Not now"])))));
+}
 function GroomingApp() {
   const [sizeIdx, setSizeIdx] = useState(0);
   const sizeKey = SIZEKEYS[sizeIdx];
   const [tab, setTab] = useState("servicios");
   const [billing, setBilling] = useState("year");
+  const [postPay, setPostPay] = useState(() => { try { return /[?&]sub=1/.test(location.search); } catch (e) { return false; } });
   const [planSize, setPlanSize] = useState({});
   const szOf = (nm) => planSize[nm] || "s";
   const setSzOf = (nm, id) => setPlanSize((o) => ({ ...o, [nm]: id }));
@@ -881,7 +968,7 @@ function GroomingApp() {
       style: { width: "100%", padding: "14px", borderRadius: 12, border: "none", background: "var(--orange)", color: "#fff", fontFamily: "inherit", fontSize: 15, fontWeight: 800, cursor: authBusy ? "default" : "pointer", opacity: authBusy ? 0.7 : 1 }
     },
     authBusy ? t(["Enviando\u2026", "Sending\u2026"]) : t(["Enviar enlace de acceso", "Send sign-in link"]) + " \u2192"
-  )))), buyFor && /* @__PURE__ */ React.createElement(MembershipPetModal, { buyFor, me, billing, onClose: () => setBuyFor(null) }));
+  )))), buyFor && /* @__PURE__ */ React.createElement(MembershipPetModal, { buyFor, me, billing, onClose: () => setBuyFor(null) }), postPay && /* @__PURE__ */ React.createElement(PostCheckoutProfile, { onClose: () => { setPostPay(false); try { history.replaceState(null, "", location.pathname); } catch (e) {} } }));
 }
 function _offerField(label, val, setter, type) {
   return /* @__PURE__ */ React.createElement("div", { className: "offer-fg" },
