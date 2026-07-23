@@ -46,6 +46,12 @@
 
   /* ── 1. La puerta ── */
   function gate() {
+    // VISTA PREVIA DEL STAFF: desde el CRM abrimos con ?preview=1 — nunca pedimos datos,
+    // los datos son SOLO para el cliente. Se recuerda en este navegador.
+    if (qs("preview") === "1" || qs("staff") === "1") {
+      try { localStorage.setItem(KEY, JSON.stringify({ staff: true })); } catch (e) {}
+      return;
+    }
     if (saved()) return;                       // ya se identificó en este navegador
     if (!/catalogo/i.test(location.pathname)) return;
     var ov = document.createElement("div"); ov.className = "cg-ov";
