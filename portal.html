@@ -560,6 +560,78 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     });
   };
 
+  /* ═══ AGREGAR SERVICIOS a una cita ya hecha (incluye Pickup & Delivery) ═══ */
+  window.addServices=function(gid){
+    var st={ gid:gid, services:[], pickup:false, quote:null, upgrade:null };
+    var ov=modal(PT('Agregar servicios','Add services'),
+      '<p class="muted">'+PT('Elige lo que quieres agregar a tu cita. Tu descuento de miembro se aplica solo.','Pick what you want to add to your appointment. Your member discount applies automatically.')+'</p>'+
+      '<div id="as-plan" class="muted" style="font-size:12.5px;margin-bottom:10px"></div>'+
+      '<div id="as-svcs" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px"><span class="muted" style="font-size:12.5px">'+PT('Cargando…','Loading…')+'</span></div>'+
+      '<label style="display:flex;gap:9px;align-items:center;font-size:14px;font-weight:700;margin-bottom:12px;cursor:pointer;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 13px">'+
+        '<input type="checkbox" id="as-pickup"> 🚐 '+PT('Recogida y entrega a domicilio','Home pickup & delivery')+
+        '<span id="as-pknote" style="margin-left:auto;font-size:12px;color:var(--ink2)"></span></label>'+
+      '<div id="as-total" style="background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;margin-bottom:10px">'+PT('Elige servicios…','Pick services…')+'</div>'+
+      '<div id="as-up"></div>'+
+      '<div id="as-msg"></div>'+
+      '<button class="btn pri w" id="as-go" style="margin-top:12px">'+PT('Pagar','Pay')+'</button>', 500);
+    var svcsEl=ov.querySelector('#as-svcs'), totEl=ov.querySelector('#as-total'), upEl=ov.querySelector('#as-up'),
+        planEl=ov.querySelector('#as-plan'), pkEl=ov.querySelector('#as-pickup'), pkNote=ov.querySelector('#as-pknote'),
+        goBtn=ov.querySelector('#as-go'), msg=ov.querySelector('#as-msg');
+    function calc(){
+      st.services=[]; try{ svcsEl.querySelectorAll('[data-on="1"]').forEach(function(e){ st.services.push(e.getAttribute('data-svc')); }); }catch(e){}
+      st.pickup=!!pkEl.checked;
+      fetch(SUPA+'/functions/v1/grooming_extra',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json','Authorization':'Bearer '+ANON},
+        body:JSON.stringify({action:'addon_quote',grooming_id:st.gid,services:st.services,pickup:st.pickup,lang:PLANG})})
+        .then(function(r){return r.json();}).then(function(d){
+          if(!d||!d.ok){ totEl.textContent=(d&&d.error)||PT('No se pudo calcular','Could not calculate'); return; }
+          st.quote=d.quote; st.upgrade=d.upgrade;
+          if(planEl) planEl.innerHTML = d.membership ? (PT('Tu plan: ','Your plan: ')+'<b>'+esc(d.membership.plan||'')+'</b>') : '';
+          if(pkNote) pkNote.textContent = d.quote.pickup_included ? PT('Incluido en tu plan','Included in your plan') : '+$20';
+          var q=d.quote;
+          totEl.innerHTML = q.items.length
+            ? (q.items.map(function(i){ return '<div style="display:flex;justify-content:space-between;color:var(--ink2)"><span>'+esc(i.name)+(i.included?(' <b style="color:#12A47A">'+PT('incluido','included')+'</b>'):'')+'</span><span>$'+Number(i.price||0).toFixed(2)+'</span></div>'; }).join('')
+              + (q.discount>0?('<div style="display:flex;justify-content:space-between;color:#12A47A;font-weight:700"><span>'+PT('Descuento de miembro','Member discount')+' ('+Math.round(q.pct*100)+'%)</span><span>-$'+q.discount.toFixed(2)+'</span></div>'):'')
+              + '<div style="display:flex;justify-content:space-between;color:var(--ink2)"><span>'+PT('Impuesto FL','FL tax')+' '+q.tax_pct+'%</span><span>$'+q.tax.toFixed(2)+'</span></div>'
+              + '<div style="display:flex;justify-content:space-between;font-weight:800;font-size:16px;border-top:1px solid var(--line);margin-top:7px;padding-top:7px"><span>'+PT('Total','Total')+'</span><span>$'+q.total.toFixed(2)+'</span></div>')
+            : PT('Elige servicios…','Pick services…');
+          upEl.innerHTML = d.upgrade
+            ? ('<div style="border:1.5px solid #7C3AED;background:#F5F3FF;border-radius:13px;padding:13px 15px;margin-top:6px">'
+              + '<div style="font-size:14px;font-weight:800;color:#5B21B6">💡 '+PT('Te conviene el ','Consider the ')+esc(d.upgrade.target_label)+'</div>'
+              + '<div style="font-size:12.5px;color:#6d28d9;margin:5px 0 8px;line-height:1.55">'+PT('Estás pagando ','You are paying ')+'<b>$'+Number(d.upgrade.paying_now).toFixed(2)+'</b>'+PT(' por esto. Por ',' for this. For ')+'<b>+$'+Number(d.upgrade.monthly_diff).toFixed(0)+PT('/mes','/mo')+'</b>'+PT(' lo tendrías incluido, y además:',' you would get it included, plus:')+'</div>'
+              + '<ul style="margin:0 0 9px;padding-left:17px;font-size:12.5px;color:#4c1d95;line-height:1.7">'+(PLANG==='en'?d.upgrade.includes_en:d.upgrade.includes).map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul>'
+              + '<a href="/grooming#memberships" target="_blank" rel="noopener" style="display:inline-block;background:#7C3AED;color:#fff;text-decoration:none;font-weight:800;font-size:13px;padding:10px 20px;border-radius:999px">'+PT('Hacer upgrade','Upgrade my plan')+' →</a>'
+              + '<div style="font-size:11px;color:#7c6bb0;margin-top:7px;line-height:1.5">'+esc(PLANG==='en'?d.upgrade.note_en:d.upgrade.note)+'</div></div>')
+            : '';
+        }).catch(function(){ totEl.textContent=PT('Error de red','Network error'); });
+    }
+    fetch(SUPA+'/functions/v1/grooming_extra',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json','Authorization':'Bearer '+ANON},body:JSON.stringify({action:'services'})})
+      .then(function(r){return r.json();}).then(function(d){
+        if(!d||!d.services){ svcsEl.innerHTML=''; return; }
+        svcsEl.innerHTML=d.services.map(function(s){
+          return '<button type="button" data-svc="'+esc(s.name)+'" data-on="0" style="border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:9px 14px;font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer">'+esc(s.name)+' $'+s.price+'</button>';
+        }).join('');
+        svcsEl.querySelectorAll('[data-svc]').forEach(function(b){ b.onclick=function(){
+          var on=b.getAttribute('data-on')==='1'; b.setAttribute('data-on',on?'0':'1');
+          b.style.borderColor=on?'var(--line)':'var(--orange)'; b.style.background=on?'var(--bg)':'rgba(245,130,32,.09)'; b.style.color=on?'var(--ink)':'var(--orange)';
+          calc();
+        }; });
+        calc();
+      }).catch(function(){ svcsEl.innerHTML=''; });
+    pkEl.onchange=calc;
+    goBtn.onclick=function(){
+      if(!st.quote || !st.quote.items.length){ msg.className='msg err'; msg.textContent=PT('Elige al menos un servicio.','Pick at least one service.'); return; }
+      if(!(st.quote.total>0)){ msg.className='msg ok'; msg.textContent=PT('Todo lo que elegiste ya viene incluido en tu plan.','Everything you picked is already included in your plan.'); return; }
+      goBtn.disabled=true; goBtn.textContent=PT('Conectando con el pago…','Connecting to payment…');
+      fetch(SUPA+'/functions/v1/grooming_extra',{method:'POST',headers:{'apikey':ANON,'Content-Type':'application/json','Authorization':'Bearer '+ANON},
+        body:JSON.stringify({action:'addon_checkout',grooming_id:st.gid,services:st.services,pickup:st.pickup,lang:PLANG,created_by:'cliente'})})
+        .then(function(r){return r.json();}).then(function(d){
+          if(d&&d.url){ location.href=d.url; return; }
+          msg.className='msg err'; msg.textContent=(d&&d.error)||PT('No se pudo iniciar el pago.','Could not start the payment.');
+          goBtn.disabled=false; goBtn.textContent=PT('Pagar','Pay');
+        }).catch(function(){ msg.className='msg err'; msg.textContent=PT('Error de red.','Network error.'); goBtn.disabled=false; goBtn.textContent=PT('Pagar','Pay'); });
+    };
+  };
+
   /* ═══ REPROGRAMAR — conectado al CRM: calendario de días + horas disponibles (bloques de 2h) ═══ */
   var GROOM_CALL='808-492-8294'; // línea para "agendar hoy" (misma que el negocio)
   function slotMin(t){ var m=String(t).match(/(\d+):(\d+)\s*(AM|PM)/i); if(!m) return 0; var h=(+m[1])%12; if(/pm/i.test(m[3])) h+=12; return h*60+(+m[2]); }
@@ -686,7 +758,10 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
           var svc=Array.isArray(b.services)?b.services.join(', '):(b.services||'');
           return '<div class="bk"><div style="min-width:0"><div style="font-weight:800">'+esc(b.pet_name||PT('Tu mascota','Your pet'))+'</div>'+
             '<div class="muted" style="font-size:12px">'+esc(fmtD(b.appointment_date))+(b.appointment_time?(' · '+esc(b.appointment_time)):'')+(svc?(' · '+esc(svc)):'')+'</div></div>'+
-            '<button class="btn sm" onclick="reschedule(\''+b.id+'\',\''+esc(b.appointment_date)+'\',\''+esc(b.appointment_time||'')+'\')">'+PT('Cambiar','Change')+'</button></div>';
+            '<div style="display:flex;gap:6px;flex-shrink:0">'+
+            '<button class="btn sm" onclick="addServices(\''+b.id+'\')" style="background:var(--orange);color:#fff;border-color:var(--orange)">'+PT('+ Servicios','+ Services')+'</button>'+
+            '<button class="btn sm" onclick="reschedule(\''+b.id+'\',\''+esc(b.appointment_date)+'\',\''+esc(b.appointment_time||'')+'\')">'+PT('Cambiar','Change')+'</button>'+
+            '</div></div>';
         }).join('')+'</div>';
     }
     out+='<div class="card tint"><div class="ttl">'+PT('Agenda tu próxima cita','Book your next appointment')+'</div>'+
@@ -898,9 +973,36 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
   document.getElementById('logout').onclick=function(e){ e.preventDefault();
     sb.auth.signOut().then(function(){ showLogin({k:'info',t:PT('Sesión cerrada.','Signed out.')}); document.getElementById('logout').style.display='none'; }); };
 
+  // ---- Retorno de Stripe tras pagar servicios extra (?addon=cs_...) ----
+  var _addonDone=false;
+  function addonBanner(kind,html){
+    var b=document.createElement('div'); b.className='wrap'; b.style.paddingBottom='0';
+    b.innerHTML='<div class="msg '+kind+'" style="margin-top:0">'+html+'</div>';
+    if(root&&root.parentNode) root.parentNode.insertBefore(b,root); else document.body.appendChild(b);
+    setTimeout(function(){ if(b.parentNode) b.parentNode.removeChild(b); },14000);
+  }
+  async function addonReturn(){
+    if(_addonDone) return; _addonDone=true;
+    var sid=null; try{ sid=new URLSearchParams(location.search).get('addon'); }catch(e){}
+    if(!sid) return;
+    try{ history.replaceState({},'',location.pathname+location.hash); }catch(e){}
+    if(sid.indexOf('cs_')!==0) return;
+    try{
+      var r=await fetch(SUPA+'/functions/v1/grooming_extra',{method:'POST',headers:{'Content-Type':'application/json','apikey':ANON,'Authorization':'Bearer '+ANON},body:JSON.stringify({action:'addon_confirm',session_id:sid})});
+      var d=await r.json();
+      if(d&&d.ok){
+        addonBanner('ok','<b>'+PT('¡Listo! Servicios agregados a tu cita.','All set! Services added to your appointment.')+'</b>'+
+          (d.total?('<br>'+PT('Pagado','Paid')+': $'+Number(d.total).toFixed(2)):'')+
+          '<br>'+PT('Te enviamos el recibo por correo.','We emailed you the receipt.'));
+      }else if(d&&d.pending){
+        addonBanner('info',PT('Tu pago se está procesando. En un momento verás los servicios en tu cita.','Your payment is processing. Your services will appear on the appointment shortly.'));
+      }
+    }catch(e){}
+  }
+
   applyStatic();
-  sb.auth.getSession().then(function(s){ if(s.data&&s.data.session&&s.data.session.user) load(); else showLogin(null); });
-  sb.auth.onAuthStateChange(function(_e,session){ if(session&&session.user) load(); });
+  sb.auth.getSession().then(function(s){ if(s.data&&s.data.session&&s.data.session.user){ addonReturn().then(load,load); } else showLogin(null); });
+  sb.auth.onAuthStateChange(function(_e,session){ if(session&&session.user){ addonReturn().then(load,load); } });
 })();
 </script>
   <script src="bp-cookies.js?v=1783375000000"></script>
