@@ -891,12 +891,26 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<button class="btn pri w" onclick="setPassword()">'+PT('Crear o cambiar mi contraseña','Set or change my password')+'</button></div>';
 
     if(d.email_opted_out){
+      var esAll=String(d.email_optout_scope||'marketing')==='all';
       out+='<div class="card"><div class="ttl">'+PT('Correos detenidos','Emails paused')+'</div>'+
-        '<p class="muted" style="margin:8px 0 14px">'+PT('Ahora mismo no te enviamos correos automáticos.','We are not sending you automatic emails right now.')+'</p>'+
+        '<p class="muted" style="margin:8px 0 14px">'+(esAll
+          ? PT('No te enviamos NINGÚN correo, ni siquiera el aviso de tus citas ni los recibos.','We are not sending you ANY email, not even your appointment notices or receipts.')
+          : PT('No te enviamos promociones, consejos ni recordatorios de volver. Los avisos de tus citas y los recibos sí te siguen llegando.','We are not sending you promotions, tips or reminders to come back. You still get your appointment notices and receipts.'))+'</p>'+
         '<button class="btn pri w" id="pf-resume">'+PT('Reactivar mis correos','Resume my emails')+'</button></div>';
     } else {
       out+='<div class="card"><div class="ttl">'+PT('Correos y notificaciones','Emails and notifications')+'</div>'+
-        '<p class="muted" style="margin:8px 0 12px">'+PT('Si ya no quieres recibir novedades, recordatorios o el cumpleaños de tu mascota, puedes detenerlos aquí.','If you no longer want news, reminders or your pet\'s birthday, you can stop them here.')+'</p>'+
+        '<p class="muted" style="margin:8px 0 12px">'+PT('Elige qué dejas de recibir.','Choose what you stop receiving.')+'</p>'+
+        // Dos niveles: parar solo lo promocional, o parar todo (incluidos los avisos de la cita).
+        '<label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:8px">'+
+          '<input type="radio" name="pf-scope" value="marketing" checked style="margin-top:3px;accent-color:var(--orange)">'+
+          '<span><b style="font-size:13.5px">'+PT('Solo promociones y consejos','Promotions and tips only')+'</b>'+
+          '<span class="muted" style="display:block;font-size:12px;margin-top:2px">'+PT('Dejas de recibir novedades, consejos, cumpleaños y recordatorios de volver. Los avisos de tus citas y los recibos te siguen llegando.','You stop getting news, tips, birthdays and reminders to come back. You still get your appointment notices and receipts.')+'</span></span>'+
+        '</label>'+
+        '<label style="display:flex;gap:9px;align-items:flex-start;cursor:pointer;border:1px solid var(--line);border-radius:12px;padding:11px 13px;margin-bottom:12px">'+
+          '<input type="radio" name="pf-scope" value="all" style="margin-top:3px;accent-color:var(--orange)">'+
+          '<span><b style="font-size:13.5px">'+PT('Absolutamente todos','Absolutely all of them')+'</b>'+
+          '<span class="muted" style="display:block;font-size:12px;margin-top:2px;color:#9B1C1C">'+PT('También dejas de recibir el aviso de tus citas y los recibos. No te avisaremos de tu cita.','You also stop getting your appointment notices and receipts. We will not remind you about your appointment.')+'</span></span>'+
+        '</label>'+
         '<label>'+PT('Motivo','Reason')+'</label>'+
         '<select id="pf-reason">'+
           '<option value="Demasiados correos">'+PT('Recibo demasiados correos','I get too many emails')+'</option>'+
@@ -976,8 +990,13 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     var stop=document.getElementById('pf-stop');
     if(stop) stop.onclick=function(){
       var rs=(document.getElementById('pf-reason')||{}).value||'';
-      if(!confirm(PT('¿Detener todos los correos automáticos?','Stop all automatic emails?'))) return;
-      api({action:'stop_emails',reason:rs}).then(function(){ load(); });
+      var sc='marketing';
+      try{ var sel=document.querySelector('input[name="pf-scope"]:checked'); if(sel) sc=sel.value; }catch(e){}
+      var ask = sc==='all'
+        ? PT('¿Detener TODOS los correos, incluidos los avisos de tus citas y los recibos? No te avisaremos de tu cita.','Stop ALL emails, including your appointment notices and receipts? We will not remind you about your appointment.')
+        : PT('¿Detener las promociones, consejos y recordatorios? Seguirás recibiendo los avisos de tus citas.','Stop promotions, tips and reminders? You will still get your appointment notices.');
+      if(!confirm(ask)) return;
+      api({action:'stop_emails',reason:rs,scope:sc}).then(function(){ load(); });
     };
     var res=document.getElementById('pf-resume');
     if(res) res.onclick=function(){ api({action:'resume_emails'}).then(function(){ load(); }); };
