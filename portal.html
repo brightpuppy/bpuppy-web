@@ -751,7 +751,24 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
   function paneGrooming(d){
     var ms=(d.memberships||[]).filter(function(m){return String(m.status||'')!=='cancelled';});
     var out='';
+    var c=d.client||{};
+    var addrLine=[c.address,c.city,c.state,c.zip].filter(Boolean).join(', ');
     var bks=(d.bookings||[]).filter(function(b){ var s=String(b.status||'').toLowerCase(); return s!=='cancelled'&&s!=='completed'&&b.appointment_date; });
+
+    // Resumen de tu membresía: lo usado, lo disponible y lo que has pagado aparte
+    if(ms.length){
+      var saldoT=ms.reduce(function(a,m){ return a+(m.credits_balance||0); },0);
+      var hechos=(d.bookings||[]).filter(function(b){ return String(b.status||'').toLowerCase()==='completed'; }).length;
+      var extras=(d.addons||[]).reduce(function(a,x){ return a+Number(x.total||0); },0);
+      var box=function(v,l,c){ return '<div style="flex:1;min-width:96px;background:var(--paper);border-radius:14px;padding:12px 13px"><div style="font-family:Bricolage Grotesque,sans-serif;font-size:24px;font-weight:800;line-height:1;color:'+c+'">'+v+'</div><div class="lb" style="margin-top:3px">'+l+'</div></div>'; };
+      out+='<div class="card"><div class="ttl" style="margin-bottom:12px">'+PT('Tu membresía de un vistazo','Your membership at a glance')+'</div>'+
+        '<div style="display:flex;gap:9px;flex-wrap:wrap">'+
+          box(saldoT,PT('baños disponibles','baths available'),'var(--green)')+
+          box(hechos,PT('baños ya hechos','baths done'),'var(--ink)')+
+          box(money(extras),PT('en servicios extra','in extra services'),'var(--orange2)')+
+        '</div></div>';
+    }
+
     if(bks.length){
       out+='<div class="card"><div class="ttl" style="margin-bottom:12px">'+PT('Tus citas','Your appointments')+'</div>'+
         bks.slice(0,6).map(function(b){
@@ -787,6 +804,9 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
             ' <a href="https://bpuppy.us/terminos#membresias" target="_blank" style="color:var(--orange2);font-weight:700;text-decoration:none;white-space:nowrap">'+PT('Ver políticas →','See policies →')+'</a></div>'+
           '<div class="row" style="margin-top:10px"><span class="k">'+PT('Precio','Price')+'</span><span class="v">'+money(m.price)+' / '+esc(i.billing)+'</span></div>'+
           (m.renew_date?('<div class="row"><span class="k">'+PT('Próxima renovación','Next renewal')+'</span><span class="v">'+esc(fmtD(m.renew_date))+'</span></div>'):'')+
+          '<div class="row"><span class="k">'+PT('Recogida a domicilio','Home pickup')+'</span><span class="v">'+
+            (/vip|total/i.test(String(m.plan||''))?('<span style="color:var(--green)">'+PT('Incluida en tu plan','Included in your plan')+'</span>'):PT('$20 por visita','$20 per visit'))+'</span></div>'+
+          (addrLine?('<div class="row"><span class="k">'+PT('Dirección de recogida','Pickup address')+'</span><span class="v" style="max-width:60%;text-align:right">'+esc(addrLine)+'</span></div>'):'')+
           '</div>';
       });
     } else {
@@ -794,6 +814,30 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         '<div class="t">'+PT('Aún no tienes membresía','No membership yet')+'</div>'+
         '<div class="d">'+PT('Con un plan ahorras en cada baño, tienes prioridad en la agenda y pickup incluido.','With a plan you save on every bath, get priority booking and pickup included.')+'</div>'+
         '<a class="btn pri" style="margin-top:14px" href="/grooming.html#memberships">'+PT('Ver los planes','See the plans')+'</a></div></div>';
+    }
+
+    // Servicios extra que ya pagó (queda en su historial)
+    var ax=(d.addons||[]);
+    if(ax.length){
+      out+='<div class="card"><div class="ttl" style="margin-bottom:10px">'+PT('Servicios extra que has pagado','Extra services you have paid')+'</div>'+
+        ax.map(function(a){
+          var nm=(Array.isArray(a.services)?a.services.map(function(s){ return s&&s.name?s.name:''; }).filter(Boolean):[]).join(', ');
+          return '<div class="bk"><div style="min-width:0"><div style="font-weight:800;font-size:13.5px">'+esc(nm||PT('Servicios extra','Extra services'))+'</div>'+
+            '<div class="muted" style="font-size:12px">'+esc(fmtD(String(a.paid_at||a.created_at||'').slice(0,10)))+(a.pet_name?(' · '+esc(a.pet_name)):'')+'</div></div>'+
+            '<div style="font-weight:800;flex-shrink:0">'+money(a.total)+'</div></div>';
+        }).join('')+'</div>';
+    }
+
+    // Historial: días y horas en que ya te atendimos
+    var hist=(d.bookings||[]).filter(function(b){ return String(b.status||'').toLowerCase()==='completed'; });
+    if(hist.length){
+      out+='<div class="card"><div class="ttl" style="margin-bottom:10px">'+PT('Tu historial de visitas','Your visit history')+'</div>'+
+        hist.slice(0,10).map(function(b){
+          var svc=Array.isArray(b.services)?b.services.join(', '):(b.services||'');
+          return '<div class="bk"><div style="min-width:0"><div style="font-weight:800;font-size:13.5px">'+esc(fmtD(b.appointment_date))+(b.appointment_time?(' · '+esc(b.appointment_time)):'')+(b.pickup?' 🚐':'')+'</div>'+
+            '<div class="muted" style="font-size:12px">'+esc(b.pet_name||'')+(svc?(' · '+esc(svc)):'')+'</div></div>'+
+            '<div style="font-weight:800;flex-shrink:0">'+money(b.amount)+'</div></div>';
+        }).join('')+'</div>';
     }
     return out;
   }
