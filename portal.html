@@ -790,7 +790,15 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     if(ms.length){
       ms.forEach(function(m){
         var i=planInfo(m.plan), saldo=(m.credits_balance||0);
-        out+='<div class="card" style="border-left:3px solid '+i.color+'">'+
+        // Aviso de cobro para membresías pagadas en efectivo (vencen pronto o ya vencidas).
+        var isCash=String(m.payment_method||'')==='cash';
+        var dCash=(isCash&&m.renew_date)?Math.round((new Date(m.renew_date+'T00:00:00')-new Date(new Date().toISOString().slice(0,10)+'T00:00:00'))/86400000):null;
+        var cashNote='';
+        if(isCash && dCash!=null){
+          if(dCash<0) cashNote='<div class="msg err" style="margin:0 0 12px">'+PT('Tu membresía venció el '+esc(fmtD(m.renew_date))+'. No podrás usarla hasta renovarla en la oficina (pago en efectivo). Llámanos: 808-492-8294.','Your membership expired on '+esc(fmtD(m.renew_date))+'. You cannot use it until you renew it at the office (cash). Call us: 808-492-8294.')+'</div>';
+          else if(dCash<=5) cashNote='<div class="msg info" style="margin:0 0 12px">'+PT((dCash===0?'Tu membresía vence HOY':'Tu membresía vence en '+dCash+(dCash===1?' día':' días'))+' ('+esc(fmtD(m.renew_date))+'). Pásate por la oficina a renovarla (efectivo). 808-492-8294.',(dCash===0?'Your membership is due TODAY':'Your membership renews in '+dCash+(dCash===1?' day':' days'))+' ('+esc(fmtD(m.renew_date))+'). Renew it at the office (cash). 808-492-8294.')+'</div>';
+        }
+        out+='<div class="card" style="border-left:3px solid '+i.color+'">'+ cashNote +
           '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px;flex-wrap:wrap">'+
             '<div><div class="ttl" style="color:'+i.color+'">'+PT('Plan ','Plan ')+esc(i.label)+'</div>'+
             '<div class="muted" style="font-size:12.5px">'+esc(i.billing)+' · '+esc(m.pet_name||'')+(m.pet_size?(' · '+esc(m.pet_size)):'')+'</div></div>'+
