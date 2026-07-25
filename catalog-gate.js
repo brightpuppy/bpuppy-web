@@ -54,6 +54,28 @@
     }
     if (saved()) return;                       // ya se identificó en este navegador
     if (!/catalogo/i.test(location.pathname)) return;
+    var tk = qs("t") || qs("token");
+    // Si el catálogo se armó PARA un cliente del CRM (bound), NO le pedimos nada: entra directo.
+    // Si no, mostramos la puerta y —si hay algo que ya sabemos— la prellenamos.
+    if (tk) {
+      fetch(SUPA + "/functions/v1/catalog_capture", {
+        method: "POST", headers: { "Content-Type": "application/json", apikey: ANON },
+        body: JSON.stringify({ action: "prefill", token: tk })
+      }).then(function (r) { return r.json(); }).then(function (x) {
+        if (x && x.ok && x.bound) {
+          try { localStorage.setItem(KEY, JSON.stringify({ client: true, name: x.name || "", email: x.email || "", phone: x.phone || "" })); } catch (e) {}
+          return; // catálogo atado a un cliente conocido → sin puerta
+        }
+        buildGate(x || null);
+      }).catch(function () { buildGate(null); });
+    } else {
+      buildGate(null);
+    }
+  }
+
+  function buildGate(pf) {
+    if (saved()) return;
+    if (document.querySelector(".cg-ov")) return;
     var ov = document.createElement("div"); ov.className = "cg-ov";
     ov.innerHTML =
       '<div class="cg-card">' +
@@ -108,29 +130,21 @@
         close();
       });
     };
-    // Si el catálogo se armó para un cliente del CRM, le prellenamos lo que ya sabemos.
-    // Sigue siendo editable: puede corregirlo ahí mismo antes de entrar.
-    var tk = qs("t") || qs("token");
-    if (tk) {
-      fetch(SUPA + "/functions/v1/catalog_capture", {
-        method: "POST", headers: { "Content-Type": "application/json", apikey: ANON },
-        body: JSON.stringify({ action: "prefill", token: tk })
-      }).then(function (r) { return r.json(); }).then(function (x) {
-        if (!x || !x.ok) return;
+    // Prellenado de lo que ya sabemos (viene del prefill que hizo gate()). Sigue editable.
+    if (pf) {
+      try {
         var n = ov.querySelector("#cg-name"), e = ov.querySelector("#cg-email"), p = ov.querySelector("#cg-phone");
-        if (n && x.name && !n.value) n.value = x.name;
-        if (e && x.email && !e.value) e.value = x.email;
-        if (p && x.phone && !p.value) p.value = x.phone;
-        // Sin avisos: se prellena calladito. El foco cae en el primer campo vacio
-        // (casi siempre el correo, porque al armar el catalogo rara vez se escribe).
-        try {
-          if (n && !n.value) n.focus();
-          else if (e && !e.value) e.focus();
-          else ov.querySelector("#cg-go").focus();
-        } catch (err) {}
-      }).catch(function () {});
+        if (n && pf.name && !n.value) n.value = pf.name;
+        if (e && pf.email && !e.value) e.value = pf.email;
+        if (p && pf.phone && !p.value) p.value = pf.phone;
+      } catch (err) {}
     }
-    setTimeout(function () { try { var n = ov.querySelector("#cg-name"); if (n && !n.value) n.focus(); } catch (e) {} }, 250);
+    setTimeout(function () {
+      try {
+        var n2 = ov.querySelector("#cg-name"), e2 = ov.querySelector("#cg-email");
+        if (n2 && !n2.value) n2.focus(); else if (e2 && !e2.value) e2.focus(); else ov.querySelector("#cg-go").focus();
+      } catch (er) {}
+    }, 200);
   }
 
   /* ── 2. Lista de espera al final del catálogo ── */
