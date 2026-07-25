@@ -162,7 +162,7 @@
     // ── Banda de suscripcion por correo (antes del footer) — site-wide, NUNCA en el juego de ninos ──
     try {
       var sub = document.createElement('script');
-      sub.src = '/bp-subscribe.js?v=1784824000000';
+      sub.src = '/bp-subscribe.js?v=1784998000000';
       sub.async = true;
       (document.head || document.documentElement).appendChild(sub);
     } catch (e) {}

@@ -62,9 +62,9 @@ header .brand img{height:28px}
   padding:0 24px 22px;box-shadow:var(--shadow)}
 .idcard .rainbow{height:3px;margin:0 -24px 0;border-radius:var(--r) var(--r) 0 0;background:linear-gradient(90deg,#F55820,#E83860,#7C3AED,#2563EB,#12A47A,#F5A623,#F55820);
   background-size:200% 100%;animation:slide 9s linear infinite}
-.av{position:relative;width:96px;height:96px;margin:-44px 0 0;border-radius:50%;border:4px solid var(--bg);
+.av{position:relative;width:118px;height:118px;margin:-56px 0 0;border-radius:50%;border:5px solid var(--bg);
   background:linear-gradient(135deg,#F55820,#E83860);display:grid;place-items:center;color:#fff;
-  font-family:'Bricolage Grotesque',sans-serif;font-size:32px;font-weight:800;box-shadow:0 8px 22px -8px rgba(36,28,24,.4)}
+  font-family:'Bricolage Grotesque',sans-serif;font-size:40px;font-weight:800;box-shadow:0 10px 26px -8px rgba(36,28,24,.44)}
 /* La imagen se recorta redonda, pero el botón de cámara (.pen) queda FUERA y visible. */
 .av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
 .av .pen{position:absolute;right:-2px;bottom:-2px;width:30px;height:30px;border-radius:50%;border:2.5px solid var(--bg);
@@ -74,6 +74,15 @@ h1.nm{font-family:'Bricolage Grotesque',sans-serif;font-size:27px;font-weight:80
 .sub{font-size:13.5px;color:var(--ink2)}
 .memchip{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:999px;font-size:12px;font-weight:800;
   border:1.5px solid;background:var(--bg);margin-top:10px}
+.nextcita{display:flex;align-items:center;gap:11px;margin-top:14px;padding:11px 14px;border-radius:14px;
+  background:linear-gradient(135deg,#FFF3E9,#FFE9F0);border:1px solid #F6D9C6}
+.nextcita .ic{width:34px;height:34px;border-radius:10px;background:#fff;display:grid;place-items:center;color:var(--orange2);flex-shrink:0}
+.nextcita .k{font-size:10.5px;font-weight:800;color:var(--soft);text-transform:uppercase;letter-spacing:.4px}
+.nextcita .v{font-size:14px;font-weight:800;color:var(--ink);margin-top:1px}
+.aboutme{margin-top:14px;border-top:1px dashed var(--line2);padding-top:12px}
+.aboutme p{font-size:13px;color:var(--ink2);line-height:1.55;text-wrap:pretty;margin:0}
+.aboutme p.ph{color:var(--soft);font-style:italic}
+.aboutme .lnk{margin-top:6px;background:none;border:none;color:var(--orange2);font-family:inherit;font-weight:700;font-size:12.5px;cursor:pointer;display:inline-flex;align-items:center;gap:5px;padding:0}
 
 /* ── stats ── */
 .stats{display:grid;grid-template-columns:repeat(4,1fr);gap:9px;margin-top:18px}
@@ -205,6 +214,9 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 /* ── pet card: todo alineado, estado abajo, botón de foto ── */
 .pet .bd{display:flex;flex-direction:column;min-height:104px}
 .pet .foot{margin-top:auto;padding-top:10px;display:flex;align-items:center;justify-content:space-between;gap:8px}
+.pet .psumm{font-size:12px;color:var(--ink2);line-height:1.45;margin-top:7px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;text-wrap:pretty}
+.pet .nextline{font-size:11.5px;font-weight:700;color:var(--green);margin-top:7px;display:flex;align-items:center;gap:5px;line-height:1.3}
+.pet .tag.ok svg,.pet .tag.warn svg{vertical-align:-1px}
 .pet .phcam{position:absolute;right:9px;bottom:9px;width:30px;height:30px;border-radius:50%;border:1.5px solid rgba(255,255,255,.7);
   background:rgba(36,28,24,.5);color:#fff;display:grid;place-items:center;cursor:pointer;backdrop-filter:blur(6px);transition:background .16s,transform .16s;z-index:2}
 .pet .phcam:hover{background:rgba(36,28,24,.75);transform:scale(1.08)}
@@ -270,6 +282,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 .dchip{display:inline-flex;align-items:center;gap:6px;font-size:12px;font-weight:600;border:1px solid var(--line);border-radius:999px;padding:5px 10px;background:var(--paper)}
 .dchip button{border:none;background:none;color:var(--soft);cursor:pointer;padding:0;display:grid;place-items:center}
 .dchip button:hover{color:#B4232A}
+.tchip{border:1.5px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:7px 12px;font-family:inherit;font-weight:700;font-size:12px;cursor:pointer;transition:border-color .14s,background .14s,color .14s}
+.tchip.on{border-color:var(--orange);background:rgba(245,130,32,.1);color:var(--orange2)}
 .ptog{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:11px 13px;border:1px solid var(--line);border-radius:12px;margin-bottom:8px;cursor:pointer;transition:border-color .16s}
 .ptog:hover{border-color:var(--orange)}
 .ptog .lt{display:flex;align-items:center;gap:9px;font-size:13.5px;font-weight:700}
@@ -292,7 +306,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
   .topband{height:78px;border-radius:0 0 20px 20px}
   .idcard{padding:0 17px 18px;border-radius:18px}
   .idcard .rainbow{margin:0 -17px}
-  .av{width:80px;height:80px;margin-top:-38px;font-size:27px}
+  .av{width:98px;height:98px;margin-top:-48px;font-size:33px}
   h1.nm{font-size:23px}
   .stats{grid-template-columns:repeat(2,1fr)}
   .g2{grid-template-columns:1fr}
@@ -455,6 +469,98 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     try{ var t=root.querySelector('.tab[data-t="'+name+'"]'); if(t) t.click(); }catch(e){}
   };
 
+  /* ═══ plan bonito, próxima cita y personalidad ═══ */
+  function planPretty(plan){ var i=planInfo(plan); return (PLANG==='en'?i.label:('Plan '+i.label))+' · '+i.billing; }
+  function planColor(plan){ return planInfo(plan).color; }
+  function planChip(plan){ var i=planInfo(plan); return '<span style="display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:'+i.color+';background:'+i.soft+';border-radius:999px;padding:4px 12px">'+svg('star',13,2)+esc(planPretty(plan))+'</span>'; }
+  function _apptAlive(b){ var s=String(b.status||'').toLowerCase(); return s!=='cancelled'&&s!=='completed'&&!!b.appointment_date; }
+  function _todayISO(){ return new Date().toISOString().slice(0,10); }
+  function nextApptFor(petName){
+    var t=_todayISO(), pn=String(petName||'').toLowerCase();
+    var list=(D&&D.bookings||[]).filter(function(b){ return _apptAlive(b) && String(b.appointment_date)>=t && String(b.pet_name||'').toLowerCase()===pn; });
+    list.sort(function(a,b){ return String(a.appointment_date).localeCompare(String(b.appointment_date)); });
+    return list[0]||null;
+  }
+  function nextApptAny(){
+    var t=_todayISO();
+    var list=(D&&D.bookings||[]).filter(function(b){ return _apptAlive(b) && String(b.appointment_date)>=t; });
+    list.sort(function(a,b){ return String(a.appointment_date).localeCompare(String(b.appointment_date)); });
+    return list[0]||null;
+  }
+  var TRAITS=[
+    ['sociable_dogs','Sociable con perros','Social with dogs'],['loves_kids','Le gustan los niños','Great with kids'],
+    ['shy_kids','Tímido con niños','Shy with kids'],['energetic','Enérgico','Energetic'],['sleepy','Dormilón','Sleepy'],
+    ['loves_exercise','Le encanta el ejercicio','Loves exercise'],['loves_walks','Ama los paseos','Loves walks'],
+    ['loves_dogpark','Ama el parque de perros','Loves the dog park'],['foodie','Comelón','Foodie'],['funny','Gracioso','Funny'],
+    ['curious','Curioso','Curious'],['witty','Ocurrente','Quirky'],['trained','Entrenado','Trained'],['cuddly','Mimoso','Cuddly'],
+    ['playful','Juguetón','Playful'],['calm','Tranquilo','Calm'],['shy','Tímido','Shy'],['smart','Inteligente','Smart'],
+    ['guardian','Protector','Protective'],['vocal','Ladrador','Vocal']
+  ];
+  function traitLabel(k){ for(var i=0;i<TRAITS.length;i++){ if(TRAITS[i][0]===k) return PT(TRAITS[i][1],TRAITS[i][2]); } return k; }
+  function petSummary(p){
+    if(p.about) return String(p.about);
+    var tr=Array.isArray(p.traits)?p.traits:[];
+    if(tr.length) return tr.slice(0,3).map(traitLabel).join(' · ');
+    return '';
+  }
+  window.editAbout=function(){
+    var c=(D&&D.client)||{};
+    var ov=modal(PT('Sobre mí','About me'),
+      '<p class="muted">'+PT('Una o dos líneas sobre ti. Lo ve nuestro equipo y aparece en tu perfil.','A line or two about you. Our team sees it and it shows on your profile.')+'</p>'+
+      '<textarea id="ab-t" maxlength="800" placeholder="'+PT('Ej: Amo a mis dos perritos, vivo en Haines City…','e.g. I love my two pups, I live in Haines City…')+'">'+esc(c.about||'')+'</textarea>'+
+      '<button class="btn pri w" id="ab-save" style="margin-top:14px">'+PT('Guardar','Save')+'</button><div id="ab-msg"></div>', 480);
+    ov.querySelector('#ab-save').onclick=async function(){ var b=this; b.disabled=true; b.textContent=PT('Guardando…','Saving…');
+      var r=await api({action:'save_about',about:(ov.querySelector('#ab-t').value||'')});
+      var m=ov.querySelector('#ab-msg');
+      if(r&&r.ok){ m.className='msg ok'; m.textContent=PT('¡Listo!','Saved!'); setTimeout(function(){ ov.close(); load(); },700); }
+      else { m.className='msg err'; m.textContent=(r&&r.error)||PT('No se pudo guardar.','Could not save.'); b.disabled=false; b.textContent=PT('Guardar','Save'); }
+    };
+  };
+
+  /* ═══ CAMBIAR DE PLAN (upgrade o downgrade) con políticas claras ═══ */
+  var PLAN_PRICES_PORTAL={esencial:{s:49,m:65,l:79,xl:99},total:{s:69,m:89,l:115,xl:145},vip:{s:129,m:159,l:195,xl:235}};
+  function planKey(plan){ var s=String(plan||'').toLowerCase(); if(s.indexOf('vip')>=0)return 'vip'; if(s.indexOf('total')>=0)return 'total'; if(s.indexOf('esencial')>=0||s.indexOf('essential')>=0)return 'esencial'; return ''; }
+  function sizeKey(sz){ var v=String(sz||'').trim().toLowerCase(); if(v==='s'||v.indexOf('peque')===0||v.indexOf('small')===0)return 's'; if(v==='l'||v.indexOf('grande')===0||v.indexOf('large')===0)return 'l'; if(v==='xl')return 'xl'; return 'm'; }
+  window.planChange=function(){
+    var ms=(D&&D.memberships||[]).filter(function(m){return String(m.status||'')!=='cancelled';});
+    var mem=ms[0]||null;
+    var cur=mem?planKey(mem.plan):'', sz=mem?sizeKey(mem.pet_size):'s';
+    var order={esencial:1,total:2,vip:3}, tiers=['esencial','total','vip'], st={ target:'' };
+    var perkShort={ esencial:PT('1 baño al mes · 10% off','1 bath/mo · 10% off'), total:PT('Baño + corte al mes · pickup · 15% off','Bath+cut/mo · pickup · 15% off'), vip:PT('Spa VIP · pickup ilimitado · 20% off','VIP spa · unlimited pickup · 20% off') };
+    var card=function(k){ var pr=(PLAN_PRICES_PORTAL[k]||{})[sz]||0, i=planInfo(k), isCur=(k===cur);
+      return '<button type="button" class="plan'+(isCur?' current':'')+'" data-k="'+k+'" style="text-align:left;width:100%;margin-bottom:11px;cursor:'+(isCur?'default':'pointer')+'"'+(isCur?' disabled':'')+'>'+
+        (isCur?'<span class="cur">'+PT('Plan actual','Current plan')+'</span>':'')+
+        '<div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px"><span class="pn" style="color:'+i.color+'">'+esc(i.label)+'</span><span style="font-weight:800">$'+pr+'<span style="font-size:11px;color:var(--soft);font-weight:600">/'+PT('mes','mo')+'</span></span></div>'+
+        '<div class="pp">'+esc(perkShort[k])+'</div></button>'; };
+    var ov=modal(PT('Cambiar de plan','Change plan'),
+      (mem?'':'<div class="msg info" style="margin-top:0">'+PT('Aún no tienes plan. Elige uno para empezar.','No plan yet. Pick one to start.')+'</div>')+
+      '<div style="margin-top:'+(mem?'2px':'10px')+'">'+tiers.map(card).join('')+'</div>'+
+      '<div style="font-size:11.5px;color:var(--ink2);line-height:1.65;background:var(--paper);border-radius:12px;padding:12px 14px;margin-top:2px">'+
+        '<b>'+PT('Cómo funciona','How it works')+':</b><br>'+
+        '• <b>'+PT('Subir de plan','Upgrade')+':</b> '+PT('entra de una y solo pagas la diferencia por lo que falta del mes.','starts right away and you only pay the difference for the rest of the month.')+'<br>'+
+        '• <b>'+PT('Bajar de plan','Downgrade')+':</b> '+PT('entra en tu próxima renovación; hasta entonces sigues con lo de ahora. Permanencia mínima de 3 meses.','starts on your next renewal; until then you keep what you have now. 3-month minimum term.')+'<br>'+
+        '• '+PT('Cumplida la permanencia, cancelas cuando quieras. Sin letra chica.','After the minimum term, cancel anytime. No fine print.')+
+        ' <a href="https://bpuppy.us/terminos#membresias" target="_blank" style="color:var(--orange2);font-weight:700;text-decoration:none;white-space:nowrap">'+PT('Ver políticas →','See policies →')+'</a></div>'+
+      '<div id="pc-msg"></div>'+
+      '<button class="btn pri w" id="pc-go" style="margin-top:12px" disabled>'+PT('Solicitar el cambio','Request the change')+'</button>', 500);
+    var goBtn=ov.querySelector('#pc-go');
+    Array.prototype.forEach.call(ov.querySelectorAll('.plan[data-k]'), function(b){ if(b.disabled) return; b.onclick=function(){ st.target=b.getAttribute('data-k');
+      Array.prototype.forEach.call(ov.querySelectorAll('.plan[data-k]'), function(x){ if(x.disabled) return; x.style.boxShadow=(x===b?'inset 0 0 0 2px var(--orange)':''); x.style.borderColor=(x===b?'var(--orange)':'var(--line)'); });
+      goBtn.disabled=false; }; });
+    goBtn.onclick=async function(){ var m=ov.querySelector('#pc-msg'); if(!st.target) return;
+      var dir=(!cur)?'new':(order[st.target]>order[cur]?'upgrade':'downgrade');
+      goBtn.disabled=true; goBtn.textContent=PT('Enviando…','Sending…');
+      var s=await sb.auth.getSession(); var tok=s.data&&s.data.session&&s.data.session.access_token;
+      try{
+        var r=await fetch(SUPA+'/functions/v1/portal_billing',{method:'POST',headers:{'Authorization':'Bearer '+(tok||ANON),'apikey':ANON,'Content-Type':'application/json'},
+          body:JSON.stringify({action:'request_plan_change',target:st.target,direction:dir,lang:PLANG})});
+        var d=await r.json();
+        if(d&&d.ok){ m.className='msg ok'; m.textContent=PT('¡Listo! Recibimos tu solicitud y te confirmamos el cambio en breve.','Done! We got your request and will confirm the change shortly.'); setTimeout(function(){ ov.close(); },1900); }
+        else { m.className='msg err'; m.textContent=(d&&d.error)||PT('No se pudo enviar.','Could not send.'); goBtn.disabled=false; goBtn.textContent=PT('Solicitar el cambio','Request the change'); }
+      }catch(e){ m.className='msg err'; m.textContent=PT('Error de red.','Network error.'); goBtn.disabled=false; goBtn.textContent=PT('Solicitar el cambio','Request the change'); }
+    };
+  };
+
   /* ═══ subir foto ═══ */
   function pickPhoto(cb){
     var inp=document.getElementById('upfile');
@@ -603,6 +709,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     var pend=String(p.status||'')==='pending';
     var meta=[p.sex,p.weight_lbs?(p.weight_lbs+' lb'):'',p.birthdate?fmtShort(p.birthdate):''].filter(Boolean).map(esc).join(' · ');
     var ph=p.photo_url?('<img src="'+esc(p.photo_url)+'" alt="">'):('<span style="color:var(--orange);opacity:.6">'+svg('paw',52,1.5)+'</span>');
+    var na=pend?null:nextApptFor(p.name);
+    var summ=petSummary(p);
     return '<div class="pet">'+
       '<div class="ph" onclick="petOpen(\''+p.id+'\')">'+ph+
         '<button class="phcam" title="'+PT('Cambiar foto','Change photo')+'" onclick="event.stopPropagation();setPetPhoto(\''+p.id+'\')">'+svg('cam',15)+'</button></div>'+
@@ -610,10 +718,14 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         '<div class="nm2">'+esc(p.name||PT('Mi mascota','My pet'))+'</div>'+
         (p.breed?('<span class="br">'+esc(p.breed)+(p.size?(' · '+esc(p.size)):'')+'</span>'):'')+
         (meta?('<div class="mt">'+meta+'</div>'):'')+
-        '<div class="foot">'+(pend
-          ? '<span class="tag warn">'+PT('En revisión','Under review')+'</span>'
-          : '<span class="tag ok">'+PT('Confirmada','Confirmed')+'</span>')+
-          (pend?'':'<button class="btn sm" style="padding:6px 11px" onclick="event.stopPropagation();bookPet(\''+p.id+'\')">'+svg('scissors',13)+' '+PT('Agendar','Book')+'</button>')+
+        (summ?('<div class="psumm">'+esc(summ)+'</div>'):'')+
+        (na?('<div class="nextline">'+svg('calendar',13,2)+' '+PT('Próxima cita grooming: ','Next grooming: ')+esc(fmtD(na.appointment_date))+(na.appointment_time?(' · '+esc(na.appointment_time)):'')+'</div>'):'')+
+        '<div class="foot">'+
+          (pend
+            ? '<span class="tag warn">'+PT('En revisión','Under review')+'</span>'
+            : (na ? '<span class="tag ok">'+svg('check',11,2)+' '+PT('Cita confirmada','Confirmed')+'</span>'
+                  : '<span class="tag" style="background:var(--paper);color:var(--soft);border:1px solid var(--line)">'+PT('Sin cita próxima','No visit yet')+'</span>'))+
+          (pend?'':'<button class="btn sm" style="padding:6px 11px" onclick="event.stopPropagation();bookPet(\''+p.id+'\')">'+svg('scissors',13)+' '+(na?PT('Otra','New'):PT('Agendar','Book'))+'</button>')+
         '</div>'+
       '</div></div>';
   }
@@ -630,6 +742,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     var vax=Array.isArray(p.vaccinations)?p.vaccinations.map(String):[];
     var dew=Array.isArray(p.deworming)?p.deworming.map(String):[];
     var standing=Array.isArray(p.standing_services)?p.standing_services:[];
+    var traits=Array.isArray(p.traits)?p.traits.slice():[];
     var fn=esc((p.name||'').split(' ')[0]);
     var tog=function(k,ic,col,label){ return '<div class="ptog'+(prefs[k]?' on':'')+'" data-k="'+k+'"><span class="lt">'+icoBox(ic,col)+esc(label)+'</span><span class="sw"></span></div>'; };
     var freqOpts=[['',PT('Sin preferencia','No preference')],['2',PT('Cada 2 semanas','Every 2 weeks')],['3',PT('Cada 3 semanas','Every 3 weeks')],['4',PT('Cada 4 semanas','Every 4 weeks')],['6',PT('Cada 6 semanas','Every 6 weeks')],['8',PT('Cada 8 semanas','Every 8 weeks')]];
@@ -651,6 +764,13 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<div><label>'+PT('Nacimiento','Birthdate')+'</label><input id="pv-b" type="date" value="'+esc((p.birthdate||'').slice(0,10))+'"></div></div>'+
       '<label>'+PT('Cuidados y detalles','Care and details')+'</label>'+
       '<textarea id="pv-notes" placeholder="'+PT('No le gusta el secador, es nervioso, alergias…','Hates the dryer, gets nervous, allergies…')+'">'+esc(p.notes||'')+'</textarea>'+
+
+      /* Personalidad del perro: lo cuenta el dueño; sale en la tarjeta y en su perfil */
+      '<div class="odsec"><div class="h">'+icoBox('heart','#E83860')+PT('Personalidad de ','About ')+fn+'</div>'+
+        '<textarea id="pv-about" maxlength="600" placeholder="'+PT('En 1-2 líneas: cómo es, qué le encanta…','In 1-2 lines: what they are like, what they love…')+'">'+esc(p.about||'')+'</textarea>'+
+        '<label style="margin-top:2px">'+PT('Características','Traits')+'</label>'+
+        '<div class="chiplist" id="pv-traits">'+TRAITS.map(function(t){ var on=traits.indexOf(t[0])>=0; return '<button type="button" class="tchip'+(on?' on':'')+'" data-k="'+t[0]+'">'+esc(PT(t[1],t[2]))+'</button>'; }).join('')+'</div>'+
+      '</div>'+
 
       /* Preferencias de grooming (se preguardan y se prellenan al agendar; el equipo las ve) */
       '<div class="odsec"><div class="h">'+icoBox('scissors','#C2521E')+PT('Preferencias de grooming','Grooming preferences')+'</div>'+
@@ -700,6 +820,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       draw();
     }
     chipHost('#pv-vaxsec',vax); chipHost('#pv-dewsec',dew);
+    Array.prototype.forEach.call(ov.querySelectorAll('#pv-traits .tchip'), function(b){ b.onclick=function(){ var k=b.getAttribute('data-k'); var i=traits.indexOf(k); if(i>=0) traits.splice(i,1); else traits.push(k); b.classList.toggle('on'); }; });
 
     var stB=ov.querySelector('#pv-standing'); if(stB) stB.onclick=function(){ standingBuy(id); };
     var bkB=ov.querySelector('#pv-book'); if(bkB) bkB.onclick=function(){ ov.close(); bookPet(id); };
@@ -712,7 +833,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         weight_lbs:v('#pv-w'),birthdate:v('#pv-b'),notes:v('#pv-notes'),photo_url:photo,
         sensitive_skin:prefs.sensitive, groom_freq_weeks:v('#pv-freq'),
         groom_prefs:{pickup:prefs.pickup,teeth_brushing:prefs.teeth,address:(v('#pv-addr')||'').trim()},
-        vaccinations:vax, deworming:dew});
+        vaccinations:vax, deworming:dew, about:v('#pv-about'), traits:traits});
       var m=ov.querySelector('#pv-msg');
       if(r&&r.ok){ m.className='msg ok'; m.textContent=PT('¡Listo! Guardado.','Saved!'); setTimeout(function(){ ov.close(); load(); },800); }
       else { m.className='msg err'; m.textContent=(r&&r.error)||PT('No se pudo guardar.','Could not save.'); b.disabled=false; b.textContent=PT('Guardar cambios','Save changes'); }
@@ -789,11 +910,12 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
   window.addServices=function(gid){
     var st={ gid:gid, services:[], pickup:false, quote:null, upgrade:null };
     var ov=modal(PT('Agregar servicios','Add services'),
-      '<p class="muted">'+PT('Elige lo que quieres agregar a tu cita. Tu descuento de miembro se aplica solo.','Pick what you want to add to your appointment. Your member discount applies automatically.')+'</p>'+
-      '<div id="as-plan" class="muted" style="font-size:12.5px;margin-bottom:10px"></div>'+
+      '<div id="as-plan" style="margin-bottom:12px"></div>'+
+      '<p class="muted" style="margin:0 0 12px">'+PT('Tu descuento de miembro se aplica solo. No incluimos lo que ya trae tu plan.','Your member discount applies automatically. What your plan already includes is left out.')+'</p>'+
+      '<label style="margin-top:0">'+PT('Elige servicios','Choose services')+'</label>'+
       '<div id="as-svcs" style="display:flex;gap:7px;flex-wrap:wrap;margin-bottom:12px"><span class="muted" style="font-size:12.5px">'+PT('Cargando…','Loading…')+'</span></div>'+
-      '<label style="display:flex;gap:9px;align-items:center;font-size:14px;font-weight:700;margin-bottom:12px;cursor:pointer;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 13px">'+
-        '<input type="checkbox" id="as-pickup"> 🚐 '+PT('Recogida y entrega a domicilio','Home pickup & delivery')+
+      '<label style="display:flex;gap:9px;align-items:center;font-size:14px;font-weight:700;margin:0 0 12px;cursor:pointer;background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:11px 13px">'+
+        '<input type="checkbox" id="as-pickup"> '+svg('truck',16,2)+' '+PT('Recogida y entrega a domicilio','Home pickup & delivery')+
         '<span id="as-pknote" style="margin-left:auto;font-size:12px;color:var(--ink2)"></span></label>'+
       '<div id="as-total" style="background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:12px 14px;font-size:13.5px;margin-bottom:10px">'+PT('Elige servicios…','Pick services…')+'</div>'+
       '<div id="as-up"></div>'+
@@ -810,7 +932,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         .then(function(r){return r.json();}).then(function(d){
           if(!d||!d.ok){ totEl.textContent=(d&&d.error)||PT('No se pudo calcular','Could not calculate'); return; }
           st.quote=d.quote; st.upgrade=d.upgrade;
-          if(planEl) planEl.innerHTML = d.membership ? (PT('Tu plan: ','Your plan: ')+'<b>'+esc(d.membership.plan||'')+'</b>') : '';
+          if(planEl) planEl.innerHTML = d.membership ? planChip(d.membership.plan) : '';
+          if(d.membership){ st.plan=d.membership.plan; var _incl=includedService(st.plan); try{ svcsEl.querySelectorAll('[data-svc]').forEach(function(bt){ if(bt.getAttribute('data-svc')===_incl){ bt.style.display='none'; bt.setAttribute('data-on','0'); } }); }catch(e){} }
           if(pkNote) pkNote.textContent = d.quote.pickup_included ? PT('Incluido en tu plan','Included in your plan') : '+$20';
           var q=d.quote;
           totEl.innerHTML = q.items.length
@@ -820,12 +943,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
               + '<div style="display:flex;justify-content:space-between;font-weight:800;font-size:16px;border-top:1px solid var(--line);margin-top:7px;padding-top:7px"><span>'+PT('Total','Total')+'</span><span>$'+q.total.toFixed(2)+'</span></div>')
             : PT('Elige servicios…','Pick services…');
           upEl.innerHTML = d.upgrade
-            ? ('<div style="border:1.5px solid #7C3AED;background:#F5F3FF;border-radius:13px;padding:13px 15px;margin-top:6px">'
-              + '<div style="font-size:14px;font-weight:800;color:#5B21B6">💡 '+PT('Te conviene el ','Consider the ')+esc(d.upgrade.target_label)+'</div>'
-              + '<div style="font-size:12.5px;color:#6d28d9;margin:5px 0 8px;line-height:1.55">'+PT('Estás pagando ','You are paying ')+'<b>$'+Number(d.upgrade.paying_now).toFixed(2)+'</b>'+PT(' por esto. Por ',' for this. For ')+'<b>+$'+Number(d.upgrade.monthly_diff).toFixed(0)+PT('/mes','/mo')+'</b>'+PT(' lo tendrías incluido, y además:',' you would get it included, plus:')+'</div>'
-              + '<ul style="margin:0 0 9px;padding-left:17px;font-size:12.5px;color:#4c1d95;line-height:1.7">'+(PLANG==='en'?d.upgrade.includes_en:d.upgrade.includes).map(function(t){ return '<li>'+esc(t)+'</li>'; }).join('')+'</ul>'
-              + '<a href="/grooming#memberships" target="_blank" rel="noopener" style="display:inline-block;background:#7C3AED;color:#fff;text-decoration:none;font-weight:800;font-size:13px;padding:10px 20px;border-radius:999px">'+PT('Hacer upgrade','Upgrade my plan')+' →</a>'
-              + '<div style="font-size:11px;color:#7c6bb0;margin-top:7px;line-height:1.5">'+esc(PLANG==='en'?d.upgrade.note_en:d.upgrade.note)+'</div></div>')
+            ? ('<button type="button" onclick="planChange()" style="display:flex;align-items:center;gap:8px;width:100%;margin-top:8px;background:none;border:none;padding:2px 0;font-family:inherit;font-size:12.5px;color:#7C3AED;font-weight:700;cursor:pointer;text-align:left">'
+              + svg('up',15,2)+'<span>'+PT('Con el ','With ')+esc(d.upgrade.target_label)+PT(' esto vendría incluido por +$','—this would be included for +$')+Number(d.upgrade.monthly_diff).toFixed(0)+PT('/mes. Ver planes →','/mo. See plans →')+'</span></button>')
             : '';
         }).catch(function(){ totEl.textContent=PT('Error de red','Network error'); });
     }
@@ -1221,14 +1340,14 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
           '<ul style="margin:13px 0 0;padding-left:17px;font-size:12.5px;color:var(--ink2);line-height:1.8">'+
             i.perks.map(function(p){return '<li>'+esc(p)+'</li>';}).join('')+'</ul>'+
           '<div style="background:var(--paper);border-radius:12px;padding:11px 13px;font-size:11.5px;color:var(--ink2);line-height:1.6;margin-top:13px">'+
-            '<b>'+PT('Lo importante:','The fine print:')+'</b> '+PT('1 grooming incluido al mes (no se acumula). Los extras llevan tu descuento. Permanencia mínima 3 meses; si cancelas antes se cobra 1 mes. Reservas y cambios con 24 horas de antelación.','1 grooming included per month (it does not roll over). Extras get your discount. 3-month minimum term; cancelling earlier charges one month. Bookings and changes need 24 hours notice.')+
+            '<b>'+PT('Lo importante:','The fine print:')+'</b> '+PT('1 grooming incluido al mes (no se acumula). Los extras llevan tu descuento. Permanencia mínima 3 meses; si cancelas antes se cobra 1 mes. Reservas y cambios con 24 h de antelación. Puedes subir o bajar de plan: subir entra al momento, bajar entra en tu próxima renovación.','1 grooming included per month (it does not roll over). Extras get your discount. 3-month minimum term; cancelling earlier charges one month. Bookings and changes need 24 h notice. You can upgrade or downgrade: upgrades apply right away, downgrades apply on your next renewal.')+
             ' <a href="https://bpuppy.us/terminos#membresias" target="_blank" style="color:var(--orange2);font-weight:700;text-decoration:none;white-space:nowrap">'+PT('Ver políticas →','See policies →')+'</a></div>'+
           '<div class="row" style="margin-top:10px"><span class="k">'+PT('Precio','Price')+'</span><span class="v">'+money(m.price)+' / '+esc(i.billing)+'</span></div>'+
           (m.renew_date?('<div class="row"><span class="k">'+PT('Próxima renovación','Next renewal')+'</span><span class="v">'+esc(fmtD(m.renew_date))+'</span></div>'):'')+
           '<div class="row"><span class="k">'+PT('Recogida a domicilio','Home pickup')+'</span><span class="v">'+
             (/vip|total/i.test(String(m.plan||''))?('<span style="color:var(--green)">'+PT('Incluida en tu plan','Included in your plan')+'</span>'):PT('$20 por visita','$20 per visit'))+'</span></div>'+
           (addrLine?('<div class="row"><span class="k">'+PT('Dirección de recogida','Pickup address')+'</span><span class="v" style="max-width:60%;text-align:right">'+esc(addrLine)+'</span></div>'):'')+
-          (String(i.label).toLowerCase()!=='vip'?('<a class="btn sm w" href="/grooming.html#memberships" style="margin-top:13px;border-color:'+i.color+';color:'+i.color+'">'+svg('up',14)+' '+PT('Mejorar mi plan','Upgrade my plan')+'</a>'):'')+
+          '<button class="btn sm w" onclick="planChange()" style="margin-top:13px;border-color:'+i.color+';color:'+i.color+'">'+svg('up',14)+' '+PT('Cambiar de plan','Change plan')+'</button>'+
           '</div>';
       });
     } else {
@@ -1369,6 +1488,9 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     var baths=ms.reduce(function(a,m){return a+(m.credits_balance||0);},0);
     var earned=(d.badges||[]).length;
     var top=topPlan(ms);
+    var na0=nextApptAny();
+    var naLineHtml = na0 ? ('<div class="nextcita"><span class="ic">'+svg('calendar',16,2)+'</span><div style="min-width:0"><div class="k">'+PT('Tu próxima cita','Your next appointment')+'</div><div class="v">'+esc(na0.pet_name||PT('tu mascota','your pet'))+' · '+esc(fmtD(na0.appointment_date))+(na0.appointment_time?(' · '+esc(na0.appointment_time)):'')+'</div></div></div>') : '';
+    var aboutBlockHtml = '<div class="aboutme">'+(c.about?('<p>'+esc(c.about)+'</p>'):('<p class="ph">'+PT('Cuéntanos algo sobre ti — se ve en tu perfil.','Tell us a bit about yourself — it shows on your profile.')+'</p>'))+'<button class="lnk" onclick="editAbout()">'+svg('pen',13,2)+' '+(c.about?PT('Editar','Edit'):PT('Escribir sobre mí','Write about me'))+'</button></div>';
 
     /* Sin foto de portada — solo un aire de color arriba para que la tarjeta respire. */
     coverHost.innerHTML='<div class="topband"></div>';
@@ -1379,6 +1501,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<h1 class="nm">'+PT('Hola, ','Hi, ')+esc(String(name||'').split(' ')[0]||name)+'</h1>'+
       '<div class="sub">'+esc(d.email)+(loc?(' · '+esc(loc)):'')+'</div>'+
       (top?('<div class="memchip" style="border-color:'+top.color+';color:'+top.color+'">'+svg('star',13,2)+' '+PT('Miembro ','Member ')+esc(top.label)+'</div>'):'')+
+      naLineHtml+
       '<div class="stats">'+
         '<div class="stat"><b style="color:var(--orange2)">'+nPets+'</b><span>'+PT(nPets===1?'MASCOTA':'MASCOTAS',nPets===1?'PET':'PETS')+'</span></div>'+
         '<div class="stat"><b style="color:var(--green)">'+baths+'</b><span>'+PT('BAÑOS DISP.','BATHS LEFT')+'</span></div>'+
@@ -1386,6 +1509,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         '<div class="stat"><b style="color:var(--blue)">'+earned+'</b><span>'+PT('INSIGNIAS','BADGES')+'</span></div>'+
       '</div>'+
       badgesHtml(d)+
+      aboutBlockHtml+
       (profileComplete(c)?'':'<div class="nudge">'+PT('Completa tu perfil y desbloqueas la insignia <b>Perfil Completo</b>.','Complete your profile and unlock the <b>Complete Profile</b> badge.')+'</div>')+
       '<button class="btn sm" style="margin-top:14px" onclick="profileEdit()">'+svg('pen',14)+' '+PT('Editar mi perfil','Edit my profile')+'</button>'+
       '</div>';
@@ -1444,14 +1568,14 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
   function badgesHtml(d){
     var all=d.badges_all||d.badges||[];
     if(!all.length) return '';
-    var sorted=all.slice().sort(function(a,b){ return (bEarned(b)?1:0)-(bEarned(a)?1:0); });
-    var show=sorted.slice(0,7);
+    var earned=all.filter(bEarned), locked=all.filter(function(b){return !bEarned(b);});
+    var show=earned.slice(); if(locked.length) show.push(locked[0]); // logrados + el próximo por lograr
     var html='<div class="bgrid">'+show.map(function(b){
       var got=bEarned(b), cat=bCat(b);
       return '<span class="bdg'+(got?'':' lock')+'" onclick="badgeNote(\''+esc(b.key)+'\')" title="'+esc(bName(b))+'">'+
         '<span class="ico" style="color:'+(got?cat.c:'var(--soft)')+'">'+svg(bIcon(b),15,1.9)+'</span>'+esc(bName(b))+(got?'':' '+svg('lock',12,2))+'</span>';
     }).join('');
-    html+='<span class="bdg" onclick="goTab(\'logros\')" style="border-style:dashed;color:var(--orange2)">'+svg('trophy',14,1.9)+' '+PT('Ver todas','See all')+' ('+all.length+')</span>';
+    html+='<span class="bdg" onclick="goTab(\'logros\')" style="border-style:dashed;color:var(--orange2)">'+svg('trophy',14,1.9)+' '+PT('Ver todas','See all')+' ('+earned.length+'/'+all.length+')</span>';
     return html+'</div>';
   }
   var CATIC={client:'medal',membership:'crown',grooming:'scissors',puppy:'paw',community:'users'};

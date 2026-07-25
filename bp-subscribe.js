@@ -9,6 +9,7 @@
   var PATH = (location.pathname || "").toLowerCase();
   if (/(^|\/)quiz(\/|\.html?)?$/.test(PATH) || PATH.indexOf("/quiz") === 0 || PATH.indexOf("quiz.html") !== -1) return; // COPPA
   if (PATH.indexOf("/solicitud") === 0 || PATH.indexOf("solicitud") !== -1) return; // ya es un formulario
+  if (PATH.indexOf("/portal") === 0 || PATH.indexOf("portal") !== -1) return; // ya tiene perfil: no re-invitar a la comunidad
   var EN = (function () { try { return (document.documentElement.lang || localStorage.getItem("bpuppy-lang") || "es").toLowerCase().indexOf("en") === 0; } catch (e) { return false; } })();
   function t(es, en) { return EN ? en : es; }
   var ACC = "#F58220", INK = "#2D2421", MUT = "#6B5A4E", LINE = "#e6ddce", CREAM = "#FBF8F3";
