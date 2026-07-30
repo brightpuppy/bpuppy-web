@@ -1318,7 +1318,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         (b.reschedule_reason?('<div class="row"><span class="k">'+PT('Motivo','Why')+'</span><span class="v" style="max-width:62%;text-align:right">'+esc(b.reschedule_reason)+'</span></div>'):'')+
         '<div style="display:flex;gap:8px;margin-top:13px">'+
           '<button class="btn pri" style="flex:1" onclick="respondResched(\''+b.id+'\',\'approve\')">'+svg('check',15)+' '+PT('Aceptar el cambio','Accept change')+'</button>'+
-          '<button class="btn" style="flex:1" onclick="respondResched(\''+b.id+'\',\'decline\')">'+PT('No me sirve','Keep current')+'</button>'+
+          '<button class="btn" style="flex:1" onclick="reschedule(\''+b.id+'\',\''+esc(b.appointment_date)+'\',\''+esc(b.appointment_time||'')+'\')">'+PT('Reprogramar','Reschedule')+'</button>'+
         '</div></div>';
     });
 
