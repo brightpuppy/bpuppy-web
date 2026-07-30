@@ -1235,6 +1235,26 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       .catch(function(){ renderDays(); });
   };
 
+  /* ═══ Responder a una propuesta de nuevo horario del salón (aprobar / rechazar) ═══ */
+  window.respondResched=function(id,decision){
+    var approve=(decision==='approve');
+    var ov=modal(approve?PT('Aceptar el nuevo horario','Accept the new time'):PT('Mantener el horario actual','Keep the current time'),
+      '<p class="muted">'+(approve
+        ? PT('Tu cita quedará en el nuevo horario que te propusimos. ¿Confirmas?','Your appointment will move to the new time we proposed. Confirm?')
+        : PT('Dejamos tu cita como está y te contactamos para acomodar. ¿Seguro?','We\'ll keep your appointment as is and reach out to arrange. Sure?'))+'</p>'+
+      '<div id="rr-msg"></div>'+
+      '<button class="btn pri w" id="rr-go" style="margin-top:12px">'+(approve?PT('Sí, acepto','Yes, accept'):PT('Sí, mantener','Yes, keep it'))+'</button>', 460);
+    var go=ov.querySelector('#rr-go');
+    var lbl=(approve?PT('Sí, acepto','Yes, accept'):PT('Sí, mantener','Yes, keep it'));
+    go.onclick=async function(){
+      var m=ov.querySelector('#rr-msg'); go.disabled=true; go.textContent=PT('Enviando…','Sending…');
+      var x=await api({action:'respond_reschedule',gid:id,decision:decision});
+      if(!x||x.error){ m.className='msg err'; m.textContent=(x&&x.error)||PT('No se pudo enviar.','Could not send it.'); go.disabled=false; go.textContent=lbl; return; }
+      m.className='msg ok'; m.textContent=approve?PT('¡Listo! Tu cita quedó en el nuevo horario.','Done! Your appointment moved to the new time.'):PT('Perfecto, dejamos tu cita como estaba.','Got it, we kept your appointment as it was.');
+      setTimeout(function(){ ov.close(); load(); },1300);
+    };
+  };
+
   /* ═══ PAGOS: tarjeta guardada ═══ */
   async function loadCard(){
     var host=document.getElementById('pm-box'); if(!host) return;
@@ -1286,6 +1306,21 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     var c=d.client||{};
     var addrLine=[c.address,c.city,c.state,c.zip].filter(Boolean).join(', ');
     var bks=(d.bookings||[]).filter(function(b){ var s=String(b.status||'').toLowerCase(); return s!=='cancelled'&&s!=='completed'&&b.appointment_date; });
+
+    // Propuestas de nuevo horario del salón: el cliente aprueba o rechaza (queda en su historial y en el nuestro).
+    var props=(d.bookings||[]).filter(function(b){ return String(b.reschedule_status||'')==='proposed' && b.proposed_date; });
+    props.forEach(function(b){
+      out+='<div class="card" style="border:1.5px solid var(--orange2);background:var(--paper)">'+
+        '<div class="ttl" style="color:var(--orange2);display:flex;align-items:center;gap:7px">'+svg('clock',18)+PT('Te proponemos un nuevo horario','We\'re proposing a new time')+'</div>'+
+        '<p class="muted" style="margin:7px 0 12px">'+PT('Queremos mover la cita de ','We\'d like to move ')+'<b>'+esc(b.pet_name||PT('tu mascota','your pet'))+'</b>'+PT('. Revisa y decide — nada cambia hasta que aceptes.','\'s appointment. Review and decide — nothing changes until you accept.')+'</p>'+
+        '<div class="row"><span class="k">'+PT('Cita actual','Current')+'</span><span class="v">'+esc(fmtD(b.appointment_date))+(b.appointment_time?(' · '+esc(b.appointment_time)):'')+'</span></div>'+
+        '<div class="row"><span class="k">'+PT('Nueva propuesta','Proposed')+'</span><span class="v" style="color:var(--orange2);font-weight:800">'+esc(fmtD(b.proposed_date))+(b.proposed_time?(' · '+esc(b.proposed_time)):'')+'</span></div>'+
+        (b.reschedule_reason?('<div class="row"><span class="k">'+PT('Motivo','Why')+'</span><span class="v" style="max-width:62%;text-align:right">'+esc(b.reschedule_reason)+'</span></div>'):'')+
+        '<div style="display:flex;gap:8px;margin-top:13px">'+
+          '<button class="btn pri" style="flex:1" onclick="respondResched(\''+b.id+'\',\'approve\')">'+svg('check',15)+' '+PT('Aceptar el cambio','Accept change')+'</button>'+
+          '<button class="btn" style="flex:1" onclick="respondResched(\''+b.id+'\',\'decline\')">'+PT('No me sirve','Keep current')+'</button>'+
+        '</div></div>';
+    });
 
     // Resumen de tu membresía: lo usado, lo disponible y lo que has pagado aparte
     if(ms.length){
@@ -1543,6 +1578,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     });
 
     if(window._openPm){ window._openPm=false; setTimeout(function(){ goTab('pagos'); addonBanner('ok','<b>'+PT('¡Tarjeta guardada!','Card saved!')+'</b> '+PT('Ya puedes pagar más rápido.','You can now pay faster.')); },60); }
+    if(window._openResched){ window._openResched=false; setTimeout(function(){ goTab('grooming'); },60); }
 
     var stop=document.getElementById('pf-stop');
     if(stop) stop.onclick=function(){
@@ -1649,6 +1685,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 
   applyStatic();
   try{ var _pm=new URLSearchParams(location.search).get('pm'); if(_pm){ window._openPm=true; history.replaceState({},'',location.pathname+location.hash); } }catch(e){}
+  try{ var _rq=new URLSearchParams(location.search).get('resched'); if(_rq){ window._openResched=true; history.replaceState({},'',location.pathname+location.hash); } }catch(e){}
   sb.auth.getSession().then(function(s){ if(s.data&&s.data.session&&s.data.session.user){ addonReturn().then(load,load); } else showLogin(null); });
   sb.auth.onAuthStateChange(function(_e,session){ if(session&&session.user){ addonReturn().then(load,load); } });
 })();
