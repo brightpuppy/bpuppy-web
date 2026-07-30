@@ -43,7 +43,7 @@ function useReveal() {
 }
 function MediaApp({ visibility = {} }) {
   const v = visibility;
-  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.news !== false && /* @__PURE__ */ React.createElement(NewsSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
+  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.aipods !== false && /* @__PURE__ */ React.createElement(AIPodcastsSection, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.news !== false && /* @__PURE__ */ React.createElement(NewsSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
 }
 function MediaHero() {
   const t = useT();
@@ -475,6 +475,38 @@ function InterviewsSection() {
   })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "baseline", gap: 12, marginBottom: 28 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(28px,4vw,44px)", fontWeight: 800, letterSpacing: "-0.03em", color: MC.ink } }, "Shorts"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, color: MC.soft, fontWeight: 400 } }, t(["\u2014 Entrevistas breves", "\u2014 Quick interviews"]))), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(168px,1fr))", gap: 14 } }, SHORTS_IDS.map(function(id, i) {
     return /* @__PURE__ */ React.createElement(ShortCard, { key: id, id, idx: i });
   }))));
+}
+function AIPodcastsSection() {
+  const t = useT();
+  const [ref, visible] = useReveal();
+  const [pods, setPods] = React.useState([]);
+  React.useEffect(function() {
+    const SUPA = "https://oqqwmcplljirbreowrll.supabase.co";
+    const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
+    fetch(SUPA + "/rest/v1/podcasts?status=eq.published&select=slug,title,description,audio_url,cover_url,duration_text,section&order=published_at.desc&limit=24", { headers: { apikey: ANON, Authorization: "Bearer " + ANON } })
+      .then(function(r) { return r.ok ? r.json() : []; })
+      .then(function(rows) { if (Array.isArray(rows)) setPods(rows.filter(function(p) { return p.audio_url; })); })
+      .catch(function() {});
+  }, []);
+  if (!pods.length) return null;
+  const h = React.createElement;
+  return h("section", { ref, style: { padding: "clamp(70px,9vw,130px) clamp(24px,6vw,120px)", background: MC.bg2, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(36px)", transition: "opacity 0.7s ease, transform 0.7s ease" } },
+    h("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 14 } },
+      h("span", { style: { fontSize: 15, color: MC.brand } }, "◎"),
+      h("span", { style: { fontSize: 12, fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: MC.brand } }, t(["Podcast IA — escucha las noticias", "AI Podcast — listen to the news"]))),
+    h("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 40, flexWrap: "wrap", gap: 24 } },
+      h("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(40px,6.5vw,88px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.92, margin: 0, color: MC.ink } }, t(["Para escuchar", "Press play"])),
+      h("p", { style: { fontSize: 16, color: MC.ink2, lineHeight: 1.6, maxWidth: "36ch", margin: 0 } }, t(["Nuestras historias, ahora en voz. Ponle play y ll\xE9vatelas contigo.", "Our stories, now in audio. Press play and take them with you."]))),
+    h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(360px,1fr))", gap: 20 } }, pods.map(function(p) {
+      return h("div", { key: p.slug || p.title, style: { background: MC.surface, border: "1px solid " + MC.border, borderRadius: 18, padding: 18, boxShadow: "0 6px 30px rgba(0,0,0,0.05)" } },
+        h("div", { style: { display: "flex", gap: 14, alignItems: "center", marginBottom: 12 } },
+          p.cover_url ? h("img", { src: p.cover_url, alt: p.title, loading: "lazy", style: { width: 74, height: 74, borderRadius: 14, objectFit: "cover", flexShrink: 0 } }) : h("div", { style: { width: 74, height: 74, borderRadius: 14, background: MC.grad, flexShrink: 0, display: "grid", placeItems: "center", color: "#fff", fontSize: 26 } }, "▶"),
+          h("div", { style: { minWidth: 0 } },
+            h("div", { style: { fontSize: 10.5, fontWeight: 800, letterSpacing: "0.07em", textTransform: "uppercase", color: MC.brand, marginBottom: 3 } }, t(["Podcast", "Podcast"]) + (p.duration_text ? (" \xB7 " + p.duration_text) : "")),
+            h("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 17.5, fontWeight: 700, color: MC.ink, letterSpacing: "-0.01em", lineHeight: 1.2 } }, p.title),
+            p.description ? h("div", { style: { fontSize: 12.5, color: MC.ink2, lineHeight: 1.5, marginTop: 4, maxHeight: 40, overflow: "hidden" } }, p.description) : null)),
+        h("audio", { controls: true, preload: "none", src: p.audio_url, style: { width: "100%", height: 38 } }));
+    })));
 }
 function NewsSection() {
   const t = useT();
