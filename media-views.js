@@ -43,7 +43,7 @@ function useReveal() {
 }
 function MediaApp({ visibility = {} }) {
   const v = visibility;
-  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
+  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.news !== false && /* @__PURE__ */ React.createElement(NewsSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
 }
 function MediaHero() {
   const t = useT();
@@ -475,6 +475,42 @@ function InterviewsSection() {
   })), /* @__PURE__ */ React.createElement("div", null, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "baseline", gap: 12, marginBottom: 28 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(28px,4vw,44px)", fontWeight: 800, letterSpacing: "-0.03em", color: MC.ink } }, "Shorts"), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 15, color: MC.soft, fontWeight: 400 } }, t(["\u2014 Entrevistas breves", "\u2014 Quick interviews"]))), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(168px,1fr))", gap: 14 } }, SHORTS_IDS.map(function(id, i) {
     return /* @__PURE__ */ React.createElement(ShortCard, { key: id, id, idx: i });
   }))));
+}
+function NewsSection() {
+  const t = useT();
+  const [ref, visible] = useReveal();
+  const [posts, setPosts] = React.useState([]);
+  React.useEffect(function() {
+    const SUPA = "https://oqqwmcplljirbreowrll.supabase.co";
+    const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
+    fetch(SUPA + "/rest/v1/news_posts?status=eq.published&select=slug,title,excerpt,cover_url,published_at&order=published_at.desc&limit=9", { headers: { apikey: ANON, Authorization: "Bearer " + ANON } })
+      .then(function(r) { return r.ok ? r.json() : []; })
+      .then(function(rows) { if (Array.isArray(rows)) setPosts(rows); })
+      .catch(function() {});
+  }, []);
+  if (!posts.length) return null;
+  const locale = (String(document.documentElement.lang || "es") !== "en") ? "es-ES" : "en-US";
+  return /* @__PURE__ */ React.createElement("section", { ref, style: { padding: "clamp(80px,10vw,140px) clamp(24px,6vw,120px)", background: MC.bg2, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(36px)", transition: "opacity 0.7s ease, transform 0.7s ease" } },
+    /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: MC.brand, marginBottom: 14 } }, t(["04 — Noticias", "04 — News"])),
+    /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 48, flexWrap: "wrap", gap: 24 } },
+      /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(44px,7.5vw,96px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.92, margin: 0, color: MC.ink } }, t(["Lo \xFAltimo", "Latest"])),
+      /* @__PURE__ */ React.createElement("p", { style: { fontSize: 16, color: MC.ink2, lineHeight: 1.6, maxWidth: "34ch", margin: 0 } }, t(["Novedades, anuncios y consejos del mundo BrightPuppy.", "Updates, announcements and tips from the BrightPuppy world."]))
+    ),
+    /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(300px,1fr))", gap: 22 } }, posts.map(function(p) {
+      let d = "";
+      try { d = new Date(p.published_at).toLocaleDateString(locale, { year: "numeric", month: "short", day: "numeric" }); } catch (e) {}
+      return /* @__PURE__ */ React.createElement("a", { key: p.slug, href: "/media/noticias/" + encodeURIComponent(p.slug), style: { display: "flex", flexDirection: "column", background: MC.surface, border: `1px solid ${MC.border}`, borderRadius: 18, overflow: "hidden", textDecoration: "none", color: MC.ink, boxShadow: "0 8px 40px rgba(0,0,0,0.06)", transition: "transform .18s ease, box-shadow .18s ease" },
+        onMouseEnter: function(e) { e.currentTarget.style.transform = "translateY(-3px)"; e.currentTarget.style.boxShadow = "0 16px 50px rgba(0,0,0,0.1)"; },
+        onMouseLeave: function(e) { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 8px 40px rgba(0,0,0,0.06)"; } },
+        p.cover_url ? /* @__PURE__ */ React.createElement("img", { src: p.cover_url, alt: p.title, loading: "lazy", style: { width: "100%", aspectRatio: "16/9", objectFit: "cover", display: "block" } }) : null,
+        /* @__PURE__ */ React.createElement("div", { style: { padding: "16px 18px 20px" } },
+          /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, color: MC.brand, letterSpacing: "0.08em", textTransform: "uppercase", marginBottom: 6 } }, t(["Noticia", "News"]) + (d ? (" \xB7 " + d) : "")),
+          /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 20, fontWeight: 700, color: MC.ink, letterSpacing: "-0.01em", lineHeight: 1.2, marginBottom: 6 } }, p.title),
+          p.excerpt ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 13.5, color: MC.ink2, lineHeight: 1.55 } }, p.excerpt) : null
+        )
+      );
+    }))
+  );
 }
 function MediaFooterCTA() {
   const t = useT();

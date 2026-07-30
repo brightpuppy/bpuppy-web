@@ -34,40 +34,14 @@
 </head>
 <body>
 <div id="root"></div>
-<section id="bp-news" style="background:#FAFAF8"></section>
 <script src="site-publish.js?v=1781476900318"></script>
 <script src="tweaks-panel.js?v=1781476900318"></script>
 <script src="i18n.js?v=1781476900318"></script>
 <script src="chrome.js?v=1784823000000"></script>
-<script src="media-views.js?v=1781476900318"></script>
+<script src="media-views.js?v=1785400000000"></script>
 <script src="Media.inline0.js?v=1781476900318"></script>
 <script src="site-animations.js?v=1781476900318"></script>
 <script src="claude-bridge.js?v=1784824000000"></script>
 <script src="chat-widget.js?v=1781476900318"></script>
-<script>
-/* Noticias publicadas desde el CRM → tarjetas que enlazan a su página SSR (/media/noticias/<slug>). Se oculta si no hay. */
-(function(){
-  var SUPA="https://oqqwmcplljirbreowrll.supabase.co";
-  var ANON="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
-  var host=document.getElementById('bp-news'); if(!host) return;
-  var es=(String(document.documentElement.lang||'es')!=='en');
-  function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c];});}
-  fetch(SUPA+"/rest/v1/news_posts?status=eq.published&select=slug,title,excerpt,cover_url,published_at&order=published_at.desc&limit=12",{headers:{apikey:ANON,Authorization:"Bearer "+ANON}})
-    .then(function(r){return r.ok?r.json():[];}).then(function(rows){
-      if(!rows||!rows.length){ return; }
-      var cards=rows.map(function(p){
-        var d=""; try{ d=new Date(p.published_at).toLocaleDateString(es?"es-ES":"en-US",{year:"numeric",month:"short",day:"numeric"}); }catch(e){}
-        return '<a href="/media/noticias/'+encodeURIComponent(p.slug)+'" style="display:flex;flex-direction:column;background:#fff;border:1px solid #ece4d8;border-radius:16px;overflow:hidden;text-decoration:none;color:#2D2421;transition:transform .15s ease,box-shadow .15s ease" onmouseover="this.style.transform=&quot;translateY(-3px)&quot;;this.style.boxShadow=&quot;0 12px 30px rgba(0,0,0,.08)&quot;" onmouseout="this.style.transform=&quot;&quot;;this.style.boxShadow=&quot;&quot;">'+
-          (p.cover_url?('<img src="'+esc(p.cover_url)+'" alt="'+esc(p.title)+'" loading="lazy" style="width:100%;aspect-ratio:16/9;object-fit:cover">'):'')+
-          '<div style="padding:15px 16px 17px"><div style="font-size:11px;font-weight:800;letter-spacing:.12em;text-transform:uppercase;color:#C2521E">'+(es?"Noticia":"News")+(d?(" · "+esc(d)):"")+'</div>'+
-          '<div style="font-family:\'Instrument Serif\',Georgia,serif;font-size:21px;line-height:1.2;margin:6px 0">'+esc(p.title)+'</div>'+
-          (p.excerpt?('<div style="font-size:13.5px;color:#6B5A4E;line-height:1.55">'+esc(p.excerpt)+'</div>'):'')+'</div></a>';
-      }).join("");
-      host.innerHTML='<div style="max-width:1120px;margin:0 auto;padding:56px 22px 34px"><div style="font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#C2521E;text-align:center">'+(es?"Lo último":"Latest")+'</div>'+
-        '<h2 style="font-family:\'Instrument Serif\',Georgia,serif;font-weight:400;font-size:clamp(30px,5vw,46px);text-align:center;margin:6px 0 30px;color:#2D2421">'+(es?"Noticias":"News")+'</h2>'+
-        '<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:20px">'+cards+'</div></div>';
-    }).catch(function(){});
-})();
-</script>
 </body>
 </html>
