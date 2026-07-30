@@ -51,6 +51,9 @@ function newsArticlePage(p){
   };
   const back = lang==="en" ? "News" : "Noticias";
   const home = lang==="en" ? "Back to BrightPuppy" : "Volver a BrightPuppy";
+  const SECL = { estrella_del_dia:["Estrella del día","Star of the day"], estudios:["Estudios","Studies"], familias:["Familias","Families"], famosos:["Famosos","Famous"], curiosidades:["Curiosidades","Curiosities"], salud:["Salud","Wellness"], rescate:["Rescates","Rescues"], mundo:["El mundo","The world"], general:["General","General"] };
+  const secLab = SECL[p.section] ? (lang==="en"?SECL[p.section][1]:SECL[p.section][0]) : back;
+  const readTxt = p.read_minutes ? (p.read_minutes + (lang==="en"?" min read":" min de lectura")) : "";
   return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">`+
     `<title>${esc(ttl)} · BrightPuppy</title>`+
     `<meta name="description" content="${esc(desc)}">`+
