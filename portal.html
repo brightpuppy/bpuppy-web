@@ -350,6 +350,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
   var sb=window.supabase.createClient(SUPA, ANON);
   var root=document.getElementById('root'), coverHost=document.getElementById('coverhost');
   var D=null; // ultimo portal_data
+  var LOY=null; // ultima respuesta de lealtad
 
   function esc(s){return String(s==null?'':s).replace(/[&<>"]/g,function(c){return({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]);});}
   function money(n){return '$'+Number(n||0).toLocaleString('en-US',{minimumFractionDigits:2,maximumFractionDigits:2});}
@@ -1354,6 +1355,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
           box(hechos,PT('baños ya hechos','baths done'),'var(--ink)')+
           box((d.addons||[]).length,PT('servicios extra','extra services'),'var(--orange2)')+
         '</div></div>';
+      out+='<div id="loy-card"></div>'; // Puntos B — se llena con loadLoyalty() (solo miembros)
     }
 
     if(bks.length){
@@ -1527,6 +1529,70 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     return out;
   }
 
+  /* ═══ PUNTOS B (lealtad) — solo miembros ═══ */
+  async function loadLoyalty(){
+    var host=document.getElementById('loy-card'); if(!host) return;
+    var s=await sb.auth.getSession(); var tok=s.data&&s.data.session&&s.data.session.access_token; if(!tok){ host.innerHTML=''; return; }
+    try{
+      var r=await fetch(SUPA+'/functions/v1/loyalty',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'get'})});
+      var d=await r.json(); if(!d||!d.ok||!d.member){ host.innerHTML=''; return; }
+      LOY=d;
+      var a=d.account, ti=d.tier_info, rules=d.rules;
+      var bal=Number(a.points_balance||0), life=Number(a.lifetime_points||0), credit=Number(a.credit_balance||0);
+      var pct = ti.next ? Math.max(4, Math.min(100, Math.round(((life - ti.min) / (ti.next.min - ti.min))*100))) : 100;
+      var rlab={earn_grooming:PT('Cita completada','Appointment completed'),welcome:PT('Bienvenida','Welcome'),tenure:PT('Antigüedad','Loyalty'),referral:PT('Referido','Referral'),redeem:PT('Canje','Redeemed'),adjust:PT('Ajuste','Adjustment'),credit_used:PT('Crédito usado','Credit used')};
+      var hist=(d.ledger||[]).filter(function(l){ return l.delta!==0; }).slice(0,6).map(function(l){
+        var col=l.delta>0?'var(--green)':'var(--orange2)';
+        return '<div class="row"><span class="k">'+esc(rlab[l.reason]||l.reason)+' <span style="color:var(--soft);font-size:11px">'+esc(fmtD(String(l.created_at).slice(0,10)))+'</span></span><span class="v" style="color:'+col+';font-weight:800">'+(l.delta>0?'+':'')+l.delta+' pts</span></div>';
+      }).join('');
+      host.innerHTML='<div class="card" style="border:1.5px solid var(--violet)">'+
+        '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:12px">'+
+          '<div><div class="ttl" style="color:var(--violet);display:flex;align-items:center;gap:7px">'+svg('star',18)+PT('Puntos B — Recompensas','B Points — Rewards')+'</div>'+
+          '<div class="muted" style="font-size:12.5px;margin-top:2px">'+ti.emoji+' '+PT('Nivel ','Level ')+esc(ti.label)+'</div></div>'+
+          '<div style="text-align:right"><div style="font-family:Bricolage Grotesque,sans-serif;font-size:28px;font-weight:800;line-height:1;color:var(--violet)">'+bal.toLocaleString()+'</div><div class="lb">'+PT('puntos','points')+'</div></div>'+
+        '</div>'+
+        (ti.next
+          ? ('<div style="margin-top:12px"><div style="height:8px;background:var(--paper);border-radius:99px;overflow:hidden"><div style="height:100%;width:'+pct+'%;background:var(--violet)"></div></div>'+
+             '<div class="muted" style="font-size:11.5px;margin-top:5px">'+PT('Te faltan ','You need ')+'<b>'+Number(ti.next.remaining).toLocaleString()+'</b> '+PT('para ','pts to reach ')+ti.next.emoji+' '+esc(ti.next.label)+'</div></div>')
+          : '<div class="muted" style="font-size:11.5px;margin-top:10px">'+PT('¡Nivel máximo! ','Top level! ')+'👑</div>')+
+        (credit>0?('<div class="msg ok" style="margin:12px 0 0">'+PT('Tienes ','You have ')+'<b>$'+credit.toFixed(2)+'</b> '+PT('de crédito — se aplica en tu próxima compra de servicios.','in credit — it applies to your next service purchase.')+'</div>'):'')+
+        '<div style="background:var(--paper);border-radius:12px;padding:11px 13px;font-size:11.5px;color:var(--ink2);line-height:1.7;margin-top:12px">'+
+          '<b>'+PT('Cómo ganas','How you earn')+':</b> '+PT('1 punto por cada $1 en grooming (mín. 25 por cita) · +100 al mes por tu membresía · +500 por cada amigo que refieras. Canjea 100 pts = $5.','1 pt per $1 on grooming (min 25 per visit) · +100/mo for your membership · +500 per friend you refer. Redeem 100 pts = $5.')+'</div>'+
+        (bal>=rules.redeem_min_points
+          ? ('<button class="btn pri w" style="margin-top:12px" onclick="redeemPoints()">'+svg('gift',15)+' '+PT('Canjear puntos por crédito','Redeem points for credit')+'</button>')
+          : ('<div class="muted" style="font-size:11.5px;margin-top:12px;text-align:center">'+PT('Junta ','Reach ')+rules.redeem_min_points+PT(' puntos para canjear ($5).',' points to redeem ($5).')+'</div>'))+
+        (hist?('<div style="margin-top:13px"><div class="lb" style="margin-bottom:4px">'+PT('Movimientos recientes','Recent activity')+'</div>'+hist+'</div>'):'')+
+      '</div>';
+    }catch(e){ host.innerHTML=''; }
+  }
+  window.redeemPoints=function(){
+    var d=LOY; if(!d||!d.account) return;
+    var bal=Number(d.account.points_balance||0), rate=Number(d.rules.redeem_rate_usd_per_point), min=Number(d.rules.redeem_min_points);
+    var start=Math.max(min, bal - (bal % 100)); if(start>bal) start=Math.floor(bal/100)*100;
+    var body='<p class="muted" style="margin:0 0 12px">'+PT('Tienes ','You have ')+'<b>'+bal.toLocaleString()+'</b> '+PT('puntos. 100 puntos = $5. El crédito se aplica en tu próxima compra de servicios.','points. 100 points = $5. The credit applies to your next service purchase.')+'</p>'+
+      '<label>'+PT('¿Cuántos puntos canjeas?','How many points to redeem?')+'</label>'+
+      '<input id="rd-pts" type="number" min="'+min+'" max="'+bal+'" step="100" value="'+start+'">'+
+      '<div id="rd-eq" class="muted" style="font-size:12.5px;margin-top:6px"></div>'+
+      '<div id="rd-msg"></div>'+
+      '<button class="btn pri w" id="rd-go" style="margin-top:12px">'+PT('Canjear','Redeem')+'</button>';
+    var ov=modal(PT('Canjear puntos','Redeem points'), body, 440);
+    var inp=ov.querySelector('#rd-pts'), eq=ov.querySelector('#rd-eq'), go=ov.querySelector('#rd-go'), msg=ov.querySelector('#rd-msg');
+    function upd(){ var p=Math.floor(Number(inp.value||0)); eq.textContent=(p>=min?('= $'+(Math.round(p*rate*100)/100).toFixed(2)+' '+PT('de crédito','credit')):PT('Mínimo ','Minimum ')+min+PT(' puntos',' points')); }
+    inp.oninput=upd; upd();
+    go.onclick=async function(){
+      var p=Math.floor(Number(inp.value||0));
+      if(p<min||p>bal){ msg.className='msg err'; msg.textContent=PT('Cantidad inválida.','Invalid amount.'); return; }
+      go.disabled=true; go.textContent=PT('Canjeando…','Redeeming…');
+      var s=await sb.auth.getSession(); var tok=s.data&&s.data.session&&s.data.session.access_token;
+      try{
+        var r=await fetch(SUPA+'/functions/v1/loyalty',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'redeem',points:p})});
+        var d2=await r.json();
+        if(d2&&d2.ok){ msg.className='msg ok'; msg.textContent=PT('¡Listo! Sumaste $'+d2.credit_added+' de crédito.','Done! You added $'+d2.credit_added+' in credit.'); setTimeout(function(){ ov.close(); loadLoyalty(); },1600); }
+        else { msg.className='msg err'; msg.textContent=(d2&&d2.error)||PT('No se pudo canjear.','Could not redeem.'); go.disabled=false; go.textContent=PT('Canjear','Redeem'); }
+      }catch(e){ msg.className='msg err'; msg.textContent=PT('Error de red.','Network error.'); go.disabled=false; go.textContent=PT('Canjear','Redeem'); }
+    };
+  };
+
   /* ═══ RENDER ═══ */
   function render(d){
     D=d; setPlangFrom(d.client);
@@ -1587,6 +1653,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<div class="pane" data-p="cuenta">'+paneCuenta(d)+'</div>';
 
     root.innerHTML=html;
+    loadLoyalty(); // Puntos B (solo miembros; no-op si no hay tarjeta)
 
     root.querySelectorAll('.tab').forEach(function(b){
       b.onclick=function(){
