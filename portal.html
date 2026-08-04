@@ -1530,8 +1530,12 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
   }
 
   /* ═══ PUNTOS B (lealtad) — solo miembros ═══ */
+  var LOY_MIN=200, LOY_RATE=0.025; // valores conservadores reales (el RULES del edge se sincroniza al liberar el cap)
   async function loadLoyalty(){
     var host=document.getElementById('loy-card'); if(!host) return;
+    // Puntos B es SOLO para el plan Total (media) en adelante — Esencial no participa.
+    var elig=(D&&D.memberships||[]).some(function(m){ var p=String(m.plan||'').toLowerCase(); return String(m.status||'')!=='cancelled' && (p.indexOf('total')>=0||p.indexOf('vip')>=0); });
+    if(!elig){ host.innerHTML=''; return; }
     var s=await sb.auth.getSession(); var tok=s.data&&s.data.session&&s.data.session.access_token; if(!tok){ host.innerHTML=''; return; }
     try{
       var r=await fetch(SUPA+'/functions/v1/loyalty',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'get'})});
@@ -1557,17 +1561,17 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
           : '<div class="muted" style="font-size:11.5px;margin-top:10px">'+PT('¡Nivel máximo! ','Top level! ')+'👑</div>')+
         (credit>0?('<div class="msg ok" style="margin:12px 0 0">'+PT('Tienes ','You have ')+'<b>$'+credit.toFixed(2)+'</b> '+PT('de crédito — se aplica en tu próxima compra de servicios.','in credit — it applies to your next service purchase.')+'</div>'):'')+
         '<div style="background:var(--paper);border-radius:12px;padding:11px 13px;font-size:11.5px;color:var(--ink2);line-height:1.7;margin-top:12px">'+
-          '<b>'+PT('Cómo ganas','How you earn')+':</b> '+PT('1 punto por cada $1 en grooming (mín. 25 por cita) · +100 al mes por tu membresía · +500 por cada amigo que refieras. Canjea 100 pts = $5.','1 pt per $1 on grooming (min 25 per visit) · +100/mo for your membership · +500 per friend you refer. Redeem 100 pts = $5.')+'</div>'+
-        (bal>=rules.redeem_min_points
+          '<b>'+PT('Cómo ganas','How you earn')+':</b> '+PT('Solo con el plan Total o VIP: 1 punto por cada $1 en grooming (mín. 10 por cita) · +25 al mes por tu membresía · +250 por cada amigo que refieras. Canjea 200 pts = $5.','Total or VIP plan only: 1 pt per $1 on grooming (min 10 per visit) · +25/mo for your membership · +250 per friend you refer. Redeem 200 pts = $5.')+'</div>'+
+        (bal>=LOY_MIN
           ? ('<button class="btn pri w" style="margin-top:12px" onclick="redeemPoints()">'+svg('gift',15)+' '+PT('Canjear puntos por crédito','Redeem points for credit')+'</button>')
-          : ('<div class="muted" style="font-size:11.5px;margin-top:12px;text-align:center">'+PT('Junta ','Reach ')+rules.redeem_min_points+PT(' puntos para canjear ($5).',' points to redeem ($5).')+'</div>'))+
+          : ('<div class="muted" style="font-size:11.5px;margin-top:12px;text-align:center">'+PT('Junta ','Reach ')+LOY_MIN+PT(' puntos para canjear ($5).',' points to redeem ($5).')+'</div>'))+
         (hist?('<div style="margin-top:13px"><div class="lb" style="margin-bottom:4px">'+PT('Movimientos recientes','Recent activity')+'</div>'+hist+'</div>'):'')+
       '</div>';
     }catch(e){ host.innerHTML=''; }
   }
   window.redeemPoints=function(){
     var d=LOY; if(!d||!d.account) return;
-    var bal=Number(d.account.points_balance||0), rate=Number(d.rules.redeem_rate_usd_per_point), min=Number(d.rules.redeem_min_points);
+    var bal=Number(d.account.points_balance||0), rate=LOY_RATE, min=LOY_MIN;
     var start=Math.max(min, bal - (bal % 100)); if(start>bal) start=Math.floor(bal/100)*100;
     var body='<p class="muted" style="margin:0 0 12px">'+PT('Tienes ','You have ')+'<b>'+bal.toLocaleString()+'</b> '+PT('puntos. 100 puntos = $5. El crédito se aplica en tu próxima compra de servicios.','points. 100 points = $5. The credit applies to your next service purchase.')+'</p>'+
       '<label>'+PT('¿Cuántos puntos canjeas?','How many points to redeem?')+'</label>'+
@@ -1587,7 +1591,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       try{
         var r=await fetch(SUPA+'/functions/v1/loyalty',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:JSON.stringify({action:'redeem',points:p})});
         var d2=await r.json();
-        if(d2&&d2.ok){ msg.className='msg ok'; msg.textContent=PT('¡Listo! Sumaste $'+d2.credit_added+' de crédito.','Done! You added $'+d2.credit_added+' in credit.'); setTimeout(function(){ ov.close(); loadLoyalty(); },1600); }
+        if(d2&&d2.ok){ var added=(Math.round(p*LOY_RATE*100)/100).toFixed(2); msg.className='msg ok'; msg.textContent=PT('¡Listo! Sumaste $'+added+' de crédito.','Done! You added $'+added+' in credit.'); setTimeout(function(){ ov.close(); loadLoyalty(); },1600); }
         else { msg.className='msg err'; msg.textContent=(d2&&d2.error)||PT('No se pudo canjear.','Could not redeem.'); go.disabled=false; go.textContent=PT('Canjear','Redeem'); }
       }catch(e){ msg.className='msg err'; msg.textContent=PT('Error de red.','Network error.'); go.disabled=false; go.textContent=PT('Canjear','Redeem'); }
     };
