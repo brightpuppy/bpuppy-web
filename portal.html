@@ -1445,6 +1445,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
             (/vip|total/i.test(String(m.plan||''))?('<span style="color:var(--green)">'+PT('Incluida en tu plan','Included in your plan')+'</span>'):PT('$20 por visita','$20 per visit'))+'</span></div>'+
           (addrLine?('<div class="row"><span class="k">'+PT('Dirección de recogida','Pickup address')+'</span><span class="v" style="max-width:60%;text-align:right">'+esc(addrLine)+'</span></div>'):'')+
           '<button class="btn sm w" onclick="planChange()" style="margin-top:13px;border-color:'+i.color+';color:'+i.color+'">'+svg('up',14)+' '+PT('Modificar plan','Modify plan')+'</button>'+
+          '<button type="button" onclick="planChange()" style="display:block;width:100%;margin-top:8px;background:none;border:none;padding:2px 0;font-family:inherit;font-size:12px;color:var(--soft);font-weight:600;cursor:pointer;text-align:center;text-decoration:underline;text-underline-offset:2px">'+PT('¿Necesitas bajar de plan?','Need to downgrade?')+'</button>'+
           '</div>';
       });
     } else {
@@ -1706,6 +1707,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         root.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on',x===b); });
         root.querySelectorAll('.pane').forEach(function(p){ p.classList.toggle('on',p.getAttribute('data-p')===t); });
         if(t==='pagos') loadCard();
+        // Al cambiar de pestaña en el cell, si veníamos scrolleados abajo (pane largo), subir para ver el contenido (sin scrollIntoView).
+        try{ var _te=root.querySelector('.tabs'); if(_te){ var _yy=_te.getBoundingClientRect().top+window.pageYOffset-10; if(window.pageYOffset>_yy+4) window.scrollTo({top:_yy,behavior:'smooth'}); } }catch(_e){}
       };
     });
 
