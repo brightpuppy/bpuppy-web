@@ -542,22 +542,42 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         '• '+PT('Cumplida la permanencia, cancelas cuando quieras. Sin letra chica.','After the minimum term, cancel anytime. No fine print.')+
         ' <a href="https://bpuppy.us/terminos#membresias" target="_blank" style="color:var(--orange2);font-weight:700;text-decoration:none;white-space:nowrap">'+PT('Ver políticas →','See policies →')+'</a></div>'+
       '<div id="pc-msg"></div>'+
-      '<button class="btn pri w" id="pc-go" style="margin-top:12px" disabled>'+PT('Solicitar el cambio','Request the change')+'</button>', 500);
+      '<button class="btn pri w" id="pc-go" style="margin-top:12px" disabled>'+PT('Cambiar de plan','Change plan')+'</button>', 500);
     var goBtn=ov.querySelector('#pc-go');
-    Array.prototype.forEach.call(ov.querySelectorAll('.plan[data-k]'), function(b){ if(b.disabled) return; b.onclick=function(){ st.target=b.getAttribute('data-k');
-      Array.prototype.forEach.call(ov.querySelectorAll('.plan[data-k]'), function(x){ if(x.disabled) return; x.style.boxShadow=(x===b?'inset 0 0 0 2px var(--orange)':''); x.style.borderColor=(x===b?'var(--orange)':'var(--line)'); });
-      goBtn.disabled=false; }; });
-    goBtn.onclick=async function(){ var m=ov.querySelector('#pc-msg'); if(!st.target) return;
-      var dir=(!cur)?'new':(order[st.target]>order[cur]?'upgrade':'downgrade');
-      goBtn.disabled=true; goBtn.textContent=PT('Enviando…','Sending…');
+    var tierName={esencial:'Esencial',total:'Total',vip:'VIP'};
+    // Llama al edge: preview=true muestra el efecto sin cobrar; preview=false aplica de verdad.
+    async function callPlan(target,preview){
       var s=await sb.auth.getSession(); var tok=s.data&&s.data.session&&s.data.session.access_token;
+      if(!tok) return { error: PT('Inicia sesión primero.','Please sign in first.') };
       try{
-        var r=await fetch(SUPA+'/functions/v1/portal_billing',{method:'POST',headers:{'Authorization':'Bearer '+(tok||ANON),'apikey':ANON,'Content-Type':'application/json'},
-          body:JSON.stringify({action:'request_plan_change',target:st.target,direction:dir,lang:PLANG})});
-        var d=await r.json();
-        if(d&&d.ok){ m.className='msg ok'; m.textContent=PT('¡Listo! Recibimos tu solicitud y te confirmamos el cambio en breve.','Done! We got your request and will confirm the change shortly.'); setTimeout(function(){ ov.close(); },1900); }
-        else { m.className='msg err'; m.textContent=(d&&d.error)||PT('No se pudo enviar.','Could not send.'); goBtn.disabled=false; goBtn.textContent=PT('Solicitar el cambio','Request the change'); }
-      }catch(e){ m.className='msg err'; m.textContent=PT('Error de red.','Network error.'); goBtn.disabled=false; goBtn.textContent=PT('Solicitar el cambio','Request the change'); }
+        var r=await fetch(SUPA+'/functions/v1/portal_billing',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},
+          body:JSON.stringify({action:'apply_plan_change',target:target,preview:!!preview,lang:PLANG})});
+        return await r.json();
+      }catch(e){ return { error: PT('Error de red.','Network error.') }; }
+    }
+    Array.prototype.forEach.call(ov.querySelectorAll('.plan[data-k]'), function(b){ if(b.disabled) return; b.onclick=function(){ st.target=b.getAttribute('data-k'); st.pv=null;
+      Array.prototype.forEach.call(ov.querySelectorAll('.plan[data-k]'), function(x){ if(x.disabled) return; x.style.boxShadow=(x===b?'inset 0 0 0 2px var(--orange)':''); x.style.borderColor=(x===b?'var(--orange)':'var(--line)'); });
+      var d2=(!cur||order[st.target]>order[cur])?'upgrade':'downgrade';
+      var mm=ov.querySelector('#pc-msg'); if(mm){ mm.textContent=''; mm.className=''; }
+      goBtn.disabled=false; goBtn.textContent=(d2==='downgrade'?PT('Bajar a ','Downgrade to '):PT('Subir a ','Upgrade to '))+(tierName[st.target]||''); }; });
+    // Paso 1: click muestra el efecto (no cobra). Paso 2: click confirma y aplica.
+    goBtn.onclick=async function(){ var m=ov.querySelector('#pc-msg'); if(!st.target) return;
+      if(!st.pv){
+        goBtn.disabled=true; goBtn.textContent=PT('Calculando…','Calculating…');
+        var pv=await callPlan(st.target,true);
+        if(!pv||!pv.ok){ m.className='msg err'; m.textContent=(pv&&pv.error)||PT('No se pudo calcular.','Could not calculate.'); goBtn.disabled=false; goBtn.textContent=PT('Cambiar de plan','Change plan'); return; }
+        st.pv=pv; var up=pv.direction==='upgrade';
+        var eff=up
+          ? PT('Entra ahora. Se cobra la diferencia prorrateada de este mes y desde tu próxima factura pagas $'+Number(pv.to_amount)+'/mes.','Starts now. We charge the prorated difference this month, then $'+Number(pv.to_amount)+'/mo going forward.')
+          : PT('Aplica en tu renovación'+(pv.effective&&pv.effective!=='next_renewal'?(' ('+pv.effective+')'):'')+'. Sin cobro ni reembolso ahora; mantienes tu plan actual hasta esa fecha.','Applies at your renewal'+(pv.effective&&pv.effective!=='next_renewal'?(' ('+pv.effective+')'):'')+'. No charge or refund now; you keep your current plan until then.');
+        m.className='msg info'; m.innerHTML='<b>'+(up?PT('Subes a ','Upgrade to '):PT('Bajas a ','Downgrade to '))+esc(pv.to_name)+' · $'+Number(pv.to_amount)+PT('/mes','/mo')+'</b><br>'+eff;
+        goBtn.disabled=false; goBtn.textContent=up?PT('Confirmar y pagar la diferencia','Confirm & pay the difference'):PT('Confirmar el cambio','Confirm the change');
+        return;
+      }
+      goBtn.disabled=true; goBtn.textContent=PT('Aplicando…','Applying…');
+      var res=await callPlan(st.target,false);
+      if(res&&res.ok){ m.className='msg ok'; m.innerHTML=(res.direction==='upgrade')?PT('¡Listo! Ya estás en tu nuevo plan. Gracias 🐾','Done! You are on your new plan. Thank you 🐾'):PT('¡Listo! El cambio entra en tu próxima renovación.','Done! The change takes effect at your next renewal.'); setTimeout(function(){ ov.close(); if(typeof load==='function') load(); },2200); }
+      else { m.className='msg err'; m.textContent=(res&&res.error)||PT('No se pudo aplicar.','Could not apply.'); st.pv=null; goBtn.disabled=false; goBtn.textContent=PT('Reintentar','Try again'); }
     };
   };
 
