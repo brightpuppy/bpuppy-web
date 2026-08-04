@@ -87,8 +87,10 @@ function AuthControl({ isOverDark }) {
   const [name, setName] = useState(() => firstNameFrom(readBpSession()));
   const [open, setOpen] = useState(false);
   const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [sending, setSending] = useState(false);
   const [sent, setSent] = useState(false);
+  const [err, setErr] = useState("");
   const ref = useRef();
   useEffect(() => {
     const sync = () => {
@@ -158,6 +160,53 @@ function AuthControl({ isOverDark }) {
       setSent(true);
     });
   };
+  const persistSession = (d) => {
+    try {
+      const now = Math.floor(Date.now() / 1e3);
+      localStorage.setItem(SB_SKEY, JSON.stringify({
+        access_token: d.access_token,
+        token_type: d.token_type || "bearer",
+        expires_in: d.expires_in,
+        expires_at: d.expires_at || now + (d.expires_in || 3600),
+        refresh_token: d.refresh_token,
+        user: d.user
+      }));
+    } catch (e) {
+    }
+  };
+  const loginPassword = (e) => {
+    e && e.preventDefault();
+    const em = (email || "").trim().toLowerCase();
+    const pw = password || "";
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(em)) {
+      setErr(t(["Escribe un correo v\xE1lido.", "Enter a valid email."]));
+      return;
+    }
+    if (pw.length < 6) {
+      setErr(t(["Escribe tu contrase\xF1a.", "Enter your password."]));
+      return;
+    }
+    setSending(true);
+    setErr("");
+    fetch(SB_URL + "/auth/v1/token?grant_type=password", { method: "POST", headers: { "Content-Type": "application/json", "apikey": SB_ANON }, body: JSON.stringify({ email: em, password: pw }) }).then((r) => r.json()).then((d) => {
+      setSending(false);
+      if (d && d.access_token) {
+        persistSession(d);
+        location.href = /\/portal/.test(location.pathname) ? location.href : "/portal";
+      } else {
+        setErr(t(["Correo o contrase\xF1a incorrectos.", "Wrong email or password."]));
+      }
+    }).catch(() => {
+      setSending(false);
+      setErr(t(["Error de red. Intenta de nuevo.", "Network error. Try again."]));
+    });
+  };
+  const loginGoogle = () => {
+    try {
+      location.href = SB_URL + "/auth/v1/authorize?provider=google&redirect_to=" + encodeURIComponent(location.origin + "/portal");
+    } catch (e) {
+    }
+  };
   const iconColor = isOverDark ? "rgba(255,255,255,0.92)" : "var(--ink-2)";
   const hoverBg = isOverDark ? "rgba(255,255,255,0.15)" : "rgba(45,36,33,0.07)";
   const panel = { position: "absolute", top: "calc(100% + 10px)", right: 0, background: "var(--paper,#fff)", border: "1px solid var(--line,#ebe7e3)", borderRadius: 16, boxShadow: "0 16px 40px -10px rgba(0,0,0,0.22)", padding: 14, minWidth: 240, zIndex: 400 };
@@ -176,7 +225,7 @@ function AuthControl({ isOverDark }) {
           if (!open) e.currentTarget.style.background = "none";
         }
       },
-      /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 30, height: 30, borderRadius: "50%", background: "linear-gradient(135deg,#F55820 0%,#E83860 100%)", color: "#fff", fontWeight: 800, fontSize: 12, letterSpacing: "0.02em" }, className: "notranslate" }, initialsFrom(display, sess.email)),
+      /* @__PURE__ */ React.createElement("span", { style: { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 34, height: 34, borderRadius: "50%", background: "linear-gradient(135deg,#F55820 0%,#E83860 100%)", color: "#fff", fontWeight: 800, fontSize: 13, letterSpacing: "0.02em" }, className: "notranslate" }, initialsFrom(display, sess.email)),
       /* @__PURE__ */ React.createElement("span", { className: "notranslate", style: { fontWeight: 700, fontSize: 13.5, maxWidth: 120, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, display),
       /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.5", strokeLinecap: "round", strokeLinejoin: "round", style: { transform: open ? "rotate(180deg)" : "none", transition: "transform .2s" } }, /* @__PURE__ */ React.createElement("path", { d: "M6 9l6 6 6-6" }))
     ), open && /* @__PURE__ */ React.createElement("div", { style: panel }, /* @__PURE__ */ React.createElement("div", { style: { padding: "2px 8px 10px" } }, /* @__PURE__ */ React.createElement("div", { className: "notranslate", style: { fontWeight: 800, fontSize: 14, color: "var(--ink)" } }, display), /* @__PURE__ */ React.createElement("div", { className: "notranslate", style: { fontSize: 12, color: "var(--ink-2)", overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" } }, sess.email)), /* @__PURE__ */ React.createElement("div", { style: { height: 1, background: "var(--line,#ebe7e3)", margin: "0 0 8px" } }), /* @__PURE__ */ React.createElement(
@@ -220,7 +269,7 @@ function AuthControl({ isOverDark }) {
       },
       title: t(["Entrar", "Sign in"]),
       "aria-label": t(["Entrar", "Sign in"]),
-      style: { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 32, height: 32, borderRadius: "50%", background: open ? hoverBg : "none", border: "none", cursor: "pointer", color: iconColor, transition: "background .15s, color .3s" },
+      style: { display: "inline-flex", alignItems: "center", justifyContent: "center", width: 36, height: 36, borderRadius: "50%", background: open ? hoverBg : "none", border: "none", cursor: "pointer", color: iconColor, transition: "background .15s, color .3s" },
       onMouseEnter: (e) => {
         if (!open) e.currentTarget.style.background = hoverBg;
       },
@@ -228,26 +277,8 @@ function AuthControl({ isOverDark }) {
         if (!open) e.currentTarget.style.background = "none";
       }
     },
-    /* @__PURE__ */ React.createElement("svg", { width: "18", height: "18", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("circle", { cx: "12", cy: "8", r: "4" }), /* @__PURE__ */ React.createElement("path", { d: "M4 21c0-4 4-6 8-6s8 2 8 6" }))
-  ), open && /* @__PURE__ */ React.createElement("div", { style: panel }, sent ? /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", padding: "8px 4px" } }, /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 6, color: "var(--orange)", display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("svg", { width: "32", height: "32", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("rect", { x: "3", y: "5", width: "18", height: "14", rx: "2" }), /* @__PURE__ */ React.createElement("path", { d: "M4 7l8 6 8-6" }))), /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, color: "var(--ink)", marginBottom: 4 } }, t(["Revisa tu correo", "Check your email"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: "var(--ink-2)", lineHeight: 1.5 } }, t(["Te enviamos un enlace para entrar sin contrase\xF1a.", "We sent you a passwordless sign-in link."]))) : /* @__PURE__ */ React.createElement("form", { onSubmit: sendLink }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, color: "var(--ink)", marginBottom: 2 } }, t(["Entra a tu cuenta", "Sign in to your account"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "var(--ink-2)", marginBottom: 10, lineHeight: 1.45 } }, t(["Sin contrase\xF1as. Te enviamos un enlace m\xE1gico.", "No passwords. We send you a magic link."])), /* @__PURE__ */ React.createElement(
-    "input",
-    {
-      type: "email",
-      value: email,
-      onChange: (e) => setEmail(e.target.value),
-      placeholder: t(["tu@correo.com", "you@email.com"]),
-      autoFocus: true,
-      style: { width: "100%", boxSizing: "border-box", padding: "10px 12px", borderRadius: 10, border: "1px solid var(--line,#ebe7e3)", fontSize: 13.5, fontFamily: "inherit", marginBottom: 9, outline: "none" }
-    }
-  ), /* @__PURE__ */ React.createElement(
-    "button",
-    {
-      type: "submit",
-      disabled: sending,
-      style: { width: "100%", padding: "10px 12px", borderRadius: 10, border: "none", cursor: sending ? "default" : "pointer", background: "linear-gradient(135deg,#F55820 0%,#E83860 100%)", color: "#fff", fontWeight: 800, fontSize: 13.5, fontFamily: "inherit", opacity: sending ? 0.7 : 1 }
-    },
-    sending ? t(["Enviando\u2026", "Sending\u2026"]) : t(["Enviar enlace", "Send link"])
-  ))));
+    /* @__PURE__ */ React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("circle", { cx: "12", cy: "8", r: "4" }), /* @__PURE__ */ React.createElement("path", { d: "M4 21c0-4 4-6 8-6s8 2 8 6" }))
+  ), open && /* @__PURE__ */ React.createElement("div", { style: panel }, sent ? /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", padding: "8px 4px" } }, /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 6, color: "var(--orange)", display: "flex", justifyContent: "center" } }, /* @__PURE__ */ React.createElement("svg", { width: "32", height: "32", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "1.5", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("rect", { x: "3", y: "5", width: "18", height: "14", rx: "2" }), /* @__PURE__ */ React.createElement("path", { d: "M4 7l8 6 8-6" }))), /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, color: "var(--ink)", marginBottom: 4 } }, t(["Revisa tu correo", "Check your email"])), /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12.5, color: "var(--ink-2)", lineHeight: 1.5 } }, t(["Te enviamos un enlace para entrar sin contrase\xF1a.", "We sent you a passwordless sign-in link."]))) : /* @__PURE__ */ React.createElement("form", { onSubmit: loginPassword }, /* @__PURE__ */ React.createElement("div", { style: { fontWeight: 800, fontSize: 14, color: "var(--ink)", marginBottom: 10 } }, t(["Entra a tu cuenta", "Sign in to your account"])), /* @__PURE__ */ React.createElement("button", { type: "button", onClick: loginGoogle, style: { width: "100%", display: "flex", alignItems: "center", justifyContent: "center", gap: 9, padding: "10px 12px", borderRadius: 10, border: "1px solid var(--line,#ddd)", background: "#fff", color: "#3c4043", fontWeight: 700, fontSize: 13.5, fontFamily: "inherit", cursor: "pointer", marginBottom: 10 } }, /* @__PURE__ */ React.createElement("svg", { width: "17", height: "17", viewBox: "0 0 48 48" }, /* @__PURE__ */ React.createElement("path", { fill: "#EA4335", d: "M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.9 2.4 30.4 0 24 0 14.6 0 6.5 5.4 2.6 13.2l7.9 6.2C12.4 13.2 17.7 9.5 24 9.5z" }), /* @__PURE__ */ React.createElement("path", { fill: "#4285F4", d: "M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.5 3-2.2 5.5-4.7 7.2l7.3 5.7c4.3-3.9 6.8-9.7 6.8-17.4z" }), /* @__PURE__ */ React.createElement("path", { fill: "#FBBC05", d: "M10.5 28.6c-.5-1.5-.8-3-.8-4.6s.3-3.1.8-4.6l-7.9-6.2C1 16.5 0 20.1 0 24s1 7.5 2.6 10.8l7.9-6.2z" }), /* @__PURE__ */ React.createElement("path", { fill: "#34A853", d: "M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.3-5.7c-2 1.4-4.7 2.3-8.6 2.3-6.3 0-11.6-3.7-13.5-9.1l-7.9 6.2C6.5 42.6 14.6 48 24 48z" })), t(["Continuar con Google", "Continue with Google"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", gap: 8, margin: "2px 0 10px", color: "var(--ink-2)", fontSize: 11 } }, /* @__PURE__ */ React.createElement("div", { style: { flex: 1, height: 1, background: "var(--line,#ebe7e3)" } }), t(["o con tu correo", "or with your email"]), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, height: 1, background: "var(--line,#ebe7e3)" } })), /* @__PURE__ */ React.createElement("input", { type: "email", value: email, onChange: (e) => setEmail(e.target.value), placeholder: t(["tu@correo.com", "you@email.com"]), autoComplete: "email", style: { width: "100%", boxSizing: "border-box", padding: "10px 12px", borderRadius: 10, border: "1px solid var(--line,#ebe7e3)", fontSize: 13.5, fontFamily: "inherit", marginBottom: 8, outline: "none" } }), /* @__PURE__ */ React.createElement("input", { type: "password", value: password, onChange: (e) => setPassword(e.target.value), placeholder: t(["Contrase\xF1a", "Password"]), autoComplete: "current-password", style: { width: "100%", boxSizing: "border-box", padding: "10px 12px", borderRadius: 10, border: "1px solid var(--line,#ebe7e3)", fontSize: 13.5, fontFamily: "inherit", marginBottom: 8, outline: "none" } }), err ? /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, color: "#C0341E", marginBottom: 8, lineHeight: 1.4 } }, err) : null, /* @__PURE__ */ React.createElement("button", { type: "submit", disabled: sending, style: { width: "100%", padding: "10px 12px", borderRadius: 10, border: "none", cursor: sending ? "default" : "pointer", background: "linear-gradient(135deg,#F55820 0%,#E83860 100%)", color: "#fff", fontWeight: 800, fontSize: 13.5, fontFamily: "inherit", opacity: sending ? 0.7 : 1 } }, sending ? t(["Entrando\u2026", "Signing in\u2026"]) : t(["Entrar", "Sign in"])), /* @__PURE__ */ React.createElement("button", { type: "button", onClick: sendLink, disabled: sending, style: { width: "100%", marginTop: 8, padding: "6px", borderRadius: 8, border: "none", background: "none", cursor: "pointer", color: "var(--ink-2)", fontFamily: "inherit", fontSize: 12, fontWeight: 600, textDecoration: "underline", textUnderlineOffset: "2px" } }, t(["Env\xEDame un enlace por correo", "Email me a sign-in link"])))));
 }
 function GlobeDropdown({ isOverDark, onLangSelect }) {
   const [open, setOpen] = useState(false);
@@ -339,6 +370,18 @@ function Header({ overDark }) {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+  useEffect(() => {
+    if (!menuOpen) return;
+    const onDown = (e) => {
+      const mn = document.querySelector(".mobile-nav");
+      const bg = document.querySelector(".hdr-burger");
+      if (mn && mn.contains(e.target)) return;
+      if (bg && bg.contains(e.target)) return;
+      setMenuOpen(false);
+    };
+    document.addEventListener("pointerdown", onDown);
+    return () => document.removeEventListener("pointerdown", onDown);
+  }, [menuOpen]);
   useEffect(() => {
     if (localStorage.getItem("bpuppy-lang") || localStorage.getItem("bpuppy-gt-lang")) return;
     const navLang = (navigator.language || "").split("-")[0].toLowerCase();
