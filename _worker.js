@@ -96,6 +96,11 @@ function notFoundPage(){
 export default {
   async fetch(request, env) {
     const url0 = new URL(request.url);
+    // Canonical host: www.* -> apex, para que la sesion (localStorage) viva siempre en el mismo origen.
+    if (url0.hostname.startsWith("www.")) {
+      url0.hostname = url0.hostname.slice(4);
+      return Response.redirect(url0.toString(), 301);
+    }
     const p0 = url0.pathname.replace(/\/+$/,"");
     if (p0 === "/sms") {
       return new Response(smsRedirectPage(url0.searchParams.get("to"), url0.searchParams.get("body")),
