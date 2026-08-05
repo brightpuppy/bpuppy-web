@@ -302,7 +302,21 @@ html.media-dark .hdr .nav-dropdown a { color: var(--ink) !important; }
   .mnav-group.open .mnav-caret { transform:rotate(180deg); }
   .mnav-sub { display:flex; flex-direction:column; padding:0 0 8px 14px; border-top:1px solid rgba(45,36,33,.05); }
   .mnav-sub a { padding:11px 6px !important; font-size:14.5px !important; font-weight:600; color:var(--ink-2,#6b5a4e) !important; border-bottom:none !important; }
+  /* ── Menú móvil COLORIDO (parity con PC: color y vida en cada ítem) ── */
+  .mobile-nav > a, .mobile-nav > .mnav-group { border-left:3px solid transparent; border-radius:0 10px 10px 0; padding-left:11px; transition:background .18s, border-color .18s; }
+  .mobile-nav > *:nth-child(1) { border-left-color:#0EA5E9; }  /* Social */
+  .mobile-nav > *:nth-child(2) { border-left-color:#F58220; }  /* Cachorros */
+  .mobile-nav > *:nth-child(3) { border-left-color:#7C3AED; }  /* Gatos */
+  .mobile-nav > *:nth-child(4) { border-left-color:#2563EB; }  /* Planes */
+  .mobile-nav > *:nth-child(5) { border-left-color:#12A47A; }  /* Grooming */
+  .mobile-nav > *:nth-child(6) { border-left-color:#E83860; }  /* Media */
+  .mobile-nav > *:nth-child(7) { border-left-color:#F59E0B; }  /* Nosotros */
+  .mobile-nav > .mnav-group.open { background:rgba(245,130,32,.055); }
+  .mobile-nav .mnav-caret { color:var(--orange); }
+  /* "Social · Community" en arcoíris animado, como el B Social de la PC */
+  .mobile-nav a.mnav-social { color:transparent !important; background:linear-gradient(90deg,#ff3b3b,#ff8a00,#ffd500,#22c55e,#3b82f6,#a855f7,#ff3b3b); background-size:200% auto; -webkit-background-clip:text; background-clip:text; -webkit-text-fill-color:transparent; animation:bpRainbowShift 3s linear infinite; font-weight:800 !important; }
 }
+@keyframes bpRainbowShift { to { background-position:200% center; } }
 @media (max-width: 560px) {
   .hdr-logo .wm { display: none; } /* solo el ícono del logo en móviles chicos para que el burger entre */
 }
