@@ -35,7 +35,7 @@ function newsArticlePage(p){
   const canonical = SITE + "/media/noticias/" + encodeURIComponent(p.slug);
   const ttl = p.seo_title || p.title || "Noticias";
   const desc = p.seo_desc || p.excerpt || "";
-  const cover = p.cover_url || (SITE + "/PORTADA.png");
+  const cover = p.cover_url || (SITE + "/assets/og-brand.jpg");
   const dateStr = p.published_at ? fmtDate(p.published_at, lang) : "";
   const tags = Array.isArray(p.tags) ? p.tags : [];
   const ld = {
@@ -46,7 +46,7 @@ function newsArticlePage(p){
     "dateModified": p.updated_at || p.published_at || null,
     "inLanguage": lang,
     "author": { "@type":"Organization", "name":"BrightPuppy", "url": SITE },
-    "publisher": { "@type":"Organization", "name":"BrightPuppy", "logo": { "@type":"ImageObject", "url": SITE + "/PORTADA.png" } },
+    "publisher": { "@type":"Organization", "name":"BrightPuppy", "logo": { "@type":"ImageObject", "url": SITE + "/assets/logo-clean.webp" } },
     "mainEntityOfPage": { "@type":"WebPage", "@id": canonical }
   };
   const back = lang==="en" ? "News" : "Noticias";

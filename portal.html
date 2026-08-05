@@ -862,9 +862,10 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<div id="pv-msg"></div>', 560);
 
     var photo=p.photo_url||'';
-    ov.querySelector('#pv-cam').onclick=function(){ pickPhoto(function(url){ photo=url;
+    function pvPickPhoto(){ pickPhoto(function(url){ photo=url;
       ov.querySelector('#pv-ph').innerHTML='<img src="'+esc(url)+'" style="width:100%;height:100%;object-fit:cover"><button class="camchip" id="pv-cam2">'+svg('cam',15)+' '+PT('Cambiar foto','Change photo')+'</button>';
-      ov.querySelector('#pv-cam2').onclick=arguments.callee; }); };
+      var _c2=ov.querySelector('#pv-cam2'); if(_c2) _c2.onclick=pvPickPhoto; }); }
+    ov.querySelector('#pv-cam').onclick=pvPickPhoto;
 
     // toggles de preferencias
     Array.prototype.forEach.call(ov.querySelectorAll('.ptog[data-k]'), function(t){ t.onclick=function(){ var k=t.getAttribute('data-k'); prefs[k]=!prefs[k]; t.classList.toggle('on',prefs[k]); }; });
