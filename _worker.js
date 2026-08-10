@@ -129,16 +129,31 @@ export default {
       if (p !== "/catalogo" && p !== "/catalogo.html") return res;
       const lang = ((url.searchParams.get("lang")||"").toLowerCase()==="en") ? "en":"es";
       const ct = (res.headers.get("content-type")||"").toLowerCase();
-      if (lang!=="en" || !ct.includes("text/html")) return res;
-      return new HTMLRewriter()
-        .on("title", new SetText(EN.title))
-        .on('meta[property="og:title"]', new SetAttr("content", EN.title))
-        .on('meta[name="twitter:title"]', new SetAttr("content", EN.title))
-        .on('meta[property="og:description"]', new SetAttr("content", EN.desc))
-        .on('meta[name="description"]', new SetAttr("content", EN.desc))
-        .on('meta[name="twitter:description"]', new SetAttr("content", EN.desc))
-        .on("html", new SetAttr("lang","en"))
-        .transform(res);
+      if (!ct.includes("text/html")) return res;
+      // Titulo del catalogo (el que puso el staff) -> asi lo muestra la vista previa de WhatsApp.
+      // Sin titulo se queda el de siempre ("Cachorros Disponibles" / "Available Puppies").
+      let ttl = (lang==="en") ? EN.title : null;
+      let dsc = (lang==="en") ? EN.desc : null;
+      const tok = url.searchParams.get("t");
+      if (tok) {
+        try {
+          const ac = new AbortController(); const tmo = setTimeout(function(){ ac.abort(); }, 2500);
+          const cr = await fetch(SUPA + "/functions/v1/catalog_view", { method:"POST", headers:{ "Content-Type":"application/json", "apikey": SUPA_ANON, "Authorization": "Bearer " + SUPA_ANON }, body: JSON.stringify({ token: tok }), signal: ac.signal });
+          clearTimeout(tmo);
+          const cd = await cr.json();
+          if (cd && cd.ok) {
+            const brand = (cd.company === "cachorrosrd") ? "Cachorros RD" : "BrightPuppy";
+            if (cd.label && String(cd.label).trim()) ttl = String(cd.label).trim() + " · " + brand;
+            if (cd.note && String(cd.note).trim()) dsc = String(cd.note).trim();
+          }
+        } catch(e){}
+      }
+      if (!ttl && !dsc && lang !== "en") return res;
+      let rw = new HTMLRewriter();
+      if (ttl) rw = rw.on("title", new SetText(ttl)).on('meta[property="og:title"]', new SetAttr("content", ttl)).on('meta[name="twitter:title"]', new SetAttr("content", ttl));
+      if (dsc) rw = rw.on('meta[property="og:description"]', new SetAttr("content", dsc)).on('meta[name="description"]', new SetAttr("content", dsc)).on('meta[name="twitter:description"]', new SetAttr("content", dsc));
+      if (lang === "en") rw = rw.on("html", new SetAttr("lang","en"));
+      return rw.transform(res);
     } catch(e){ return res; }
   }
 };

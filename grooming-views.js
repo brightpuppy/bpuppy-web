@@ -273,9 +273,17 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   const [times, setTimes] = useState(TIMES);
   const [closedDays, setClosedDays] = useState([0]);
   const [leadHours, setLeadHours] = useState(6);
+  const [blockedDates, setBlockedDates] = useState([]);
   useEffect(function() {
+    const ANON_CFG = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
     try {
-      fetch("https://oqqwmcplljirbreowrll.supabase.co/functions/v1/grooming_slots", { method: "POST", headers: { "Content-Type": "application/json", "apikey": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4" }, body: "{}" }).then(function(r) { return r.json(); }).then(function(cf) { if (cf && cf.times && cf.times.length) setTimes(cf.times); if (cf && cf.closed_days) setClosedDays(cf.closed_days); if (cf && cf.lead_hours != null) setLeadHours(cf.lead_hours); }).catch(function() {});
+      fetch("https://oqqwmcplljirbreowrll.supabase.co/functions/v1/grooming_slots", { method: "POST", headers: { "Content-Type": "application/json", "apikey": ANON_CFG }, body: "{}" }).then(function(r) { return r.json(); }).then(function(cf) { if (cf && cf.times && cf.times.length) setTimes(cf.times); if (cf && cf.closed_days) setClosedDays(cf.closed_days); if (cf && cf.lead_hours != null) setLeadHours(cf.lead_hours); }).catch(function() {});
+    } catch (e) {}
+    // Dias bloqueados a mano desde el CRM: se apagan en el calendario, no solo al elegirlos
+    try {
+      const d0 = new Date(); d0.setDate(d0.getDate() - 1);
+      const from = d0.getFullYear() + "-" + String(d0.getMonth() + 1).padStart(2, "0") + "-" + String(d0.getDate()).padStart(2, "0");
+      fetch("https://oqqwmcplljirbreowrll.supabase.co/rest/v1/grooming_blocked_dates?select=date&date=gte." + from, { headers: { "apikey": ANON_CFG, "Authorization": "Bearer " + ANON_CFG } }).then(function(r) { return r.json(); }).then(function(rows) { if (Array.isArray(rows)) setBlockedDates(rows.map(function(x) { return String(x.date).slice(0, 10); })); }).catch(function() {});
     } catch (e) {}
   }, []);
   const MONTHS_DISP = [t(["Enero", "January"]), t(["Febrero", "February"]), t(["Marzo", "March"]), t(["Abril", "April"]), t(["Mayo", "May"]), t(["Junio", "June"]), t(["Julio", "July"]), t(["Agosto", "August"]), t(["Septiembre", "September"]), t(["Octubre", "October"]), t(["Noviembre", "November"]), t(["Diciembre", "December"])];
@@ -356,6 +364,8 @@ function BookingCalendar({ me, activeMembership, activePlan, firstName, onLogin 
   const isAvailable = (d) => {
     const date = new Date(year, month, d);
     if (closedDays.indexOf(date.getDay()) >= 0) return false;
+    const ds = year + "-" + String(month + 1).padStart(2, "0") + "-" + String(d).padStart(2, "0");
+    if (blockedDates.indexOf(ds) >= 0) return false;
     return availableTimes(d).length > 0;
   };
   const canStep2 = selectedServices.size > 0 && size;
@@ -1081,7 +1091,7 @@ function IntroOfferBanner() {
   // Mismo día permitido solo antes de las 2 PM (3h antes del último slot 5 PM) y con al menos 1h de anticipación.
   function todayOk(tm) { if (day !== todayISO) return true; var nowD = new Date(); var nm = nowD.getHours() * 60 + nowD.getMinutes(); if (nm >= 840) return false; return bkMin(tm) >= nm + 60; }
   function ymdL(dt) { return dt.getFullYear() + "-" + String(dt.getMonth() + 1).padStart(2, "0") + "-" + String(dt.getDate()).padStart(2, "0"); }
-  function availDays() { var out = []; var base = new Date(); base.setHours(0, 0, 0, 0); var i = 0; while (out.length < 14 && i < 40) { var dt = new Date(base.getTime() + i * 864e5); i++; if (closedDays.indexOf(dt.getDay()) >= 0) continue; out.push({ ds: ymdL(dt), d: dt, first: i === 1 }); } return out; }
+  function availDays() { var out = []; var base = new Date(); base.setHours(0, 0, 0, 0); var i = 0; while (out.length < 14 && i < 40) { var dt = new Date(base.getTime() + i * 864e5); i++; if (closedDays.indexOf(dt.getDay()) >= 0) continue; var _ds = ymdL(dt); if (blocked.indexOf(_ds) >= 0) continue; out.push({ ds: _ds, d: dt, first: i === 1 }); } return out; }
   function pickDate(v) {
     setDay(v); setTime(""); setTaken([]); setErr("");
     if (!v) return;
