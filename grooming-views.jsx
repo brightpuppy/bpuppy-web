@@ -939,7 +939,7 @@ function GroomingApp() {
               <span style={{ color:'var(--orange)', display:'inline-flex' }}><Icon name="pin" size={16}/></span>
               <div>
                 <div style={{ fontSize:9.5, fontWeight:800, letterSpacing:'0.1em', textTransform:'uppercase', color:'var(--orange)', marginBottom:1 }}>{t(['Próximamente abriendo','Opening soon'])}</div>
-                <div style={{ fontSize:12, fontWeight:600, color:'var(--ink)' }}>5604 Kalogridis Rd, Haines City, FL 33844</div>
+                <div style={{ fontSize:12, fontWeight:600, color:'var(--ink)' }}>Haines City, FL</div>
               </div>
             </div>
 
@@ -1075,7 +1075,7 @@ function GroomingApp() {
               {t(['Selecciona servicio, fecha y hora. Te confirmamos disponibilidad en menos de 2 horas. También ofrecemos','Select a service, date and time. We confirm availability within 2 hours. We also offer'])} <strong>{t(['recogida y entrega','pickup and delivery'])}</strong> — {t(['pregunta al reservar.','just ask when you book.'])}
             </p>
             <div style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
-              {[['pin', t(['Próximamente · Haines City, FL','Opening soon · Haines City, FL']), '5604 Kalogridis Rd, Haines City, FL 33844'], ['van', 'Pickup & Delivery', t(['Recogemos y entregamos en tu casa (+$20)','We pick up and drop off at your home (+$20)'])], ['clock', t(['Horario','Hours']), t(['Lun – Sáb: 9:00 AM – 6:00 PM','Mon – Sat: 9:00 AM – 6:00 PM'])]].map(([ic, title, sub]) => (
+              {[['pin', t(['Próximamente · Haines City, FL','Opening soon · Haines City, FL']), 'Haines City, FL'], ['van', 'Pickup & Delivery', t(['Recogemos y entregamos en tu casa (+$20)','We pick up and drop off at your home (+$20)'])], ['clock', t(['Horario','Hours']), t(['Lun – Sáb: 9:00 AM – 6:00 PM','Mon – Sat: 9:00 AM – 6:00 PM'])]].map(([ic, title, sub]) => (
                 <div key={title} style={{ display: 'flex', gap: 12, padding: '14px 16px', background: 'var(--paper)', borderRadius: 12, border: '1px solid var(--line)' }}>
                   <span style={{ flexShrink: 0, color: 'var(--orange)', display:'inline-flex' }}><Icon name={ic} size={22}/></span>
                   <div>
@@ -1100,7 +1100,7 @@ function GroomingApp() {
                 BPuppy Grooming · Haines City, FL
               </h2>
             </div>
-            <a href="https://maps.google.com/?q=5604+Kalogridis+Rd,+Haines+City,+FL+33844" target="_blank" rel="noreferrer"
+            <a href="https://maps.google.com/?q=Haines+City,+FL" target="_blank" rel="noreferrer"
               style={{ marginLeft:'auto', display:'inline-flex', alignItems:'center', gap:8, padding:'10px 18px', borderRadius:999, background:'var(--orange)', color:'#fff', fontSize:13, fontWeight:700, textDecoration:'none', whiteSpace:'nowrap', boxShadow:'0 6px 20px -6px rgba(245,130,32,0.45)' }}>
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
               {t(['Abrir en Maps','Open in Maps'])}
@@ -1109,13 +1109,13 @@ function GroomingApp() {
           <div style={{ display:'flex', alignItems:'center', gap:10, marginBottom:20, padding:'12px 18px', background:'rgba(245,130,32,0.06)', border:'1px solid rgba(245,130,32,0.2)', borderRadius:12 }}>
             <span style={{ color:'var(--orange)', display:'inline-flex' }}><Icon name="pin" size={18}/></span>
             <div>
-              <div style={{ fontSize:14, fontWeight:700, color:'var(--ink)' }}>5604 Kalogridis Rd, Haines City, FL 33844</div>
+              <div style={{ fontSize:14, fontWeight:700, color:'var(--ink)' }}>Haines City, FL</div>
               <div style={{ fontSize:12, color:'var(--orange)', fontWeight:600 }}>{t(['Próximamente abriendo · ¡Síguenos para el anuncio oficial!','Opening soon · Follow us for the official announcement!'])}</div>
             </div>
           </div>
           <div style={{ borderRadius:18, overflow:'hidden', border:'1px solid var(--line)', boxShadow:'0 4px 24px rgba(0,0,0,0.07)' }}>
             <iframe
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d622.1281722026707!2d-81.56348267074404!3d28.107241293543456!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x88dd744a45039381%3A0x7e8fc576a126e748!2s5604%20Kalogridis%20Rd%2C%20Haines%20City%2C%20FL%2033844!5e0!3m2!1ses!2sus!4v1779474402737!5m2!1ses!2sus"
+              src="https://www.google.com/maps?q=Haines+City,+FL&output=embed"
               width="100%" height="380" style={{ border:0, display:'block' }}
               allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"
               title="BPuppy Grooming — Haines City FL"
