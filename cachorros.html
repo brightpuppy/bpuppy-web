@@ -709,10 +709,11 @@ window.submitIntlShipping = submitIntlShipping;
         var el = document.querySelector(SECTIONS[id]);
         if (!el) return;
         if (id === 'listado') {
-          // Default listado to HIDDEN — only show if explicitly published ON
+          // El listado se VE por defecto: estaba oculto salvo que se publicara a mano, y como esa marca
+          // vive en el localStorage de cada navegador, todo el que llegaba de Google veia la pagina SIN cachorros.
           var d; try { d = JSON.parse(localStorage.getItem('bpuppy_publish_v1')) || {}; } catch(e) { d = {}; }
           var explicit = d.sections && d.sections[PAGE] && d.sections[PAGE][id];
-          el.style.display = explicit === true ? '' : 'none';
+          el.style.display = explicit === false ? 'none' : '';
         } else {
           el.style.display = SP.isSectionLive(PAGE, id) ? '' : 'none';
         }

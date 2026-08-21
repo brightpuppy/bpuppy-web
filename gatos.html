@@ -382,10 +382,10 @@ window.submitIntlCat=submitIntlCat;
         var el = document.querySelector(SECTIONS[id]);
         if (!el) return;
         if (id === 'listado') {
-          // Default listado to HIDDEN — only show if explicitly published ON
+          // El listado se VE por defecto (antes estaba oculto salvo publicacion manual, que vive en localStorage).
           var d; try { d = JSON.parse(localStorage.getItem('bpuppy_publish_v1')) || {}; } catch(e) { d = {}; }
           var explicit = d.sections && d.sections[PAGE] && d.sections[PAGE][id];
-          el.style.display = explicit === true ? '' : 'none';
+          el.style.display = explicit === false ? 'none' : '';
         } else {
           el.style.display = SP.isSectionLive(PAGE, id) ? '' : 'none';
         }
