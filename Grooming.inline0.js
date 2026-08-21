@@ -16,12 +16,22 @@ function GroomRoot() {
   React.useEffect(() => {
     document.documentElement.lang = lang;
   }, [lang]);
+  // El encabezado es position:fixed, asi que el aviso se le metia debajo y se leia encima del menu.
+  // Medimos su alto real (cambia en movil y al hacer scroll) para dejarlo justo debajo.
+  const [hdrH, setHdrH] = React.useState(86);
+  React.useEffect(() => {
+    const medir = () => { const h = document.querySelector(".hdr"); if (h && h.offsetHeight) setHdrH(h.offsetHeight); };
+    medir();
+    const t = setTimeout(medir, 350);
+    window.addEventListener("resize", medir);
+    return () => { clearTimeout(t); window.removeEventListener("resize", medir); };
+  }, []);
   const isLive = useSitePublish("Grooming");
   if (!isLive) return /* @__PURE__ */ React.createElement(ComingSoon, { pageName: "Grooming" });
   // Aviso de reestructuracion: mientras la agenda este cerrada, esto va arriba de todo para que
   // nadie intente reservar y se lleve un error. Se quita borrando este bloque (y reabriendo los dias).
   const en = lang === "en";
-  const notice = /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#2D2421,#43352d)", color: "#fff", padding: "16px 18px", textAlign: "center" } },
+  const notice = /* @__PURE__ */ React.createElement("div", { style: { background: "linear-gradient(135deg,#2D2421,#43352d)", color: "#fff", padding: "16px 18px", textAlign: "center", marginTop: hdrH } },
     /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 760, margin: "0 auto" } },
       /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 800, letterSpacing: ".14em", textTransform: "uppercase", color: "#F58220", marginBottom: 5 } }, en ? "Temporary notice" : "Aviso temporal"),
       /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(17px,4.4vw,22px)", fontWeight: 700, lineHeight: 1.35 } }, en ? "We are restructuring — grooming available soon." : "Estamos reestructurando, grooming disponible próximamente."),
