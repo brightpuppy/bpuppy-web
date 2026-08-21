@@ -19,7 +19,7 @@ const STRINGS = {
     contact: ["Contacto", "Contact"]
   },
   hdr: {
-    cta: ["Solicita un Cachorro", "Request a Puppy"]
+    cta: ["Ver Cachorros", "See Puppies"]
   },
   hero: {
     eyebrow: ["Cachorros disponibles ahora", "Puppies available now"],
