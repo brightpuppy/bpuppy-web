@@ -4,11 +4,11 @@
 <meta charset="utf-8" />
 <script>try{var _bl=localStorage.getItem('bpuppy-lang');if(!_bl){_bl=(((navigator.language||navigator.userLanguage||'')+'').toLowerCase().indexOf('es')===0)?'es':'en';localStorage.setItem('bpuppy-lang',_bl);}document.documentElement.lang=_bl;}catch(e){}/*bplangboot*/</script>
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<meta name="description" content="Premium-breed puppies for sale, family-raised and vaccinated, with a health guarantee. Haines City, FL and shipping across the USA. See today's available puppies." />
+<meta name="description" content="Puppies available now from our partner breeder network across the USA: dozens of breeds, family-raised, vaccinated, with a written health guarantee. Delivery in 2 to 5 days. Haines City, FL." />
 <meta name="robots" content="index, follow" />
 <link rel="canonical" href="https://bpuppy.us/cachorros" />
 <meta property="og:title" content="Puppies for Sale - Premium Breeds with Health Guarantee | BPuppy" />
-<meta property="og:description" content="Premium-breed puppies for sale, family-raised and vaccinated, with a health guarantee. Haines City, FL and shipping across the USA. See today's available puppies." />
+<meta property="og:description" content="Puppies available now from our partner breeder network across the USA: dozens of breeds, vaccinated, with a written health guarantee. Delivery in 2 to 5 days." />
 <meta property="og:url" content="https://bpuppy.us/cachorros" />
 <meta property="og:type" content="website" />
 <meta property="og:image" content="https://bpuppy.us/assets/og-brand.jpg" />
@@ -20,659 +20,1375 @@
 <link rel="stylesheet" href="styles.css?v=1785890000000">
 <script src="site-publish.js?v=1781476900318"></script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
 <style>
 @keyframes spin { to { transform: rotate(360deg); } }
 .pup-spinner { width:36px; height:36px; border:3px solid var(--line); border-top-color:var(--orange); border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 16px; }
-</style>
-<style>
-.page-hero { background: linear-gradient(100deg, rgba(45,36,33,0.78) 0%, rgba(45,36,33,0.55) 40%, rgba(45,36,33,0.15) 100%), url("assets/header-cachorros.webp") right 25%/cover no-repeat, var(--dark-sec, #5C4F48); color: #fff; padding: 140px 0 80px; position: relative; overflow: hidden; }
-.page-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(45% 60% at 18% 50%, rgba(0,0,0,0.4), transparent 70%); pointer-events:none; }
-.page-hero .container { position: relative; z-index: 2; }
-.page-hero h1, .page-hero p, .page-hero .back { color: #fff !important; }
-.page-hero h1 em { color: #FFB877 !important; }
-.page-hero .back { display:inline-flex; align-items:center; gap:8px; font-size:13px; font-weight:600; letter-spacing:0.06em; text-transform:uppercase; color: var(--ink-soft, rgba(45,36,33,0.62)); margin-bottom:28px; transition:color .2s; }
-.page-hero .back:hover { color: var(--ink); }
-.page-hero h1 { font-family:var(--display); font-size:clamp(42px,7vw,88px); font-weight:600; letter-spacing:-0.03em; line-height:0.95; margin:0 0 20px; }
-.page-hero h1 em { font-family:var(--serif); font-style:italic; color: var(--orange); font-weight:400; }
-.page-hero p { color: var(--ink-2, #6B5A4E); font-size:18px; max-width:56ch; line-height:1.55; margin:0; }
+.ic { width:16px; height:16px; flex:0 0 auto; stroke:currentColor; fill:none; stroke-width:1.7; stroke-linecap:round; stroke-linejoin:round; }
 
-/* Dog decorative silhouette */
-.dog-deco { position: absolute; z-index: 1; opacity: 0.05; pointer-events: none; color: #fff; }
-.dog-deco-1 { top: 12%; right: 4%; width: 260px; height: 260px; animation: dogPlay 8s ease-in-out infinite; }
-.dog-deco-2 { bottom: -2%; left: 6%; width: 160px; height: 160px; animation: dogPlay 10s ease-in-out infinite reverse; }
-@keyframes dogPlay { 0%,100% { transform: translateY(0) scaleX(1); } 25% { transform: translateY(-8px) scaleX(1.02); } 75% { transform: translateY(4px) scaleX(0.98); } }
+/* Hero */
+.page-hero { background: linear-gradient(100deg, rgba(45,36,33,0.82) 0%, rgba(45,36,33,0.58) 42%, rgba(45,36,33,0.18) 100%), url("assets/header-cachorros.webp") right 25%/cover no-repeat, var(--dark-sec, #5C4F48); color:#fff; padding:130px 0 66px; position:relative; overflow:hidden; }
+.page-hero::before { content:""; position:absolute; inset:0; background: radial-gradient(45% 60% at 18% 50%, rgba(0,0,0,0.42), transparent 70%); pointer-events:none; }
+.page-hero .container { position:relative; z-index:2; }
+.page-hero h1, .page-hero p { color:#fff !important; }
+.page-hero h1 { font-family:var(--display); font-size:clamp(38px,6.4vw,82px); font-weight:600; letter-spacing:-0.03em; line-height:0.96; margin:0 0 18px; max-width:16ch; }
+.page-hero h1 em { font-family:var(--serif); font-style:italic; color:#FFB877 !important; font-weight:400; }
+.page-hero .lede { font-size:clamp(15px,1.6vw,18px); max-width:54ch; line-height:1.6; margin:0; color:rgba(255,255,255,0.88) !important; }
 
-/* Section links */
-.sec-links { padding: 40px 0 0; background: var(--bg); }
-.links-row { display: flex; gap: 16px; flex-wrap: wrap; justify-content: center; }
-.link-card {
-  display: flex; align-items: center; gap: 16px;
-  padding: 18px 28px; border-radius: 999px;
-  background: var(--paper); border: 1.5px solid var(--line);
-  font-size: 15px; font-weight: 600; color: var(--ink);
-  transition: all .25s; text-decoration: none;
-}
-.link-card:hover { transform: translateY(-2px); box-shadow: var(--shadow-card); border-color: var(--orange); }
-.link-card .lc-emoji { font-size: 24px; }
-.link-card .lc-arrow { color: var(--ink-soft); transition: transform .2s; }
-.link-card:hover .lc-arrow { transform: translateX(3px); color: var(--orange); }
+.hero-note { margin-top:26px; max-width:62ch; border-top:1px solid rgba(255,255,255,0.28); border-bottom:1px solid rgba(255,255,255,0.28); padding:18px 0; display:flex; gap:14px; align-items:flex-start; }
+.hero-note .ic { width:22px; height:22px; color:#FFB877; margin-top:2px; }
+.hero-note p { margin:0; font-size:clamp(14px,1.5vw,16.5px); line-height:1.6; text-wrap:pretty; }
+.hero-note b { color:#FFB877; font-weight:700; }
 
-/* Puppy grid */
-.pup-sec { padding: 80px 0; background: var(--bg); position: relative; overflow: hidden; }
-.pup-sec::before {
-  content: ""; position: absolute; top: 40%; left: -100px;
-  width: 400px; height: 400px; border-radius: 50%;
-  background: radial-gradient(circle, var(--accent-2) 0%, transparent 70%);
-  opacity: 0.3; pointer-events: none;
-}
-.pup-grid { display:grid; grid-template-columns:repeat(3, 1fr); gap:22px; position: relative; z-index: 1; }
-.pup-card { border-radius:22px; background:var(--paper); border:1px solid var(--line); overflow:hidden; transition:transform .35s, box-shadow .35s; cursor:pointer; position: relative; }
-.pup-card:hover { transform:translateY(-6px); box-shadow: 0 20px 50px -15px rgba(245,130,32,0.06); }
-.pup-card-img { aspect-ratio:4/3; background: linear-gradient(135deg, var(--accent-2), var(--bg-2)); display:grid; place-items:center; position:relative; overflow: hidden; }
-.pup-card-img .ph { font-size:48px; z-index: 1; filter: drop-shadow(0 4px 12px rgba(45,36,33,0.1)); }
-.pup-card-img .badge { position:absolute; top:14px; left:14px; padding:5px 12px; border-radius:999px; font-size:11px; font-weight:700; letter-spacing:0.04em; z-index: 2; }
-.badge-new { background:var(--orange); color:#fff; }
-.badge-reserved { background:var(--ink); color:#fff; }
-.badge-taken { background:#4E7A51; color:#fff; }
-.pup-taken-ov { position:absolute; inset:0; background:rgba(45,36,33,0.42); display:grid; place-items:center; z-index:3; color:#fff; font-weight:700; font-size:14px; text-align:center; padding:12px; }
-.pup-card.taken .pup-card-img img { filter:grayscale(0.45) brightness(0.9); }
+.hero-facts { display:flex; flex-wrap:wrap; gap:9px; margin-top:22px; }
+.hero-fact { display:inline-flex; align-items:center; gap:8px; padding:8px 15px; border:1px solid rgba(255,255,255,0.3); border-radius:999px; font-size:12.5px; font-weight:600; letter-spacing:0.01em; color:#fff; }
+.hero-fact .ic { width:15px; height:15px; color:#FFB877; }
+.hero-fine { margin-top:16px; font-size:12.5px; line-height:1.6; color:rgba(255,255,255,0.72) !important; max-width:66ch; text-wrap:pretty; }
 
-/* Dog silhouette playing behind cards */
-.pup-card-img::after {
-  content: "";
-  position: absolute; bottom: 6px; right: 10px; width: 90px; height: 65px;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 90 65'%3E%3Cpath d='M18 55 Q10 42 15 28 Q18 18 28 25 Q30 14 38 10 Q42 18 40 26 Q48 18 56 22 Q60 28 58 35 Q68 30 76 38 Q82 48 72 55 Z' fill='%23F58220' opacity='0.07'/%3E%3Ccircle cx='70' cy='46' r='5' fill='%23F58220' opacity='0.05'/%3E%3Ccircle cx='62' cy='52' r='3' fill='%23F58220' opacity='0.04'/%3E%3C/svg%3E");
-  background-size: contain; background-repeat: no-repeat; opacity: 0.8;
-  transition: transform .4s ease;
-}
-.pup-card:hover .pup-card-img::after { transform: translateX(4px) scale(1.08); }
+/* Trust links */
+.sec-links { padding:34px 0 0; background:var(--bg); }
+.links-row { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+.link-card { display:inline-flex; align-items:center; gap:9px; padding:11px 19px; border-radius:999px; background:var(--paper); border:1px solid var(--line); font-size:13.5px; font-weight:600; color:var(--ink); transition:border-color .2s, transform .2s, color .2s; text-decoration:none; }
+.link-card .ic { color:var(--orange); }
+.link-card:hover { transform:translateY(-2px); border-color:var(--orange); color:var(--orange); }
 
-.pup-card-body { padding:22px; }
-.pup-card-body h3 { font-family:var(--display); font-size:22px; font-weight:600; letter-spacing:-0.015em; margin:0 0 4px; }
-.pup-card-body .breed { font-size:13px; color:var(--orange); font-weight:600; }
-.pup-card-body .meta { font-size:13px; color:var(--ink-soft); margin-top:8px; display:flex; gap:14px; }
+/* Listing */
+.pup-sec { padding:56px 0 90px; background:var(--bg); position:relative; }
+.pup-head { display:flex; gap:22px; flex-wrap:wrap; align-items:flex-end; justify-content:space-between; margin-bottom:26px; }
+.pup-head h2 { font-family:var(--display); font-size:clamp(29px,3.6vw,50px); font-weight:600; letter-spacing:-0.025em; margin:10px 0 0; }
+.pup-head h2 em { font-family:var(--serif); font-style:italic; color:var(--orange); font-weight:400; }
+.pup-head .side { display:flex; flex-direction:column; gap:9px; align-items:flex-start; max-width:38ch; }
+.pup-head .side p { color:var(--ink-2); font-size:14px; line-height:1.6; margin:0; text-wrap:pretty; }
+.btn-line { display:inline-flex; align-items:center; gap:8px; padding:10px 17px; background:none; border:1px solid var(--line); border-radius:999px; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink-2); cursor:pointer; transition:border-color .2s, color .2s; }
+.btn-line:hover { border-color:var(--orange); color:var(--orange); }
+.btn-line .ic { width:15px; height:15px; }
 
-/* Breeds section */
-.breeds-sec { padding: 80px 0; background: var(--paper); border-top: 1px solid var(--line); }
-.breed-chips { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 36px; justify-content: center; }
-.breed-chip {
-  padding: 12px 22px; border-radius: 999px;
-  background: var(--bg); border: 1.5px solid var(--line);
-  font-size: 14px; font-weight: 600; color: var(--ink-2); text-decoration: none; cursor: pointer;
-  display: flex; align-items: center; gap: 8px; transition: all .25s;
-}
-.breed-chip:hover { background: var(--orange); color: #fff; border-color: var(--orange); transform: translateY(-2px); }
-
-.back-cta { padding: 80px 0; text-align: center; background: var(--bg); border-top: 1px solid var(--line); }
-
-/* Filter bar */
-.pup-filter-bar {
-  display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
-  background: #fff; border: 1px solid var(--line); border-radius: 12px;
-  padding: 14px 18px; margin-bottom: 28px; position: relative; z-index: 2;
-}
-.pf-label { font-size: 11px; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: var(--orange); flex-shrink: 0; }
-.pf-select {
-  padding: 8px 30px 8px 12px; border: 1.5px solid var(--line); border-radius: 8px;
-  font-family: inherit; font-size: 13px; font-weight: 600; color: var(--ink);
-  background: #fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23F58220' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center;
-  -webkit-appearance: none; appearance: none; cursor: pointer;
-}
-.pf-select:focus { border-color: var(--orange); outline: none; }
-.pf-search {
-  flex: 1; min-width: 180px; display: flex; align-items: center; gap: 8px;
-  background: #FFF5EB; border-radius: 8px; padding: 8px 12px;
-}
-.pf-search input { flex: 1; border: none; background: none; outline: none; font-family: inherit; font-size: 13px; color: var(--ink); }
-.pf-search input::placeholder { color: var(--ink-soft); }
-.pf-clear { background: none; border: 1.5px solid var(--line); color: var(--ink-2); padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 12px; font-weight: 600; font-family: inherit; transition: all .15s; }
-.pf-clear:hover { border-color: var(--orange); color: var(--orange); }
-.pf-count { font-size: 12px; font-weight: 700; color: var(--orange); white-space: nowrap; }
-
-/* Breed autocomplete */
-.pf-autocomplete { position:relative; }
-.pf-ac-input { padding:8px 28px 8px 12px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink); background:#fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23F58220' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 8px center; min-width:160px; outline:none; cursor:pointer; }
+/* Filters */
+.pf-wrap { border:1px solid var(--line); border-radius:16px; background:var(--paper); margin-bottom:26px; }
+.pf-top { display:flex; align-items:center; gap:10px; padding:12px 14px; flex-wrap:wrap; }
+.pf-search { flex:1 1 200px; min-width:0; display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:9px 13px; }
+.pf-search .ic { color:var(--ink-soft); }
+.pf-search input { flex:1; min-width:0; border:none; background:none; outline:none; font-family:inherit; font-size:13.5px; color:var(--ink); }
+.pf-btn.pf-toggle { display:none; }
+.pf-body { display:flex; align-items:center; gap:9px; flex-wrap:wrap; padding:0 14px 13px; }
+.pf-select { padding:9px 32px 9px 13px; border:1px solid var(--line); border-radius:10px; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink); background:#fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23F58220' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 11px center; -webkit-appearance:none; appearance:none; cursor:pointer; max-width:100%; }
+.pf-select:focus { border-color:var(--orange); outline:none; }
+.pf-select.on { border-color:var(--orange); color:var(--orange); background-color:rgba(245,130,32,0.06); }
+.pf-ac { position:relative; flex:0 1 auto; min-width:0; }
+.pf-ac-input { width:190px; max-width:100%; padding:9px 30px 9px 13px; border:1px solid var(--line); border-radius:10px; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink); background:#fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23F58220' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 10px center; outline:none; cursor:pointer; }
 .pf-ac-input:focus { border-color:var(--orange); }
-.pf-ac-input.has-value { border-color:var(--orange); background-color:rgba(245,130,32,0.06); color:var(--orange); }
-.pf-ac-drop { position:absolute; top:calc(100% + 4px); left:0; min-width:220px; max-height:240px; overflow-y:auto; background:#fff; border:1.5px solid var(--line); border-radius:10px; box-shadow:0 8px 24px -8px rgba(45,36,33,0.18); z-index:999; display:none; }
+.pf-ac-input.on { border-color:var(--orange); background-color:rgba(245,130,32,0.06); color:var(--orange); }
+.pf-ac-drop { position:absolute; top:calc(100% + 5px); left:0; width:280px; max-width:78vw; max-height:290px; overflow-y:auto; background:#fff; border:1px solid var(--line); border-radius:12px; box-shadow:0 14px 34px -12px rgba(45,36,33,0.24); z-index:60; display:none; }
 .pf-ac-drop.open { display:block; }
-.pf-ac-opt { padding:9px 14px; font-size:13px; font-weight:500; color:var(--ink); cursor:pointer; transition:background .1s; }
-.pf-ac-opt:hover, .pf-ac-opt.selected { background:rgba(245,130,32,0.08); color:var(--orange); font-weight:700; }
+.pf-ac-opt { display:flex; justify-content:space-between; gap:12px; padding:9px 14px; font-size:13px; font-weight:500; color:var(--ink); cursor:pointer; }
+.pf-ac-opt small { color:var(--ink-soft); font-weight:700; }
+.pf-ac-opt:hover, .pf-ac-opt.sel { background:rgba(245,130,32,0.08); color:var(--orange); font-weight:700; }
+.pf-btn { padding:9px 15px; border:1px solid var(--line); border-radius:10px; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink-2); background:#fff; cursor:pointer; display:inline-flex; align-items:center; justify-content:center; gap:7px; white-space:nowrap; }
+.pf-btn.on { border-color:var(--orange); color:var(--orange); background:rgba(245,130,32,0.06); }
+.pf-btn .n { background:var(--orange); color:#fff; border-radius:999px; padding:1px 7px; font-size:11px; }
+.pf-clear { padding:9px 15px; border:1px solid var(--line); border-radius:10px; background:none; font-family:inherit; font-size:12.5px; font-weight:600; color:var(--ink-2); cursor:pointer; }
+.pf-clear:hover { border-color:var(--orange); color:var(--orange); }
+.pf-count { font-size:12.5px; font-weight:700; color:var(--orange); white-space:nowrap; margin-left:auto; }
+.pf-colors { display:none; border-top:1px solid var(--line); padding:16px; background:var(--bg); border-radius:0 0 16px 16px; }
+.pf-colors.open { display:block; }
+.pf-colors .hint { font-size:12px; color:var(--ink-soft); line-height:1.5; margin:0 0 12px; text-wrap:pretty; }
+.pf-sw-row { display:flex; flex-wrap:wrap; gap:12px; }
+.pf-sw { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; user-select:none; width:64px; }
+.pf-sw-dot { width:34px; height:34px; border-radius:50%; border:2px solid rgba(45,36,33,0.14); }
+.pf-sw.sel .pf-sw-dot { border-color:var(--orange); box-shadow:0 0 0 3px rgba(245,130,32,0.22); }
+.pf-sw-lbl { font-size:10.5px; font-weight:600; color:var(--ink-2); text-align:center; line-height:1.3; }
+.pf-sw.sel .pf-sw-lbl { color:var(--orange); font-weight:700; }
+.pf-chips { display:flex; flex-wrap:wrap; gap:7px; padding:0 14px 13px; }
+.pf-chip { display:inline-flex; align-items:center; gap:7px; padding:5px 12px; border-radius:999px; background:rgba(245,130,32,0.1); color:var(--orange); font-size:12px; font-weight:700; border:none; font-family:inherit; cursor:pointer; }
+.pf-chip .x { font-size:14px; line-height:1; }
 
-/* Color filter */
-.pf-color-btn { padding:8px 14px; border:1.5px solid var(--line); border-radius:8px; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink-2); background:#fff; cursor:pointer; display:inline-flex; align-items:center; gap:6px; transition:all .15s; white-space:nowrap; }
-.pf-color-btn.active { border-color:var(--orange); color:var(--orange); background:rgba(245,130,32,0.06); }
-.pf-color-panel { display:none; background:#fff; border:1px solid var(--line); border-radius:12px; padding:16px 20px; margin-bottom:10px; }
-.pf-color-panel.open { display:block; }
-.pf-color-group-label { font-size:10px; font-weight:800; letter-spacing:0.1em; text-transform:uppercase; color:var(--ink-soft); margin:14px 0 8px; }
-.pf-color-group-label:first-child { margin-top:0; }
-.pf-color-swatches { display:flex; flex-wrap:wrap; gap:10px; }
-.pf-color-swatch { display:flex; flex-direction:column; align-items:center; gap:5px; cursor:pointer; transition:transform .15s; user-select:none; }
-.pf-color-swatch:hover { transform:translateY(-2px); }
-.pf-color-dot { width:34px; height:34px; border-radius:50%; border:2.5px solid rgba(45,36,33,0.12); transition:all .15s; position:relative; }
-.pf-color-swatch.sel .pf-color-dot { border-color:var(--orange); box-shadow:0 0 0 3px rgba(245,130,32,0.22); transform:scale(1.12); }
-.pf-color-dot::after { content:'✓'; position:absolute; inset:0; display:none; align-items:center; justify-content:center; font-size:14px; font-weight:800; color:#fff; text-shadow:0 1px 3px rgba(0,0,0,0.55); }
-.pf-color-swatch.sel .pf-color-dot::after { display:flex; }
-.pf-color-label { font-size:10px; font-weight:600; color:var(--ink-2); text-align:center; max-width:54px; line-height:1.3; }
-.pf-color-swatch.sel .pf-color-label { color:var(--orange); font-weight:700; }
+/* Cards */
+.pup-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:20px; }
+.pcard { background:var(--paper); border:1px solid var(--line); border-radius:20px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:transform .28s, box-shadow .28s, border-color .28s; text-align:left; padding:0; font-family:inherit; }
+.pcard:hover { transform:translateY(-4px); box-shadow:var(--shadow-card); border-color:rgba(245,130,32,0.4); }
+.pcard:focus-visible { outline:2px solid var(--orange); outline-offset:2px; }
+.pcard-ph { position:relative; width:100%; aspect-ratio:1/1; background:#F2ECE2; overflow:hidden; }
+.pcard-ph img { width:100%; height:100%; object-fit:cover; display:block; }
+/* Tapa la franja del logo (arriba y abajo) en fotos de criadores y reescala para no dejar bordes vacios */
+.pcard-ph.crop img, .pd-main.crop img { clip-path:inset(13% 0 9% 0); transform:translateY(-2.6%) scale(1.3); }
+.pcard-ph .tag { position:absolute; top:11px; left:11px; z-index:2; background:var(--orange); color:#fff; font-size:10.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; padding:4px 10px; border-radius:999px; }
+.pcard-ph .cnt { position:absolute; left:11px; bottom:11px; z-index:2; display:inline-flex; align-items:center; gap:5px; background:rgba(45,36,33,0.6); color:#fff; font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
+.pcard-ph .cnt .ic { width:12px; height:12px; }
+.pcard-ph .pz { position:absolute; right:11px; bottom:11px; z-index:2; background:rgba(45,36,33,0.86); color:#fff; font-size:13px; font-weight:800; padding:5px 12px; border-radius:999px; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
+.pcard-b { padding:15px 16px 17px; display:flex; flex-direction:column; flex:1; }
+.pcard-breed { font-size:12px; color:var(--orange); font-weight:700; letter-spacing:0.01em; }
+.pcard-b h3 { font-family:var(--display); font-size:20px; font-weight:600; letter-spacing:-0.015em; margin:3px 0 0; }
+.pcard-meta { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
+.chipx { font-size:11.5px; font-weight:600; color:var(--ink-2); background:var(--bg); border:1px solid var(--line); border-radius:999px; padding:3px 9px; }
+.pcard-cta { margin-top:auto; padding-top:13px; font-size:12.5px; font-weight:700; color:var(--ink-2); display:inline-flex; align-items:center; gap:6px; }
+.pcard:hover .pcard-cta { color:var(--orange); }
 
-@media (max-width:900px) { .pup-grid { grid-template-columns: 1fr 1fr; } }
-@media (max-width:540px) { .pup-grid { grid-template-columns: 1fr; } }
+.pup-more { display:flex; justify-content:center; margin-top:34px; }
+.btn-more { padding:14px 30px; border-radius:999px; border:1px solid var(--line); background:var(--paper); font-family:inherit; font-size:14px; font-weight:700; color:var(--ink); cursor:pointer; transition:border-color .2s, color .2s; }
+.btn-more:hover { border-color:var(--orange); color:var(--orange); }
 
-/* Lang toggle */
-.lang { display: flex; align-items: center; padding: 4px; border-radius: 999px; background: rgba(45,36,33,0.06); }
-.lang button { padding: 5px 12px; border-radius: 999px; font-size: 12px; font-weight: 700; letter-spacing: 0.04em; color: var(--ink-2); transition: all .2s; border: 0; background: none; cursor: pointer; font-family: inherit; }
-.lang button[data-active="true"] { background: var(--ink); color: var(--bg); }
+/* Solicitar otra raza */
+.ask { margin-top:44px; border:1px solid var(--line); border-radius:20px; background:var(--paper); padding:clamp(22px,3vw,34px); display:flex; gap:22px; align-items:center; flex-wrap:wrap; }
+.ask .txt { flex:1 1 320px; min-width:0; }
+.ask h3 { font-family:var(--display); font-size:clamp(20px,2.4vw,28px); font-weight:600; letter-spacing:-0.02em; margin:0 0 8px; text-wrap:pretty; }
+.ask p { margin:0; color:var(--ink-2); font-size:14px; line-height:1.6; max-width:56ch; text-wrap:pretty; }
+.ask .acts { display:flex; gap:10px; flex-wrap:wrap; }
+.btn-solid { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:13px 24px; border-radius:999px; background:var(--orange); color:#fff; border:none; font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; }
+.btn-solid:hover { background:var(--orange-deep); }
+.btn-outline2 { display:inline-flex; align-items:center; justify-content:center; gap:8px; padding:13px 24px; border-radius:999px; background:none; color:var(--ink); border:1px solid var(--line); font-family:inherit; font-size:14px; font-weight:700; cursor:pointer; text-decoration:none; }
+.btn-outline2:hover { border-color:var(--orange); color:var(--orange); }
+
+/* Razas */
+.breeds-sec { padding:70px 0; background:var(--paper); border-top:1px solid var(--line); }
+.breed-chips { display:flex; flex-wrap:wrap; gap:9px; margin-top:30px; justify-content:center; }
+.breed-chip { display:inline-flex; align-items:center; gap:8px; padding:10px 18px; border-radius:999px; background:var(--bg); border:1px solid var(--line); font-size:13.5px; font-weight:600; color:var(--ink-2); cursor:pointer; font-family:inherit; transition:border-color .2s, color .2s, transform .2s; text-decoration:none; }
+.breed-chip:hover { border-color:var(--orange); color:var(--orange); transform:translateY(-2px); }
+.breed-chip small { font-size:11.5px; color:var(--ink-soft); font-weight:700; }
+.breed-chip:hover small { color:var(--orange); }
+
+.back-cta { padding:74px 0; text-align:center; background:var(--bg); border-top:1px solid var(--line); }
+
+/* Overlays */
+.ov { position:fixed; inset:0; z-index:9200; background:rgba(30,22,18,0.62); -webkit-backdrop-filter:blur(6px); backdrop-filter:blur(6px); display:none; align-items:flex-start; justify-content:center; padding:18px; overflow-y:auto; overscroll-behavior:contain; }
+.ov.open { display:flex; }
+.ov-card { background:var(--paper); border-radius:22px; width:100%; max-width:620px; margin:auto; box-shadow:0 30px 80px -30px rgba(0,0,0,0.5); position:relative; }
+.ov-x { position:absolute; top:12px; right:12px; width:36px; height:36px; border-radius:50%; border:1px solid var(--line); background:var(--paper); color:var(--ink-2); cursor:pointer; display:grid; place-items:center; z-index:5; }
+.ov-in { padding:22px; }
+.pd-head { padding-right:44px; margin-bottom:14px; }
+.pd-head .b { color:var(--orange); font-weight:700; font-size:12.5px; }
+.pd-head h3 { font-family:var(--display); font-size:clamp(22px,3.4vw,30px); font-weight:600; letter-spacing:-0.02em; margin:2px 0 0; }
+.pd-main { position:relative; border-radius:14px; overflow:hidden; background:#F2ECE2; aspect-ratio:4/3; }
+.pd-main img { width:100%; height:100%; object-fit:cover; display:block; cursor:zoom-in; }
+.pd-main .zoom { position:absolute; right:9px; bottom:9px; background:rgba(45,36,33,0.6); color:#fff; font-size:11px; font-weight:700; padding:4px 10px; border-radius:999px; pointer-events:none; }
+.pd-thumbs { display:flex; gap:6px; margin-top:8px; overflow-x:auto; padding-bottom:4px; }
+.pd-thumbs img { width:52px; height:52px; border-radius:9px; object-fit:cover; cursor:pointer; border:2px solid transparent; flex:0 0 auto; }
+.pd-thumbs img.on { border-color:var(--orange); }
+.pd-price { font-family:var(--display); font-size:27px; font-weight:800; letter-spacing:-0.02em; margin-top:14px; }
+.pd-price small { font-size:12px; font-weight:600; color:var(--ink-soft); }
+.pd-note { font-size:12px; color:var(--ink-soft); line-height:1.55; margin-top:4px; text-wrap:pretty; }
+.pd-specs { display:grid; grid-template-columns:1fr 1fr; gap:0 18px; margin:16px 0 4px; }
+.pd-specs div { display:flex; justify-content:space-between; gap:10px; font-size:13px; border-bottom:1px solid var(--line); padding:7px 0; }
+.pd-specs span:first-child { color:var(--ink-soft); }
+.pd-specs span:last-child { font-weight:700; text-align:right; }
+.pd-acts { display:flex; flex-direction:column; gap:9px; margin-top:18px; }
+.pd-links { display:flex; flex-wrap:wrap; gap:8px 16px; margin-top:14px; padding-top:14px; border-top:1px solid var(--line); }
+.pd-links a { font-size:12.5px; font-weight:700; color:var(--orange); text-decoration:none; display:inline-flex; align-items:center; gap:6px; }
+.pd-links a:hover { text-decoration:underline; }
+.fld { width:100%; padding:11px 14px; border:1px solid var(--line); border-radius:10px; font-family:inherit; font-size:14px; color:var(--ink); background:#fff; outline:none; box-sizing:border-box; }
+.fld:focus { border-color:var(--orange); }
+.fld.key { border-color:var(--orange); background:rgba(245,130,32,0.05); font-weight:600; }
+.frm { display:flex; flex-direction:column; gap:10px; margin-top:14px; }
+
+/* Lightbox */
+.lbx { position:fixed; inset:0; z-index:9400; background:rgba(20,15,12,0.94); display:none; align-items:center; justify-content:center; padding:18px; touch-action:none; }
+.lbx.open { display:flex; }
+.lbx img { max-width:96vw; max-height:88vh; border-radius:12px; }
+.lbx img.crop { clip-path:inset(13% 0 9% 0); }
+.lbx button { position:absolute; border:none; background:rgba(255,255,255,0.14); color:#fff; border-radius:50%; cursor:pointer; display:grid; place-items:center; font-family:inherit; }
+.lbx .x { top:14px; right:16px; width:44px; height:44px; font-size:22px; }
+.lbx .nav { top:50%; transform:translateY(-50%); width:48px; height:48px; font-size:26px; }
+.lbx .prev { left:10px; } .lbx .next { right:10px; }
+
+/* Aviso de la raza pedida desde la URL (anuncio o correo) */
+.url-note { display:flex; gap:12px 16px; align-items:center; flex-wrap:wrap; border:1px solid var(--line); border-radius:16px; background:var(--paper); padding:14px 16px; margin-bottom:18px; }
+.url-note .t { flex:1 1 260px; min-width:0; margin:0; font-size:13.5px; line-height:1.6; color:var(--ink-2); text-wrap:pretty; }
+.url-note .t b { color:var(--ink); font-weight:700; }
+.url-note .btn-solid { padding:11px 20px; font-size:13.5px; min-height:44px; }
+.url-note .x { border:none; background:none; color:var(--ink-soft); font-size:19px; line-height:1; padding:8px 10px; cursor:pointer; font-family:inherit; }
+.url-note .x:hover { color:var(--orange); }
+
+/* Formulario de solicitud */
+select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; cursor:pointer; background:#fff url("data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath d='M3 4.5L6 7.5L9 4.5' stroke='%23F58220' stroke-width='1.8' fill='none' stroke-linecap='round'/%3E%3C/svg%3E") no-repeat right 12px center; }
+.rq-ship { border:1px solid var(--line); border-radius:12px; padding:12px 14px; font-size:13px; line-height:1.65; color:var(--ink-2); text-wrap:pretty; }
+.rq-ship.on { border-color:var(--orange); }
+.rq-ship .p { font-size:16px; font-weight:800; color:var(--ink); }
+.rq-ship .d { color:var(--orange); font-weight:700; }
+.rq-ship .n { display:block; margin-top:4px; font-size:11.5px; color:var(--ink-soft); }
+.rq-hp { position:absolute; left:-9999px; width:1px; height:1px; opacity:0; }
+.rq-err { border:1px solid var(--orange); border-radius:12px; background:rgba(245,130,32,0.08); color:var(--orange-deep,#C8620F); font-size:13px; font-weight:600; line-height:1.5; padding:10px 13px; }
+
+/* Respuesta inmediata a la solicitud */
+.rq-res { text-align:center; padding:20px 2px 6px; }
+.rq-res .ico { display:flex; justify-content:center; color:var(--orange); margin-bottom:12px; }
+.rq-res .ico .ic { width:40px; height:40px; }
+.rq-res h3 { font-family:var(--display); font-size:clamp(23px,5.4vw,31px); font-weight:600; letter-spacing:-0.025em; line-height:1.08; margin:0 0 10px; text-wrap:pretty; }
+.rq-res p { color:var(--ink-2); font-size:14px; line-height:1.6; max-width:44ch; margin:0 auto 12px; text-wrap:pretty; }
+.rq-res .fine { font-size:12.5px; color:var(--ink-soft); }
+.rq-res .cta { display:flex; flex-direction:column; gap:9px; margin-top:18px; }
+.rq-big { display:inline-flex; align-items:center; justify-content:center; gap:10px; width:100%; min-height:54px; padding:15px 20px; border:none; border-radius:16px; background:var(--orange); color:#fff; font-family:inherit; font-size:clamp(15px,3.9vw,17px); font-weight:800; letter-spacing:-0.01em; line-height:1.25; text-align:center; text-decoration:none; cursor:pointer; }
+.rq-big:hover { background:var(--orange-deep); }
+.rq-big .ic { width:19px; height:19px; }
+.rq-res .btn-outline2 { width:100%; min-height:48px; }
+
+/* Responsive */
+@media (max-width:900px) {
+  .pup-head { flex-direction:column; align-items:flex-start; }
+  .pup-head .side { align-items:flex-start; max-width:100%; }
+}
+@media (max-width:760px) {
+  .page-hero { padding:110px 0 52px; }
+  .pf-btn.pf-toggle { display:inline-flex; }
+  .pf-body { display:none; }
+  .pf-wrap.open .pf-body { display:flex; }
+  .pf-body .pf-select, .pf-body .pf-ac, .pf-body .pf-ac-input, .pf-body .pf-btn, .pf-body .pf-clear { width:100%; flex:1 1 100%; }
+  .pf-count { margin-left:0; }
+  .pup-grid { grid-template-columns:repeat(auto-fill,minmax(152px,1fr)); gap:13px; }
+  .pcard-b { padding:12px 13px 14px; }
+  .pcard-b h3 { font-size:17px; }
+  .pcard-ph .pz { font-size:12px; padding:4px 10px; }
+  .ov { padding:0; }
+  .ov-card { border-radius:20px 20px 0 0; max-width:none; margin:auto 0 0; }
+  .ov-in { padding:18px 16px 26px; }
+  .pd-specs { grid-template-columns:1fr; }
+  .ask { padding:22px 18px; }
+  .lbx .nav { width:42px; height:42px; }
+  /* 16px: iOS no hace zoom al enfocar el campo */
+  .fld { font-size:16px; padding:12px 14px; }
+  .frm { gap:11px; }
+  .url-note { padding:13px 14px; }
+  .url-note .btn-solid { width:100%; }
+  .rq-res { padding:14px 0 4px; }
+}
+@media (max-width:340px) { .pup-grid { grid-template-columns:1fr; } }
 </style>
-<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
-<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
-<script type="application/ld+json">{"@context":"https://schema.org","@type":"PetStore","name":"BPuppy","url":"https://bpuppy.us/cachorros","telephone":"+19294287300","image":"https://bpuppy.us/assets/og-brand.jpg","priceRange":"$$","address":{"@type":"PostalAddress","addressLocality":"Haines City","addressRegion":"FL","addressCountry":"US"},"areaServed":[{"@type":"State","name":"Florida"},{"@type":"State","name":"New York"},{"@type":"City","name":"Boston"}],"description":"Premium family-raised puppies with a written health guarantee. Nationwide shipping across the USA."}</script>
+<script type="application/ld+json">{"@context":"https://schema.org","@type":"PetStore","name":"BPuppy","url":"https://bpuppy.us/cachorros","telephone":"+19294287300","image":"https://bpuppy.us/assets/og-brand.jpg","priceRange":"$$","address":{"@type":"PostalAddress","addressLocality":"Haines City","addressRegion":"FL","addressCountry":"US"},"areaServed":[{"@type":"State","name":"Florida"},{"@type":"State","name":"New York"},{"@type":"City","name":"Boston"}],"description":"Puppies from our partner breeder network across the USA, with a written health guarantee and vaccines up to date. Availability is confirmed at the time of your request and delivery takes 2 to 5 days. Any breed can be requested."}</script>
 </head>
 <body>
 <div id="__chrome-hdr"></div>
+
 <!-- Hero -->
 <section class="page-hero">
-  <div class="dog-deco dog-deco-1">
-    <svg viewBox="0 0 200 200"><path d="M50 170 Q25 130 40 90 Q48 65 65 75 Q70 50 85 40 Q95 55 90 72 Q105 52 120 60 Q128 72 122 88 Q145 78 162 92 Q175 110 165 135 Q155 155 135 162 Q110 170 85 168 Z" fill="currentColor"/><circle cx="148" cy="125" r="10" fill="currentColor"/><circle cx="135" cy="140" r="6" fill="currentColor"/></svg>
-  </div>
-  <div class="dog-deco dog-deco-2">
-    <svg viewBox="0 0 120 120"><ellipse cx="60" cy="72" rx="28" ry="22" fill="currentColor"/><ellipse cx="32" cy="48" rx="12" ry="16" fill="currentColor"/><ellipse cx="88" cy="48" rx="12" ry="16" fill="currentColor"/><ellipse cx="42" cy="28" rx="10" ry="14" fill="currentColor"/><ellipse cx="78" cy="28" rx="10" ry="14" fill="currentColor"/></svg>
-  </div>
   <div class="container">
-    <h1>Nuestros <em>cachorros</em></h1>
-    <p>Cachorros de raza criados en familia, con garantía de salud, vacunas al día y acompañamiento de por vida. Encuentra tu próximo mejor amigo.</p>
+    <h1 data-es="Nuestros &lt;em&gt;cachorros&lt;/em&gt;" data-en="Our &lt;em&gt;puppies&lt;/em&gt;">Nuestros <em>cachorros</em></h1>
+    <p class="lede" data-es="Cachorros de raza con garantía de salud por escrito, vacunas al día y acompañamiento de por vida. Todos los que ves aquí están disponibles hoy." data-en="Purebred puppies with a written health guarantee, vaccines up to date and lifetime support. Everything you see here is available today.">Cachorros de raza con garantía de salud por escrito, vacunas al día y acompañamiento de por vida. Todos los que ves aquí están disponibles hoy.</p>
+
+    <div class="hero-note">
+      <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M12 7.4v3.2M11 11.6 6.6 15.9M13 11.6l4.4 4.3"/></svg>
+      <p data-es="Si deseas solicitar una raza en específico, &lt;b&gt;nosotros la tenemos para ti&lt;/b&gt;. Trabajamos con una red de criadores en todos los estados." data-en="If you want to request a specific breed, &lt;b&gt;we can get it for you&lt;/b&gt;. We work with a network of breeders in every state.">Si deseas solicitar una raza en específico, <b>nosotros la tenemos para ti</b>. Trabajamos con una red de criadores en todos los estados.</p>
+    </div>
+
+    <div class="hero-facts">
+      <span class="hero-fact"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M2 7.5h11.5v9H2z"/><path d="M13.5 10.5H17l3 3v3h-6.5z"/><circle cx="6.5" cy="18.5" r="1.8"/><circle cx="17" cy="18.5" r="1.8"/></svg><b data-es="Entrega entre 2 y 5 días" data-en="Delivery in 2 to 5 days">Entrega entre 2 y 5 días</b></span>
+      <span class="hero-fact"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l7 2.8v5.6c0 4.2-2.9 7.5-7 8.9-4.1-1.4-7-4.7-7-8.9V6z"/><path d="M9 12.2l2.1 2.1 4-4.2"/></svg><span data-es="Garantía de salud por escrito" data-en="Written health guarantee">Garantía de salud por escrito</span></span>
+      <span class="hero-fact"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.7 6.5-10.3A6.5 6.5 0 0 0 5.5 10.7C5.5 15.3 12 21 12 21z"/><circle cx="12" cy="10.6" r="2.4"/></svg><span data-es="Delivery a todo Estados Unidos" data-en="Delivery anywhere in the USA">Delivery a todo Estados Unidos</span></span>
+      <span class="hero-fact"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10h18"/></svg><span data-es="Pago en cuotas disponible" data-en="Installment payments available">Pago en cuotas disponible</span></span>
+    </div>
+
+    <p class="hero-fine" data-es="Los cachorros de este listado están en casas de criadores asociados en distintos estados. Confirmamos la disponibilidad de cada uno en el momento de tu solicitud y coordinamos la entrega contigo: se realiza entre 2 y 5 días." data-en="The puppies in this listing live with partner breeders in different states. We confirm each puppy's availability the moment you request it and then arrange delivery with you: it takes 2 to 5 days.">Los cachorros de este listado están en casas de criadores asociados en distintos estados. Confirmamos la disponibilidad de cada uno en el momento de tu solicitud y coordinamos la entrega contigo: se realiza entre 2 y 5 días.</p>
   </div>
 </section>
 
-<!-- Puppies -->
+<!-- Enlaces de confianza -->
+<section class="sec-links">
+  <div class="container">
+    <div class="links-row">
+      <a class="link-card" href="/garantia"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l7 2.8v5.6c0 4.2-2.9 7.5-7 8.9-4.1-1.4-7-4.7-7-8.9V6z"/><path d="M9 12.2l2.1 2.1 4-4.2"/></svg><span data-es="Garantía de salud" data-en="Health guarantee">Garantía de salud</span></a>
+      <a class="link-card" href="/nosotros"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M12 7.4v3.2M11 11.6 6.6 15.9M13 11.6l4.4 4.3"/></svg><span data-es="Cómo trabajamos" data-en="How we work">Cómo trabajamos</span></a>
+      <a class="link-card" href="/financiamiento"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10h18"/></svg><span data-es="Financiamiento" data-en="Financing">Financiamiento</span></a>
+      <a class="link-card" href="/planea-sin-prisa"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15" rx="2.5"/><path d="M3.5 9.5h17M8 3.2v3.4M16 3.2v3.4"/></svg><span data-es="Planea sin prisa" data-en="Plan at your pace">Planea sin prisa</span></a>
+      <a class="link-card" href="/reembolsos"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 10.5A8 8 0 1 1 5.6 16"/><path d="M3.5 5.5v5h5"/></svg><span data-es="Reembolsos" data-en="Refunds">Reembolsos</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- Listado -->
 <section class="pup-sec">
   <div class="container">
-    <div class="sec-head" style="margin-bottom: 36px;">
+    <div class="pup-head">
       <div>
-        <div class="eyebrow">Disponibles esta semana</div>
-        <h2 class="display" style="font-size: clamp(32px,4vw,56px); margin: 12px 0 0;">Cachorros listos <em class="serif-italic">para ti.</em></h2>
+        <div class="eyebrow" data-es="Disponibles ahora" data-en="Available now">Disponibles ahora</div>
+        <h2 data-es="Cachorros listos &lt;em&gt;para ti.&lt;/em&gt;" data-en="Puppies ready &lt;em&gt;for you.&lt;/em&gt;">Cachorros listos <em>para ti.</em></h2>
       </div>
-      <div style="display:flex;flex-direction:column;gap:10px;align-items:flex-end">
-        <p style="color: var(--ink-2); max-width: 40ch;">Cada cachorro viene con garantía de salud, vacunas al día y nuestro acompañamiento de por vida.</p>
-        <button onclick="openIntlShipping()" style="display:inline-flex;align-items:center;gap:8px;padding:10px 18px;background:none;border:1.5px solid var(--line);border-radius:999px;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-2);cursor:pointer;transition:all .2s" onmouseover="this.style.borderColor='var(--orange)';this.style.color='var(--orange)'" onmouseout="this.style.borderColor='var(--line)';this.style.color='var(--ink-2)'">
-          ✈️ Solicitar envío internacional
-        </button>
+      <div class="side">
+        <p data-es="Toca cualquier cachorro para ver todas sus fotos y su ficha completa. Precios en dólares, con delivery a todo Estados Unidos incluido." data-en="Tap any puppy to see all its photos and full details. Prices in US dollars, delivery anywhere in the USA included.">Toca cualquier cachorro para ver todas sus fotos y su ficha completa. Precios en dólares, con delivery a todo Estados Unidos incluido.</p>
+        <button type="button" class="btn-line" id="btn-intl"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.4 13.6 3.5 11.2 20.5 4l-7.2 17-2.9-7.4z"/></svg><span data-es="Solicitar envío internacional" data-en="Request international shipping">Solicitar envío internacional</span></button>
       </div>
     </div>
-    <div>
-      <div class="pup-filter-bar">
-        <span class="pf-label">Filtrar:</span>
-        <div id="pf-breed-wrap" class="pf-autocomplete">
-          <input id="pf-breed-input" class="pf-ac-input" type="text" placeholder="Todas las razas…" autocomplete="off">
-          <div id="pf-breed-drop" class="pf-ac-drop"></div>
-        </div>
-        <select id="pf-sex" class="pf-select">
-          <option value="">Todos los sexos</option>
-          <option value="female">♀ Hembra</option>
-          <option value="male">♂ Macho</option>
-        </select>
-        <select id="pf-age" class="pf-select">
-          <option value="">Todas las edades</option>
-          <option value="0-8">0–8 semanas</option>
-          <option value="8-12">8–12 semanas</option>
-          <option value="12-16">12–16 semanas</option>
-          <option value="16+">16+ semanas</option>
-        </select>
-        <div id="pf-color-wrap">
-          <button id="pf-color-btn" class="pf-color-btn">🎨 Color</button>
-        </div>
+
+    <div id="url-note"></div>
+
+    <div class="pf-wrap" id="pf-wrap">
+      <div class="pf-top">
         <div class="pf-search">
-          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg>
-          <input id="pf-search" type="text" placeholder="Buscar por nombre o raza…">
+          <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="M20.5 20.5 16.6 16.6"/></svg>
+          <input id="pf-q" type="text" data-es-ph="Buscar por nombre, raza o color…" data-en-ph="Search by name, breed or color…" placeholder="Buscar por nombre, raza o color…">
         </div>
-        <button id="pf-clear" class="pf-clear">× Limpiar</button>
-        <span id="pf-count" class="pf-count"></span>
+        <button type="button" class="pf-btn pf-toggle" id="pf-toggle"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17.5 7H20M4 17h2.5M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="8.5" cy="17" r="2.2"/></svg><span data-es="Filtros" data-en="Filters">Filtros</span></button>
+        <span class="pf-count" id="pf-count"></span>
       </div>
-      <div id="pf-color-panel" class="pf-color-panel"></div>
+      <div class="pf-body">
+        <div class="pf-ac" id="pf-breed-wrap">
+          <input id="pf-breed" class="pf-ac-input" type="text" autocomplete="off" data-es-ph="Todas las razas" data-en-ph="All breeds" placeholder="Todas las razas">
+          <div class="pf-ac-drop" id="pf-breed-drop"></div>
+        </div>
+        <select id="pf-sex" class="pf-select"></select>
+        <select id="pf-age" class="pf-select"></select>
+        <select id="pf-price" class="pf-select"></select>
+        <button type="button" class="pf-btn" id="pf-color-btn"><span data-es="Color" data-en="Color">Color</span></button>
+        <select id="pf-sort" class="pf-select"></select>
+        <button type="button" class="pf-clear" id="pf-clear" data-es="Limpiar filtros" data-en="Clear filters">Limpiar filtros</button>
+      </div>
+      <div class="pf-colors" id="pf-colors"></div>
+      <div class="pf-chips" id="pf-chips"></div>
     </div>
-    <div class="pup-grid" id="pup-grid">
-      <div id="pup-loading" style="grid-column:1/-1;text-align:center;padding:60px 0;color:var(--ink-soft)">
-        <div class="pup-spinner"></div>
-        <p style="font-size:15px;font-weight:600">Cargando cachorros disponibles…</p>
+
+    <div class="pup-grid" id="pup-grid"></div>
+    <div id="pup-loading" style="text-align:center;padding:60px 0;color:var(--ink-soft)">
+      <div class="pup-spinner"></div>
+      <p style="font-size:15px;font-weight:600;margin:0" data-es="Cargando cachorros disponibles…" data-en="Loading available puppies…">Cargando cachorros disponibles…</p>
+    </div>
+    <div class="pup-more" id="pup-more" style="display:none"><button type="button" class="btn-more" id="btn-more"></button></div>
+
+    <!-- Solicitar otro cachorro de la misma raza -->
+    <div class="ask" id="ask-block" style="display:none">
+      <div class="txt">
+        <h3 id="ask-title"></h3>
+        <p id="ask-text"></p>
+      </div>
+      <div class="acts">
+        <button type="button" class="btn-solid" id="ask-btn"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="7" cy="9.5" r="1.8"/><circle cx="12" cy="7.6" r="1.8"/><circle cx="17" cy="9.5" r="1.8"/><path d="M12 12.4c-2.6 0-4.6 2-4.6 4.1 0 1.6 1.3 2.6 2.8 2.6.9 0 1.2-.4 1.8-.4s.9.4 1.8.4c1.5 0 2.8-1 2.8-2.6 0-2.1-2-4.1-4.6-4.1z"/></svg><span id="ask-btn-lbl"></span></button>
+        <a class="btn-outline2" id="ask-link" href="/solicitud"><span data-es="Formulario completo" data-en="Full request form">Formulario completo</span></a>
       </div>
     </div>
   </div>
 </section>
 
-<!-- Breeds -->
+<!-- Razas -->
 <section class="breeds-sec">
-  <div class="container" style="text-align: center;">
-    <div class="eyebrow">Razas que trabajamos</div>
-    <h2 class="display" style="font-size: clamp(28px,4vw,42px); margin: 12px 0 0;">Encuentra la raza <em class="serif-italic">perfecta.</em></h2>
-    <div class="breed-chips">
-      <a class="breed-chip" href="/solicitud" data-breed="golden">🦮 Golden Retriever</a>
-      <a class="breed-chip" href="/solicitud" data-breed="french">🐕 French Bulldog</a>
-      <a class="breed-chip" href="/solicitud" data-breed="pomeran">🐾 Pomeranian</a>
-      <a class="breed-chip" href="/solicitud" data-breed="poodle">🐩 Poodle (Caniche)</a>
-      <a class="breed-chip" href="/solicitud" data-breed="labrador">🐕‍🦺 Labrador Retriever</a>
-      <a class="breed-chip" href="/solicitud" data-breed="schnauzer">🦊 Mini Schnauzer</a>
-      <a class="breed-chip" href="/solicitud" data-breed="husky">🐺 Husky Siberiano</a>
-      <a class="breed-chip" href="/solicitud" data-breed="cavalier">🐶 Cavalier King Charles</a>
-      <a class="breed-chip" href="/solicitud" data-breed="border">🐕 Border Collie</a>
-      <a class="breed-chip" href="/solicitud" data-breed="beagle">🦴 Beagle</a>
-      <a class="breed-chip" href="/solicitud" data-breed="york">🐾 Yorkshire Terrier</a>
-      <a class="breed-chip" href="/solicitud">✨ Y más...</a>
-    </div>
+  <div class="container" style="text-align:center">
+    <div class="eyebrow" data-es="Razas disponibles ahora" data-en="Breeds available now">Razas disponibles ahora</div>
+    <h2 class="display" style="font-size:clamp(27px,3.8vw,42px);margin:12px 0 0" data-es="Encuentra la raza &lt;em class=&quot;serif-italic&quot;&gt;perfecta.&lt;/em&gt;" data-en="Find the &lt;em class=&quot;serif-italic&quot;&gt;perfect&lt;/em&gt; breed.">Encuentra la raza <em class="serif-italic">perfecta.</em></h2>
+    <p style="color:var(--ink-2);font-size:14.5px;line-height:1.6;max-width:60ch;margin:14px auto 0;text-wrap:pretty" data-es="Estas son las razas que tenemos disponibles hoy. Si la tuya no está en la lista, la conseguimos con nuestra red de criadores." data-en="These are the breeds we have available today. If yours is not on the list, we source it through our breeder network.">Estas son las razas que tenemos disponibles hoy. Si la tuya no está en la lista, la conseguimos con nuestra red de criadores.</p>
+    <div class="breed-chips" id="breed-chips"></div>
   </div>
 </section>
-<script>
-/* Si hay un cachorro disponible de esa raza, el chip lleva a /cachorros; si no, a /solicitud */
-(function(){
-  function up(){
-    if(!window.bpPuppies){ return setTimeout(up, 400); }
-    window.bpPuppies('available', 60).then(function(list){
-      var breeds = (list||[]).map(function(p){ return (p.breed||'').toLowerCase(); });
-      document.querySelectorAll('.breed-chip[data-breed]').forEach(function(a){
-        var b = a.getAttribute('data-breed').toLowerCase();
-        if (breeds.some(function(x){ return x && (x.indexOf(b)>-1 || b.indexOf(x)>-1); })) a.setAttribute('href','/cachorros');
-      });
-    }).catch(function(){});
-  }
-  if(document.readyState!=='loading') up(); else document.addEventListener('DOMContentLoaded', up);
-})();
-</script>
 
 <!-- CTA -->
 <section class="back-cta">
   <div class="container">
-    <h2 class="display" style="font-size: clamp(32px,5vw,56px); margin: 0 0 16px;">¿Necesitas ayuda <em class="serif-italic">eligiendo?</em></h2>
-    <p style="color: var(--ink-2); max-width: 44ch; margin: 0 auto 28px;">Nuestro equipo te guía para encontrar el compañero perfecto para tu hogar y estilo de vida.</p>
-    <div style="display: flex; gap: 14px; justify-content: center; flex-wrap: wrap;">
-      <a href="https://wa.me/19294287300" target="_blank" rel="noreferrer" class="btn btn-primary">Escríbenos por WhatsApp</a>
-      <a href="sms:+19294287300?body=Hola!%20Tengo%20una%20pregunta%20sobre%20BPuppy." class="btn btn-ghost" style="border:1.5px solid var(--line,#e4d7bf)">Escríbenos por SMS</a>
+    <h2 class="display" style="font-size:clamp(30px,4.6vw,54px);margin:0 0 16px" data-es="¿Necesitas ayuda &lt;em class=&quot;serif-italic&quot;&gt;eligiendo?&lt;/em&gt;" data-en="Need help &lt;em class=&quot;serif-italic&quot;&gt;choosing?&lt;/em&gt;">¿Necesitas ayuda <em class="serif-italic">eligiendo?</em></h2>
+    <p style="color:var(--ink-2);max-width:46ch;margin:0 auto 28px;text-wrap:pretty" data-es="Nuestro equipo te guía para encontrar el compañero perfecto para tu hogar y tu estilo de vida." data-en="Our team guides you to find the perfect companion for your home and lifestyle.">Nuestro equipo te guía para encontrar el compañero perfecto para tu hogar y tu estilo de vida.</p>
+    <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap">
+      <a href="https://wa.me/19294287300" target="_blank" rel="noreferrer" class="btn btn-primary" data-es="Escríbenos por WhatsApp" data-en="Message us on WhatsApp">Escríbenos por WhatsApp</a>
+      <a href="sms:+19294287300?body=Hola!%20Tengo%20una%20pregunta%20sobre%20BPuppy." class="btn btn-ghost" style="border:1.5px solid var(--line,#e4d7bf)" data-es="Escríbenos por SMS" data-en="Text us">Escríbenos por SMS</a>
       <a href="tel:+19294287300" class="btn btn-outline">Llámanos · (929) 428-7300</a>
-      <a href="/#quiz" class="btn btn-outline">Hacer el quiz</a>
+      <a href="/#quiz" class="btn btn-outline" data-es="Hacer el quiz" data-en="Take the quiz">Hacer el quiz</a>
     </div>
   </div>
 </section>
 
 <div id="__chrome-ftr"></div>
 
+<!-- Ficha del cachorro -->
+<div class="ov" id="pdOv" aria-hidden="true"><div class="ov-card"><button type="button" class="ov-x" id="pdX" aria-label="Cerrar"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div class="ov-in" id="pdIn"></div></div></div>
+
+<!-- Solicitud -->
+<div class="ov" id="prqOv" aria-hidden="true"><div class="ov-card" style="max-width:480px"><button type="button" class="ov-x" id="prqX" aria-label="Cerrar"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div class="ov-in" id="prqIn"></div></div></div>
+
+<!-- Envío internacional -->
+<div class="ov" id="intlOv" aria-hidden="true"><div class="ov-card" style="max-width:500px"><button type="button" class="ov-x" id="intlX" aria-label="Cerrar"><svg class="ic" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6 6 18"/></svg></button><div class="ov-in" id="intlIn"></div></div></div>
+
+<!-- Zoom de fotos -->
+<div class="lbx" id="lbx"><button type="button" class="x" id="lbxX" aria-label="Cerrar">&times;</button><button type="button" class="nav prev" id="lbxP" aria-label="Anterior">&lsaquo;</button><img id="lbxImg" src="" alt="" referrerpolicy="no-referrer" onerror="__bpImgFallback(this)"><button type="button" class="nav next" id="lbxN" aria-label="Siguiente">&rsaquo;</button></div>
 
 <script src="site-animations.js?v=1781476900318"></script>
 <script>
-// ── Supabase puppy loader ─────────────────────────────────────────────────────
-(function() {
+/* ── /cachorros · listado publico (vista public_puppies_feed) ───────────── */
+(function () {
   var SUPA_URL = 'https://oqqwmcplljirbreowrll.supabase.co';
   var SUPA_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
   var sb = supabase.createClient(SUPA_URL, SUPA_KEY);
-  var ALL_PUPPIES = [], allBreeds = [], selectedBreed = '', selectedColors = [];
+  var WA = '19294287300', TEL = '+1 (929) 428-7300';
+  var PAGE = 24;
 
-  var MASTER_BREEDS = [
-    'Affenpinscher','Akita','Alaskan Klee Kai','Malamute de Alaska','American Bully',
-    'American Cocker Spaniel','Basenji','Basset Hound','Beagle','Bedlington Terrier',
-    'Bernés de la Montaña','Bichón Frisé','Bichón Maltés','Bloodhound','Border Collie',
-    'Boston Terrier','Boykin Spaniel','Bracco Italiano','Bull Terrier','Bulldog Francés',
-    'Bulldog Inglés','Bullmastiff','Cairn Terrier','Cane Corso',
-    'Poodle (Caniche)','Poodle Miniatura (Caniche)','Poodle Toy (Caniche)','Carlino / Pug','Cavapoo','Cavalier King Charles',
-    'Chihuahua','Chow Chow','Cockapoo','Cocker Spaniel Americano','Cocker Spaniel Inglés',
-    'Collie','Corgi Galés de Pembroke','Corgi Galés de Cardigan','Dachshund / Salchicha',
-    'Dálmata','Doberman Pinscher','Dogo Argentino','Dogo de Burdeos',
-    'English Springer Spaniel','Fox Terrier','Galgo Español','Galgo Italiano',
-    'Golden Retriever','Goldendoodle','Gran Danés','Gran Pirineo','Greyhound',
-    'Havanés','Husky Siberiano','Jack Russell Terrier','Keeshond',
-    'Labradoodle','Labrador Retriever','Leonberger','Lhasa Apso',
-    'Malinois Belga','Maltipoo','Mastín','Mastín Napolitano','Mastín del Pirineo',
-    'Maltés','Morkie','Newfoundland / Terranova','Old English Sheepdog',
-    'Papillón','Pastor Alemán','Pastor Australiano','Pastor Belga',
-    'Pastor de Shetland','Pechinés / Pekingese','Pinscher Miniatura',
-    'Pitbull / American Pit Bull','Plott Hound','Pointer','Pomerania',
-    'Pomsky','Portuguese Water Dog','Rhodesian Ridgeback','Rottweiler',
-    'Samoyedo','San Bernardo','Schnauzer Gigante','Schnauzer Miniatura',
-    'Schnauzer Estándar','Scottish Terrier','Setter Irlandés','Shar Pei',
-    'Shiba Inu','Shih Tzu','Soft Coated Wheaten Terrier','Spitz Alemán',
-    'Staffordshire Bull Terrier','Teddy Bear','Tibetan Mastiff','Vizsla',
-    'Weimaraner','West Highland White Terrier','Whippet','Xoloitzcuintli',
-    'Yorkshire Terrier',
-  ];
+  var ALL = [], VIEW = [], shown = 0, ready = false;
+  var F = { breed: '', sex: '', age: '', price: '', colors: [], q: '', sort: 'mix' };
+  // Raza pedida por URL (anuncio/correo) que hoy no tenemos: la usamos para el CTA de solicitud.
+  var WANT = '', NOTE_OFF = false;
+  // Precios de delivery por estado (tabla delivery_prices, lectura publica).
+  var SHIP = [], SHIP_BY = {};
+  var DRAFT = 'bp_rq_draft_v1';
 
-  var SWATCHES = [
-    {l:'Negro',      v:'negro',      g:'c', hex:'#1C1C1C'},
-    {l:'Blanco',     v:'blanco',     g:'c', hex:'#F0EDE0', bd:true},
-    {l:'Crema',      v:'crema',      g:'c', hex:'#E8D090'},
-    {l:'Apricot',    v:'apricot',    g:'c', hex:'#E8A878'},
-    {l:'Dorado',     v:'dorado',     g:'c', hex:'#C8920A'},
-    {l:'Marrón',     v:'marron',     g:'c', hex:'#7B3F25'},
-    {l:'Chocolate',  v:'chocolate',  g:'c', hex:'#4A2515'},
-    {l:'Gris/Plata', v:'gris',       g:'c', hex:'#909090'},
-    {l:'Canela/Rojo',v:'canela',     g:'c', hex:'#BF5A2A'},
-    {l:'Merle',      v:'merle',      g:'m', hex:'lg135,#8090a8,#b8c8d8 30%,#606878 60%,#a0b0c0'},
-    {l:'Merle Azul', v:'merle_azul', g:'m', hex:'rg35,#c0d8f0,#7090b8 45%,#405878'},
-    {l:'Merle Rojo', v:'merle_rojo', g:'m', hex:'rg35,#e8b090,#b07058 45%,#784030'},
-    {l:'Tricolor',   v:'tricolor',   g:'e', hex:'conic,#1C1C1C 120deg,#F0EDE0 240deg,#C8920A 360deg'},
-    {l:'Atigrado',   v:'atigrado',   g:'e', hex:'rep45,#7B3F25 4px,#BF5A2A 10px'},
-    {l:'Phantom',    v:'phantom',    g:'e', hex:'#1E1228'},
-    {l:'Harlequin',  v:'harlequin',  g:'e', hex:'conic,#fff 90deg,#1C1C1C 180deg,#fff 270deg,#1C1C1C 360deg'},
-  ];
+  /* ── idioma ─────────────────────────────────────────────────────────── */
+  var LANG = (function () {
+    try {
+      var q = (new URLSearchParams(location.search).get('lang') || '').toLowerCase();
+      if (q === 'en' || q === 'es') return q;
+      return (localStorage.getItem('bpuppy-lang') || 'es') === 'en' ? 'en' : 'es';
+    } catch (e) { return 'es'; }
+  })();
+  function T(es, en) { return LANG === 'en' ? en : es; }
+  function applyStatic() {
+    document.querySelectorAll('[data-es][data-en]').forEach(function (el) {
+      var v = LANG === 'en' ? el.getAttribute('data-en') : el.getAttribute('data-es');
+      if (v != null) el.innerHTML = v;
+    });
+    document.querySelectorAll('[data-es-ph][data-en-ph]').forEach(function (el) {
+      el.setAttribute('placeholder', LANG === 'en' ? el.getAttribute('data-en-ph') : el.getAttribute('data-es-ph'));
+    });
+  }
 
-  var COLOR_TERMS = {
-    apricot:['apricot','albaricoque','melocotón','albicocca'],
-    negro:['negro','black'], blanco:['blanco','white'], crema:['crema','cream'],
-    dorado:['dorado','golden','gold'], marron:['marrón','marron','brown','cafe'],
-    chocolate:['chocolate'], gris:['gris','gray','grey','plata','silver'],
-    canela:['canela','rojo','red','copper'], merle:['merle'],
-    merle_azul:['merle azul','blue merle'], merle_rojo:['merle rojo','red merle'],
-    tricolor:['tricolor','tri-color','tri '], atigrado:['atigrado','brindle'],
-    phantom:['phantom'], harlequin:['harlequin','arlequín'],
+  /* ── utilidades ─────────────────────────────────────────────────────── */
+  function esc(s) { return String(s == null ? '' : s).replace(/[&<>"']/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]; }); }
+  function norm(s) { return String(s == null ? '' : s).toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g, '').trim(); }
+  function money(n) { if (n == null || isNaN(n)) return T('Consultar', 'Ask us'); return '$' + Number(n).toLocaleString('en-US', { maximumFractionDigits: 0 }); }
+  function el(id) { return document.getElementById(id); }
+  function svg(d, cls) { return '<svg class="' + (cls || 'ic') + '" viewBox="0 0 24 24" aria-hidden="true">' + d + '</svg>'; }
+  var IC = {
+    paw: '<circle cx="7" cy="9.5" r="1.8"/><circle cx="12" cy="7.6" r="1.8"/><circle cx="17" cy="9.5" r="1.8"/><path d="M12 12.4c-2.6 0-4.6 2-4.6 4.1 0 1.6 1.3 2.6 2.8 2.6.9 0 1.2-.4 1.8-.4s.9.4 1.8.4c1.5 0 2.8-1 2.8-2.6 0-2.1-2-4.1-4.6-4.1z"/>',
+    cam: '<path d="M3.5 8.5h3.2L8.2 6h7.6l1.5 2.5h3.2v10H3.5z"/><circle cx="12" cy="13" r="3.2"/>',
+    arrow: '<path d="M5 12h13M12.5 6.5 19 12l-6.5 5.5"/>',
+    chat: '<path d="M20.5 4.5h-17v12h4.5v3.5l4-3.5h8.5z"/>',
+    sms: '<path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>',
+    truck: '<path d="M2 7.5h11.5v9H2z"/><path d="M13.5 10.5H17l3 3v3h-6.5z"/><circle cx="6.5" cy="18.5" r="1.8"/><circle cx="17" cy="18.5" r="1.8"/>',
+    shield: '<path d="M12 3.2l7 2.8v5.6c0 4.2-2.9 7.5-7 8.9-4.1-1.4-7-4.7-7-8.9V6z"/><path d="M9 12.2l2.1 2.1 4-4.2"/>',
+    card: '<rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10h18"/>',
+    plane: '<path d="M10.4 13.6 3.5 11.2 20.5 4l-7.2 17-2.9-7.4z"/>',
+    check: '<circle cx="12" cy="12" r="9"/><path d="M8 12.4l2.6 2.6L16 9.6"/>',
+    bell: '<path d="M18 8.6a6 6 0 1 0-12 0c0 5.9-2 7.4-2 7.4h16s-2-1.5-2-7.4z"/><path d="M13.7 19.5a2 2 0 0 1-3.4 0"/>'
   };
-
-  function dotBg(sw) {
-    var h = sw.hex;
-    if (h.startsWith('lg135,')) return 'background:linear-gradient(135deg,' + h.slice(6) + ')';
-    if (h.startsWith('rg35,'))  return 'background:radial-gradient(circle at 35% 35%,' + h.slice(5) + ')';
-    if (h.startsWith('conic,')) return 'background:conic-gradient(from 0deg,' + h.slice(6) + ')';
-    if (h.startsWith('rep45,')) return 'background:repeating-linear-gradient(45deg,' + h.slice(6) + ')';
-    return 'background:' + h;
+  function gclid() { try { window.bpLead && window.bpLead(); } catch (e) { } try { return window.bpGclid ? window.bpGclid() : null; } catch (e) { return null; } }
+  // Las fotos originales pesan 3-5 MB: las servimos redimensionadas por Supabase.
+  // Si el transformador no responde, la imagen vuelve sola a la original (data-o).
+  var OBJ = '/storage/v1/object/public/', REN = '/storage/v1/render/image/public/';
+  function tx(u, w, q) {
+    if (!u) return '';
+    var i = u.indexOf(OBJ);
+    if (i < 0) return u;
+    return u.slice(0, i) + REN + u.slice(i + OBJ.length) + '?width=' + w + '&quality=' + q;
+  }
+  window.__bpImgFallback = function (img) {
+    if (img.dataset.o && !img.dataset.f) { img.dataset.f = '1'; img.src = img.dataset.o; return; }
+    img.style.visibility = 'hidden';
+  };
+  function imgTag(u, w, q, alt, extra) {
+    return '<img src="' + esc(tx(u, w, q)) + '" data-o="' + esc(u) + '" alt="' + esc(alt || '') + '" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="__bpImgFallback(this)"' + (extra || '') + '>';
+  }
+  function scrollToEl(node, off) {
+    if (!node) return;
+    var y = node.getBoundingClientRect().top + window.pageYOffset - (off || 90);
+    try { window.scrollTo({ top: y, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, y); }
   }
 
-  function esc(s) { return String(s || '').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/"/g,'&quot;'); }
-
-  function getPhoto(p) {
-    if (Array.isArray(p.photos) && p.photos.length) return p.photos[0];
-    return p.photo_url || null;
+  /* ── edad / nacimiento ──────────────────────────────────────────────── */
+  var MESES = { enero: 0, febrero: 1, marzo: 2, abril: 3, mayo: 4, junio: 5, julio: 6, agosto: 7, septiembre: 8, setiembre: 8, octubre: 9, noviembre: 10, diciembre: 11 };
+  function bornDate(v) {
+    if (!v) return null;
+    var s = String(v).trim().replace(/^(naci[oó]|born)\s*[:.]?\s*/i, '');
+    if (!s) return null;
+    var m = /^(\d{1,2})\s+de\s+([a-zá-úA-ZÁ-Ú]+)\s+(\d{4})/.exec(s);
+    if (m) { var k = norm(m[2]); if (MESES[k] != null) return new Date(+m[3], MESES[k], +m[1]); }
+    var t = Date.parse(s.replace(/(\d+)(st|nd|rd|th)/i, '$1'));
+    if (!isNaN(t)) return new Date(t);
+    return null;
   }
-
-  function getAge(p) {
-    var w = p.age_weeks || (p.birth_date ? Math.floor((Date.now() - new Date(p.birth_date)) / 604800000) : 0);
-    if (!w) return '';
-    return w < 16 ? w + ' semanas' : Math.floor(w / 4) + ' meses';
+  function weeksOf(p) {
+    var d = bornDate(p.born) || bornDate(p.age);
+    if (d) { var w = Math.floor((Date.now() - d.getTime()) / 604800000); if (w >= 0 && w < 700) return w; }
+    var g = /^\s*(\d{1,3})\s*(sem\.?|semanas?|weeks?|wks?|w)?\s*$/i.exec(String(p.age || ''));
+    if (g) { var n = +g[1]; if (n > 0 && n < 700) return n; }
+    return null;
   }
-
-  function renderCard(p) {
-    var photo = getPhoto(p), age = getAge(p);
-    var sex = p.gender === 'female' ? 'Hembra' : p.gender === 'male' ? 'Macho' : '';
-    var reserved = p.status === 'reserved';
-    var taken = (p.status === 'sold' || p.status === 'in_transit' || p.status === 'delivered');
-    var imgHTML = photo
-      ? '<img src="' + esc(photo) + '" alt="' + esc(p.name) + '" style="width:100%;height:100%;object-fit:cover;position:absolute;inset:0" onerror="this.style.display=\'none\'">'
-      : '<div class="ph">🐶</div>';
-    var priceHTML = (p.price && !taken)
-      ? '<div style="position:absolute;bottom:14px;right:14px;background:rgba(45,36,33,0.88);color:#fff;padding:6px 12px;border-radius:999px;font-weight:700;font-size:13px;backdrop-filter:blur(4px)">$' + Number(p.price).toLocaleString() + '</div>'
-      : '';
-    var badgeHTML = taken
-      ? '<span class="badge badge-taken">Con una nueva familia 🏡</span>'
-      : (reserved ? '<span class="badge badge-reserved">Reservado</span>' : '<span class="badge badge-new">Disponible</span>');
-    var overlayHTML = taken ? '<div class="pup-taken-ov">🏡 Con una nueva familia ya</div>' : '';
-    var meta = [age, sex, p.color].filter(Boolean).map(function(s){ return '<span>' + esc(s) + '</span>'; }).join('');
-    return '<a class="pup-card' + (taken ? ' taken' : '') + '" href="/puppy-detalle?id=' + esc(p.id) + '" style="text-decoration:none;color:inherit;display:block">'
-      + '<div class="pup-card-img" style="position:relative">'
-      + badgeHTML + overlayHTML
-      + imgHTML + priceHTML + '</div>'
-      + '<div class="pup-card-body"><h3>' + esc(p.name || 'Sin nombre') + '</h3>'
-      + '<div class="breed">' + esc(p.breed || '') + '</div>'
-      + (meta ? '<div class="meta">' + meta + '</div>' : '')
-      + '</div></a>';
+  function ageLabel(w) {
+    if (w == null) return '';
+    if (w < 16) return w + ' ' + (w === 1 ? T('semana', 'week') : T('semanas', 'weeks'));
+    var m = Math.round(w / 4.345);
+    if (m < 12) return m + ' ' + (m === 1 ? T('mes', 'month') : T('meses', 'months'));
+    var y = Math.floor(m / 12), r = m % 12;
+    return y + ' ' + (y === 1 ? T('año', 'year') : T('años', 'years')) + (r ? ' ' + r + ' ' + T('m', 'mo') : '');
   }
-
-  function populateFilters(puppies) {
-    var dbBreeds = puppies.map(function(p){ return p.breed; }).filter(Boolean);
-    var merged = [...new Set([...MASTER_BREEDS, ...dbBreeds])].sort(function(a,b){ return a.localeCompare(b, 'es'); });
-    allBreeds = merged;
+  function bornLabel(p) {
+    var d = bornDate(p.born);
+    if (d) { try { return d.toLocaleDateString(LANG === 'en' ? 'en-US' : 'es-US', { day: 'numeric', month: 'long', year: 'numeric' }); } catch (e) { } }
+    if (p.born) return String(p.born).replace(/^(naci[oó]|born)\s*[:.]?\s*/i, '');
+    return '';
   }
+  function sexLabel(g) { return g === 'female' ? T('Hembra', 'Female') : g === 'male' ? T('Macho', 'Male') : ''; }
+  function yesLabel(v) { var n = norm(v); if (n === 'si' || n === 'sí' || n === 'yes' || n === 'true') return T('Sí', 'Yes'); if (n === 'no' || n === 'false') return 'No'; return v; }
 
-  function applyFilters() {
-    var sex    = document.getElementById('pf-sex').value;
-    var age    = document.getElementById('pf-age').value;
-    var search = (document.getElementById('pf-search').value || '').toLowerCase().trim();
-    var filtered = ALL_PUPPIES.filter(function(p) {
-      if (selectedBreed && p.breed !== selectedBreed) return false;
-      if (sex && p.gender !== sex) return false;
-      if (selectedColors.length > 0) {
-        var pc = (p.color || '').toLowerCase();
-        var match = selectedColors.some(function(v) {
-          return (COLOR_TERMS[v] || [v]).some(function(t){ return pc.includes(t); });
-        });
-        if (!match) return false;
-      }
-      if (search) { var hay = ((p.name||'')+' '+(p.breed||'')).toLowerCase(); if (!hay.includes(search)) return false; }
-      if (age) {
-        var w = p.age_weeks || (p.birth_date ? Math.floor((Date.now()-new Date(p.birth_date))/604800000) : 0);
-        if (age==='0-8'   && w > 8)          return false;
-        if (age==='8-12'  && (w<8  || w>12)) return false;
-        if (age==='12-16' && (w<12 || w>16)) return false;
-        if (age==='16+'   && w < 16)          return false;
-      }
-      return true;
-    });
-    var grid  = document.getElementById('pup-grid');
-    var count = document.getElementById('pf-count');
-    if (count) count.textContent = filtered.length + (filtered.length === 1 ? ' disponible' : ' disponibles');
-    if (filtered.length) {
-      grid.innerHTML = filtered.map(renderCard).join('');
-    } else {
-      var fs = [];
-      if (selectedBreed)       fs.push('Raza: ' + selectedBreed);
-      if (sex)                 fs.push(sex === 'female' ? 'Hembra' : 'Macho');
-      if (age)                 fs.push('Edad: ' + age + ' sem');
-      if (selectedColors.length) fs.push('Color: ' + selectedColors.map(function(v){ var s=SWATCHES.find(function(s){return s.v===v;}); return s?s.l:v; }).join(', '));
-      if (search)              fs.push('"' + search + '"');
-      var sumHTML = fs.length
-        ? '<div style="display:flex;gap:8px;flex-wrap:wrap;justify-content:center;margin:12px 0 20px">' + fs.map(function(f){ return '<span style="padding:4px 12px;border-radius:999px;background:rgba(245,130,32,0.1);color:var(--orange);font-size:12px;font-weight:700">' + f + '</span>'; }).join('') + '</div>'
-        : '';
-      grid.innerHTML = '<div style="grid-column:1/-1;padding:48px 24px"><div style="max-width:480px;margin:0 auto;text-align:center">'
-        + '<div style="font-size:40px;margin-bottom:16px">🐾</div>'
-        + '<h3 style="font-family:var(--display);font-size:clamp(20px,3vw,28px);font-weight:700;letter-spacing:-0.02em;margin:0 0 8px;color:var(--ink)">¡Solicita el cachorro que buscas!</h3>'
-        + '<p style="color:var(--ink-2);font-size:14px;line-height:1.6;margin:0 0 4px">No encontramos resultados con esos filtros, pero puedes solicitar con nosotros el cachorro que buscas.</p>'
-        + sumHTML
-        + '<div style="background:var(--paper);border:1px solid var(--line);border-radius:16px;padding:24px;text-align:left;margin-top:8px"><div style="display:flex;flex-direction:column;gap:10px">'
-        + '<input id="pr-breed" placeholder="Raza que buscas *" value="' + esc(selectedBreed) + '" required style="width:100%;padding:10px 14px;border:1.5px solid var(--orange);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none;background:rgba(245,130,32,0.05);font-weight:600"/>'
-        + '<input id="pr-name" placeholder="Tu nombre *" required style="width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none"/>'
-        + '<input id="pr-email" type="email" placeholder="Email *" required style="width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none"/>'
-        + '<input id="pr-phone" type="tel" placeholder="Teléfono / WhatsApp *" required style="width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none"/>'
-        + '<textarea id="pr-notes" rows="2" placeholder="Algo más sobre el cachorro que buscas..." style="width:100%;padding:10px 14px;border:1.5px solid var(--line);border-radius:8px;font-family:inherit;font-size:14px;resize:vertical;box-sizing:border-box;outline:none"></textarea>'
-        + '<button onclick="submitPuppyRequest(\'' + fs.join(', ') + '\')" style="width:100%;padding:13px 20px;background:var(--orange);color:#fff;border:none;border-radius:999px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;box-shadow:0 8px 24px -8px rgba(245,130,32,0.4)">🐾 Solicitar este cachorro</button>'
-        + '</div></div>'
-        + '<button onclick="clearFilters()" style="margin-top:16px;background:none;border:none;color:var(--ink-2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">Ver todos los disponibles</button>'
-        + '</div></div>';
-    }
+  /* ── colores ────────────────────────────────────────────────────────── */
+  var COLORS = [
+    { k: 'blanco', es: 'Blanco', en: 'White', bg: '#F0EDE0', t: ['white', 'blanco'] },
+    { k: 'crema', es: 'Crema', en: 'Cream', bg: '#E8D090', t: ['cream', 'crema', 'beige'] },
+    { k: 'dorado', es: 'Dorado', en: 'Golden', bg: '#C8920A', t: ['golden', 'gold', 'dorado'] },
+    { k: 'apricot', es: 'Apricot', en: 'Apricot', bg: '#E8A878', t: ['apricot', 'albaricoque', 'peach', 'melocoton'] },
+    { k: 'canela', es: 'Canela / Rojo', en: 'Red / Tan', bg: '#BF5A2A', t: ['red', 'rojo', 'canela', 'tan', 'ruby', 'copper', 'sable'] },
+    { k: 'marron', es: 'Marrón', en: 'Brown', bg: '#7B3F25', t: ['brown', 'marron', 'cafe', 'liver'] },
+    { k: 'chocolate', es: 'Chocolate', en: 'Chocolate', bg: '#4A2515', t: ['chocolate'] },
+    { k: 'negro', es: 'Negro', en: 'Black', bg: '#1C1C1C', t: ['black', 'negro'] },
+    { k: 'gris', es: 'Gris / Azul', en: 'Grey / Blue', bg: '#8C93A0', t: ['grey', 'gray', 'gris', 'blue', 'azul', 'silver', 'plata'] },
+    { k: 'isabella', es: 'Isabella / Lila', en: 'Isabella / Lilac', bg: '#C1A99C', t: ['isabella', 'lilac', 'lila', 'fawn'] },
+    { k: 'merle', es: 'Merle', en: 'Merle', bg: 'linear-gradient(135deg,#8090a8,#b8c8d8 30%,#606878 60%,#a0b0c0)', t: ['merle'] },
+    { k: 'atigrado', es: 'Atigrado', en: 'Brindle', bg: 'repeating-linear-gradient(45deg,#7B3F25 0 4px,#BF5A2A 4px 9px)', t: ['brindle', 'atigrado'] },
+    { k: 'tricolor', es: 'Tricolor', en: 'Tricolor', bg: 'conic-gradient(from 0deg,#1C1C1C 120deg,#F0EDE0 240deg,#C8920A 360deg)', t: ['tricolor', 'tri color', 'tri-color'] },
+    { k: 'bicolor', es: 'Bicolor', en: 'Two-tone', bg: 'conic-gradient(from 0deg,#1C1C1C 180deg,#F0EDE0 360deg)', t: ['and white', 'y blanco', 'parti', 'bicolor', 'piebald'] }
+  ];
+  function colorKeys(raw) {
+    var s = norm(raw); if (!s) return [];
+    var out = [];
+    COLORS.forEach(function (c) { for (var i = 0; i < c.t.length; i++) { if (s.indexOf(c.t[i]) >= 0) { out.push(c.k); return; } } });
+    return out;
   }
+  function colorLabel(k) { for (var i = 0; i < COLORS.length; i++) if (COLORS[i].k === k) return T(COLORS[i].es, COLORS[i].en); return k; }
+  // El criador escribe el color en ingles: si lo reconocemos sin ambiguedad, lo mostramos en el idioma del visitante.
+  function colorText(p) { return p._ck.length === 1 ? colorLabel(p._ck[0]) : (p.color || ''); }
 
-  function updateColorBtn() {
-    var btn = document.getElementById('pf-color-btn');
-    if (!btn) return;
-    if (selectedColors.length === 0) {
-      btn.innerHTML = '🎨 Color';
-      btn.className = 'pf-color-btn';
-    } else {
-      btn.innerHTML = '🎨 Color <span style="background:var(--orange);color:#fff;border-radius:999px;padding:1px 7px;font-size:11px;margin-left:2px">' + selectedColors.length + '</span>';
-      btn.className = 'pf-color-btn active';
-    }
+  /* ── rangos ─────────────────────────────────────────────────────────── */
+  var AGES = [
+    { k: 'a', es: 'Hasta 12 semanas', en: 'Up to 12 weeks', f: function (w) { return w != null && w <= 12; } },
+    { k: 'b', es: '12 a 16 semanas', en: '12 to 16 weeks', f: function (w) { return w != null && w > 12 && w <= 16; } },
+    { k: 'c', es: '4 a 6 meses', en: '4 to 6 months', f: function (w) { return w != null && w > 16 && w <= 26; } },
+    { k: 'd', es: 'Más de 6 meses', en: 'Over 6 months', f: function (w) { return w != null && w > 26; } }
+  ];
+  var PRICES = [
+    { k: 'p1', u: 'hasta-2200', min: 0, max: 2200, es: 'Hasta $2,200', en: 'Up to $2,200', f: function (v) { return v < 2200; } },
+    { k: 'p2', u: '2200-2500', min: 2200, max: 2500, es: '$2,200 a $2,500', en: '$2,200 to $2,500', f: function (v) { return v >= 2200 && v < 2500; } },
+    { k: 'p3', u: '2500-3000', min: 2500, max: 3000, es: '$2,500 a $3,000', en: '$2,500 to $3,000', f: function (v) { return v >= 2500 && v < 3000; } },
+    { k: 'p4', u: '3000-mas', min: 3000, max: null, es: '$3,000 o más', en: '$3,000 and up', f: function (v) { return v >= 3000; } }
+  ];
+  function ageDef(k) { for (var i = 0; i < AGES.length; i++) if (AGES[i].k === k) return AGES[i]; return null; }
+  function priceDef(k) { for (var i = 0; i < PRICES.length; i++) if (PRICES[i].k === k) return PRICES[i]; return null; }
+
+  /* ── estados de EE. UU. (el selector nunca depende de la red) ───────── */
+  var STATES = [
+    ['AL', 'Alabama'], ['AK', 'Alaska'], ['AZ', 'Arizona'], ['AR', 'Arkansas'], ['CA', 'California'],
+    ['CO', 'Colorado'], ['CT', 'Connecticut'], ['DE', 'Delaware'], ['DC', 'District of Columbia'], ['FL', 'Florida'],
+    ['GA', 'Georgia'], ['HI', 'Hawaii'], ['ID', 'Idaho'], ['IL', 'Illinois'], ['IN', 'Indiana'],
+    ['IA', 'Iowa'], ['KS', 'Kansas'], ['KY', 'Kentucky'], ['LA', 'Louisiana'], ['ME', 'Maine'],
+    ['MD', 'Maryland'], ['MA', 'Massachusetts'], ['MI', 'Michigan'], ['MN', 'Minnesota'], ['MS', 'Mississippi'],
+    ['MO', 'Missouri'], ['MT', 'Montana'], ['NE', 'Nebraska'], ['NV', 'Nevada'], ['NH', 'New Hampshire'],
+    ['NJ', 'New Jersey'], ['NM', 'New Mexico'], ['NY', 'New York'], ['NC', 'North Carolina'], ['ND', 'North Dakota'],
+    ['OH', 'Ohio'], ['OK', 'Oklahoma'], ['OR', 'Oregon'], ['PA', 'Pennsylvania'], ['RI', 'Rhode Island'],
+    ['SC', 'South Carolina'], ['SD', 'South Dakota'], ['TN', 'Tennessee'], ['TX', 'Texas'], ['UT', 'Utah'],
+    ['VT', 'Vermont'], ['VA', 'Virginia'], ['WA', 'Washington'], ['WV', 'West Virginia'], ['WI', 'Wisconsin'], ['WY', 'Wyoming']
+  ];
+  function loadShipping() {
+    return fetch(SUPA_URL + '/rest/v1/delivery_prices?select=state,state_name,price,days_min,days_max,notes&order=state_name.asc', { headers: { apikey: SUPA_KEY, Authorization: 'Bearer ' + SUPA_KEY } })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!Array.isArray(d)) return;
+        SHIP = d; SHIP_BY = {};
+        d.forEach(function (s) { SHIP_BY[s.state] = s; });
+        var sel = el('rq-state');
+        if (sel) { fillStates(sel, sel.value); paintShip(); }
+      }).catch(function () { });
   }
-
-  function initBreedAutocomplete() {
-    var input = document.getElementById('pf-breed-input');
-    var drop  = document.getElementById('pf-breed-drop');
-    if (!input || !drop) return;
-    function render(q) {
-      var list = allBreeds.filter(function(b){ return !q || b.toLowerCase().includes(q.toLowerCase()); });
-      drop.innerHTML = (q ? '' : '<div class="pf-ac-opt" data-v="">Todas las razas</div>')
-        + (list.length ? list.map(function(b){ return '<div class="pf-ac-opt' + (b===selectedBreed?' selected':'') + '" data-v="' + esc(b) + '">' + esc(b) + '</div>'; }).join('') : '<div class="pf-ac-opt" style="color:var(--ink-soft)">Sin resultados</div>');
-    }
-    input.addEventListener('focus', function(){ render(input.value); drop.classList.add('open'); });
-    input.addEventListener('input', function(){ render(input.value); drop.classList.add('open'); });
-    document.addEventListener('click', function(e){ if (!e.target.closest('#pf-breed-wrap')) drop.classList.remove('open'); });
-    drop.addEventListener('mousedown', function(e) {
-      var opt = e.target.closest('.pf-ac-opt');
-      if (!opt) return;
-      e.preventDefault();
-      selectedBreed = opt.dataset.v || '';
-      input.value   = selectedBreed;
-      input.className = selectedBreed ? 'pf-ac-input has-value' : 'pf-ac-input';
-      drop.classList.remove('open');
-      applyFilters();
-    });
-  }
-
-  function initColorSwatches() {
-    var panel = document.getElementById('pf-color-panel');
-    var btn   = document.getElementById('pf-color-btn');
-    if (!panel || !btn) return;
-    var groups = [{k:'c',l:'Colores comunes'},{k:'m',l:'Merle'},{k:'e',l:'Colores exóticos'}];
-    var exoticVals = SWATCHES.filter(function(s){ return s.g==='e'; }).map(function(s){ return s.v; });
-
-    panel.innerHTML = '<div style="display:flex;align-items:center;gap:8px;margin-bottom:14px;flex-wrap:wrap">'
-      + '<button id="pf-color-any" style="padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-family:inherit;font-size:12px;font-weight:700;color:var(--ink-2);cursor:pointer;transition:all .15s">Cualquier color</button>'
-      + '<button id="pf-color-exotic" style="padding:6px 14px;border-radius:999px;border:1.5px solid var(--line);background:#fff;font-family:inherit;font-size:12px;font-weight:700;color:var(--ink-2);cursor:pointer;transition:all .15s">✨ Todos los exóticos</button>'
-      + '</div>'
-      + groups.map(function(g) {
-        var sw = SWATCHES.filter(function(s){ return s.g === g.k; });
-        return '<div class="pf-color-group-label">' + g.l + '</div>'
-          + '<div class="pf-color-swatches">'
-          + sw.map(function(s){
-            return '<div class="pf-color-swatch" data-v="' + s.v + '" title="' + s.l + '">'
-              + '<div class="pf-color-dot" style="' + dotBg(s) + (s.bd ? ';border-color:rgba(45,36,33,0.25)' : '') + '"></div>'
-              + '<span class="pf-color-label">' + s.l + '</span></div>';
-          }).join('') + '</div>';
+  function fillStates(sel, cur) {
+    if (!sel) return;
+    sel.innerHTML = '<option value="">' + esc(T('Tu estado', 'Your state')) + ' *</option>'
+      + STATES.map(function (s) {
+        var d = SHIP_BY[s[0]];
+        return '<option value="' + s[0] + '">' + esc(d ? d.state_name : s[1]) + '</option>';
       }).join('');
-
-    // "Cualquier color" — clears all
-    document.getElementById('pf-color-any').addEventListener('click', function() {
-      selectedColors = [];
-      panel.querySelectorAll('.pf-color-swatch.sel').forEach(function(el){ el.classList.remove('sel'); });
-      updateColorBtn();
-      applyFilters();
-    });
-
-    // "Todos los exóticos" — toggle all exotic colors
-    document.getElementById('pf-color-exotic').addEventListener('click', function() {
-      var allSelected = exoticVals.every(function(v){ return selectedColors.indexOf(v) !== -1; });
-      if (allSelected) {
-        // deselect all exotics
-        exoticVals.forEach(function(v){
-          var idx = selectedColors.indexOf(v); if (idx !== -1) selectedColors.splice(idx, 1);
-          var el = panel.querySelector('[data-v="' + v + '"]'); if (el) el.classList.remove('sel');
-        });
-      } else {
-        // select all exotics
-        exoticVals.forEach(function(v){
-          if (selectedColors.indexOf(v) === -1) selectedColors.push(v);
-          var el = panel.querySelector('[data-v="' + v + '"]'); if (el) el.classList.add('sel');
-        });
-      }
-      updateColorBtn();
-      applyFilters();
-    });
-
-    btn.addEventListener('click', function(e){ e.stopPropagation(); panel.classList.toggle('open'); });
-    document.addEventListener('click', function(e){
-      if (!e.target.closest('#pf-color-wrap') && !e.target.closest('#pf-color-panel')) panel.classList.remove('open');
-    });
-    panel.addEventListener('click', function(e) {
-      var sw = e.target.closest('.pf-color-swatch');
-      if (!sw) return;
-      var v = sw.dataset.v, idx = selectedColors.indexOf(v);
-      if (idx === -1) { selectedColors.push(v); sw.classList.add('sel'); }
-      else            { selectedColors.splice(idx, 1); sw.classList.remove('sel'); }
-      updateColorBtn();
-      applyFilters();
-    });
+    if (cur) sel.value = cur;
   }
-
-  async function submitPuppyRequest(filterDesc) {
-    var breed = (document.getElementById('pr-breed') || {}).value || '';
-    var name  = (document.getElementById('pr-name')  || {}).value || '';
-    var email = (document.getElementById('pr-email') || {}).value || '';
-    var phone = (document.getElementById('pr-phone') || {}).value || '';
-    var notes = (document.getElementById('pr-notes') || {}).value || '';
-    if (!breed || !name || !email || !phone) { alert('Por favor completa la raza, tu nombre, email y teléfono.'); return; }
-    try {
-      await sb.from('website_leads').insert({ gclid: (function(){try{window.bpLead&&window.bpLead()}catch(e){}return (typeof window!=='undefined'&&window.bpGclid?window.bpGclid():null)})(), full_name:name, email:email, phone:phone,
-        message:'SOLICITUD DE CACHORRO\nRaza: '+breed+'\nFiltros: '+filterDesc+'\nNotas: '+notes, source:'puppy_request' });
-      var grid = document.getElementById('pup-grid');
-      if (grid) grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:60px 24px"><div style="font-size:52px;margin-bottom:16px">🎉</div><h3 style="font-family:var(--display);font-size:24px;font-weight:700;color:var(--ink);margin:0 0 10px">¡Solicitud recibida!</h3><p style="color:var(--ink-2);font-size:15px">Te contactaremos cuando tengamos el cachorro perfecto para ti.</p></div>';
-    } catch(err) { alert('Error al enviar. Por favor escríbenos por WhatsApp: +1 (929) 428-7300'); }
-  }
-  window.submitPuppyRequest = submitPuppyRequest;
-
-  function clearFilters() {
-    selectedBreed = ''; selectedColors = [];
-    ['pf-sex','pf-age'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
-    var s = document.getElementById('pf-search'); if (s) s.value = '';
-    var bi = document.getElementById('pf-breed-input');
-    if (bi) { bi.value = ''; bi.className = 'pf-ac-input'; }
-    document.querySelectorAll('.pf-color-swatch.sel').forEach(function(el){ el.classList.remove('sel'); });
-    updateColorBtn();
-    applyFilters();
-  }
-  window.clearFilters = clearFilters;
-
-  async function load() {
-    var grid    = document.getElementById('pup-grid');
-    var loading = document.getElementById('pup-loading');
-    try {
-      var res = await sb.from('puppies_public').select('*').in('status', ['available','reserved','sold','in_transit','delivered']).order('created_at', { ascending: false });
-      if (res.error) throw res.error;
-      ALL_PUPPIES = res.data || [];
-      if (loading) loading.remove();
-      populateFilters(ALL_PUPPIES);
-      initBreedAutocomplete();
-      initColorSwatches();
-      applyFilters();
-      ['pf-sex','pf-age'].forEach(function(id){ var el=document.getElementById(id); if(el) el.addEventListener('change', applyFilters); });
-      var si = document.getElementById('pf-search'); if (si) si.addEventListener('input', applyFilters);
-      var cl = document.getElementById('pf-clear');  if (cl) cl.addEventListener('click', clearFilters);
-    } catch(e) {
-      if (loading) loading.innerHTML = '<p style="color:var(--ink-soft);font-size:15px">Error al cargar. Por favor recarga la página.</p>';
-      console.error('Supabase error:', e);
+  function shipDays(s) { return s.days_min === s.days_max ? (s.days_min + ' ' + T('días', 'days')) : (s.days_min + '–' + s.days_max + ' ' + T('días', 'days')); }
+  function paintShip() {
+    var box = el('rq-ship'), sel = el('rq-state');
+    if (!box) return;
+    var s = sel && sel.value ? SHIP_BY[sel.value] : null;
+    if (!s) {
+      box.className = 'rq-ship';
+      box.innerHTML = T('Elige tu estado y te mostramos el costo del delivery. Las entregas se realizan entre 2 y 5 días.', 'Pick your state and we show you the delivery cost. Deliveries take between 2 and 5 days.');
+      return;
     }
+    box.className = 'rq-ship on';
+    box.innerHTML = '<span class="p">' + money(s.price) + '</span> · <span class="d">' + T('Entrega a ', 'Delivery to ') + esc(s.state_name) + ' · ' + shipDays(s) + '</span><br>'
+      + T('El delivery se cobra aparte del cachorro.', 'Delivery is charged separately from the puppy.')
+      + (s.notes ? '<span class="n">' + esc(s.notes) + '</span>' : '');
   }
 
-  if (document.readyState === 'loading') { document.addEventListener('DOMContentLoaded', load); }
-  else { load(); }
-})();
-</script>
-<script>
-// International shipping modal
-function openIntlShipping() {
-  var existing = document.getElementById('__intl-modal');
-  if (existing) { existing.style.display = 'flex'; return; }
-  var ov = document.createElement('div');
-  ov.id = '__intl-modal';
-  ov.style.cssText = 'position:fixed;inset:0;z-index:9998;background:rgba(45,36,33,0.6);backdrop-filter:blur(8px);display:flex;align-items:center;justify-content:center;padding:20px;font-family:Plus Jakarta Sans,sans-serif';
-  ov.onclick = function(e){ if(e.target===ov) ov.style.display='none'; };
-  ov.innerHTML = '<div style="background:#FFFCF6;border-radius:22px;max-width:500px;width:100%;max-height:90vh;overflow-y:auto;position:relative;padding:28px">'
-    + '<button onclick="document.getElementById(\'__intl-modal\').style.display=\'none\'" style="position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:1px solid rgba(45,36,33,0.12);background:none;cursor:pointer;font-size:18px;display:grid;place-items:center;color:#6B5A4E">×</button>'
-    + '<div style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:#F58220;margin-bottom:6px">Envío Internacional</div>'
-    + '<div style="font-family:Bricolage Grotesque,sans-serif;font-size:22px;font-weight:700;letter-spacing:-.02em;margin-bottom:8px;color:#2D2421">Llevamos tu cachorro donde estés</div>'
-    + '<p style="font-size:13px;color:#6B5A4E;margin-bottom:16px;line-height:1.65">Cuéntanos tu destino y te enviamos una cotización con todos los requisitos para importar tu mascota.</p>'
-    + '<div style="background:#FFF5EB;border-radius:10px;padding:14px;margin-bottom:16px;font-size:12px;color:#6B5A4E;line-height:1.6">'
-    + '<div style="font-weight:700;color:#F58220;margin-bottom:8px">✓ Requisitos generales</div>'
-    + '✓ Certificado de salud veterinario (≤10 días antes del vuelo)<br>'
-    + '✓ Microchip ISO 11784/11785<br>'
-    + '✓ Vacuna antirrábica vigente<br>'
-    + '✓ Endoso USDA APHIS del certificado<br>'
-    + '✓ Permiso de importación del país destino (si aplica)<br>'
-    + '<em style="font-size:11px">* Los requisitos varían por país. Te informamos al contactarte.</em>'
-    + '</div>'
-    + '<div style="display:flex;flex-direction:column;gap:10px">'
-    + '<input id="is-country" placeholder="País de destino *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none;background:#FFF5EB">'
-    + '<input id="is-name" placeholder="Tu nombre *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">'
-    + '<input id="is-email" type="email" placeholder="Email *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">'
-    + '<input id="is-phone" type="tel" placeholder="Teléfono / WhatsApp *" style="width:100%;padding:10px 14px;border:1.5px solid rgba(45,36,33,0.12);border-radius:8px;font-family:inherit;font-size:14px;box-sizing:border-box;outline:none">'
-    + '<button onclick="submitIntlShipping()" style="width:100%;padding:13px;background:#F58220;color:#fff;border:none;border-radius:999px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer">✈️ Solicitar cotización</button>'
-    + '</div></div>';
-  document.body.appendChild(ov);
-}
-window.openIntlShipping = openIntlShipping;
+  /* ── filtros desde la URL (?raza= ?sexo= ?color= ?precio=) ──────────── */
+  function slug(s) { return norm(s).replace(/[^a-z0-9]+/g, ''); }
+  function slugDash(s) { return norm(s).replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, ''); }
+  function titleize(s) {
+    return String(s == null ? '' : s).replace(/[-_+]+/g, ' ').replace(/\s+/g, ' ').trim()
+      .split(' ').map(function (w) { return w ? w.charAt(0).toUpperCase() + w.slice(1) : w; }).join(' ');
+  }
+  // Acepta el nombre ("Yorkshire Terrier"), el slug ("yorkshire-terrier") y el breed_key ("yorkshireterrier").
+  function findBreed(raw) {
+    var s = slug(raw); if (!s) return '';
+    var part = '';
+    for (var i = 0; i < ALL.length; i++) {
+      var b = slug(ALL[i].breed), k = slug(ALL[i].breed_key);
+      if (b === s || (k && k === s)) return ALL[i].breed;
+      if (!part && b.length > 3 && (b.indexOf(s) >= 0 || (s.length > 3 && s.indexOf(b) >= 0))) part = ALL[i].breed;
+    }
+    return part;
+  }
+  function countBreed(name) {
+    var s = slug(name), n = 0;
+    if (!s) return 0;
+    ALL.forEach(function (p) { if (slug(p.breed) === s) n++; });
+    return n;
+  }
+  function sexFromParam(v) {
+    var s = norm(v);
+    if (/^(f|h|hembra|hembras|female|females|girl|girls)$/.test(s)) return 'female';
+    if (/^(m|macho|machos|male|males|boy|boys)$/.test(s)) return 'male';
+    return '';
+  }
+  function colorsFromParam(v) {
+    if (!v) return [];
+    var out = [];
+    String(v).split(',').forEach(function (raw) {
+      var s = norm(raw); if (!s) return;
+      for (var i = 0; i < COLORS.length; i++) {
+        var c = COLORS[i];
+        if (s === c.k || s === norm(c.es) || s === norm(c.en) || c.t.indexOf(s) >= 0) { if (out.indexOf(c.k) < 0) out.push(c.k); return; }
+      }
+      var k = colorKeys(s);
+      if (k.length === 1 && out.indexOf(k[0]) < 0) out.push(k[0]);
+    });
+    return out;
+  }
+  function priceBucket(n) {
+    for (var i = 0; i < PRICES.length; i++) { var p = PRICES[i]; if (n >= p.min && (p.max == null || n < p.max)) return p.k; }
+    return '';
+  }
+  function priceFromParam(v) {
+    var s = norm(v).replace(/[$,\s]/g, '').replace(/[–—]/g, '-');
+    if (!s) return '';
+    var i;
+    for (i = 0; i < PRICES.length; i++) if (s === PRICES[i].k || s === PRICES[i].u) return PRICES[i].k;
+    var down = /hasta|upto|up-to|under|menos|below|max/.test(s);
+    var up = !down && /\+|mas|more|over|desde|up/.test(s);
+    var nums = (s.match(/\d+/g) || []).map(Number).filter(function (n) { return n > 0; });
+    if (!nums.length) return '';
+    if (nums.length > 1) {
+      for (i = 0; i < PRICES.length; i++) if (PRICES[i].min === nums[0] && PRICES[i].max === nums[1]) return PRICES[i].k;
+      for (i = 0; i < PRICES.length; i++) if (PRICES[i].min === nums[0]) return PRICES[i].k;
+      return priceBucket(nums[0]);
+    }
+    if (up) { for (i = PRICES.length - 1; i >= 0; i--) if (PRICES[i].min <= nums[0]) return PRICES[i].k; return ''; }
+    for (i = 0; i < PRICES.length; i++) if (PRICES[i].max === nums[0]) return PRICES[i].k;
+    return priceBucket(nums[0]);
+  }
+  function readURL() {
+    try {
+      var q = new URLSearchParams(location.search), v;
+      v = (q.get('raza') || q.get('breed') || '').trim();
+      if (v) { var hit = findBreed(v); if (hit) F.breed = hit; else WANT = titleize(v); }
+      v = sexFromParam(q.get('sexo') || q.get('sex') || q.get('gender')); if (v) F.sex = v;
+      var cs = colorsFromParam(q.get('color') || q.get('colors')); if (cs.length) F.colors = cs;
+      v = priceFromParam(q.get('precio') || q.get('price')); if (v) F.price = v;
+      v = (q.get('q') || q.get('buscar') || '').trim();
+      if (v) { F.q = norm(v); var qi = el('pf-q'); if (qi) qi.value = v; }
+    } catch (e) { }
+  }
+  // El enlace se puede compartir: la URL siempre refleja los filtros de pantalla.
+  function syncURL() {
+    try {
+      var u = new URL(location.href), q = u.searchParams;
+      if (F.breed) q.set('raza', slugDash(F.breed));
+      else if (WANT) q.set('raza', slugDash(WANT));
+      else q.delete('raza');
+      if (F.sex) q.set('sexo', F.sex === 'female' ? 'hembra' : 'macho'); else q.delete('sexo');
+      if (F.colors.length) q.set('color', F.colors.join(',')); else q.delete('color');
+      var pd = F.price ? priceDef(F.price) : null;
+      if (pd) q.set('precio', pd.u); else q.delete('precio');
+      if (F.q) q.set('q', F.q); else q.delete('q');
+      q.delete('breed'); q.delete('sex'); q.delete('gender'); q.delete('colors'); q.delete('price'); q.delete('buscar');
+      var s = q.toString().replace(/%2C/gi, ',');
+      history.replaceState(null, '', u.pathname + (s ? '?' + s : '') + u.hash);
+    } catch (e) { }
+  }
+  // Llegó de un anuncio pidiendo una raza que hoy no tenemos: se lo decimos de frente.
+  function renderURLNote() {
+    var box = el('url-note'); if (!box) return;
+    if (!WANT || NOTE_OFF || F.breed) { box.innerHTML = ''; return; }
+    box.innerHTML = '<div class="url-note">'
+      + '<p class="t">' + T('Ahora mismo no tenemos <b>' + esc(WANT) + '</b> en el listado. Solicítalo y lo buscamos con nuestra red de criadores: te avisamos en 24 a 48 horas. Mientras tanto, estos son todos los cachorros disponibles hoy.',
+        'We do not have <b>' + esc(WANT) + '</b> in the listing right now. Request it and we will source it through our breeder network: we let you know within 24 to 48 hours. Meanwhile, these are all the puppies available today.') + '</p>'
+      + '<button type="button" class="btn-solid" data-act="want">' + esc(T('Solicitar un ' + WANT, 'Request a ' + WANT)) + '</button>'
+      + '<button type="button" class="x" data-act="note-off" aria-label="' + esc(T('Cerrar aviso', 'Dismiss')) + '">&times;</button>'
+      + '</div>';
+  }
 
-async function submitIntlShipping() {
-  var SUPA_URL='https://oqqwmcplljirbreowrll.supabase.co';
-  var SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4';
-  var g = function(id){ var e=document.getElementById(id); return e?e.value.trim():''; };
-  if (!g('is-country') || !g('is-name') || !g('is-email') || !g('is-phone')) { alert('Por favor completa todos los campos obligatorios.'); return; }
-  try {
-    var sb2 = supabase.createClient(SUPA_URL, SUPA_KEY);
-    await sb2.from('website_leads').insert({ gclid: (function(){try{window.bpLead&&window.bpLead()}catch(e){}return (typeof window!=='undefined'&&window.bpGclid?window.bpGclid():null)})(), full_name:g('is-name'), email:g('is-email'), phone:g('is-phone'), message:'ENVÍO INTERNACIONAL - País: '+g('is-country'), source:'intl_shipping' });
-    var modal = document.getElementById('__intl-modal');
-    if (modal) modal.querySelector('div').innerHTML = '<div style="text-align:center;padding:40px 20px"><div style="font-size:52px;margin-bottom:16px">✈️</div><div style="font-family:Bricolage Grotesque,sans-serif;font-size:22px;font-weight:700;color:#2D2421;margin-bottom:8px">¡Solicitud recibida!</div><p style="color:#6B5A4E;font-size:14px;line-height:1.65">Te enviaremos la cotización y los requisitos para '+g('is-country')+' en breve.</p><button onclick="document.getElementById(\'__intl-modal\').style.display=\'none\'" style="margin-top:20px;background:#F58220;color:#fff;border:none;padding:12px 24px;border-radius:999px;font-weight:700;cursor:pointer;font-family:inherit">Cerrar</button></div>';
-  } catch(err) { alert('Error al enviar. Escríbenos por SMS o WhatsApp: +1 (929) 428-7300'); }
-}
-window.submitIntlShipping = submitIntlShipping;
+  /* ── preparar datos ─────────────────────────────────────────────────── */
+  function prep(rows) {
+    return (rows || []).filter(function (p) { return p && (p.photos || []).length; }).map(function (p, i) {
+      p._i = i;
+      p._ph = (p.photos || []).filter(Boolean);
+      p._crop = (p.source_site === 'lancaster' || p.source_site === 'greenfield');
+      p._w = weeksOf(p);
+      p._age = ageLabel(p._w);
+      p._sex = p.gender === 'female' || p.gender === 'male' ? p.gender : '';
+      p._ck = colorKeys(p.color);
+      p._s = norm([p.name, p.breed, p.color, sexLabel(p._sex)].filter(Boolean).join(' '));
+      return p;
+    });
+  }
+
+  /* ── filtro ─────────────────────────────────────────────────────────── */
+  function pass(p) {
+    if (F.breed && p.breed !== F.breed) return false;
+    if (F.sex && p._sex !== F.sex) return false;
+    if (F.age) { var a = ageDef(F.age); if (!a || !a.f(p._w)) return false; }
+    if (F.price) { var pd = priceDef(F.price); if (!pd || p.price_public == null || !pd.f(Number(p.price_public))) return false; }
+    if (F.colors.length) {
+      if (!p._ck.length) return false;
+      var ok = false;
+      for (var i = 0; i < F.colors.length; i++) if (p._ck.indexOf(F.colors[i]) >= 0) { ok = true; break; }
+      if (!ok) return false;
+    }
+    if (F.q && p._s.indexOf(F.q) < 0) return false;
+    return true;
+  }
+  function sortList(list) {
+    var l = list.slice();
+    if (F.sort === 'price_asc') return l.sort(function (a, b) { return (a.price_public || 0) - (b.price_public || 0); });
+    if (F.sort === 'price_desc') return l.sort(function (a, b) { return (b.price_public || 0) - (a.price_public || 0); });
+    if (F.sort === 'young') return l.sort(function (a, b) { return (a._w == null ? 9999 : a._w) - (b._w == null ? 9999 : b._w); });
+    if (F.sort === 'new') return l.sort(function (a, b) { return String(b.created_at || '').localeCompare(String(a.created_at || '')); });
+    var g = {}, order = [];
+    l.forEach(function (p) { var k = p.breed_key || p.breed || 'x'; if (!g[k]) { g[k] = []; order.push(k); } g[k].push(p); });
+    var out = [], i = 0;
+    while (out.length < l.length) {
+      var moved = false;
+      for (var j = 0; j < order.length; j++) { var it = g[order[j]][i]; if (it) { out.push(it); moved = true; } }
+      if (!moved) break;
+      i++;
+    }
+    return out;
+  }
+
+  /* ── tarjetas ───────────────────────────────────────────────────────── */
+  function card(p) {
+    var meta = [];
+    if (p._sex) meta.push(sexLabel(p._sex));
+    if (p._age) meta.push(p._age);
+    var ct = colorText(p); if (ct) meta.push(ct);
+    return '<button type="button" class="pcard" data-i="' + p._i + '" aria-label="' + esc((p.name || p.breed || '') + ' — ' + T('ver ficha', 'view details')) + '">'
+      + '<div class="pcard-ph' + (p._crop ? ' crop' : '') + '">'
+      + imgTag(p._ph[0], 520, 62, (p.breed || 'Cachorro') + ' ' + (p.name || ''))
+      + '<span class="tag">' + T('Disponible', 'Available') + '</span>'
+      + (p._ph.length > 1 ? '<span class="cnt">' + svg(IC.cam) + p._ph.length + '</span>' : '')
+      + '<span class="pz">' + money(p.price_public) + '</span>'
+      + '</div>'
+      + '<div class="pcard-b">'
+      + '<div class="pcard-breed">' + esc(p.breed || '') + '</div>'
+      + '<h3>' + esc(p.name || T('Sin nombre', 'Unnamed')) + '</h3>'
+      + (meta.length ? '<div class="pcard-meta">' + meta.map(function (m) { return '<span class="chipx">' + esc(m) + '</span>'; }).join('') + '</div>' : '')
+      + '<span class="pcard-cta">' + T('Ver ficha completa', 'See full details') + svg(IC.arrow) + '</span>'
+      + '</div></button>';
+  }
+
+  function render(reset) {
+    if (!ready) return;
+    var grid = el('pup-grid'), more = el('pup-more'), btn = el('btn-more');
+    if (reset !== false) { VIEW = sortList(ALL.filter(pass)); shown = 0; grid.innerHTML = ''; }
+    var next = VIEW.slice(shown, shown + PAGE);
+    if (shown === 0 && !next.length) { grid.innerHTML = emptyHTML(); }
+    else { grid.insertAdjacentHTML('beforeend', next.map(card).join('')); }
+    shown += next.length;
+    var left = VIEW.length - shown;
+    if (left > 0) { more.style.display = 'flex'; btn.textContent = T('Ver más cachorros', 'Show more puppies') + ' (' + left + ')'; }
+    else more.style.display = 'none';
+    var c = el('pf-count');
+    if (c) c.textContent = VIEW.length + ' ' + (VIEW.length === 1 ? T('cachorro', 'puppy') : T('cachorros', 'puppies'));
+    renderChips();
+    renderAsk();
+    renderURLNote();
+    if (reset !== false) syncURL();
+  }
+
+  function emptyHTML() {
+    return '<div style="grid-column:1/-1;border:1px solid var(--line);border-radius:20px;background:var(--paper);padding:40px 24px;text-align:center">'
+      + '<div style="color:var(--orange);display:flex;justify-content:center;margin-bottom:12px">' + svg(IC.paw, 'ic') + '</div>'
+      + '<h3 style="font-family:var(--display);font-size:clamp(20px,3vw,26px);font-weight:600;letter-spacing:-0.02em;margin:0 0 8px">' + T('No hay cachorros con esos filtros', 'No puppies match those filters') + '</h3>'
+      + '<p style="color:var(--ink-2);font-size:14px;line-height:1.6;max-width:48ch;margin:0 auto 18px;text-wrap:pretty">' + T('Pero sí podemos conseguirlo: trabajamos con una red de criadores en todos los estados. Dinos qué buscas y te avisamos en cuanto lo tengamos.', 'We can still find it: we work with a breeder network in every state. Tell us what you are looking for and we will let you know as soon as we have it.') + '</p>'
+      + '<div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap">'
+      + '<button type="button" class="btn-solid" data-act="request">' + T('Solicitar el cachorro que buscas', 'Request the puppy you want') + '</button>'
+      + '<button type="button" class="btn-outline2" data-act="clear">' + T('Ver todos los cachorros', 'See all puppies') + '</button>'
+      + '</div></div>';
+  }
+
+  /* ── chips de filtros activos ───────────────────────────────────────── */
+  function renderChips() {
+    var box = el('pf-chips'); if (!box) return;
+    var chips = [];
+    if (F.breed) chips.push(['breed', F.breed]);
+    if (F.sex) chips.push(['sex', sexLabel(F.sex)]);
+    if (F.age) { var a = ageDef(F.age); if (a) chips.push(['age', T(a.es, a.en)]); }
+    if (F.price) { var pd = priceDef(F.price); if (pd) chips.push(['price', T(pd.es, pd.en)]); }
+    F.colors.forEach(function (k) { chips.push(['color:' + k, colorLabel(k)]); });
+    if (F.q) chips.push(['q', '"' + F.q + '"']);
+    box.innerHTML = chips.map(function (c) {
+      return '<button type="button" class="pf-chip" data-chip="' + esc(c[0]) + '">' + esc(c[1]) + '<span class="x">&times;</span></button>';
+    }).join('');
+  }
+
+  /* ── bloque "solicita otro de esa raza" ─────────────────────────────── */
+  function renderAsk() {
+    var box = el('ask-block'); if (!box) return;
+    box.style.display = 'flex';
+    var b = F.breed || WANT, own = !!F.breed;
+    el('ask-title').textContent = !b
+      ? T('¿No ves la raza que buscas?', 'Not seeing the breed you want?')
+      : own
+        ? T('¿Buscas otro ' + b + ' que no ves aquí?', 'Looking for another ' + b + ' you do not see here?')
+        : T('¿Buscas un ' + b + '?', 'Looking for a ' + b + '?');
+    el('ask-text').textContent = !b
+      ? T('Trabajamos con una red de criadores en todos los estados. Dinos qué raza quieres y te la conseguimos, con la misma garantía y entrega entre 2 y 5 días.', 'We work with a breeder network in every state. Tell us which breed you want and we will source it, with the same guarantee and delivery in 2 to 5 days.')
+      : own
+        ? T('Solicítalo y lo buscamos con nuestra red de criadores: otro color, otro sexo, más pequeño o recién nacido. Te avisamos en cuanto lo tengamos y la entrega se realiza entre 2 y 5 días.', 'Request it and we will look for it through our breeder network: another color, another sex, smaller or younger. We let you know as soon as we have it and delivery takes 2 to 5 days.')
+        : T('Hoy no tenemos ' + b + ' en el listado, pero lo buscamos con nuestra red de criadores en todos los estados: te avisamos en 24 a 48 horas y la entrega se realiza entre 2 y 5 días.', 'We do not have ' + b + ' in the listing today, but we source it through our breeder network in every state: we let you know within 24 to 48 hours and delivery takes 2 to 5 days.');
+    el('ask-btn-lbl').textContent = b ? T('Solicitar un ' + b, 'Request a ' + b) : T('Solicitar una raza', 'Request a breed');
+    el('ask-link').setAttribute('href', '/solicitud?especie=dog' + (b ? '&raza=' + encodeURIComponent(b) : ''));
+  }
+
+  /* ── controles ──────────────────────────────────────────────────────── */
+  var breedList = [];
+  function buildControls() {
+    // razas reales de la vista, con su conteo
+    var bc = {};
+    ALL.forEach(function (p) { var b = p.breed || ''; if (b) bc[b] = (bc[b] || 0) + 1; });
+    breedList = Object.keys(bc).map(function (b) { return { b: b, n: bc[b] }; })
+      .sort(function (x, y) { return y.n - x.n || x.b.localeCompare(y.b, 'es'); });
+
+    // sexo
+    var nf = ALL.filter(function (p) { return p._sex === 'female'; }).length;
+    var nm = ALL.filter(function (p) { return p._sex === 'male'; }).length;
+    fillSelect('pf-sex', T('Todos los sexos', 'Any sex'), [
+      { v: 'female', l: T('Hembra', 'Female') + ' (' + nf + ')' },
+      { v: 'male', l: T('Macho', 'Male') + ' (' + nm + ')' }
+    ], F.sex);
+
+    // edad
+    fillSelect('pf-age', T('Todas las edades', 'Any age'), AGES.map(function (a) {
+      var n = ALL.filter(function (p) { return a.f(p._w); }).length;
+      return { v: a.k, l: T(a.es, a.en) + ' (' + n + ')' };
+    }), F.age);
+
+    // precio
+    fillSelect('pf-price', T('Todos los precios', 'Any price'), PRICES.map(function (pr) {
+      var n = ALL.filter(function (p) { return p.price_public != null && pr.f(Number(p.price_public)); }).length;
+      return { v: pr.k, l: T(pr.es, pr.en) + ' (' + n + ')' };
+    }), F.price);
+
+    // orden
+    fillSelect('pf-sort', null, [
+      { v: 'mix', l: T('Orden: variedad de razas', 'Sort: mixed breeds') },
+      { v: 'price_asc', l: T('Precio: de menor a mayor', 'Price: low to high') },
+      { v: 'price_desc', l: T('Precio: de mayor a menor', 'Price: high to low') },
+      { v: 'young', l: T('Los más pequeños primero', 'Youngest first') },
+      { v: 'new', l: T('Añadidos recientemente', 'Recently added') }
+    ], F.sort);
+
+    // colores
+    var box = el('pf-colors');
+    var withColor = ALL.filter(function (p) { return p._ck.length; }).length;
+    var av = COLORS.map(function (c) {
+      return { c: c, n: ALL.filter(function (p) { return p._ck.indexOf(c.k) >= 0; }).length };
+    }).filter(function (x) { return x.n > 0; });
+    box.innerHTML = '<p class="hint">' + T('El criador no siempre registra el color. Ahora mismo ' + withColor + ' de ' + ALL.length + ' cachorros lo tienen anotado: si filtras por color, verás solo esos.', 'Breeders do not always record the color. Right now ' + withColor + ' of ' + ALL.length + ' puppies have it on file: filtering by color shows only those.') + '</p>'
+      + '<div class="pf-sw-row">' + av.map(function (x) {
+        return '<div class="pf-sw' + (F.colors.indexOf(x.c.k) >= 0 ? ' sel' : '') + '" data-color="' + x.c.k + '" role="button" tabindex="0">'
+          + '<span class="pf-sw-dot" style="background:' + x.c.bg + (x.c.k === 'blanco' ? ';border-color:rgba(45,36,33,0.3)' : '') + '"></span>'
+          + '<span class="pf-sw-lbl">' + esc(T(x.c.es, x.c.en)) + ' (' + x.n + ')</span></div>';
+      }).join('') + '</div>';
+    updColorBtn();
+
+    // chips de razas
+    var chips = el('breed-chips');
+    chips.innerHTML = breedList.map(function (x) {
+      return '<button type="button" class="breed-chip" data-breed="' + esc(x.b) + '">' + esc(x.b) + ' <small>' + x.n + '</small></button>';
+    }).join('')
+      + '<button type="button" class="breed-chip" data-act="request" style="border-color:var(--orange);color:var(--orange)">' + T('Solicitar otra raza', 'Request another breed') + '</button>';
+
+    // raza seleccionada
+    var bi = el('pf-breed');
+    bi.value = F.breed;
+    bi.className = F.breed ? 'pf-ac-input on' : 'pf-ac-input';
+  }
+  function fillSelect(id, blank, opts, cur) {
+    var s = el(id); if (!s) return;
+    s.innerHTML = (blank != null ? '<option value="">' + esc(blank) + '</option>' : '')
+      + opts.map(function (o) { return '<option value="' + esc(o.v) + '">' + esc(o.l) + '</option>'; }).join('');
+    s.value = cur || (blank != null ? '' : opts[0].v);
+    s.className = s.value && blank != null ? 'pf-select on' : 'pf-select';
+  }
+  function updColorBtn() {
+    var b = el('pf-color-btn'); if (!b) return;
+    b.className = F.colors.length ? 'pf-btn on' : 'pf-btn';
+    b.innerHTML = '<span>' + T('Color', 'Color') + '</span>' + (F.colors.length ? '<span class="n">' + F.colors.length + '</span>' : '');
+  }
+  function breedDrop(q) {
+    var drop = el('pf-breed-drop');
+    var qn = norm(q);
+    var list = breedList.filter(function (x) { return !qn || norm(x.b).indexOf(qn) >= 0; });
+    drop.innerHTML = '<div class="pf-ac-opt' + (F.breed ? '' : ' sel') + '" data-v=""><span>' + T('Todas las razas', 'All breeds') + '</span><small>' + ALL.length + '</small></div>'
+      + (list.length
+        ? list.map(function (x) { return '<div class="pf-ac-opt' + (x.b === F.breed ? ' sel' : '') + '" data-v="' + esc(x.b) + '"><span>' + esc(x.b) + '</span><small>' + x.n + '</small></div>'; }).join('')
+        : '<div class="pf-ac-opt" style="color:var(--ink-soft)"><span>' + T('Sin resultados', 'No matches') + '</span></div>');
+  }
+  function setBreed(b) {
+    F.breed = b || '';
+    var i = el('pf-breed');
+    i.value = F.breed; i.className = F.breed ? 'pf-ac-input on' : 'pf-ac-input';
+    render(true);
+  }
+  function clearAll() {
+    F = { breed: '', sex: '', age: '', price: '', colors: [], q: '', sort: F.sort };
+    WANT = '';
+    el('pf-q').value = '';
+    buildControls();
+    render(true);
+  }
+  // Aplica una raza en la propia página (sin recargar) y sube al listado.
+  function goBreed(b) {
+    closeOv('prqOv');
+    F = { breed: findBreed(b) || b, sex: '', age: '', price: '', colors: [], q: '', sort: F.sort };
+    WANT = '';
+    var qi = el('pf-q'); if (qi) qi.value = '';
+    buildControls();
+    render(true);
+    scrollToEl(el('pf-wrap'), 100);
+  }
+
+  /* ── overlays ───────────────────────────────────────────────────────── */
+  function openOv(id) { var o = el(id); if (!o) return; o.classList.add('open'); o.setAttribute('aria-hidden', 'false'); document.body.style.overflow = 'hidden'; }
+  function closeOv(id) {
+    var o = el(id); if (o) { o.classList.remove('open'); o.setAttribute('aria-hidden', 'true'); }
+    if (!document.querySelector('.ov.open') && !el('lbx').classList.contains('open')) document.body.style.overflow = '';
+  }
+
+  /* ── ficha del cachorro ─────────────────────────────────────────────── */
+  var DET = { p: null, ph: [], idx: 0, crop: false };
+  function openDetail(i) {
+    var p = ALL[i]; if (!p) return;
+    DET.p = p; DET.ph = p._ph; DET.idx = 0; DET.crop = p._crop;
+    var specs = [];
+    if (p._sex) specs.push([T('Sexo', 'Sex'), sexLabel(p._sex)]);
+    if (p._age) specs.push([T('Edad', 'Age'), p._age]);
+    var bl = bornLabel(p); if (bl) specs.push([T('Nacimiento', 'Born'), bl]);
+    var ct = colorText(p); if (ct) specs.push([T('Color', 'Color'), ct]);
+    if (p.weight) specs.push([T('Peso adulto est.', 'Est. adult weight'), p.weight]);
+    if (p.pedigree) specs.push([T('Pedigrí / registro', 'Pedigree'), yesLabel(p.pedigree)]);
+    if (p.microchip) specs.push([T('Microchip', 'Microchip'), yesLabel(p.microchip)]);
+    if (p.vaccines) specs.push([T('Vacunas', 'Vaccines'), yesLabel(p.vaccines)]);
+    specs.push([T('Entrega', 'Delivery'), T('2 a 5 días', '2 to 5 days')]);
+
+    var msg = T('Hola! Me interesa ', 'Hi! I am interested in ') + (p.name ? p.name + ' ' : '') + '(' + (p.breed || 'cachorro') + ')'
+      + T(' que vi en bpuppy.us/cachorros. ¿Sigue disponible?', ' that I saw on bpuppy.us/cachorros. Is it still available?');
+    var enc = encodeURIComponent(msg);
+
+    el('pdIn').innerHTML =
+      '<div class="pd-head"><div class="b">' + esc(p.breed || '') + '</div><h3>' + esc(p.name || p.breed || T('Cachorro', 'Puppy')) + '</h3></div>'
+      + '<div class="pd-main' + (p._crop ? ' crop' : '') + '">'
+      + imgTag(DET.ph[0] || '', 900, 70, (p.breed || '') + ' ' + (p.name || ''), ' id="pd-img"')
+      + '<span class="zoom">' + T('Toca para ampliar', 'Tap to enlarge') + (DET.ph.length > 1 ? ' · ' + DET.ph.length : '') + '</span></div>'
+      + (DET.ph.length > 1 ? '<div class="pd-thumbs" id="pd-thumbs">' + DET.ph.map(function (u, k) {
+        return imgTag(u, 160, 60, '', ' data-k="' + k + '" class="' + (k === 0 ? 'on' : '') + '"');
+      }).join('') + '</div>' : '')
+      + '<div class="pd-price">' + money(p.price_public) + ' <small>USD</small></div>'
+      + '<p class="pd-note">' + T('Incluye <b>delivery a todo Estados Unidos</b>. Disponibilidad sujeta a confirmación con el criador; la entrega se realiza entre 2 y 5 días.', 'Includes <b>delivery anywhere in the USA</b>. Availability subject to confirmation with the breeder; delivery takes 2 to 5 days.') + '</p>'
+      + '<div class="pd-specs">' + specs.map(function (s) { return '<div><span>' + esc(s[0]) + '</span><span>' + esc(s[1]) + '</span></div>'; }).join('') + '</div>'
+      + '<div class="pd-acts">'
+      + '<button type="button" class="btn-solid" data-act="request-this">' + svg(IC.paw) + T('Solicitar este cachorro', 'Request this puppy') + '</button>'
+      + '<a class="btn-outline2" href="https://wa.me/' + WA + '?text=' + enc + '" target="_blank" rel="noopener">' + svg(IC.chat) + T('Preguntar por WhatsApp', 'Ask on WhatsApp') + '</a>'
+      + '<a class="btn-outline2" href="sms:+' + WA + '?&body=' + enc + '">' + svg(IC.sms) + T('Preguntar por SMS', 'Ask by text') + '</a>'
+      + '</div>'
+      + '<div class="pd-links">'
+      + '<a href="/garantia">' + svg(IC.shield) + T('Garantía de salud', 'Health guarantee') + '</a>'
+      + '<a href="/nosotros">' + svg(IC.truck) + T('Cómo trabajamos', 'How we work') + '</a>'
+      + '<a href="/financiamiento">' + svg(IC.card) + T('Pagar en cuotas', 'Pay in installments') + '</a>'
+      + '</div>';
+    openOv('pdOv');
+    var ov = el('pdOv'); if (ov) ov.scrollTop = 0;
+  }
+  function pdSwap(k) {
+    if (!DET.ph[k]) return;
+    DET.idx = k;
+    var m = el('pd-img');
+    if (m) { delete m.dataset.f; m.dataset.o = DET.ph[k]; m.src = tx(DET.ph[k], 900, 70); m.style.visibility = ''; }
+    var th = el('pd-thumbs');
+    if (th) th.querySelectorAll('img').forEach(function (im) { im.classList.toggle('on', String(im.dataset.k) === String(k)); });
+  }
+
+  /* ── zoom de fotos ──────────────────────────────────────────────────── */
+  function lbxOpen(k) {
+    if (!DET.ph.length) return;
+    DET.idx = k == null ? DET.idx : k;
+    var im = el('lbxImg');
+    delete im.dataset.f; im.dataset.o = DET.ph[DET.idx]; im.style.visibility = '';
+    im.src = tx(DET.ph[DET.idx], 1600, 78);
+    im.classList.toggle('crop', !!DET.crop);
+    el('lbx').classList.add('open');
+    document.body.style.overflow = 'hidden';
+    var nav = DET.ph.length > 1 ? '' : 'none';
+    el('lbxP').style.display = nav; el('lbxN').style.display = nav;
+  }
+  function lbxNav(d) {
+    if (DET.ph.length < 2) return;
+    DET.idx = (DET.idx + d + DET.ph.length) % DET.ph.length;
+    var im = el('lbxImg');
+    delete im.dataset.f; im.dataset.o = DET.ph[DET.idx]; im.style.visibility = '';
+    im.src = tx(DET.ph[DET.idx], 1600, 78);
+    pdSwap(DET.idx);
+  }
+  function lbxClose() { el('lbx').classList.remove('open'); if (!document.querySelector('.ov.open')) document.body.style.overflow = ''; }
+
+  /* ── solicitud ──────────────────────────────────────────────────────── */
+  function activeFilterDesc() {
+    var f = [];
+    if (F.breed) f.push(T('Raza', 'Breed') + ': ' + F.breed);
+    if (F.sex) f.push(sexLabel(F.sex));
+    if (F.age) { var a = ageDef(F.age); if (a) f.push(T(a.es, a.en)); }
+    if (F.price) { var pd = priceDef(F.price); if (pd) f.push(T(pd.es, pd.en)); }
+    if (F.colors.length) f.push(T('Color', 'Color') + ': ' + F.colors.map(colorLabel).join(', '));
+    if (F.q) f.push('"' + F.q + '"');
+    return f.join(' · ');
+  }
+  function openRequest(opts) {
+    opts = opts || {};
+    var p = opts.puppy || null;
+    var breed = opts.breed || (p && p.breed) || F.breed || WANT || '';
+    var title = p
+      ? T('Solicitar a ', 'Request ') + (p.name || p.breed || T('este cachorro', 'this puppy'))
+      : (breed ? T('Solicitar un ', 'Request a ') + breed : T('Solicita el cachorro que buscas', 'Request the puppy you want'));
+    var sub = p
+      ? T('Confirmamos con el criador que sigue disponible y te escribimos hoy mismo. La entrega se realiza entre 2 y 5 días.', 'We confirm with the breeder that it is still available and write back to you today. Delivery takes 2 to 5 days.')
+      : T('Trabajamos con una red de criadores en todos los estados. Dinos qué buscas y te avisamos en cuanto lo tengamos.', 'We work with a breeder network in every state. Tell us what you want and we will let you know as soon as we have it.');
+    el('prqIn').innerHTML =
+      '<div class="pd-head"><div class="b">' + T('Solicitud', 'Request') + '</div><h3>' + esc(title) + '</h3></div>'
+      + '<p style="color:var(--ink-2);font-size:13.5px;line-height:1.6;margin:0;text-wrap:pretty">' + esc(sub) + '</p>'
+      + (p ? '<div style="display:flex;gap:12px;align-items:center;margin-top:14px;border:1px solid var(--line);border-radius:14px;padding:10px;background:#fff">'
+        + '<div style="width:56px;height:56px;border-radius:10px;overflow:hidden;flex:0 0 auto;background:#F2ECE2">'
+        + imgTag(p._ph[0] || '', 160, 60, '', ' style="width:100%;height:100%;object-fit:cover' + (p._crop ? ';clip-path:inset(13% 0 9% 0);transform:translateY(-2.6%) scale(1.3)' : '') + '"') + '</div>'
+        + '<div style="min-width:0"><div style="font-weight:700;font-size:14px">' + esc(p.name || '') + '</div><div style="font-size:12.5px;color:var(--orange);font-weight:600">' + esc(p.breed || '') + ' · ' + money(p.price_public) + '</div></div></div>' : '')
+      + '<div class="frm">'
+      + '<input id="rq-breed" class="fld key" value="' + esc(breed) + '" placeholder="' + T('Raza que buscas', 'Breed you want') + ' *">'
+      + '<input id="rq-name" class="fld" autocomplete="name" placeholder="' + T('Tu nombre', 'Your name') + ' *">'
+      + '<input id="rq-email" class="fld" type="email" inputmode="email" autocomplete="email" placeholder="Email *">'
+      + '<input id="rq-phone" class="fld" type="tel" inputmode="tel" autocomplete="tel" placeholder="' + T('Teléfono / WhatsApp', 'Phone / WhatsApp') + ' *">'
+      + '<select id="rq-state" class="fld"></select>'
+      + '<div class="rq-ship" id="rq-ship"></div>'
+      + '<textarea id="rq-notes" class="fld" rows="2" placeholder="' + T('Algo más que debamos saber (color, sexo, cuándo lo quieres…)', 'Anything else we should know (color, sex, when you want it…)') + '"></textarea>'
+      + '<input class="rq-hp" id="rq-hp" tabindex="-1" autocomplete="off" aria-hidden="true">'
+      + '<div class="rq-err" id="rq-err" style="display:none"></div>'
+      + '<button type="button" class="btn-solid" id="rq-go" style="width:100%;min-height:52px">' + T('Enviar solicitud', 'Send request') + '</button>'
+      + '<p style="font-size:11.5px;color:var(--ink-soft);line-height:1.5;margin:2px 0 0;text-align:center;text-wrap:pretty">' + T('Te contactamos por el medio que prefieras: llamada, SMS o WhatsApp.', 'We contact you however you prefer: call, text or WhatsApp.') + '</p>'
+      + '</div>';
+    openOv('prqOv');
+    el('prqOv').scrollTop = 0;
+    fillStates(el('rq-state'), '');
+    restoreDraft();
+    paintShip();
+    if (!SHIP.length) loadShipping();
+    el('rq-state').addEventListener('change', function () { paintShip(); saveDraft(); });
+    ['rq-name', 'rq-email', 'rq-phone', 'rq-notes'].forEach(function (id) {
+      var e = el(id); if (e) e.addEventListener('input', saveDraft);
+    });
+    el('rq-go').addEventListener('click', function () { sendRequest(p); });
+  }
+
+  /* Autoguardado del formulario: si se sale y vuelve, no vuelve a escribir todo. */
+  function saveDraft() {
+    try {
+      var g = function (id) { var e = el(id); return e ? String(e.value || '') : ''; };
+      localStorage.setItem(DRAFT, JSON.stringify({ name: g('rq-name'), email: g('rq-email'), phone: g('rq-phone'), state: g('rq-state'), notes: g('rq-notes') }));
+    } catch (e) { }
+  }
+  function restoreDraft() {
+    try {
+      var d = JSON.parse(localStorage.getItem(DRAFT) || '{}') || {};
+      ['name', 'email', 'phone', 'state', 'notes'].forEach(function (k) {
+        var e = el('rq-' + k);
+        if (e && d[k] && !e.value) e.value = d[k];
+      });
+    } catch (e) { }
+  }
+  function clearDraft() { try { localStorage.removeItem(DRAFT); } catch (e) { } }
+  function rqError(msg) {
+    var b = el('rq-err');
+    if (!b) { alert(msg); return; }
+    b.style.display = ''; b.textContent = msg;
+  }
+  function sendRequest(p) {
+    var v = function (id) { var e = el(id); return e ? String(e.value || '').trim() : ''; };
+    var breed = v('rq-breed'), name = v('rq-name'), email = v('rq-email'), phone = v('rq-phone'), state = v('rq-state'), notes = v('rq-notes');
+    if (!breed || !name || !email || !phone || !state) { rqError(T('Completa la raza, tu nombre, email, teléfono y estado.', 'Please fill in the breed, your name, email, phone and state.')); return; }
+    if (email.indexOf('@') < 1 || email.indexOf('.') < 2) { rqError(T('Revisa tu email.', 'Please check your email.')); return; }
+    if (phone.replace(/\D/g, '').length < 7) { rqError(T('Revisa tu teléfono.', 'Please check your phone number.')); return; }
+    var eb = el('rq-err'); if (eb) eb.style.display = 'none';
+    var btn = el('rq-go'); btn.disabled = true; btn.textContent = T('Buscando…', 'Searching…');
+
+    var extra = [];
+    if (notes) extra.push(notes);
+    if (p) extra.push(T('Cachorro que estaba viendo: ', 'Puppy they were viewing: ') + (p.name || '-') + ' · ' + (p.breed || '-') + ' · ' + money(p.price_public) + ' · ID ' + p.id + (p._ph[0] ? ' · ' + p._ph[0] : ''));
+    var fd = activeFilterDesc(); if (fd) extra.push(T('Filtros', 'Filters') + ': ' + fd);
+
+    fetch(SUPA_URL + '/functions/v1/puppy_request', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', apikey: SUPA_KEY },
+      body: JSON.stringify({
+        name: name, email: email, phone: phone, state: state, breed: breed,
+        notes: extra.join(' | '), website: v('rq-hp'), lang: LANG, gclid: gclid()
+      })
+    }).then(function (r) {
+      return r.json().catch(function () { return {}; }).then(function (d) { return { ok: r.ok, d: d || {} }; });
+    }).then(function (res) {
+      if (!res.ok || res.d.ok === false) throw new Error(res.d.error || '');
+      clearDraft();
+      showResult(breed, email, state, res.d);
+    }).catch(function (e) {
+      btn.disabled = false; btn.textContent = T('Enviar solicitud', 'Send request');
+      rqError((e && e.message) ? e.message : T('No pudimos enviar la solicitud. Escríbenos por WhatsApp o SMS al ' + TEL + '.', 'We could not send the request. Message us on WhatsApp or by text at ' + TEL + '.'));
+    });
+  }
+
+  /* La respuesta se ve AQUÍ MISMO: si hay cachorros de esa raza, se los enseñamos ya.
+     `found` / `url` / `waitlisted` vienen del edge; si el edge responde en segundo plano
+     (queued) nos apoyamos en lo que ya está cargado en la página, que nunca miente. */
+  function showResult(breed, email, state, d) {
+    var hit = findBreed(breed), label = hit || breed;
+    var here = countBreed(hit);
+    var url = d.url || d.catalog || '';
+    var eF = typeof d.found === 'number' ? d.found : null;
+    var s = SHIP_BY[state];
+    var ship = s ? '<p class="fine">' + T('Delivery a ', 'Delivery to ') + esc(s.state_name) + ': <b style="color:var(--orange)">' + money(s.price) + '</b> · ' + shipDays(s) + '</p>' : '';
+    var one = here === 1, html;
+
+    if (here > 0) {
+      html = '<div class="rq-res"><div class="ico">' + svg(IC.check) + '</div>'
+        + '<h3>' + esc(T('Tenemos ' + here + ' ' + label + (one ? ' disponible' : ' disponibles') + ' para ti', 'We have ' + here + ' ' + label + ' available for you')) + '</h3>'
+        + '<p>' + T('No hace falta esperar: te los enseñamos ahora mismo, aquí en la página.', 'No need to wait: we show them to you right now, here on the page.') + '</p>'
+        + '<div class="cta">'
+        + '<button type="button" class="rq-big" data-act="see-breed" data-breed="' + esc(label) + '">'
+        + esc(T(one ? 'Ver el ' + label : 'Ver los ' + here + ' ' + label, one ? 'See the ' + label : 'See the ' + here + ' ' + label)) + svg(IC.arrow) + '</button>'
+        + ((url && url.indexOf('/cachorros') !== 0) ? '<a class="btn-outline2" href="' + esc(url) + '" target="_blank" rel="noopener">' + T('Ver mi catálogo personalizado', 'See my personal catalog') + '</a>' : '')
+        + '</div>' + ship
+        + '<p class="fine">' + T('Guardamos tu solicitud. ¿Prefieres que te escribamos? WhatsApp o SMS al ', 'We saved your request. Prefer us to reach out? WhatsApp or text ') + '<b>' + TEL + '</b>.</p>'
+        + '</div>';
+    } else if (eF > 0) {
+      html = '<div class="rq-res"><div class="ico">' + svg(IC.check) + '</div>'
+        + '<h3>' + esc(T('Encontramos ' + eF + ' ' + label + ' para ti', 'We found ' + eF + ' ' + label + ' for you')) + '</h3>'
+        + '<p>' + T('No están en este listado: los acabamos de buscar con nuestra red de criadores.', 'They are not in this listing: we just sourced them from our breeder network.') + '</p>'
+        + '<div class="cta">'
+        + (url ? '<a class="rq-big" href="' + esc(url) + '" target="_blank" rel="noopener">' + esc(T('Ver los ' + eF + ' ' + label, 'See the ' + eF + ' ' + label)) + svg(IC.arrow) + '</a>' : '')
+        + '<button type="button" class="btn-outline2" data-act="close-prq">' + T('Seguir viendo cachorros', 'Keep browsing puppies') + '</button>'
+        + '</div>' + ship
+        + '<p class="fine">' + T('Guardamos tu solicitud. ¿Prefieres que te escribamos? WhatsApp o SMS al ', 'We saved your request. Prefer us to reach out? WhatsApp or text ') + '<b>' + TEL + '</b>.</p>'
+        + '</div>';
+    } else {
+      html = '<div class="rq-res"><div class="ico">' + svg(IC.bell) + '</div>'
+        + '<h3>' + esc(T('Ahora mismo no tenemos ' + label, 'We do not have ' + label + ' right now')) + '</h3>'
+        + '<p>' + T('Te avisamos apenas llegue: nuestra red de criadores nos manda camadas nuevas todos los días y te escribimos en 24 a 48 horas.', 'We let you know as soon as one arrives: our breeder network sends us new litters every day and we write to you within 24 to 48 hours.') + '</p>'
+        + '<p>' + T('Ya quedaste apuntado para <b>' + esc(label) + '</b> y te escribimos a ', 'You are on the list for <b>' + esc(label) + '</b> and we will write to you at ') + '<b>' + esc(email) + '</b>.</p>'
+        + '<div class="cta">'
+        + '<button type="button" class="rq-big" data-act="close-prq">' + T('Ver los cachorros disponibles hoy', 'See the puppies available today') + svg(IC.arrow) + '</button>'
+        + '<a class="btn-outline2" href="https://wa.me/' + WA + '?text=' + encodeURIComponent(T('Hola! Solicité un ' + label + ' en bpuppy.us/cachorros.', 'Hi! I requested a ' + label + ' on bpuppy.us/cachorros.')) + '" target="_blank" rel="noopener">' + T('Escríbenos por WhatsApp', 'Message us on WhatsApp') + '</a>'
+        + '<a class="btn-outline2" href="sms:+' + WA + '?&body=' + encodeURIComponent(T('Hola! Solicité un ' + label + ' en bpuppy.us/cachorros.', 'Hi! I requested a ' + label + ' on bpuppy.us/cachorros.')) + '">' + T('Escríbenos por SMS', 'Text us') + '</a>'
+        + '</div>' + ship
+        + '</div>';
+    }
+    el('prqIn').innerHTML = html;
+    var ov = el('prqOv'); if (ov) ov.scrollTop = 0;
+  }
+
+  /* ── envio internacional ────────────────────────────────────────────── */
+  function openIntl() {
+    el('intlIn').innerHTML =
+      '<div class="pd-head"><div class="b">' + T('Envío internacional', 'International shipping') + '</div><h3>' + T('Llevamos tu cachorro donde estés', 'We take your puppy wherever you are') + '</h3></div>'
+      + '<p style="color:var(--ink-2);font-size:13.5px;line-height:1.6;margin:0;text-wrap:pretty">' + T('Cuéntanos tu destino y te enviamos una cotización con todos los requisitos para importar tu mascota.', 'Tell us your destination and we will send you a quote with every requirement to import your pet.') + '</p>'
+      + '<div style="background:var(--bg);border:1px solid var(--line);border-radius:12px;padding:13px 15px;margin-top:14px;font-size:12.5px;color:var(--ink-2);line-height:1.75">'
+      + '<div style="font-weight:700;color:var(--orange);margin-bottom:6px">' + T('Requisitos generales', 'General requirements') + '</div>'
+      + T('Certificado de salud veterinario (10 días antes del vuelo)', 'Veterinary health certificate (within 10 days of the flight)') + '<br>'
+      + T('Microchip ISO 11784/11785', 'ISO 11784/11785 microchip') + '<br>'
+      + T('Vacuna antirrábica vigente', 'Valid rabies vaccine') + '<br>'
+      + T('Endoso USDA APHIS del certificado', 'USDA APHIS endorsement of the certificate') + '<br>'
+      + T('Permiso de importación del país destino, si aplica', 'Import permit for the destination country, if applicable') + '<br>'
+      + '<em style="font-size:11.5px">' + T('Los requisitos varían por país. Te los detallamos al contactarte.', 'Requirements vary by country. We detail them when we contact you.') + '</em></div>'
+      + '<div class="frm">'
+      + '<input id="is-country" class="fld key" placeholder="' + T('País de destino', 'Destination country') + ' *">'
+      + '<input id="is-name" class="fld" placeholder="' + T('Tu nombre', 'Your name') + ' *">'
+      + '<input id="is-email" class="fld" type="email" inputmode="email" placeholder="Email *">'
+      + '<input id="is-phone" class="fld" type="tel" inputmode="tel" placeholder="' + T('Teléfono / WhatsApp', 'Phone / WhatsApp') + ' *">'
+      + '<button type="button" class="btn-solid" id="is-go" style="width:100%">' + svg(IC.plane) + T('Solicitar cotización', 'Request a quote') + '</button>'
+      + '</div>';
+    openOv('intlOv');
+    el('is-go').addEventListener('click', sendIntl);
+  }
+  function sendIntl() {
+    var v = function (id) { var e = el(id); return e ? String(e.value || '').trim() : ''; };
+    if (!v('is-country') || !v('is-name') || !v('is-email') || !v('is-phone')) { alert(T('Completa todos los campos obligatorios.', 'Please fill in all required fields.')); return; }
+    var btn = el('is-go'); btn.disabled = true; btn.textContent = T('Enviando…', 'Sending…');
+    sb.from('website_leads').insert({
+      gclid: gclid(), full_name: v('is-name'), email: v('is-email'), phone: v('is-phone'),
+      message: 'ENVÍO INTERNACIONAL - País: ' + v('is-country'), source: 'intl_shipping'
+    }).then(function (r) {
+      if (r && r.error) throw r.error;
+      el('intlIn').innerHTML = '<div style="text-align:center;padding:26px 6px">'
+        + '<div style="color:var(--orange);display:flex;justify-content:center;margin-bottom:12px">' + svg(IC.plane) + '</div>'
+        + '<h3 style="font-family:var(--display);font-size:23px;font-weight:600;margin:0 0 10px">' + T('¡Solicitud recibida!', 'Request received!') + '</h3>'
+        + '<p style="color:var(--ink-2);font-size:14px;line-height:1.6;max-width:40ch;margin:0 auto 18px">' + T('Te enviamos la cotización y los requisitos en breve.', 'We will send you the quote and requirements shortly.') + '</p>'
+        + '<button type="button" class="btn-outline2" data-act="close-intl">' + T('Cerrar', 'Close') + '</button></div>';
+    }).catch(function () {
+      btn.disabled = false; btn.textContent = T('Solicitar cotización', 'Request a quote');
+      alert(T('No pudimos enviar. Escríbenos por WhatsApp o SMS al ' + TEL + '.', 'We could not send it. Message us on WhatsApp or by text at ' + TEL + '.'));
+    });
+  }
+
+  /* ── eventos ────────────────────────────────────────────────────────── */
+  function wire() {
+    var grid = el('pup-grid');
+    grid.addEventListener('click', function (e) {
+      var act = e.target.closest('[data-act]');
+      if (act) {
+        if (act.dataset.act === 'request') openRequest({});
+        if (act.dataset.act === 'clear') clearAll();
+        return;
+      }
+      var c = e.target.closest('.pcard');
+      if (c) openDetail(+c.dataset.i);
+    });
+
+    var qt;
+    el('pf-q').addEventListener('input', function (e) {
+      clearTimeout(qt);
+      var v = norm(e.target.value);
+      qt = setTimeout(function () { F.q = v; render(true); }, 180);
+    });
+    el('pf-sex').addEventListener('change', function (e) { F.sex = e.target.value; e.target.className = e.target.value ? 'pf-select on' : 'pf-select'; render(true); });
+    el('pf-age').addEventListener('change', function (e) { F.age = e.target.value; e.target.className = e.target.value ? 'pf-select on' : 'pf-select'; render(true); });
+    el('pf-price').addEventListener('change', function (e) { F.price = e.target.value; e.target.className = e.target.value ? 'pf-select on' : 'pf-select'; render(true); });
+    el('pf-sort').addEventListener('change', function (e) { F.sort = e.target.value; render(true); });
+    el('pf-clear').addEventListener('click', clearAll);
+    el('pf-toggle').addEventListener('click', function () { el('pf-wrap').classList.toggle('open'); });
+    el('btn-more').addEventListener('click', function () { render(false); });
+    el('btn-intl').addEventListener('click', openIntl);
+
+    // color
+    el('pf-color-btn').addEventListener('click', function (e) { e.stopPropagation(); el('pf-colors').classList.toggle('open'); });
+    el('pf-colors').addEventListener('click', function (e) {
+      var sw = e.target.closest('[data-color]'); if (!sw) return;
+      var k = sw.dataset.color, i = F.colors.indexOf(k);
+      if (i < 0) { F.colors.push(k); sw.classList.add('sel'); } else { F.colors.splice(i, 1); sw.classList.remove('sel'); }
+      updColorBtn(); render(true);
+    });
+
+    // raza (autocompletar)
+    var bi = el('pf-breed'), bd = el('pf-breed-drop');
+    bi.addEventListener('focus', function () { breedDrop(''); bd.classList.add('open'); bi.select(); });
+    bi.addEventListener('input', function () { breedDrop(bi.value); bd.classList.add('open'); });
+    bi.addEventListener('keydown', function (e) { if (e.key === 'Escape') { bd.classList.remove('open'); bi.blur(); } });
+    bd.addEventListener('mousedown', function (e) {
+      var o = e.target.closest('.pf-ac-opt'); if (!o || o.dataset.v === undefined) return;
+      e.preventDefault(); bd.classList.remove('open'); setBreed(o.dataset.v);
+    });
+    document.addEventListener('click', function (e) {
+      if (!e.target.closest('#pf-breed-wrap')) bd.classList.remove('open');
+      if (!e.target.closest('#pf-color-btn') && !e.target.closest('#pf-colors')) el('pf-colors').classList.remove('open');
+    });
+
+    // chips de filtros activos
+    el('pf-chips').addEventListener('click', function (e) {
+      var c = e.target.closest('[data-chip]'); if (!c) return;
+      var k = c.dataset.chip;
+      if (k === 'breed') { setBreed(''); buildControls(); return; }
+      if (k === 'sex') F.sex = '';
+      else if (k === 'age') F.age = '';
+      else if (k === 'price') F.price = '';
+      else if (k === 'q') { F.q = ''; el('pf-q').value = ''; }
+      else if (k.indexOf('color:') === 0) { var i = F.colors.indexOf(k.slice(6)); if (i >= 0) F.colors.splice(i, 1); }
+      buildControls(); render(true);
+    });
+
+    // chips de razas
+    el('breed-chips').addEventListener('click', function (e) {
+      var a = e.target.closest('[data-act="request"]');
+      if (a) { openRequest({}); return; }
+      var b = e.target.closest('[data-breed]'); if (!b) return;
+      setBreed(b.dataset.breed); buildControls();
+      scrollToEl(el('pf-wrap'));
+    });
+
+    // bloque "solicita otra raza"
+    el('ask-btn').addEventListener('click', function () { openRequest({ breed: F.breed }); });
+
+    // ficha
+    el('pdIn').addEventListener('click', function (e) {
+      if (e.target.closest('[data-act="request-this"]')) { closeOv('pdOv'); openRequest({ puppy: DET.p }); return; }
+      var th = e.target.closest('#pd-thumbs img'); if (th) { pdSwap(+th.dataset.k); return; }
+      if (e.target.closest('#pd-img')) lbxOpen(DET.idx);
+    });
+    el('prqIn').addEventListener('click', function (e) {
+      var sb = e.target.closest('[data-act="see-breed"]');
+      if (sb) { goBreed(sb.dataset.breed); return; }
+      if (e.target.closest('[data-act="close-prq"]')) closeOv('prqOv');
+    });
+    el('url-note').addEventListener('click', function (e) {
+      if (e.target.closest('[data-act="want"]')) { openRequest({ breed: WANT }); return; }
+      if (e.target.closest('[data-act="note-off"]')) { NOTE_OFF = true; renderURLNote(); }
+    });
+    el('intlIn').addEventListener('click', function (e) { if (e.target.closest('[data-act="close-intl"]')) closeOv('intlOv'); });
+
+    ['pd', 'prq', 'intl'].forEach(function (k) {
+      el(k + 'X').addEventListener('click', function () { closeOv(k + 'Ov'); });
+      el(k + 'Ov').addEventListener('click', function (e) { if (e.target === el(k + 'Ov')) closeOv(k + 'Ov'); });
+    });
+
+    // zoom
+    el('lbxX').addEventListener('click', lbxClose);
+    el('lbxP').addEventListener('click', function (e) { e.stopPropagation(); lbxNav(-1); });
+    el('lbxN').addEventListener('click', function (e) { e.stopPropagation(); lbxNav(1); });
+    el('lbx').addEventListener('click', function (e) { if (e.target.id !== 'lbxImg') lbxClose(); });
+    var sx = 0, sy = 0;
+    el('lbx').addEventListener('touchstart', function (e) { if (e.touches && e.touches.length) { sx = e.touches[0].clientX; sy = e.touches[0].clientY; } }, { passive: true });
+    el('lbx').addEventListener('touchend', function (e) {
+      var t = e.changedTouches && e.changedTouches[0]; if (!t) return;
+      var dx = t.clientX - sx, dy = t.clientY - sy;
+      if (Math.abs(dx) > 40 && Math.abs(dx) > Math.abs(dy) * 1.3) lbxNav(dx < 0 ? 1 : -1);
+    }, { passive: true });
+
+    document.addEventListener('keydown', function (e) {
+      if (el('lbx').classList.contains('open')) {
+        if (e.key === 'Escape') lbxClose();
+        else if (e.key === 'ArrowLeft') lbxNav(-1);
+        else if (e.key === 'ArrowRight') lbxNav(1);
+        return;
+      }
+      if (e.key === 'Escape') { var o = document.querySelector('.ov.open'); if (o) closeOv(o.id); }
+    });
+
+    // el header (React) cambia documentElement.lang al cambiar de idioma
+    try {
+      new MutationObserver(function () {
+        var l = (document.documentElement.lang || 'es') === 'en' ? 'en' : 'es';
+        if (l !== LANG) { LANG = l; applyStatic(); buildControls(); render(true); }
+      }).observe(document.documentElement, { attributes: true, attributeFilter: ['lang'] });
+    } catch (e) { }
+  }
+
+  /* ── carga ──────────────────────────────────────────────────────────── */
+  function load() {
+    applyStatic();
+    sb.from('public_puppies_feed').select('*').then(function (res) {
+      if (res.error) throw res.error;
+      ALL = prep(res.data || []);
+      ready = true;
+      var ld = el('pup-loading'); if (ld) ld.style.display = 'none';
+      readURL();
+      loadShipping();
+      buildControls();
+      wire();
+      render(true);
+    }).catch(function (e) {
+      var ld = el('pup-loading');
+      if (ld) ld.innerHTML = '<p style="color:var(--ink-2);font-size:15px;font-weight:600;margin:0 0 14px">' + T('No pudimos cargar los cachorros. Recarga la página o escríbenos.', 'We could not load the puppies. Please reload the page or contact us.') + '</p>'
+        + '<a class="btn-outline2" href="https://wa.me/' + WA + '" target="_blank" rel="noopener">' + T('Escríbenos por WhatsApp', 'Message us on WhatsApp') + '</a>'
+        + '<a class="btn-outline2" href="sms:+' + WA + '">' + T('Escríbenos por SMS', 'Text us') + '</a>';
+      var ab = el('ask-block'); if (ab) { ab.style.display = 'flex'; }
+      try { console.error('public_puppies_feed:', e); } catch (x) { }
+    });
+  }
+
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', load);
+  else load();
+})();
 </script>
 <script>
 // SitePublish visibility — Cachorros
@@ -687,7 +1403,7 @@ window.submitIntlShipping = submitIntlShipping;
       + '<div style="font-size:11px;font-weight:700;letter-spacing:0.16em;text-transform:uppercase;color:#FF5520;margin-bottom:14px">En preparación</div>'
       + '<h1 style="font-family:Bricolage Grotesque,sans-serif;font-size:clamp(22px,3.5vw,38px);font-weight:700;letter-spacing:-0.02em;margin:0 0 14px;color:#2D2421">' + name + ' llega pronto</h1>'
       + '<p style="color:#6B5A4E;line-height:1.65;margin-bottom:32px;max-width:38ch;font-size:15px">Estamos trabajando para traerte la mejor experiencia. Gracias por tu paciencia.</p>'
-      + '<a href="/" style="display:inline-flex;align-items:center;gap:8px;background:#FF5520;color:#fff;font-weight:700;font-size:14px;padding:13px 26px;border-radius:999px;text-decoration:none;box-shadow:0 8px 24px -8px rgba(255,85,32,0.38)">← Volver al inicio</a>'
+      + '<a href="/" style="display:inline-flex;align-items:center;gap:8px;background:#FF5520;color:#fff;font-weight:700;font-size:14px;padding:13px 26px;border-radius:999px;text-decoration:none">← Volver al inicio</a>'
       + '</div>';
   }
 
@@ -705,12 +1421,12 @@ window.submitIntlShipping = submitIntlShipping;
       }
     } else {
       if (ov) ov.remove();
-      Object.keys(SECTIONS).forEach(function(id) {
+      Object.keys(SECTIONS).forEach(function (id) {
         var el = document.querySelector(SECTIONS[id]);
         if (!el) return;
         if (id === 'listado') {
-          // El listado se VE por defecto: estaba oculto salvo que se publicara a mano, y como esa marca
-          // vive en el localStorage de cada navegador, todo el que llegaba de Google veia la pagina SIN cachorros.
+          // El listado se VE por defecto: la marca de publicación vive en el localStorage de cada
+          // navegador, así que todo el que llegaba de Google veía la página SIN cachorros.
           var d; try { d = JSON.parse(localStorage.getItem('bpuppy_publish_v1')) || {}; } catch(e) { d = {}; }
           var explicit = d.sections && d.sections[PAGE] && d.sections[PAGE][id];
           el.style.display = explicit === false ? 'none' : '';
@@ -726,7 +1442,6 @@ window.submitIntlShipping = submitIntlShipping;
   window.addEventListener('bpuppy:publish', apply);
 })();
 </script>
-
 
 <script src="tweaks-panel.js?v=1781476900318"></script>
 <script src="i18n.js?v=1785895000000"></script>

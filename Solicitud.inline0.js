@@ -83,6 +83,18 @@ function SolicitudForm() {
     contact_method: "",
     notes: ""
   });
+  // bp-prefill-raza: /solicitud?raza=Cavapoo&especie=dog llega desde /cachorros con la raza ya puesta
+  React.useEffect(function() {
+    try {
+      var q = new URLSearchParams(location.search);
+      var b = (q.get("raza") || q.get("breed") || "").trim();
+      var sp = (q.get("especie") || q.get("species") || "").trim().toLowerCase();
+      if (sp === "dog" || sp === "perro") set("species", "dog");
+      else if (sp === "cat" || sp === "gato") set("species", "cat");
+      else if (b) set("species", "dog");
+      if (b) applyBreed(b);
+    } catch (e) {}
+  }, []);
   function set(key, val) {
     setForm(function(f) {
       return Object.assign({}, f, { [key]: val });
