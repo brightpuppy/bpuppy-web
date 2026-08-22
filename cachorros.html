@@ -157,6 +157,12 @@
   .pcard-more { padding:13px 8px; font-size:11.5px; min-height:46px; }
   .pcard-rows div { font-size:11.5px; }
 }
+/* Foto vertical: se enseña entera y el hueco de los lados se rellena con la misma
+   foto desenfocada. Asi se ve el perro completo sin dos franjas vacias. */
+.pcard-ph.alta::before, .pd-main.alta::before { content:""; position:absolute; inset:-8%; background-image:var(--bgimg); background-size:cover; background-position:center; filter:blur(24px) brightness(0.78) saturate(1.1); z-index:0; }
+.pcard-ph.alta img, .pd-main.alta img { object-fit:contain; position:relative; z-index:1; }
+/* con la foto entera el recorte del logo del criador se hace por abajo, que es donde va */
+.pcard-ph.alta.crop img, .pd-main.alta.crop img { width:100%; height:100%; margin-top:0; clip-path:inset(0 0 7% 0); }
 .pcard-ph .tag { position:absolute; top:11px; left:11px; z-index:2; background:var(--orange); color:#fff; font-size:10.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; padding:4px 10px; border-radius:999px; }
 .pcard-ph .cnt { position:absolute; left:11px; bottom:11px; z-index:2; display:inline-flex; align-items:center; gap:5px; background:rgba(45,36,33,0.6); color:#fff; font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
 .pcard-ph .cnt .ic { width:12px; height:12px; }
@@ -539,8 +545,21 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     if (img.dataset.o && !img.dataset.f) { img.dataset.f = '1'; img.src = img.dataset.o; return; }
     img.style.visibility = 'hidden';
   };
+  /* Marca el marco cuando la foto es mas alta que ancha (fotos de movil). */
+  window.__bpAlta = function (im) {
+    try {
+      if (!im || !im.naturalWidth) return;
+      var box = im.closest ? im.closest('.pcard-ph, .pd-main') : null;
+      if (!box) return;
+      var alta = im.naturalHeight > im.naturalWidth * 1.08;
+      box.classList.toggle('alta', alta);
+      if (alta) box.style.setProperty('--bgimg', 'url("' + (im.currentSrc || im.src) + '")');
+      else box.style.removeProperty('--bgimg');
+    } catch (e) { }
+  };
+
   function imgTag(u, w, q, alt, extra) {
-    return '<img src="' + esc(tx(u, w, q)) + '" data-o="' + esc(u) + '" alt="' + esc(alt || '') + '" loading="lazy" decoding="async" referrerpolicy="no-referrer" onerror="__bpImgFallback(this)"' + (extra || '') + '>';
+    return '<img src="' + esc(tx(u, w, q)) + '" data-o="' + esc(u) + '" alt="' + esc(alt || '') + '" loading="lazy" decoding="async" referrerpolicy="no-referrer" onload="__bpAlta(this)" onerror="__bpImgFallback(this)"' + (extra || '') + '>';
   }
   function scrollToEl(node, off) {
     if (!node) return;
@@ -955,7 +974,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     var m = el('cph-' + i); if (!m) return;
     var k = ((+m.dataset.k || 0) + dir + p._ph.length) % p._ph.length;
     delete m.dataset.f; m.dataset.o = p._ph[k]; m.dataset.k = k;
-    m.src = tx(p._ph[k], 520, 62); m.style.visibility = '';
+    m.src = tx(p._ph[k], 520, 62); m.style.visibility = ''; m.onload = function () { window.__bpAlta(m); };
     var card = m.closest('.pcard');
     var box = card && card.querySelector('.pcard-thumbs');
     if (box) box.querySelectorAll('img').forEach(function (im) { im.classList.toggle('on', +im.dataset.k === k); });
@@ -966,7 +985,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     var i = th.dataset.th, k = +th.dataset.k;
     var p = ALL[i]; if (!p || !p._ph[k]) return;
     var m = el('cph-' + i);
-    if (m) { delete m.dataset.f; m.dataset.o = p._ph[k]; m.dataset.k = k; m.src = tx(p._ph[k], 520, 62); m.style.visibility = ''; }
+    if (m) { delete m.dataset.f; m.dataset.o = p._ph[k]; m.dataset.k = k; m.src = tx(p._ph[k], 520, 62); m.style.visibility = ''; m.onload = function () { window.__bpAlta(m); }; }
     var box = th.parentNode;
     if (box) box.querySelectorAll('img').forEach(function (im) { im.classList.toggle('on', im === th); });
   }
@@ -1249,7 +1268,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     if (!DET.ph[k]) return;
     DET.idx = k;
     var m = el('pd-img');
-    if (m) { delete m.dataset.f; m.dataset.o = DET.ph[k]; m.src = tx(DET.ph[k], 900, 70); m.style.visibility = ''; }
+    if (m) { delete m.dataset.f; m.dataset.o = DET.ph[k]; m.src = tx(DET.ph[k], 900, 70); m.style.visibility = ''; m.onload = function () { window.__bpAlta(m); }; }
     var th = el('pd-thumbs');
     if (th) th.querySelectorAll('img').forEach(function (im) { im.classList.toggle('on', String(im.dataset.k) === String(k)); });
   }
