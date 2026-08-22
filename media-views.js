@@ -74,7 +74,7 @@ function MediaHero() {
       animation: "charFloat " + ch.dur + "s ease-in-out infinite",
       animationDelay: ch.delay + "s"
     } }, ch.c);
-  })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 32, flexWrap: "wrap", alignItems: "flex-end", maxWidth: 900 } }, /* @__PURE__ */ React.createElement("p", { style: { fontSize: "clamp(15px,1.4vw,18px)", color: MC.heroMuted, lineHeight: 1.6, margin: 0, maxWidth: "42ch" } }, t(["El mundo de las mascotas en un solo lugar.", "Original content about pets, responsible breeding and the BrightPuppy community."])), /* Luis: fuera el boton "Ver ahora", no aporta */ false && /* @__PURE__ */ React.createElement(
+  })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 32, flexWrap: "wrap", alignItems: "flex-end", maxWidth: 900 } }, /* @__PURE__ */ React.createElement("p", { style: { fontSize: "clamp(15px,1.4vw,18px)", color: MC.heroMuted, lineHeight: 1.6, margin: 0, maxWidth: "42ch" } }, t(["El mundo de las mascotas en un solo lugar.", "The whole world of pets in one place."])), /* Luis: fuera el boton "Ver ahora", no aporta */ false && /* @__PURE__ */ React.createElement(
     "a",
     {
       href: "#videos",
