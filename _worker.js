@@ -12,7 +12,7 @@ function smsRedirectPage(to, body){
   const num = String(to||"").replace(/[^\d]/g,"");
   const href = "sms:" + (num?("+"+num):"") + "&body=" + encodeURIComponent(String(body||""));
   const j = JSON.stringify(href);
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Abrir Mensajes…</title>`+
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png"><title>Abrir Mensajes…</title>`+
     `<style>body{font-family:-apple-system,system-ui,'Segoe UI',Arial,sans-serif;background:#FAF7F2;color:#2D2421;margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px}`+
     `.c{max-width:340px}h1{font-size:19px;font-weight:800;margin:0 0 6px}h1 span{color:#F58220}p{color:#6B5A4E;margin:0 0 18px;line-height:1.5}`+
     `a{display:inline-block;padding:15px 28px;border-radius:999px;background:#F58220;color:#fff;text-decoration:none;font-weight:700;font-size:16px}</style></head>`+
@@ -176,7 +176,7 @@ function newsArticlePage(p, relacionadas){
     '.foot a{display:inline-block;background:#191510;color:#fff;text-decoration:none;font-weight:800;font-size:14px;padding:13px 28px;border-radius:999px}' +
     '@media(max-width:560px){.body{font-size:18.5px}}';
 
-  return '<!doctype html><html lang="' + lang + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+  return '<!doctype html><html lang="' + lang + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">' +
     '<title>' + esc(ttl) + ' &middot; BrightPuppy</title>' +
     '<meta name="description" content="' + esc(desc) + '">' +
     '<link rel="canonical" href="' + esc(canonical) + '">' +
@@ -204,7 +204,7 @@ function newsArticlePage(p, relacionadas){
     '</article></main></body></html>';
 }
 function notFoundPage(){
-  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Noticia no encontrada · BrightPuppy</title><meta name="robots" content="noindex"><style>body{font-family:-apple-system,system-ui,Arial,sans-serif;background:#FAF7F2;color:#2D2421;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;margin:0}a{color:#F58220;font-weight:700;text-decoration:none}</style></head><body><div><h1>Esta noticia no está disponible</h1><p><a href="`+SITE+`/media">Ver todas las noticias →</a></p></div></body></html>`;
+  return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png"><title>Noticia no encontrada · BrightPuppy</title><meta name="robots" content="noindex"><style>body{font-family:-apple-system,system-ui,Arial,sans-serif;background:#FAF7F2;color:#2D2421;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;margin:0}a{color:#F58220;font-weight:700;text-decoration:none}</style></head><body><div><h1>Esta noticia no está disponible</h1><p><a href="`+SITE+`/media">Ver todas las noticias →</a></p></div></body></html>`;
 }
 export default {
   async fetch(request, env) {
