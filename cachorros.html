@@ -151,7 +151,10 @@
 .pcard-more { display:block; text-align:center; border:1.5px solid var(--line); color:var(--ink-2); border-radius:12px; padding:11px; font-weight:600; font-size:12.5px; text-decoration:none; }
 .pcard-more:hover { border-color:var(--orange); color:var(--orange); }
 @media (max-width:560px) {
-  .pcard-thumbs img { width:38px; height:38px; }
+  /* movil: la tarjeta respira. Las miniaturas sobran porque ahi las fotos se pasan
+     deslizando, y de los datos se dejan los dos que mas pesan al decidir. */
+  .pcard-thumbs { display:none; }
+  .pcard-rows div:nth-child(n+3) { display:none; }
   .pcard-price { font-size:20px; }
   .pcard-see { padding:14px 10px; font-size:12.5px; min-height:46px; }
   .pcard-more { padding:13px 8px; font-size:11.5px; min-height:46px; }
@@ -207,6 +210,50 @@
 .chipx { font-size:11.5px; font-weight:600; color:var(--ink-2); background:#F6F1E9; border:1px solid var(--line); border-radius:999px; padding:3px 9px; }
 .pcard-cta { margin-top:auto; padding-top:13px; font-size:12.5px; font-weight:700; color:var(--ink-2); display:inline-flex; align-items:center; gap:6px; }
 .pcard:hover .pcard-cta { color:var(--orange); }
+
+/* ══ Estilo del Catálogo traído a Cachorros disponibles ══════════════════
+   Mismos colores, mismas formas y los toques de arcoíris del catálogo.
+   El arcoíris se usa con cuentagotas: el botón de financiar y las razas.   */
+@keyframes bpArcoiris { 0% { background-position:0% 50%; } 100% { background-position:300% 50%; } }
+:root { --bp-arco:linear-gradient(90deg,#ff5f6d,#ffc371,#47e891,#3aafff,#a86bff,#ff5f6d); }
+
+/* Botón de financiar: relleno arcoíris, como en el catálogo */
+.bp-fin-wrap { text-align:center; margin:0 0 24px; }
+.bp-fin { display:inline-flex; flex-direction:column; align-items:center; justify-content:center; gap:2px; border:none; cursor:pointer; text-decoration:none;
+  font-family:inherit; font-weight:800; font-size:16px; letter-spacing:0.01em; color:#fff; padding:14px 32px; border-radius:999px;
+  background:var(--bp-arco); background-size:300% 100%; animation:bpArcoiris 4s linear infinite;
+  box-shadow:0 10px 26px -12px rgba(45,36,33,0.55); transition:transform .14s, box-shadow .14s; text-shadow:0 1px 2px rgba(0,0,0,0.22); }
+.bp-fin:hover { transform:translateY(-2px) scale(1.02); box-shadow:0 14px 32px -12px rgba(45,36,33,0.6); }
+.bp-fin:active { transform:scale(.98); }
+.bp-fin small { font-size:11px; font-weight:700; opacity:.95; letter-spacing:0; }
+
+/* Razas: pastilla con borde arcoíris girando (la del catálogo) */
+.breed-chip { position:relative; background:#fffdf9; border:none !important; }
+.breed-chip::before { content:""; position:absolute; inset:0; border-radius:999px; padding:2px; background:var(--bp-arco); background-size:300% 100%;
+  -webkit-mask:linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0); -webkit-mask-composite:xor; mask-composite:exclude;
+  animation:bpArcoiris 5s linear infinite; pointer-events:none; }
+.breed-chip:hover { transform:translateY(-1px); }
+.breed-chip.on { background:#fff; color:var(--orange); }
+
+/* Ficha: cabecera cálida, como el popup del catálogo */
+.ov-card { border-radius:22px; }
+.pd-head { margin:-22px -22px 16px; padding:24px 52px 20px 24px; background:linear-gradient(135deg,#FFF5EC,#FDEAF3); border-radius:22px 22px 0 0; }
+.pd-head h3 { margin:0; }
+.pd-head .b { margin-top:3px; }
+
+/* Foto muy alargada: con la foto entera quedaría una tira. Se llena el marco
+   y se enseña la parte de arriba, que es donde suele estar la cabeza. */
+.pcard-ph.altisima img, .pd-main.altisima img { object-fit:cover; object-position:center 18%; width:100%; height:100%; margin-top:0; clip-path:none; }
+
+/* Detalles del catálogo en la tarjeta */
+.pcard-ph .tag { background:var(--orange); box-shadow:0 2px 8px -2px rgba(45,36,33,0.35); }
+.pcard-price { color:var(--ink); }
+.pcard-see { box-shadow:0 6px 16px -8px rgba(245,130,32,0.9); }
+
+@media (max-width:560px) {
+  .bp-fin { font-size:15px; padding:13px 22px; width:100%; }
+  .pd-head { margin:-18px -18px 14px; padding:20px 46px 16px 18px; }
+}
 
 .pup-more { display:flex; justify-content:center; margin-top:34px; }
 .btn-more { padding:14px 30px; border-radius:999px; border:1px solid var(--line); background:var(--paper); font-family:inherit; font-size:14px; font-weight:700; color:var(--ink); cursor:pointer; transition:border-color .2s, color .2s; }
@@ -386,6 +433,11 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       </div>
     </div>
 
+    <div class="bp-fin-wrap">
+      <a class="bp-fin" href="/financiamiento"><span data-es="Págalo en cuotas" data-en="Pay in installments">Págalo en cuotas</span>
+        <small data-es="Klarna · Afterpay · Affirm — consultar no afecta tu crédito" data-en="Klarna · Afterpay · Affirm — checking does not affect your credit">Klarna · Afterpay · Affirm — consultar no afecta tu crédito</small>
+      </a>
+    </div>
     <div id="url-note"></div>
 
     <div class="pf-wrap" id="pf-wrap">
@@ -551,8 +603,11 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       if (!im || !im.naturalWidth) return;
       var box = im.closest ? im.closest('.pcard-ph, .pd-main') : null;
       if (!box) return;
-      var alta = im.naturalHeight > im.naturalWidth * 1.08;
+      var r = im.naturalHeight / im.naturalWidth;
+      var alta = r > 1.08 && r <= 1.95;      // vertical normal: se enseña entera
+      var altisima = r > 1.95;               // tira: se llena el marco por arriba
       box.classList.toggle('alta', alta);
+      box.classList.toggle('altisima', altisima);
       if (alta) box.style.setProperty('--bgimg', 'url("' + (im.currentSrc || im.src) + '")');
       else box.style.removeProperty('--bgimg');
     } catch (e) { }
