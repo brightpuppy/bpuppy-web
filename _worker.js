@@ -30,14 +30,79 @@ async function fetchNews(query){
 function fmtDate(iso, lang){
   try{ const d = new Date(iso); return d.toLocaleDateString(lang==="en"?"en-US":"es-ES", { year:"numeric", month:"long", day:"numeric" }); }catch(e){ return String(iso||"").slice(0,10); }
 }
-function newsArticlePage(p){
+// Razas que sabemos reconocer en el texto de una noticia: si sale una, la noticia
+// enlaza a su pagina de raza. (Sin foto: Luis no quiere repetir las imagenes que ya
+// usa en otras paginas del sitio.)
+const RAZAS = [
+  { p:"german-shepherd", es:"Pastor Alemán", en:"German Shepherd", k:["pastor aleman","german shepherd","ovejero aleman"] },
+  { p:"labrador-retriever", es:"Labrador Retriever", en:"Labrador Retriever", k:["labrador"] },
+  { p:"golden-retriever", es:"Golden Retriever", en:"Golden Retriever", k:["golden retriever","golden"] },
+  { p:"french-bulldog", es:"Bulldog Francés", en:"French Bulldog", k:["bulldog frances","frenchie","french bulldog"] },
+  { p:"english-bulldog", es:"Bulldog Inglés", en:"English Bulldog", k:["bulldog ingles","english bulldog"] },
+  { p:"yorkshire-terrier", es:"Yorkshire Terrier", en:"Yorkshire Terrier", k:["yorkshire","yorkie"] },
+  { p:"chihuahua", es:"Chihuahua", en:"Chihuahua", k:["chihuahua"] },
+  { p:"siberian-husky", es:"Husky Siberiano", en:"Siberian Husky", k:["husky"] },
+  { p:"beagle", es:"Beagle", en:"Beagle", k:["beagle"] },
+  { p:"rottweiler", es:"Rottweiler", en:"Rottweiler", k:["rottweiler"] },
+  { p:"boxer", es:"Boxer", en:"Boxer", k:["boxer"] },
+  { p:"dachshund", es:"Dachshund", en:"Dachshund", k:["dachshund","salchicha","teckel"] },
+  { p:"pug", es:"Pug", en:"Pug", k:["pug","carlino"] },
+  { p:"border-collie", es:"Border Collie", en:"Border Collie", k:["border collie"] },
+  { p:"shih-tzu", es:"Shih Tzu", en:"Shih Tzu", k:["shih tzu"] },
+  { p:"maltese", es:"Maltés", en:"Maltese", k:["maltes","maltese"] },
+  { p:"doberman-pinscher", es:"Doberman", en:"Doberman", k:["doberman"] },
+  { p:"great-dane", es:"Gran Danés", en:"Great Dane", k:["gran danes","great dane"] },
+  { p:"saint-bernard", es:"San Bernardo", en:"Saint Bernard", k:["san bernardo","saint bernard"] },
+  { p:"samoyed", es:"Samoyedo", en:"Samoyed", k:["samoyedo","samoyed"] },
+  { p:"akita", es:"Akita", en:"Akita", k:["akita"] },
+  { p:"shiba-inu", es:"Shiba Inu", en:"Shiba Inu", k:["shiba"] },
+  { p:"bernese-mountain-dog", es:"Boyero de Berna", en:"Bernese Mountain Dog", k:["boyero de berna","bernese"] },
+  { p:"australian-shepherd", es:"Pastor Australiano", en:"Australian Shepherd", k:["pastor australiano","australian shepherd"] },
+  { p:"belgian-malinois", es:"Malinois Belga", en:"Belgian Malinois", k:["malinois"] },
+  { p:"cocker-spaniel", es:"Cocker Spaniel", en:"Cocker Spaniel", k:["cocker"] },
+  { p:"dalmatian", es:"Dálmata", en:"Dalmatian", k:["dalmata","dalmatian"] },
+  { p:"chow-chow", es:"Chow Chow", en:"Chow Chow", k:["chow chow"] },
+  { p:"pomeranian", es:"Pomerania", en:"Pomeranian", k:["pomerania","pomeranian"] },
+  { p:"pembroke-corgi", es:"Corgi", en:"Corgi", k:["corgi"] },
+  { p:"boston-terrier", es:"Boston Terrier", en:"Boston Terrier", k:["boston terrier"] },
+  { p:"jack-russell", es:"Jack Russell", en:"Jack Russell", k:["jack russell"] },
+  { p:"miniature-schnauzer", es:"Schnauzer Miniatura", en:"Miniature Schnauzer", k:["schnauzer"] },
+  { p:"alaskan-malamute", es:"Malamute de Alaska", en:"Alaskan Malamute", k:["malamute"] },
+  { p:"weimaraner", es:"Weimaraner", en:"Weimaraner", k:["weimaraner"] },
+  { p:"havanese", es:"Bichón Habanero", en:"Havanese", k:["habanero","havanese"] },
+  { p:"bichon-frise", es:"Bichón Frisé", en:"Bichon Frise", k:["bichon"] },
+  { p:"basset-hound", es:"Basset Hound", en:"Basset Hound", k:["basset"] },
+  { p:"cavalier-kcs", es:"Cavalier King Charles", en:"Cavalier King Charles", k:["cavalier"] },
+  { p:"toy-poodle", es:"Poodle Toy", en:"Toy Poodle", k:["poodle","caniche"] }
+];
+function sinTildes(s){ return String(s||"").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g,""); }
+function razaDe(p){
+  const txt = sinTildes(String(p.title||"") + " " + String(p.excerpt||"") + " " + String(p.body||""));
+  let mejor = null, mejorPos = 1e9;
+  for(const r of RAZAS){
+    for(const k of r.k){
+      const i = txt.indexOf(sinTildes(k));
+      if(i >= 0 && i < mejorPos){ mejor = r; mejorPos = i; }
+    }
+  }
+  return mejor;
+}
+function razaUrl(r, lang){
+  return SITE + (lang === "en" ? ("/" + r.p + "-puppies-florida") : ("/cachorros-" + r.p + "-florida"));
+}
+
+function newsArticlePage(p, relacionadas){
   const lang = (p.lang==="en") ? "en" : "es";
+  const en = lang === "en";
   const canonical = SITE + "/media/noticias/" + encodeURIComponent(p.slug);
   const ttl = p.seo_title || p.title || "Noticias";
   const desc = p.seo_desc || p.excerpt || "";
-  const cover = p.cover_url || (SITE + "/assets/og-brand.jpg");
+  const raza = razaDe(p);
+  const heroImg = p.cover_url || "";
+  const cover = heroImg || (SITE + "/assets/og-brand.jpg");
   const dateStr = p.published_at ? fmtDate(p.published_at, lang) : "";
   const tags = Array.isArray(p.tags) ? p.tags : [];
+  const rel = Array.isArray(relacionadas) ? relacionadas : [];
   const ld = {
     "@context":"https://schema.org", "@type":"NewsArticle",
     "headline": p.title || "", "description": desc,
@@ -49,46 +114,94 @@ function newsArticlePage(p){
     "publisher": { "@type":"Organization", "name":"BrightPuppy", "logo": { "@type":"ImageObject", "url": SITE + "/assets/logo-clean.webp" } },
     "mainEntityOfPage": { "@type":"WebPage", "@id": canonical }
   };
-  const back = lang==="en" ? "News" : "Noticias";
-  const home = lang==="en" ? "Back to BrightPuppy" : "Volver a BrightPuppy";
-  const SECL = { estrella_del_dia:["Estrella del día","Star of the day"], estudios:["Estudios","Studies"], familias:["Familias","Families"], famosos:["Famosos","Famous"], curiosidades:["Curiosidades","Curiosities"], salud:["Salud","Wellness"], rescate:["Rescates","Rescues"], mundo:["El mundo","The world"], general:["General","General"] };
-  const secLab = SECL[p.section] ? (lang==="en"?SECL[p.section][1]:SECL[p.section][0]) : back;
-  const readTxt = p.read_minutes ? (p.read_minutes + (lang==="en"?" min read":" min de lectura")) : "";
-  return `<!doctype html><html lang="${lang}"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">`+
-    `<title>${esc(ttl)} · BrightPuppy</title>`+
-    `<meta name="description" content="${esc(desc)}">`+
-    `<link rel="canonical" href="${esc(canonical)}">`+
-    `<meta property="og:type" content="article"><meta property="og:site_name" content="BrightPuppy">`+
-    `<meta property="og:title" content="${esc(ttl)}"><meta property="og:description" content="${esc(desc)}">`+
-    `<meta property="og:url" content="${esc(canonical)}"><meta property="og:image" content="${esc(cover)}">`+
-    `<meta property="article:published_time" content="${esc(p.published_at||"")}">`+
-    `<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="${esc(ttl)}"><meta name="twitter:description" content="${esc(desc)}"><meta name="twitter:image" content="${esc(cover)}">`+
-    `<script type="application/ld+json">${JSON.stringify(ld)}</script>`+
-    `<style>*{box-sizing:border-box}body{font-family:Georgia,'Times New Roman',serif;background:#FAF7F2;color:#2D2421;margin:0;line-height:1.7}`+
-    `.top{font-family:-apple-system,system-ui,'Segoe UI',Arial,sans-serif;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:16px 22px;border-bottom:1px solid #ece4d8;position:sticky;top:0;background:rgba(250,247,242,.94);backdrop-filter:blur(6px)}`+
-    `.brand{font-weight:800;font-size:18px;text-decoration:none;color:#2D2421}.brand span{color:#F58220}`+
-    `.top a.back{font-family:inherit;font-size:13px;font-weight:700;color:#F58220;text-decoration:none}`+
-    `main{max-width:720px;margin:0 auto;padding:34px 22px 70px}`+
-    `.kick{font-family:-apple-system,system-ui,Arial,sans-serif;font-size:12px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#C2521E}`+
-    `h1{font-size:clamp(27px,5vw,40px);line-height:1.15;margin:10px 0 8px;letter-spacing:-.01em}`+
-    `.meta{font-family:-apple-system,system-ui,Arial,sans-serif;font-size:13px;color:#8a7a6c;margin-bottom:22px}`+
-    `.cover{width:100%;border-radius:16px;margin:6px 0 26px;display:block}`+
-    `.body{font-size:18px}.body p{margin:0 0 18px}.body h2{font-size:24px;margin:30px 0 10px}.body h3{font-size:20px;margin:24px 0 8px}.body img{max-width:100%;border-radius:12px}.body a{color:#C2521E}`+
-    `.body ul,.body ol{padding-left:22px;margin:0 0 18px}`+
-    `.tags{font-family:-apple-system,system-ui,Arial,sans-serif;margin:30px 0 0;display:flex;gap:8px;flex-wrap:wrap}`+
-    `.tag{font-size:12px;font-weight:700;color:#6B5A4E;background:#f0e8dc;border-radius:999px;padding:4px 11px}`+
-    `.foot{font-family:-apple-system,system-ui,Arial,sans-serif;text-align:center;margin-top:44px;padding-top:24px;border-top:1px solid #ece4d8}`+
-    `.foot a{display:inline-block;background:#2D2421;color:#fff;text-decoration:none;font-weight:800;font-size:14px;padding:12px 26px;border-radius:999px}</style></head>`+
-    `<body><div class="top"><a class="brand" href="${SITE}">Bright<span>Puppy</span></a><a class="back" href="${SITE}/media">← ${back}</a></div>`+
-    `<main><article>`+
-    `<div class="kick">${back}</div>`+
-    `<h1>${esc(p.title||"")}</h1>`+
-    `<div class="meta">${dateStr?esc(dateStr):""}${p.author?(" · "+esc(p.author)):""}</div>`+
-    (p.cover_url?`<img class="cover" src="${esc(p.cover_url)}" alt="${esc(p.title||"")}">`:"")+
-    `<div class="body">${p.body||("<p>"+esc(p.excerpt||"")+"</p>")}</div>`+
-    (tags.length?`<div class="tags">${tags.map(function(t){return '<span class="tag">'+esc(t)+'</span>';}).join("")}</div>`:"")+
-    `<div class="foot"><a href="${SITE}/media">${home}</a></div>`+
-    `</article></main></body></html>`;
+  const back = en ? "News" : "Noticias";
+  const home = en ? "See all news" : "Ver todas las noticias";
+  const SECL = { estrella_del_dia:["Estrella del día","Star of the day"], estudios:["Estudios","Studies"], familias:["Familias","Families"], famosos:["Famosos","Famous"], curiosidades:["Curiosidades","Curiosities"], salud:["Salud","Wellness"], rescate:["Rescates","Rescues"], mundo:["Mundo","World"] };
+  const secLab = SECL[p.section] ? (en?SECL[p.section][1]:SECL[p.section][0]) : back;
+  const readTxt = p.read_minutes ? (p.read_minutes + (en?" min read":" min de lectura")) : "";
+  const metaLinea = [dateStr, readTxt, p.author||""].filter(Boolean).map(esc).join(" &middot; ");
+
+  const bloqueFuente = (p.source_url && p.source_name)
+    ? '<div class="fuente">' + (en?"Source":"Fuente") + ': <a href="' + esc(p.source_url) + '" target="_blank" rel="noopener nofollow">' + esc(p.source_name) + '</a></div>'
+    : "";
+
+  const bloqueRaza = raza
+    ? '<aside class="raza"><div class="raza-k">' + (en?"In this story":"En esta historia") + '</div>' +
+      '<div class="raza-n">' + esc(en?raza.en:raza.es) + '</div>' +
+      '<a href="' + esc(razaUrl(raza, lang)) + '">' +
+      (en ? ("Learn more about the " + esc(raza.en)) : ("Conoce m&aacute;s sobre el " + esc(raza.es))) + ' &rarr;</a></aside>'
+    : "";
+
+  const bloqueRel = rel.length
+    ? '<section class="rel"><h2>' + (en?"Keep reading":"Sigue leyendo") + '</h2><div class="rel-g">' +
+      rel.map(function(r){
+        const rs = SECL[r.section] ? (en?SECL[r.section][1]:SECL[r.section][0]) : back;
+        return '<a class="rel-c" href="' + SITE + '/media/noticias/' + encodeURIComponent(r.slug) + '">' +
+               '<div class="rel-s">' + esc(rs) + '</div><div class="rel-t">' + esc(r.title||"") + '</div></a>';
+      }).join("") + '</div></section>'
+    : "";
+
+  const css = '*{box-sizing:border-box}' +
+    'body{font-family:"Source Serif 4",Georgia,"Times New Roman",serif;background:#fff;color:#191510;margin:0;line-height:1.72;-webkit-font-smoothing:antialiased}' +
+    '.top{font-family:"Plus Jakarta Sans",-apple-system,system-ui,Arial,sans-serif;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:15px 22px;border-bottom:1px solid #e8e2d8;position:sticky;top:0;background:rgba(255,255,255,.94);backdrop-filter:blur(8px);z-index:5}' +
+    '.brand{font-weight:800;font-size:18px;text-decoration:none;color:#191510}.brand span{color:#F58220}' +
+    '.top a.back{font-size:13px;font-weight:700;color:#F58220;text-decoration:none}' +
+    'main{max-width:700px;margin:0 auto;padding:40px 22px 72px}' +
+    '.kick{font-family:"Plus Jakarta Sans",Arial,sans-serif;font-size:11.5px;font-weight:800;letter-spacing:.16em;text-transform:uppercase;color:#C2521E}' +
+    'h1{font-size:clamp(30px,5.4vw,46px);line-height:1.12;margin:12px 0 10px;letter-spacing:-.018em;font-weight:700}' +
+    '.meta{font-family:"Plus Jakarta Sans",Arial,sans-serif;font-size:12.5px;color:#8a7a6c;margin-bottom:28px}' +
+    '.cover{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:4px;margin:4px 0 28px;display:block}' +
+    '.body{font-size:19.5px;letter-spacing:.003em}' +
+    '.body>p:first-of-type::first-letter{float:left;font-size:3.05em;line-height:.86;padding:.06em .09em 0 0;font-weight:700}' +
+    '.body p{margin:0 0 20px}' +
+    '.body h2{font-family:"Plus Jakarta Sans",Arial,sans-serif;font-size:22px;font-weight:800;margin:36px 0 12px;letter-spacing:-.01em}' +
+    '.body h3{font-family:"Plus Jakarta Sans",Arial,sans-serif;font-size:18px;font-weight:800;margin:28px 0 8px}' +
+    '.body img{max-width:100%;border-radius:4px}.body a{color:#C2521E}' +
+    '.body ul,.body ol{padding-left:22px;margin:0 0 20px}.body li{margin:0 0 8px}' +
+    '.fuente{font-family:"Plus Jakarta Sans",Arial,sans-serif;font-size:13px;color:#8a7a6c;border-left:3px solid #F58220;padding:2px 0 2px 12px;margin:28px 0 0}' +
+    '.fuente a{color:#C2521E}' +
+    '.raza{margin:34px 0 0;padding:18px 20px;border:1px solid #e8e2d8;border-radius:12px;background:#fdfbf7}' +
+    '.raza-k{font-family:"Plus Jakarta Sans",Arial,sans-serif;font-size:10.5px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#9c8f82}' +
+    '.raza-n{font-family:"Plus Jakarta Sans",Arial,sans-serif;font-size:20px;font-weight:800;margin:4px 0 8px}' +
+    '.raza a{font-family:"Plus Jakarta Sans",Arial,sans-serif;font-size:14.5px;font-weight:700;color:#C2521E;text-decoration:none}' +
+    '.tags{font-family:"Plus Jakarta Sans",Arial,sans-serif;margin:30px 0 0;display:flex;gap:8px;flex-wrap:wrap}' +
+    '.tag{font-size:12px;font-weight:700;color:#6B5A4E;background:#f4efe7;border-radius:999px;padding:4px 11px}' +
+    '.rel{margin:52px 0 0;padding-top:30px;border-top:1px solid #e8e2d8}' +
+    '.rel h2{font-family:"Plus Jakarta Sans",Arial,sans-serif;font-size:13px;font-weight:800;letter-spacing:.14em;text-transform:uppercase;color:#9c8f82;margin:0 0 16px}' +
+    '.rel-g{display:grid;gap:12px}' +
+    '.rel-c{display:block;text-decoration:none;color:inherit;border:1px solid #e8e2d8;border-radius:10px;padding:14px 16px}' +
+    '.rel-s{font-family:"Plus Jakarta Sans",Arial,sans-serif;font-size:10.5px;font-weight:800;letter-spacing:.13em;text-transform:uppercase;color:#C2521E;margin-bottom:5px}' +
+    '.rel-t{font-size:17px;line-height:1.35;font-weight:600}' +
+    '.foot{font-family:"Plus Jakarta Sans",Arial,sans-serif;text-align:center;margin-top:44px;padding-top:26px;border-top:1px solid #e8e2d8}' +
+    '.foot a{display:inline-block;background:#191510;color:#fff;text-decoration:none;font-weight:800;font-size:14px;padding:13px 28px;border-radius:999px}' +
+    '@media(max-width:560px){.body{font-size:18.5px}}';
+
+  return '<!doctype html><html lang="' + lang + '"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">' +
+    '<title>' + esc(ttl) + ' &middot; BrightPuppy</title>' +
+    '<meta name="description" content="' + esc(desc) + '">' +
+    '<link rel="canonical" href="' + esc(canonical) + '">' +
+    '<meta property="og:type" content="article"><meta property="og:site_name" content="BrightPuppy">' +
+    '<meta property="og:title" content="' + esc(ttl) + '"><meta property="og:description" content="' + esc(desc) + '">' +
+    '<meta property="og:url" content="' + esc(canonical) + '"><meta property="og:image" content="' + esc(cover) + '">' +
+    '<meta property="article:published_time" content="' + esc(p.published_at||"") + '">' +
+    '<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="' + esc(ttl) + '"><meta name="twitter:description" content="' + esc(desc) + '"><meta name="twitter:image" content="' + esc(cover) + '">' +
+    '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>' +
+    '<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Source+Serif+4:opsz,wght@8..60,400;8..60,600;8..60,700&family=Plus+Jakarta+Sans:wght@600;800&display=swap">' +
+    '<script type="application/ld+json">' + JSON.stringify(ld) + '</script>' +
+    '<style>' + css + '</style></head>' +
+    '<body><div class="top"><a class="brand" href="' + SITE + '">Bright<span>Puppy</span></a><a class="back" href="' + SITE + '/media#noticias">&larr; ' + back + '</a></div>' +
+    '<main><article>' +
+    '<div class="kick">' + esc(secLab) + '</div>' +
+    '<h1>' + esc(p.title||"") + '</h1>' +
+    '<div class="meta">' + metaLinea + '</div>' +
+    (heroImg ? ('<img class="cover" src="' + esc(heroImg) + '" alt="' + esc(p.title||"") + '">') : "") +
+    '<div class="body">' + (p.body || ("<p>" + esc(p.excerpt||"") + "</p>")) + '</div>' +
+    bloqueFuente +
+    bloqueRaza +
+    (tags.length ? ('<div class="tags">' + tags.map(function(t){ return '<span class="tag">' + esc(t) + '</span>'; }).join("") + '</div>') : "") +
+    bloqueRel +
+    '<div class="foot"><a href="' + SITE + '/media#noticias">' + home + '</a></div>' +
+    '</article></main></body></html>';
 }
 function notFoundPage(){
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Noticia no encontrada · BrightPuppy</title><meta name="robots" content="noindex"><style>body{font-family:-apple-system,system-ui,Arial,sans-serif;background:#FAF7F2;color:#2D2421;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;margin:0}a{color:#F58220;font-weight:700;text-decoration:none}</style></head><body><div><h1>Esta noticia no está disponible</h1><p><a href="`+SITE+`/media">Ver todas las noticias →</a></p></div></body></html>`;
@@ -113,7 +226,11 @@ export default {
       const rows = await fetchNews("slug=eq." + encodeURIComponent(slug) + "&status=eq.published&select=*&limit=1");
       const post = rows && rows.length ? rows[0] : null;
       if (!post) return new Response(notFoundPage(), { status: 404, headers: { "content-type":"text/html; charset=utf-8", "cache-control":"public, max-age=120" } });
-      return new Response(newsArticlePage(post), { headers: { "content-type":"text/html; charset=utf-8", "cache-control":"public, max-age=300, s-maxage=600" } });
+      const relQ = post.section
+        ? ("status=eq.published&section=eq." + encodeURIComponent(post.section) + "&slug=neq." + encodeURIComponent(post.slug) + "&select=slug,title,section&order=published_at.desc&limit=3")
+        : ("status=eq.published&slug=neq." + encodeURIComponent(post.slug) + "&select=slug,title,section&order=published_at.desc&limit=3");
+      const rel = (await fetchNews(relQ)) || [];
+      return new Response(newsArticlePage(post, rel), { headers: { "content-type":"text/html; charset=utf-8", "cache-control":"public, max-age=300, s-maxage=600" } });
     }
     // Sitemap de noticias (para Google / indexación)
     if (p0 === "/sitemap-news.xml") {
