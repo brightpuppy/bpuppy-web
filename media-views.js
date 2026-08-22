@@ -559,10 +559,11 @@ function NewsSection() {
   const [ref, visible] = useReveal();
   const [posts, setPosts] = React.useState([]);
   const [active, setActive] = React.useState("all");
+  const [verTodo, setVerTodo] = React.useState(false);
   React.useEffect(function() {
     const SUPA = "https://oqqwmcplljirbreowrll.supabase.co";
     const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
-    fetch(SUPA + "/rest/v1/news_posts?status=eq.published&select=slug,title,excerpt,cover_url,published_at,section,read_minutes&order=published_at.desc&limit=18", { headers: { apikey: ANON, Authorization: "Bearer " + ANON } })
+    fetch(SUPA + "/rest/v1/news_posts?status=eq.published&select=slug,title,excerpt,cover_url,published_at,section,read_minutes&order=published_at.desc&limit=120", { headers: { apikey: ANON, Authorization: "Bearer " + ANON } })
       .then(function(r) { return r.ok ? r.json() : []; })
       .then(function(rows) { if (Array.isArray(rows)) setPosts(rows); })
       .catch(function() {});
@@ -580,6 +581,9 @@ function NewsSection() {
   const filtered = active === "all" ? posts : posts.filter(function(p) { return p.section === active; });
   const featured = filtered[0];
   const rest = filtered.slice(1);
+  const PASO = 17;
+  const visibles = verTodo ? rest : rest.slice(0, PASO);
+  const faltan = rest.length - visibles.length;
   const ticker = h("div", { style: { borderTop: "1px solid " + MC.border, borderBottom: "1px solid " + MC.border, overflow: "hidden", whiteSpace: "nowrap", margin: "0 0 34px", padding: "11px 0", WebkitMaskImage: "linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)", maskImage: "linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent)" } },
     h("div", { style: { display: "inline-flex", animation: "mediaTicker 46s linear infinite" } }, posts.concat(posts).map(function(p, i) {
       return h("a", { key: i, href: "/media/noticias/" + encodeURIComponent(p.slug), style: { display: "inline-flex", alignItems: "center", gap: 9, textDecoration: "none", color: MC.ink2, fontSize: 13.5, fontWeight: 600, padding: "0 24px" } },
@@ -600,7 +604,7 @@ function NewsSection() {
       h("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(26px,3.4vw,40px)", fontWeight: 800, letterSpacing: "-0.03em", lineHeight: 1.05, marginBottom: 12, color: MC.ink } }, featured.title),
       featured.excerpt ? h("div", { style: { fontSize: 15.5, color: MC.ink2, lineHeight: 1.6 } }, featured.excerpt) : null,
       h("div", { style: { marginTop: 16, fontSize: 13.5, fontWeight: 800, color: MC.brand } }, es ? "Leer →" : "Read →"))) : null;
-  const grid = h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 22 } }, rest.map(function(p) {
+  const grid = h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(280px,1fr))", gap: 22 } }, visibles.map(function(p) {
     return h("a", { key: p.slug, href: "/media/noticias/" + encodeURIComponent(p.slug), style: { display: "flex", flexDirection: "column", background: MC.surface, border: "1px solid " + MC.border, borderRadius: 18, overflow: "hidden", textDecoration: "none", color: MC.ink, boxShadow: "0 6px 30px rgba(0,0,0,0.05)", transition: "transform .18s ease, box-shadow .18s ease" },
       onMouseEnter: function(e) { e.currentTarget.style.transform = "translateY(-4px)"; e.currentTarget.style.boxShadow = "0 16px 46px rgba(0,0,0,0.1)"; },
       onMouseLeave: function(e) { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "0 6px 30px rgba(0,0,0,0.05)"; } },
@@ -622,7 +626,16 @@ function NewsSection() {
     posts.length > 3 ? ticker : null,
     sections.length > 1 ? chips : null,
     feat,
-    grid);
+    grid,
+    faltan > 0 ? h("div", { style: { textAlign: "center", marginTop: 38 } },
+      h("button", {
+        type: "button",
+        onClick: function() { setVerTodo(true); },
+        style: { background: "transparent", border: "1px solid " + MC.border, color: MC.ink, borderRadius: 999, padding: "13px 30px", fontSize: 14.5, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", minHeight: 46 },
+        onMouseEnter: function(e) { e.currentTarget.style.borderColor = MC.brand; e.currentTarget.style.color = MC.brand; },
+        onMouseLeave: function(e) { e.currentTarget.style.borderColor = MC.border; e.currentTarget.style.color = MC.ink; }
+      }, t(["Ver m\xE1s noticias (" + faltan + ")", "See more news (" + faltan + ")"]))
+    ) : null);
 }
 function MediaFooterCTA() {
   const t = useT();
