@@ -24,26 +24,44 @@ const MC = {
   ink2: "#5C5870",
   soft: "#A8A4B8"
 };
+// OJO: esto tenia un fallo que dejaba secciones enteras INVISIBLES para siempre.
+// El observador se enganchaba una sola vez al montar, pero algunas secciones (Noticias)
+// devuelven null en ese primer render mientras piden sus datos: ref.current era null,
+// no habia nada que observar, y cuando los datos llegaban la seccion se quedaba con
+// opacity 0 aunque estuviera entera en el DOM (54 enlaces clicables sobre un vacio blanco).
+// Ahora se reintenta hasta que exista el elemento y, si nunca aparece, se enseña igual:
+// jamas se esconde contenido por una animacion que no llego a engancharse.
 function useReveal() {
   const ref = React.useRef(null);
   const [visible, setVisible] = React.useState(false);
   React.useEffect(function() {
-    const obs = new IntersectionObserver(function(entries) {
-      if (entries[0].isIntersecting) {
+    let obs = null, vivo = true, intentos = 0;
+    const enganchar = function() {
+      if (!vivo) return;
+      if (!ref.current) {
+        if (intentos++ < 40) { setTimeout(enganchar, 100); return; }
         setVisible(true);
-        obs.disconnect();
+        return;
       }
-    }, { threshold: 0.1 });
-    if (ref.current) obs.observe(ref.current);
+      obs = new IntersectionObserver(function(entries) {
+        if (entries[0].isIntersecting) {
+          setVisible(true);
+          obs.disconnect();
+        }
+      }, { threshold: 0.1 });
+      obs.observe(ref.current);
+    };
+    enganchar();
     return function() {
-      obs.disconnect();
+      vivo = false;
+      if (obs) obs.disconnect();
     };
   }, []);
   return [ref, visible];
 }
 function MediaApp({ visibility = {} }) {
   const v = visibility;
-  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), v.news !== false && /* @__PURE__ */ React.createElement(NewsSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.aipods !== false && /* @__PURE__ */ React.createElement(AIPodcastsSection, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
+  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.news !== false && /* @__PURE__ */ React.createElement(NewsSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.aipods !== false && /* @__PURE__ */ React.createElement(AIPodcastsSection, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
 }
 function MediaHero() {
   const t = useT();
