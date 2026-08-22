@@ -33,7 +33,11 @@ const MC = {
 // jamas se esconde contenido por una animacion que no llego a engancharse.
 function useReveal() {
   const ref = React.useRef(null);
-  const [visible, setVisible] = React.useState(false);
+  // Arranca VISIBLE a proposito. La animacion de entrada es un adorno; que una seccion
+  // entera (Noticias, 54 enlaces) se quedara invisible por depender de un observador o de
+  // un temporizador que pueden no dispararse, no lo es. Si el observador funciona, la
+  // animacion se ve igual en las secciones que aun no se han alcanzado.
+  const [visible, setVisible] = React.useState(true);
   React.useEffect(function() {
     let obs = null, vivo = true, intentos = 0;
     const enganchar = function() {
