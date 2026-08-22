@@ -110,11 +110,44 @@
 .pcard:focus-visible { outline:2px solid var(--orange); outline-offset:2px; }
 .pcard-ph { position:relative; width:100%; aspect-ratio:4/3; background:#F2ECE2; overflow:hidden; }
 .pcard-ph img { width:100%; height:100%; object-fit:cover; display:block; }
-/* Tapa la franja del logo (arriba y abajo) en fotos de criadores y reescala para no dejar bordes vacios */
-/* El recorte tapa las marcas de agua de Lancaster/Greenfield. Antes llevaba ademas
-     scale(1.3): recorte sobre recorte, y en las tarjetas solo se veian pelos. El catalogo
-     usa el recorte a secas y por eso se ve bien. */
-    .pcard-ph.crop img, .pd-main.crop img { clip-path:inset(13% 0 9% 0); }
+/* Recorte del logo del criador (franja arriba en Greenfield, abajo en Lancaster).
+   Se reescala la foto en vez de recortarla con clip-path: el clip dejaba franjas
+   vacias dentro del marco y las tarjetas parecian cortadas. Es lo que hace el catalogo. */
+.pcard-ph.crop img, .pd-main.crop img { width:100%; height:132%; margin-top:-16%; object-fit:cover; object-position:center; }
+.pcard-ph .brand { position:absolute; right:11px; top:11px; z-index:2; display:inline-flex; align-items:center; gap:5px; background:rgba(45,36,33,0.62); color:#fff; font-size:10px; font-weight:800; letter-spacing:0.02em; padding:3px 9px; border-radius:999px; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
+.pcard-ph .brand i { width:7px; height:7px; border-radius:50%; background:var(--orange); display:block; }
+.pcard-thumbs { display:flex; gap:6px; padding:9px 13px 0; overflow-x:auto; scrollbar-width:none; }
+.pcard-thumbs::-webkit-scrollbar { display:none; }
+.pcard-thumbs img { width:44px; height:44px; border-radius:9px; object-fit:cover; cursor:pointer; border:2px solid transparent; flex:0 0 auto; background:#F2ECE2; }
+.pcard-thumbs img.on { border-color:var(--orange); }
+.pcard-price { margin-top:13px; font-family:var(--display); font-size:23px; font-weight:700; letter-spacing:-0.02em; }
+.pcard-price small { font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+.pcard-ship { font-size:11px; color:var(--ink-soft); margin-top:3px; line-height:1.45; text-wrap:pretty; }
+.pcard-rows { margin-top:10px; display:flex; flex-direction:column; gap:3px; }
+.pcard-rows div { display:flex; justify-content:space-between; gap:10px; font-size:12px; }
+.pcard-rows span:first-child { color:var(--ink-soft); }
+.pcard-rows span:last-child { font-weight:600; color:var(--ink-2); text-align:right; }
+.pcard-breedbox { margin-top:11px; border-top:1px solid var(--line); padding-top:9px; }
+.pcard-breedbox summary { cursor:pointer; font-size:12.5px; font-weight:700; color:var(--orange); list-style:none; display:flex; align-items:center; gap:6px; }
+.pcard-breedbox summary::-webkit-details-marker { display:none; }
+.pcard-breedbox summary::after { content:"+"; margin-left:auto; font-size:15px; line-height:1; color:var(--ink-soft); }
+.pcard-breedbox[open] summary::after { content:"\2212"; }
+.pcard-breedbox .in { margin-top:9px; }
+.pcard-breedbox .tp { display:flex; flex-wrap:wrap; gap:5px; margin-bottom:8px; }
+.pcard-breedbox .ln { font-size:12.5px; margin-bottom:5px; color:var(--ink-2); }
+.pcard-breedbox .ds { font-size:12.5px; color:var(--ink-2); line-height:1.55; text-wrap:pretty; }
+.pcard-acts { margin-top:auto; padding-top:13px; display:flex; flex-direction:column; gap:8px; }
+.pcard-see {  display:flex; align-items:center; justify-content:center; gap:7px; background:var(--orange); color:#fff; border-radius:12px; padding:12px; font-weight:700; font-size:13.5px; }
+.pcard-see .ic { width:15px; height:15px; }
+.pcard-more { display:block; text-align:center; border:1.5px solid var(--line); color:var(--ink-2); border-radius:12px; padding:11px; font-weight:600; font-size:12.5px; text-decoration:none; }
+.pcard-more:hover { border-color:var(--orange); color:var(--orange); }
+@media (max-width:560px) {
+  .pcard-thumbs img { width:38px; height:38px; }
+  .pcard-price { font-size:20px; }
+  .pcard-see { padding:14px 10px; font-size:12.5px; min-height:46px; }
+  .pcard-more { padding:13px 8px; font-size:11.5px; min-height:46px; }
+  .pcard-rows div { font-size:11.5px; }
+}
 .pcard-ph .tag { position:absolute; top:11px; left:11px; z-index:2; background:var(--orange); color:#fff; font-size:10.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; padding:4px 10px; border-radius:999px; }
 .pcard-ph .cnt { position:absolute; left:11px; bottom:11px; z-index:2; display:inline-flex; align-items:center; gap:5px; background:rgba(45,36,33,0.6); color:#fff; font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
 .pcard-ph .cnt .ic { width:12px; height:12px; }
@@ -395,6 +428,8 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
 <!-- Zoom de fotos -->
 <div class="lbx" id="lbx"><button type="button" class="x" id="lbxX" aria-label="Cerrar">&times;</button><button type="button" class="nav prev" id="lbxP" aria-label="Anterior">&lsaquo;</button><img id="lbxImg" src="" alt="" referrerpolicy="no-referrer" onerror="__bpImgFallback(this)"><button type="button" class="nav next" id="lbxN" aria-label="Siguiente">&rsaquo;</button></div>
 
+<script src="breed-data.js?v=1787416500000"></script>
+<script src="cat-breed-data.js?v=1787416500000"></script>
 <script src="site-animations.js?v=1781476900318"></script>
 <script>
 /* ── /cachorros · listado publico (vista public_puppies_feed) ───────────── */
@@ -757,25 +792,113 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     return out;
   }
 
+  /* ── enciclopedia de razas (misma fuente que el catálogo) ───────────── */
+  var COAT_LBL = { short: ['Corto', 'Short'], long: ['Largo', 'Long'], curly: ['Rizado', 'Curly'], smooth: ['Liso', 'Smooth'], wiry: ['Áspero', 'Wiry'], hairless: ['Sin pelo', 'Hairless'], soft: ['Suave', 'Soft'], medium: ['Medio', 'Medium'], double: ['Doble capa', 'Double coat'] };
+  var BREED_ALIAS = { 'yorkie': 'yorkshire terrier', 'yorky': 'yorkshire terrier', 'yorkies': 'yorkshire terrier', 'frenchie': 'french bulldog', 'frenchies': 'french bulldog', 'frances': 'french bulldog', 'doxie': 'dachshund', 'salchicha': 'dachshund', 'teckel': 'dachshund', 'pom': 'pomeranian', 'pomerania': 'pomeranian', 'lab': 'labrador retriever', 'golden': 'golden retriever', 'aussie': 'australian shepherd', 'mini schnauzer': 'miniature schnauzer', 'schnauzer miniatura': 'miniature schnauzer', 'caniche': 'standard poodle', 'bichon': 'bichon frise' };
+  function bnorm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
+  var BI_CACHE = {};
+  function breedInfo(breedStr) {
+    var nb = bnorm(breedStr); if (!nb) return null;
+    if (BI_CACHE[nb] !== undefined) return BI_CACHE[nb];
+    nb = BREED_ALIAS[nb] || nb;
+    var nbc = nb.replace(/ /g, '');
+    var all = [].concat(window.DOG_BREEDS || [], window.DESIGNER_BREEDS || [], window.CAT_BREEDS || []);
+    var best = null, bestLen = 0;
+    for (var k = 0; k < all.length; k++) {
+      var e = all[k];
+      [bnorm(e.name), bnorm(e.es)].forEach(function (nm) {
+        if (!nm) return;
+        var nmc = nm.replace(/ /g, '');
+        if (nb === nm || nbc === nmc) { if (nm.length + 100 > bestLen) { best = e; bestLen = nm.length + 100; } }
+        else if ((' ' + nb + ' ').indexOf(' ' + nm + ' ') >= 0 || (' ' + nm + ' ').indexOf(' ' + nb + ' ') >= 0) { if (nm.length > bestLen) { best = e; bestLen = nm.length; } }
+      });
+    }
+    var out = null;
+    if (best) {
+      out = {
+        temperament: (LANG === 'en' ? (best.temperamentEn || best.temperament) : (best.temperament || best.temperamentEn)) || [],
+        coats: (best.coat || []).map(function (c) { var l = COAT_LBL[c]; return l ? T(l[0], l[1]) : c; }),
+        care: (LANG === 'en' ? (best.careEn || best.care) : (best.care || best.careEn)) || '',
+        desc: (LANG === 'en' ? (best.descEn || best.desc) : (best.desc || best.descEn)) || '',
+        health: (LANG === 'en' ? (best.healthEn || best.health) : (best.health || best.healthEn)) || '',
+        raw: best
+      };
+    }
+    BI_CACHE[bnorm(breedStr)] = out;
+    return out;
+  }
+  function breedLabel(breedStr) {
+    var bi = breedInfo(breedStr);
+    if (bi && bi.raw) return (LANG === 'en' ? (bi.raw.name || bi.raw.es) : (bi.raw.es || bi.raw.name)) || breedStr || '';
+    return breedStr || '';
+  }
+  function breedLink(breed) {
+    var n = bnorm(breed); if (!n) return '/razas';
+    var M = [['golden', 1], ['french', 2], ['frances', 2], ['labrador', 3], ['poodle', 4], ['caniche', 4], ['schnauzer', 5], ['yorkshire', 6], ['yorkie', 6], ['york', 6], ['beagle', 7], ['cocker', 8], ['chihuahua', 9], ['shih', 10], ['shitzu', 10]];
+    for (var i = 0; i < M.length; i++) { if (n.indexOf(M[i][0]) >= 0) return '/blog?art=' + M[i][1]; }
+    return '/razas';
+  }
+
   /* ── tarjetas ───────────────────────────────────────────────────────── */
   function card(p) {
     var meta = [];
     if (p._sex) meta.push(sexLabel(p._sex));
     if (p._age) meta.push(p._age);
     var ct = colorText(p); if (ct) meta.push(ct);
-    return '<button type="button" class="pcard" data-i="' + p._i + '" aria-label="' + esc((p.name || p.breed || '') + ' — ' + T('ver ficha', 'view details')) + '">'
+
+    var rows = [];
+    if (p.pedigree) rows.push([T('Pedigrí', 'Pedigree'), yesLabel(p.pedigree)]);
+    if (p.vaccines) rows.push([T('Vacunas', 'Vaccines'), yesLabel(p.vaccines)]);
+    if (p.microchip) rows.push([T('Microchip', 'Microchip'), yesLabel(p.microchip)]);
+    var bl = bornLabel(p); if (bl) rows.push([T('Nacimiento', 'Born'), bl]);
+
+    var bi = breedInfo(p.breed), biH = '';
+    if (bi && (bi.temperament.length || bi.care || bi.coats.length || bi.desc)) {
+      var inner = '';
+      if (bi.temperament.length) inner += '<div class="tp">' + bi.temperament.slice(0, 5).map(function (t) { return '<span class="chipx">' + esc(t) + '</span>'; }).join('') + '</div>';
+      if (bi.coats.length) inner += '<div class="ln"><b>' + T('Pelaje', 'Coat') + ':</b> ' + esc(bi.coats.join(', ')) + '</div>';
+      if (bi.care) inner += '<div class="ln"><b>' + T('Cuidado', 'Care') + ':</b> ' + esc(bi.care) + '</div>';
+      if (bi.desc) inner += '<div class="ds">' + esc(bi.desc) + '</div>';
+      biH = '<details class="pcard-breedbox"><summary>' + T('Sobre la raza', 'About the breed') + '</summary><div class="in">' + inner + '</div></details>';
+    }
+
+    var thumbs = p._ph.length > 1
+      ? '<div class="pcard-thumbs">' + p._ph.slice(0, 8).map(function (u, k) {
+        return imgTag(u, 160, 60, '', ' data-th="' + p._i + '" data-k="' + k + '" class="' + (k === 0 ? 'on' : '') + '"');
+      }).join('') + '</div>'
+      : '';
+
+    var bLabel = breedLabel(p.breed);
+    return '<article class="pcard" role="button" tabindex="0" data-i="' + p._i + '" aria-label="' + esc((p.name || bLabel || '') + ' — ' + T('ver ficha', 'view details')) + '">'
       + '<div class="pcard-ph' + (p._crop ? ' crop' : '') + '">'
-      + imgTag(p._ph[0], 520, 62, (p.breed || 'Cachorro') + ' ' + (p.name || ''))
+      + imgTag(p._ph[0], 520, 62, (p.breed || 'Cachorro') + ' ' + (p.name || ''), ' id="cph-' + p._i + '" data-k="0"')
       + '<span class="tag">' + T('Disponible', 'Available') + '</span>'
+      + '<span class="brand"><i></i>BrightPuppy</span>'
       + (p._ph.length > 1 ? '<span class="cnt">' + svg(IC.cam) + p._ph.length + '</span>' : '')
-      + '<span class="pz">' + money(p.price_public) + '</span>'
       + '</div>'
+      + thumbs
       + '<div class="pcard-b">'
-      + '<div class="pcard-breed">' + esc(p.breed || '') + '</div>'
+      + '<div class="pcard-breed">' + esc(bLabel) + '</div>'
       + '<h3>' + esc(p.name || T('Sin nombre', 'Unnamed')) + '</h3>'
       + (meta.length ? '<div class="pcard-meta">' + meta.map(function (m) { return '<span class="chipx">' + esc(m) + '</span>'; }).join('') + '</div>' : '')
-      + '<span class="pcard-cta">' + T('Ver ficha completa', 'See full details') + svg(IC.arrow) + '</span>'
-      + '</div></button>';
+      + '<div class="pcard-price">' + money(p.price_public) + (p.price_public != null && !isNaN(p.price_public) ? ' <small>USD</small>' : '') + '</div>'
+      + '<div class="pcard-ship">' + T('Incluye <b>delivery a todo Estados Unidos</b>. Entrega en 2 a 5 días.', 'Includes <b>delivery anywhere in the USA</b>. Delivery in 2 to 5 days.') + '</div>'
+      + (rows.length ? '<div class="pcard-rows">' + rows.map(function (r) { return '<div><span>' + esc(r[0]) + '</span><span>' + esc(r[1]) + '</span></div>'; }).join('') + '</div>' : '')
+      + biH
+      + '<div class="pcard-acts">'
+      + '<span class="pcard-see">' + T('Ver ficha completa', 'See full details') + svg(IC.arrow) + '</span>'
+      + (p.breed ? '<a class="pcard-more" href="' + breedLink(p.breed) + '" data-keep="1">' + T('Leer más sobre los ', 'Read more about ') + esc(bLabel) + ' &rarr;</a>' : '') + '</div>'
+      + '</div></article>';
+  }
+
+  /* cambia la foto principal de una tarjeta al tocar una miniatura */
+  function cardSwap(th) {
+    var i = th.dataset.th, k = +th.dataset.k;
+    var p = ALL[i]; if (!p || !p._ph[k]) return;
+    var m = el('cph-' + i);
+    if (m) { delete m.dataset.f; m.dataset.o = p._ph[k]; m.dataset.k = k; m.src = tx(p._ph[k], 520, 62); m.style.visibility = ''; }
+    var box = th.parentNode;
+    if (box) box.querySelectorAll('img').forEach(function (im) { im.classList.toggle('on', im === th); });
   }
 
   function render(reset) {
@@ -1245,8 +1368,16 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
         if (act.dataset.act === 'clear') clearAll();
         return;
       }
+      var th = e.target.closest('[data-th]');
+      if (th) { e.stopPropagation(); cardSwap(th); return; }
+      if (e.target.closest('a, summary')) return;
       var c = e.target.closest('.pcard');
       if (c) openDetail(+c.dataset.i);
+    });
+    grid.addEventListener('keydown', function (e) {
+      if (e.key !== 'Enter' && e.key !== ' ') return;
+      var c = e.target.closest && e.target.closest('.pcard');
+      if (c && e.target === c) { e.preventDefault(); openDetail(+c.dataset.i); }
     });
 
     var qt;
