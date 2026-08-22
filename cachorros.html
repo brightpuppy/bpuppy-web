@@ -76,7 +76,7 @@
 /* Filters */
 .pf-wrap { border:1px solid var(--line); border-radius:16px; background:var(--paper); margin-bottom:26px; }
 .pf-top { display:flex; align-items:center; gap:10px; padding:12px 14px; flex-wrap:wrap; }
-.pf-search { flex:1 1 200px; min-width:0; display:flex; align-items:center; gap:8px; background:var(--bg); border:1px solid var(--line); border-radius:10px; padding:9px 13px; }
+.pf-search { flex:1 1 200px; min-width:0; display:flex; align-items:center; gap:8px; background:#fff; border:1px solid var(--line); border-radius:10px; padding:9px 13px; }
 .pf-search .ic { color:var(--ink-soft); }
 .pf-search input { flex:1; min-width:0; border:none; background:none; outline:none; font-family:inherit; font-size:13.5px; color:var(--ink); }
 .pf-btn.pf-toggle { display:none; }
@@ -114,10 +114,10 @@
 
 /* Cards */
 .pup-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(240px,1fr)); gap:20px; }
-.pcard { background:var(--paper); border:1px solid var(--line); border-radius:20px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:transform .28s, box-shadow .28s, border-color .28s; text-align:left; padding:0; font-family:inherit; }
-.pcard:hover { transform:translateY(-4px); box-shadow:var(--shadow-card); border-color:rgba(245,130,32,0.4); }
+.pcard { background:#fff; border:1px solid var(--line); border-radius:22px; box-shadow:0 1px 2px rgba(45,36,33,.06), 0 18px 44px -22px rgba(45,36,33,.22); overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:transform .28s, box-shadow .28s, border-color .28s; text-align:left; padding:0; font-family:inherit; }
+.pcard:hover { transform:translateY(-3px); box-shadow:0 1px 2px rgba(45,36,33,.06), 0 26px 56px -24px rgba(45,36,33,.3); border-color:rgba(245,130,32,0.4); }
 .pcard:focus-visible { outline:2px solid var(--orange); outline-offset:2px; }
-.pcard-ph { position:relative; width:100%; aspect-ratio:4/3; background:#F2ECE2; overflow:hidden; }
+.pcard-ph { position:relative; width:100%; aspect-ratio:1/1; background:#F2ECE2; overflow:hidden; }
 .pcard-ph img { width:100%; height:100%; object-fit:cover; display:block; }
 /* Recorte del logo del criador (franja arriba en Greenfield, abajo en Lancaster).
    Se reescala la foto en vez de recortarla con clip-path: el clip dejaba franjas
@@ -198,7 +198,7 @@
 }
 
 .pcard-meta { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
-.chipx { font-size:11.5px; font-weight:600; color:var(--ink-2); background:var(--bg); border:1px solid var(--line); border-radius:999px; padding:3px 9px; }
+.chipx { font-size:11.5px; font-weight:600; color:var(--ink-2); background:#F6F1E9; border:1px solid var(--line); border-radius:999px; padding:3px 9px; }
 .pcard-cta { margin-top:auto; padding-top:13px; font-size:12.5px; font-weight:700; color:var(--ink-2); display:inline-flex; align-items:center; gap:6px; }
 .pcard:hover .pcard-cta { color:var(--orange); }
 
@@ -376,7 +376,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     <div class="pup-head">
       <div>
         <div class="eyebrow" data-es="Disponibles ahora" data-en="Available now">Disponibles ahora</div>
-        <h2 data-es="Cachorros listos &lt;em&gt;para ti.&lt;/em&gt;" data-en="Puppies ready &lt;em&gt;for you.&lt;/em&gt;">Cachorros listos <em>para ti.</em></h2>
+        <h2 data-es="Algunos de los cachorros &lt;em&gt;disponibles.&lt;/em&gt;" data-en="Some of the &lt;em&gt;available&lt;/em&gt; puppies.">Algunos de los cachorros <em>disponibles.</em></h2>
       </div>
     </div>
 
@@ -389,7 +389,6 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
           <input id="pf-q" type="text" data-es-ph="Buscar por nombre, raza o color…" data-en-ph="Search by name, breed or color…" placeholder="Buscar por nombre, raza o color…">
         </div>
         <button type="button" class="pf-btn pf-toggle" id="pf-toggle"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 7h9M17.5 7H20M4 17h2.5M11 17h9"/><circle cx="15" cy="7" r="2.2"/><circle cx="8.5" cy="17" r="2.2"/></svg><span data-es="Filtros" data-en="Filters">Filtros</span></button>
-        <span class="pf-count" id="pf-count"></span>
       </div>
       <div class="pf-body">
         <div class="pf-ac" id="pf-breed-wrap">
@@ -467,6 +466,8 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
 <div class="lbx" id="lbx"><button type="button" class="x" id="lbxX" aria-label="Cerrar">&times;</button><button type="button" class="nav prev" id="lbxP" aria-label="Anterior">&lsaquo;</button><img id="lbxImg" src="" alt="" referrerpolicy="no-referrer" onerror="__bpImgFallback(this)"><button type="button" class="nav next" id="lbxN" aria-label="Siguiente">&rsaquo;</button></div>
 
 <script src="breed-data.js?v=1787416500000"></script>
+<script src="breed-data-extra.js?v=1787430000000"></script>
+<script src="breed-data-more.js?v=1787430000000"></script>
 <script src="cat-breed-data.js?v=1787416500000"></script>
 <script src="site-animations.js?v=1781476900318"></script>
 <script>
@@ -818,8 +819,15 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     if (F.sort === 'price_desc') return l.sort(function (a, b) { return (b.price_public || 0) - (a.price_public || 0); });
     if (F.sort === 'young') return l.sort(function (a, b) { return (a._w == null ? 9999 : a._w) - (b._w == null ? 9999 : b._w); });
     if (F.sort === 'new') return l.sort(function (a, b) { return String(b.created_at || '').localeCompare(String(a.created_at || '')); });
+    // Luis: estas razas van siempre delante, son las que mas se venden.
+    var DESTACADAS = [/^toypoodle/, /^shihtzu/, /^yorkshireterrier|^yorkie/, /^cavapoo/, /^pomeran/, /^frenchbulldog/, /^cavalier/];
+    var rango = function (k) {
+      for (var i = 0; i < DESTACADAS.length; i++) if (DESTACADAS[i].test(k)) return i;
+      return DESTACADAS.length;
+    };
     var g = {}, order = [];
     l.forEach(function (p) { var k = p.breed_key || p.breed || 'x'; if (!g[k]) { g[k] = []; order.push(k); } g[k].push(p); });
+    order.sort(function (a, b) { return rango(a) - rango(b); });
     var out = [], i = 0;
     while (out.length < l.length) {
       var moved = false;
@@ -972,10 +980,8 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     else { grid.insertAdjacentHTML('beforeend', next.map(card).join('')); }
     shown += next.length;
     var left = VIEW.length - shown;
-    if (left > 0) { more.style.display = 'flex'; btn.textContent = T('Ver más cachorros', 'Show more puppies') + ' (' + left + ')'; }
+    if (left > 0) { more.style.display = 'flex'; btn.textContent = T('Ver más cachorros', 'Show more puppies'); }
     else more.style.display = 'none';
-    var c = el('pf-count');
-    if (c) c.textContent = VIEW.length + ' ' + (VIEW.length === 1 ? T('cachorro', 'puppy') : T('cachorros', 'puppies'));
     renderChips();
     renderAsk();
     renderURLNote();
