@@ -43,7 +43,7 @@ function useReveal() {
 }
 function MediaApp({ visibility = {} }) {
   const v = visibility;
-  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.aipods !== false && /* @__PURE__ */ React.createElement(AIPodcastsSection, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.news !== false && /* @__PURE__ */ React.createElement(NewsSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
+  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), v.news !== false && /* @__PURE__ */ React.createElement(NewsSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.aipods !== false && /* @__PURE__ */ React.createElement(AIPodcastsSection, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
 }
 function MediaHero() {
   const t = useT();
@@ -74,7 +74,7 @@ function MediaHero() {
       animation: "charFloat " + ch.dur + "s ease-in-out infinite",
       animationDelay: ch.delay + "s"
     } }, ch.c);
-  })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 32, flexWrap: "wrap", alignItems: "flex-end", maxWidth: 900 } }, /* @__PURE__ */ React.createElement("p", { style: { fontSize: "clamp(15px,1.4vw,18px)", color: MC.heroMuted, lineHeight: 1.6, margin: 0, maxWidth: "42ch" } }, t(["Contenido original sobre mascotas, crianza responsable y la comunidad BrightPuppy.", "Original content about pets, responsible breeding and the BrightPuppy community."])), /* @__PURE__ */ React.createElement(
+  })), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", gap: 32, flexWrap: "wrap", alignItems: "flex-end", maxWidth: 900 } }, /* @__PURE__ */ React.createElement("p", { style: { fontSize: "clamp(15px,1.4vw,18px)", color: MC.heroMuted, lineHeight: 1.6, margin: 0, maxWidth: "42ch" } }, t(["El mundo de las mascotas en un solo lugar.", "Original content about pets, responsible breeding and the BrightPuppy community."])), /* Luis: fuera el boton "Ver ahora", no aporta */ false && /* @__PURE__ */ React.createElement(
     "a",
     {
       href: "#videos",
@@ -428,12 +428,17 @@ const SHORTS_IDS = [
   "GMoy5dJtp_s",
   "M7KZF9P3S34"
 ];
+// Antes se incrustaban los 9 reproductores de YouTube a la vez: el navegador no daba abasto,
+// 7 tarjetas se quedaban en blanco y dejaban un hueco enorme debajo de los Shorts. Ahora se
+// pinta la miniatura y el reproductor solo entra cuando alguien pulsa.
 function ShortCard({ id, idx }) {
   const t = useT();
+  const _p = React.useState(false);
+  const play = _p[0], setPlay = _p[1];
   return /* @__PURE__ */ React.createElement(
     "div",
     {
-      style: { borderRadius: 14, overflow: "hidden", background: MC.surface, border: `1px solid ${MC.border}`, transition: "transform .22s, box-shadow .22s" },
+      style: { borderRadius: 14, overflow: "hidden", background: MC.surface, border: "1px solid " + MC.border, transition: "transform .22s, box-shadow .22s" },
       onMouseEnter: function(e) {
         e.currentTarget.style.transform = "translateY(-5px)";
         e.currentTarget.style.boxShadow = "0 18px 44px rgba(0,0,0,0.1)";
@@ -443,16 +448,30 @@ function ShortCard({ id, idx }) {
         e.currentTarget.style.boxShadow = "none";
       }
     },
-    /* @__PURE__ */ React.createElement("div", { style: { aspectRatio: "9/16", position: "relative" } }, /* @__PURE__ */ React.createElement(
-      "iframe",
-      {
-        src: "https://www.youtube.com/embed/" + id + "?rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es",
+    /* @__PURE__ */ React.createElement("div", { style: { aspectRatio: "9/16", position: "relative", background: "#000" } },
+      play ? /* @__PURE__ */ React.createElement("iframe", {
+        src: "https://www.youtube.com/embed/" + id + "?autoplay=1&rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=es",
         title: t(["Short entrevista ", "Interview short "]) + (idx + 1),
         allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
         allowFullScreen: true,
         style: { position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", display: "block" }
-      }
-    ))
+      }) : /* @__PURE__ */ React.createElement("button", {
+        type: "button",
+        onClick: function() { setPlay(true); },
+        "aria-label": t(["Reproducir short ", "Play short "]) + (idx + 1),
+        style: { position: "absolute", inset: 0, width: "100%", height: "100%", padding: 0, border: "none", cursor: "pointer", background: "#000", display: "block" }
+      },
+        /* @__PURE__ */ React.createElement("img", {
+          src: "https://i.ytimg.com/vi/" + id + "/hqdefault.jpg",
+          alt: "", loading: "lazy",
+          style: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }
+        }),
+        /* @__PURE__ */ React.createElement("span", {
+          style: { position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: 54, height: 54, borderRadius: "50%", background: "rgba(0,0,0,.55)", border: "2px solid rgba(255,255,255,.9)", display: "flex", alignItems: "center", justifyContent: "center" }
+        }, /* @__PURE__ */ React.createElement("svg", { width: "20", height: "20", viewBox: "0 0 24 24", fill: "#fff" },
+             /* @__PURE__ */ React.createElement("polygon", { points: "6 4 20 12 6 20 6 4" })))
+      )
+    )
   );
 }
 function InterviewsSection() {
@@ -566,7 +585,7 @@ function NewsSection() {
         h("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 18.5, fontWeight: 700, color: MC.ink, letterSpacing: "-0.01em", lineHeight: 1.2, marginBottom: 7 } }, p.title),
         p.excerpt ? h("div", { style: { fontSize: 13, color: MC.ink2, lineHeight: 1.55 } }, p.excerpt) : null));
   }));
-  return h("section", { ref, style: { padding: "clamp(80px,10vw,140px) clamp(24px,6vw,120px)", background: "#fff", opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(36px)", transition: "opacity 0.7s ease, transform 0.7s ease" } },
+  return h("section", { id: "noticias", ref, style: { padding: "clamp(80px,10vw,140px) clamp(24px,6vw,120px)", background: "#fff", opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(36px)", transition: "opacity 0.7s ease, transform 0.7s ease" } },
     h("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 14 } },
       h("span", { style: { width: 9, height: 9, borderRadius: "50%", background: MC.brand, display: "inline-block", boxShadow: "0 0 0 3px rgba(255,85,32,0.22)", animation: "mediaPulse 1.8s ease-in-out infinite" } }),
       h("span", { style: { fontSize: 12, fontWeight: 800, letterSpacing: "0.18em", textTransform: "uppercase", color: MC.brand } }, t(["04 — En vivo", "04 — Live"]))),
