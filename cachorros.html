@@ -108,10 +108,13 @@
 .pcard { background:var(--paper); border:1px solid var(--line); border-radius:20px; overflow:hidden; display:flex; flex-direction:column; cursor:pointer; transition:transform .28s, box-shadow .28s, border-color .28s; text-align:left; padding:0; font-family:inherit; }
 .pcard:hover { transform:translateY(-4px); box-shadow:var(--shadow-card); border-color:rgba(245,130,32,0.4); }
 .pcard:focus-visible { outline:2px solid var(--orange); outline-offset:2px; }
-.pcard-ph { position:relative; width:100%; aspect-ratio:1/1; background:#F2ECE2; overflow:hidden; }
+.pcard-ph { position:relative; width:100%; aspect-ratio:4/3; background:#F2ECE2; overflow:hidden; }
 .pcard-ph img { width:100%; height:100%; object-fit:cover; display:block; }
 /* Tapa la franja del logo (arriba y abajo) en fotos de criadores y reescala para no dejar bordes vacios */
-.pcard-ph.crop img, .pd-main.crop img { clip-path:inset(13% 0 9% 0); transform:translateY(-2.6%) scale(1.3); }
+/* El recorte tapa las marcas de agua de Lancaster/Greenfield. Antes llevaba ademas
+     scale(1.3): recorte sobre recorte, y en las tarjetas solo se veian pelos. El catalogo
+     usa el recorte a secas y por eso se ve bien. */
+    .pcard-ph.crop img, .pd-main.crop img { clip-path:inset(13% 0 9% 0); }
 .pcard-ph .tag { position:absolute; top:11px; left:11px; z-index:2; background:var(--orange); color:#fff; font-size:10.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; padding:4px 10px; border-radius:999px; }
 .pcard-ph .cnt { position:absolute; left:11px; bottom:11px; z-index:2; display:inline-flex; align-items:center; gap:5px; background:rgba(45,36,33,0.6); color:#fff; font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
 .pcard-ph .cnt .ic { width:12px; height:12px; }
