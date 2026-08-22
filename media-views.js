@@ -568,6 +568,46 @@ function NewsSection() {
       .then(function(rows) { if (Array.isArray(rows)) setPosts(rows); })
       .catch(function() {});
   }, []);
+  // Luis: al entrar por /media#noticias la pagina tiene que abrir JUSTO donde empiezan
+  // las noticias, sin que nadie tenga que bajar. El ancla nativa del navegador no sirve:
+  // cuando llega, la seccion todavia no existe (se pinta cuando responde Supabase).
+  const saltoHecho = React.useRef(false);
+  React.useEffect(function() {
+    if (!posts.length) return;
+    const esNoticias = function() {
+      const x = String(window.location.hash || "").toLowerCase();
+      return x === "#noticias" || x === "#news";
+    };
+    const irALasNoticias = function() {
+      const el = ref.current;
+      if (!el) return null;
+      const hdr = document.querySelector("header");
+      const alto = hdr ? hdr.getBoundingClientRect().height : 72;
+      const y = Math.max(0, el.getBoundingClientRect().top + window.pageYOffset - alto - 8);
+      window.scrollTo(0, y);
+      return y;
+    };
+    const saltar = function() {
+      let puesto = null;
+      const t1 = setTimeout(function() { puesto = irALasNoticias(); }, 60);
+      // Las fotos y las fuentes mueven la pagina despues de pintar: se recoloca una vez.
+      // Solo si el visitante no ha tocado nada desde el primer salto.
+      const t2 = setTimeout(function() {
+        if (puesto == null) { irALasNoticias(); return; }
+        if (Math.abs(window.pageYOffset - puesto) < 6) irALasNoticias();
+      }, 450);
+      return function() { clearTimeout(t1); clearTimeout(t2); };
+    };
+    let limpiar = null;
+    if (esNoticias() && !saltoHecho.current) { saltoHecho.current = true; limpiar = saltar(); }
+    // Y si ya esta en /media y pulsa Noticias en el menu (solo cambia el #).
+    const alCambiarHash = function() { if (esNoticias()) saltar(); };
+    window.addEventListener("hashchange", alCambiarHash);
+    return function() {
+      window.removeEventListener("hashchange", alCambiarHash);
+      if (limpiar) limpiar();
+    };
+  }, [posts.length]);
   if (!posts.length) return null;
   const h = React.createElement;
   const es = String(document.documentElement.lang || "es") !== "en";

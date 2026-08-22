@@ -40,7 +40,21 @@
 <script src="blog-data.js?v=1781476900318"></script>
 <script src="blog-data-extra.js?v=1781476900318"></script>
 <script src="age-charts.js?v=1781476900318"></script>
-<script src="blog-views.js?v=1781476900318"></script>
+<script>/* blog-solo-razas: el Blog es SOLO guias de raza con foto. Lo demas se parecia a
+   Noticias y ademas repetia lo que ya esta en /razas (Luis, 22-ago). No se borran los
+   datos: se filtran aqui, asi que devolverlos es quitar este bloque. */
+(function () {
+  try {
+    if (typeof BLOG !== "undefined" && Array.isArray(BLOG)) {
+      var solo = BLOG.filter(function (a) { return a && a.cat === "razas" && a.img; });
+      if (solo.length) { BLOG.length = 0; Array.prototype.push.apply(BLOG, solo); }
+    }
+    if (typeof BLOG_CATS !== "undefined" && Array.isArray(BLOG_CATS)) {
+      BLOG_CATS.length = 0; BLOG_CATS.push("todos");
+    }
+  } catch (e) { }
+})();</script>
+<script src="blog-views.js?v=1787433000000"></script>
 <script src="blog-app.js?v=1783880000000"></script>
 <script src="site-animations.js?v=1781476900318"></script>
 <script src="claude-bridge.js?v=1784824000000"></script>

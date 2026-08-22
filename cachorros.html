@@ -803,7 +803,15 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     nb = BREED_ALIAS[nb] || nb;
     var nbc = nb.replace(/ /g, '');
     var all = [].concat(window.DOG_BREEDS || [], window.DESIGNER_BREEDS || [], window.CAT_BREEDS || []);
+    /* QUALIF: "Mini Poodle" o "Toy Australian Shepherd" no casan con la ficha de la raza;
+       se prueba otra vez sin el calificativo de tamano. */
+    var QUALIF = /\b(mini|miniature|toy|standard|teacup|micro|petite|giant|small|medium|large|grande|mediano|pequeno|enano)\b/g;
+    var probar = [nb];
+    var nb2 = nb.replace(QUALIF, " ").replace(/\s+/g, " ").trim();
+    if (nb2 && nb2 !== nb) probar.push(nb2);
     var best = null, bestLen = 0;
+    for (var v = 0; v < probar.length && !best; v++) {
+    nb = probar[v]; nbc = nb.replace(/ /g, "");
     for (var k = 0; k < all.length; k++) {
       var e = all[k];
       [bnorm(e.name), bnorm(e.es)].forEach(function (nm) {
@@ -812,6 +820,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
         if (nb === nm || nbc === nmc) { if (nm.length + 100 > bestLen) { best = e; bestLen = nm.length + 100; } }
         else if ((' ' + nb + ' ').indexOf(' ' + nm + ' ') >= 0 || (' ' + nm + ' ').indexOf(' ' + nb + ' ') >= 0) { if (nm.length > bestLen) { best = e; bestLen = nm.length; } }
       });
+    }
     }
     var out = null;
     if (best) {
