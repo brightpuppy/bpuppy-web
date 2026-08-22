@@ -76,8 +76,8 @@ function MediaHero() {
   const t = useT();
   const [feat, setFeat] = React.useState("M4D398WTPb0");
   const EPISODES = [
+    { id: "m5zU7U34GC0", title: ["Mejores Días", "Best Days"], tag: ["Comercial", "Commercial"] },
     { id: "M4D398WTPb0", title: ["The Girl \u2014 Comercial", "The Girl \u2014 Commercial"], tag: ["Nuevo", "New"] },
-    { id: "m5zU7U34GC0", title: ["Comercial 2", "Commercial 2"], tag: ["Comercial", "Commercial"] },
     { id: t(["qW0jwJeNrPk", "YImasdUtIrI"]), title: ["Nuestra historia (corto)", "Our story (short)"], tag: ["Historia", "Story"] }
   ];
   const chars = [
@@ -174,7 +174,7 @@ function MediaHero() {
 }
 const COMERCIALES = [
   { id: "M4D398WTPb0", label: ["Comercial 1", "Commercial 1"], color: "#FF5520" },
-  { id: "m5zU7U34GC0", label: ["Comercial 2", "Commercial 2"], color: "#9B6FFF" }
+  { id: "m5zU7U34GC0", label: ["Mejores Días", "Best Days"], color: "#9B6FFF" }
 ];
 function CommercialCard({ item }) {
   const t = useT();
