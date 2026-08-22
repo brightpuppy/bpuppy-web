@@ -52,8 +52,13 @@ function useReveal() {
       obs.observe(ref.current);
     };
     enganchar();
+    // RED DE SEGURIDAD: pase lo que pase con el observador (pestaña en segundo plano,
+    // navegador que no lo soporta, seccion mas alta que la pantalla...), a los 1,2 s la
+    // seccion se enseña. Una animacion NUNCA debe dejar contenido escondido.
+    const red = setTimeout(function() { if (vivo) setVisible(true); }, 1200);
     return function() {
       vivo = false;
+      clearTimeout(red);
       if (obs) obs.disconnect();
     };
   }, []);
