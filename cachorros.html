@@ -46,7 +46,13 @@
 
 .hero-facts { display:flex; flex-wrap:wrap; gap:9px; margin-top:22px; }
 .hero-fact { display:inline-flex; align-items:center; gap:8px; padding:8px 15px; border:1px solid rgba(255,255,255,0.3); border-radius:999px; font-size:12.5px; font-weight:600; letter-spacing:0.01em; color:#fff; }
+.hero-fact-btn { font-family:inherit; background:rgba(255,255,255,0.06); cursor:pointer; transition:background .18s, border-color .18s; }
+.hero-fact-btn:hover { background:rgba(255,255,255,0.16); border-color:rgba(255,255,255,0.6); }
+.hero-fact-btn:focus-visible { outline:2px solid #FFB877; outline-offset:2px; }
 .hero-fact .ic { width:15px; height:15px; color:#FFB877; }
+.aqui-btn { display:inline-block; padding:3px 13px; margin:0 2px; border-radius:999px; border:none; background:var(--orange); color:#fff; font-family:inherit; font-size:inherit; font-weight:800; line-height:1.45; cursor:pointer; vertical-align:baseline; }
+.aqui-btn:hover { background:#E0631A; }
+.aqui-btn:focus-visible { outline:2px solid #fff; outline-offset:2px; }
 .hero-fine { margin-top:16px; font-size:12.5px; line-height:1.6; color:rgba(255,255,255,0.72) !important; max-width:66ch; text-wrap:pretty; }
 
 /* Trust links */
@@ -154,10 +160,43 @@
 .pcard-ph .tag { position:absolute; top:11px; left:11px; z-index:2; background:var(--orange); color:#fff; font-size:10.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; padding:4px 10px; border-radius:999px; }
 .pcard-ph .cnt { position:absolute; left:11px; bottom:11px; z-index:2; display:inline-flex; align-items:center; gap:5px; background:rgba(45,36,33,0.6); color:#fff; font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
 .pcard-ph .cnt .ic { width:12px; height:12px; }
+.pcard-ph .ph-nav { position:absolute; top:50%; transform:translateY(-50%); z-index:3; width:30px; height:30px; padding:0; border:none; border-radius:50%; background:rgba(45,36,33,0.5); color:#fff; display:grid; place-items:center; cursor:pointer; opacity:0; transition:opacity .18s, background .18s; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
+.pcard-ph .ph-nav svg { width:16px; height:16px; fill:none; stroke:currentColor; stroke-width:2.4; stroke-linecap:round; stroke-linejoin:round; }
+.pcard:hover .ph-nav, .pcard:focus-within .ph-nav { opacity:1; }
+.pcard-ph .ph-nav:hover { background:rgba(45,36,33,0.8); }
+.pcard-ph .ph-nav.prev { left:8px; }
+.pcard-ph .ph-nav.next { right:8px; }
+/* En pantalla tactil no hay hover: ahi se pasan las fotos deslizando. */
+@media (hover:none) { .pcard-ph .ph-nav { display:none; } }
 .pcard-ph .pz { position:absolute; right:11px; bottom:11px; z-index:2; background:rgba(45,36,33,0.86); color:#fff; font-size:13px; font-weight:800; padding:5px 12px; border-radius:999px; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
 .pcard-b { padding:15px 16px 17px; display:flex; flex-direction:column; flex:1; }
-.pcard-breed { font-size:12px; color:var(--orange); font-weight:700; letter-spacing:0.01em; }
-.pcard-b h3 { font-family:var(--display); font-size:20px; font-weight:600; letter-spacing:-0.015em; margin:3px 0 0; }
+/* La raza manda: es lo que la gente busca. El nombre del cachorro va debajo, pequeno. */
+.pcard-breed { font-family:var(--display); font-size:19px; font-weight:700; letter-spacing:-0.015em; color:var(--ink); line-height:1.18; margin:0; text-wrap:balance; }
+.pcard-name { font-size:12.5px; font-weight:700; color:var(--orange); margin-top:4px; letter-spacing:0.01em; }
+/* ficha: bloque de raza (mismo espiritu que el catalogo) */
+.pd-breed { margin-top:18px; border:1px solid var(--line); border-radius:16px; background:linear-gradient(180deg,#FFF9F2 0%,var(--paper) 60%); padding:16px 16px 15px; }
+.pd-breed h4 { font-family:var(--display); font-size:17px; font-weight:700; letter-spacing:-0.015em; margin:0 0 12px; }
+.pd-bstats { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:12px; }
+.pd-bstats div { flex:1 1 88px; border:1px solid var(--line); border-radius:11px; background:var(--paper); padding:8px 10px; }
+.pd-bstats .v { font-family:var(--display); font-size:15px; font-weight:700; letter-spacing:-0.01em; }
+.pd-bstats .l { font-size:10.5px; color:var(--ink-soft); font-weight:600; letter-spacing:0.03em; text-transform:uppercase; margin-top:1px; }
+.pd-btemp { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:13px; }
+.pd-btemp span { font-size:12px; font-weight:700; color:#B3431E; background:#FDF0E4; border:1px solid #F7D9BE; border-radius:999px; padding:4px 11px; }
+.pd-brate { display:grid; grid-template-columns:1fr 1fr; gap:9px 16px; margin-bottom:13px; }
+.pd-brate div { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--ink-2); }
+.pd-brate .n { flex:0 0 78px; font-weight:600; }
+.pd-brate .bar { flex:1; height:6px; border-radius:999px; background:#F1E7DA; overflow:hidden; }
+.pd-brate .bar i { display:block; height:100%; border-radius:999px; background:linear-gradient(90deg,#F58220,#E0631A); }
+.pd-btxt { font-size:13px; line-height:1.6; color:var(--ink-2); text-wrap:pretty; }
+.pd-btxt + .pd-btxt { margin-top:7px; }
+.pd-btxt b { color:var(--ink); }
+.pd-guide { display:flex; align-items:center; justify-content:center; gap:7px; margin-top:14px; padding:12px; border-radius:12px; background:var(--orange); color:#fff; font-weight:700; font-size:13.5px; text-decoration:none; }
+.pd-guide svg { width:15px; height:15px; }
+@media (max-width:560px) {
+  .pd-brate { grid-template-columns:1fr; }
+  .pd-bstats div { flex:1 1 calc(50% - 4px); }
+}
+
 .pcard-meta { display:flex; flex-wrap:wrap; gap:5px; margin-top:10px; }
 .chipx { font-size:11.5px; font-weight:600; color:var(--ink-2); background:var(--bg); border:1px solid var(--line); border-radius:999px; padding:3px 9px; }
 .pcard-cta { margin-top:auto; padding-top:13px; font-size:12.5px; font-weight:700; color:var(--ink-2); display:inline-flex; align-items:center; gap:6px; }
@@ -274,7 +313,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
   .pf-count { margin-left:0; }
   .pup-grid { grid-template-columns:repeat(auto-fill,minmax(152px,1fr)); gap:13px; }
   .pcard-b { padding:12px 13px 14px; }
-  .pcard-b h3 { font-size:17px; }
+  .pcard-breed { font-size:16.5px; }
   .pcard-ph .pz { font-size:12px; padding:4px 10px; }
   .ov { padding:0; }
   .ov-card { border-radius:20px 20px 0 0; max-width:none; margin:auto 0 0; }
@@ -299,12 +338,12 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
 <!-- Hero -->
 <section class="page-hero">
   <div class="container">
-    <h1 data-es="Nuestros &lt;em&gt;cachorros&lt;/em&gt;" data-en="Our &lt;em&gt;puppies&lt;/em&gt;">Nuestros <em>cachorros</em></h1>
-    <p class="lede" data-es="Cachorros de raza con garantía de salud por escrito, vacunas al día y acompañamiento de por vida. Todos los que ves aquí están disponibles hoy." data-en="Purebred puppies with a written health guarantee, vaccines up to date and lifetime support. Everything you see here is available today.">Cachorros de raza con garantía de salud por escrito, vacunas al día y acompañamiento de por vida. Todos los que ves aquí están disponibles hoy.</p>
+    <h1 data-es="Cachorros &lt;em&gt;disponibles&lt;/em&gt;" data-en="Available &lt;em&gt;puppies&lt;/em&gt;">Cachorros <em>disponibles</em></h1>
+    <p class="lede" data-es="Cachorros de raza con garantía de salud por escrito, vacunas al día y acompañamiento de por vida." data-en="Purebred puppies with a written health guarantee, vaccines up to date and lifetime support.">Cachorros de raza con garantía de salud por escrito, vacunas al día y acompañamiento de por vida.</p>
 
     <div class="hero-note">
       <svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="5" r="2.4"/><circle cx="5" cy="18" r="2.4"/><circle cx="19" cy="18" r="2.4"/><path d="M12 7.4v3.2M11 11.6 6.6 15.9M13 11.6l4.4 4.3"/></svg>
-      <p data-es="Si deseas solicitar una raza en específico, &lt;b&gt;nosotros la tenemos para ti&lt;/b&gt;. Trabajamos con una red de criadores en todos los estados." data-en="If you want to request a specific breed, &lt;b&gt;we can get it for you&lt;/b&gt;. We work with a network of breeders in every state.">Si deseas solicitar una raza en específico, <b>nosotros la tenemos para ti</b>. Trabajamos con una red de criadores en todos los estados.</p>
+      <p data-es="Si deseas solicitar una raza en específico, solicítala &lt;button type=&quot;button&quot; class=&quot;aqui-btn&quot; data-act=&quot;request&quot;&gt;aquí&lt;/button&gt;. Trabajamos con una red de familias y criadores responsables en todo Estados Unidos." data-en="If you are looking for a specific breed, request it &lt;button type=&quot;button&quot; class=&quot;aqui-btn&quot; data-act=&quot;request&quot;&gt;here&lt;/button&gt;. We work with a network of responsible families and breeders across the United States.">Si deseas solicitar una raza en específico, solicítala <button type="button" class="aqui-btn" data-act="request">aquí</button>. Trabajamos con una red de familias y criadores responsables en todo Estados Unidos.</p>
     </div>
 
     <div class="hero-facts">
@@ -312,9 +351,9 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       <span class="hero-fact"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2l7 2.8v5.6c0 4.2-2.9 7.5-7 8.9-4.1-1.4-7-4.7-7-8.9V6z"/><path d="M9 12.2l2.1 2.1 4-4.2"/></svg><span data-es="Garantía de salud por escrito" data-en="Written health guarantee">Garantía de salud por escrito</span></span>
       <span class="hero-fact"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21s6.5-5.7 6.5-10.3A6.5 6.5 0 0 0 5.5 10.7C5.5 15.3 12 21 12 21z"/><circle cx="12" cy="10.6" r="2.4"/></svg><span data-es="Delivery a todo Estados Unidos" data-en="Delivery anywhere in the USA">Delivery a todo Estados Unidos</span></span>
       <span class="hero-fact"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="6" width="18" height="12" rx="2.5"/><path d="M3 10h18"/></svg><span data-es="Pago en cuotas disponible" data-en="Installment payments available">Pago en cuotas disponible</span></span>
+      <button type="button" class="hero-fact hero-fact-btn" id="btn-intl"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M3 12h18"/><path d="M12 3c2.6 2.5 4 5.6 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.6-4-9s1.4-6.5 4-9z"/></svg><span data-es="Delivery internacional" data-en="International delivery">Delivery internacional</span></button>
     </div>
 
-    <p class="hero-fine" data-es="Los cachorros de este listado están en casas de criadores asociados en distintos estados. Confirmamos la disponibilidad de cada uno en el momento de tu solicitud y coordinamos la entrega contigo: se realiza entre 2 y 5 días." data-en="The puppies in this listing live with partner breeders in different states. We confirm each puppy's availability the moment you request it and then arrange delivery with you: it takes 2 to 5 days.">Los cachorros de este listado están en casas de criadores asociados en distintos estados. Confirmamos la disponibilidad de cada uno en el momento de tu solicitud y coordinamos la entrega contigo: se realiza entre 2 y 5 días.</p>
   </div>
 </section>
 
@@ -338,10 +377,6 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       <div>
         <div class="eyebrow" data-es="Disponibles ahora" data-en="Available now">Disponibles ahora</div>
         <h2 data-es="Cachorros listos &lt;em&gt;para ti.&lt;/em&gt;" data-en="Puppies ready &lt;em&gt;for you.&lt;/em&gt;">Cachorros listos <em>para ti.</em></h2>
-      </div>
-      <div class="side">
-        <p data-es="Toca cualquier cachorro para ver todas sus fotos y su ficha completa. Precios en dólares, con delivery a todo Estados Unidos incluido." data-en="Tap any puppy to see all its photos and full details. Prices in US dollars, delivery anywhere in the USA included.">Toca cualquier cachorro para ver todas sus fotos y su ficha completa. Precios en dólares, con delivery a todo Estados Unidos incluido.</p>
-        <button type="button" class="btn-line" id="btn-intl"><svg class="ic" viewBox="0 0 24 24" aria-hidden="true"><path d="M10.4 13.6 3.5 11.2 20.5 4l-7.2 17-2.9-7.4z"/></svg><span data-es="Solicitar envío internacional" data-en="Request international shipping">Solicitar envío internacional</span></button>
       </div>
     </div>
 
@@ -844,12 +879,24 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     if (bi && bi.raw) return (LANG === 'en' ? (bi.raw.name || bi.raw.es) : (bi.raw.es || bi.raw.name)) || breedStr || '';
     return breedStr || '';
   }
+  /* Mapa raza -> guia del blog. El orden importa: "french" e "ingles/english" se miran
+     antes que "bulldog" a secas. Es el mismo que usa /razas. */
+  var GUIA_BLOG = [
+    [/\b(french|frances|frenchie)\b/, 2], [/\b(english|ingles)\b.*bulldog|bulldog.*\b(english|ingles)\b/, 45],
+    [/golden/, 1], [/labrador/, 3], [/poodle|caniche/, 4], [/schnauzer/, 5],
+    [/yorkshire|yorkie/, 6], [/beagle/, 7], [/cocker/, 8], [/chihuahua/, 9],
+    [/shih ?tzu/, 10], [/pastor aleman|german shepherd/, 42], [/corgi/, 43],
+    [/dachshund|salchicha|teckel/, 44], [/husky/, 46], [/bichon/, 47],
+    [/american bully/, 48], [/cavapoo/, 49], [/maltes|maltese/, 50],
+    [/pomerania|pomeranian/, 51], [/\bpug\b|carlino/, 52], [/rottweiler/, 53]
+  ];
   function breedLink(breed) {
-    var n = bnorm(breed); if (!n) return '/razas';
-    var M = [['golden', 1], ['french', 2], ['frances', 2], ['labrador', 3], ['poodle', 4], ['caniche', 4], ['schnauzer', 5], ['yorkshire', 6], ['yorkie', 6], ['york', 6], ['beagle', 7], ['cocker', 8], ['chihuahua', 9], ['shih', 10], ['shitzu', 10]];
-    for (var i = 0; i < M.length; i++) { if (n.indexOf(M[i][0]) >= 0) return '/blog?art=' + M[i][1]; }
-    return '/razas';
+    var n = bnorm(breed); if (!n) return null;
+    if (/doodle|mix|cruce/.test(n) && !/cavapoo/.test(n)) return null;
+    for (var i = 0; i < GUIA_BLOG.length; i++) if (GUIA_BLOG[i][0].test(n)) return "/blog?art=" + GUIA_BLOG[i][1];
+    return null;
   }
+
 
   /* ── tarjetas ───────────────────────────────────────────────────────── */
   function card(p) {
@@ -864,15 +911,6 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     if (p.microchip) rows.push([T('Microchip', 'Microchip'), yesLabel(p.microchip)]);
     var bl = bornLabel(p); if (bl) rows.push([T('Nacimiento', 'Born'), bl]);
 
-    var bi = breedInfo(p.breed), biH = '';
-    if (bi && (bi.temperament.length || bi.care || bi.coats.length || bi.desc)) {
-      var inner = '';
-      if (bi.temperament.length) inner += '<div class="tp">' + bi.temperament.slice(0, 5).map(function (t) { return '<span class="chipx">' + esc(t) + '</span>'; }).join('') + '</div>';
-      if (bi.coats.length) inner += '<div class="ln"><b>' + T('Pelaje', 'Coat') + ':</b> ' + esc(bi.coats.join(', ')) + '</div>';
-      if (bi.care) inner += '<div class="ln"><b>' + T('Cuidado', 'Care') + ':</b> ' + esc(bi.care) + '</div>';
-      if (bi.desc) inner += '<div class="ds">' + esc(bi.desc) + '</div>';
-      biH = '<details class="pcard-breedbox"><summary>' + T('Sobre la raza', 'About the breed') + '</summary><div class="in">' + inner + '</div></details>';
-    }
 
     var thumbs = p._ph.length > 1
       ? '<div class="pcard-thumbs">' + p._ph.slice(0, 8).map(function (u, k) {
@@ -887,20 +925,32 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       + '<span class="tag">' + T('Disponible', 'Available') + '</span>'
       + '<span class="brand"><i></i>BrightPuppy</span>'
       + (p._ph.length > 1 ? '<span class="cnt">' + svg(IC.cam) + p._ph.length + '</span>' : '')
+      + (p._ph.length > 1 ? '<button type="button" class="ph-nav prev" data-nav="-1" data-i="' + p._i + '" aria-label="' + T('Foto anterior', 'Previous photo') + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>'
+        + '<button type="button" class="ph-nav next" data-nav="1" data-i="' + p._i + '" aria-label="' + T('Foto siguiente', 'Next photo') + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 5l7 7-7 7"/></svg></button>' : '')
       + '</div>'
       + thumbs
       + '<div class="pcard-b">'
-      + '<div class="pcard-breed">' + esc(bLabel) + '</div>'
-      + '<h3>' + esc(p.name || T('Sin nombre', 'Unnamed')) + '</h3>'
+      + '<h3 class="pcard-breed">' + esc(bLabel) + '</h3>'
+      + (p.name ? '<div class="pcard-name">' + esc(p.name) + '</div>' : '')
       + (meta.length ? '<div class="pcard-meta">' + meta.map(function (m) { return '<span class="chipx">' + esc(m) + '</span>'; }).join('') + '</div>' : '')
       + '<div class="pcard-price">' + money(p.price_public) + (p.price_public != null && !isNaN(p.price_public) ? ' <small>USD</small>' : '') + '</div>'
-      + '<div class="pcard-ship">' + T('Incluye <b>delivery a todo Estados Unidos</b>. Entrega en 2 a 5 días.', 'Includes <b>delivery anywhere in the USA</b>. Delivery in 2 to 5 days.') + '</div>'
       + (rows.length ? '<div class="pcard-rows">' + rows.map(function (r) { return '<div><span>' + esc(r[0]) + '</span><span>' + esc(r[1]) + '</span></div>'; }).join('') + '</div>' : '')
-      + biH
       + '<div class="pcard-acts">'
       + '<span class="pcard-see">' + T('Ver ficha completa', 'See full details') + svg(IC.arrow) + '</span>'
-      + (p.breed ? '<a class="pcard-more" href="' + breedLink(p.breed) + '" data-keep="1">' + T('Leer más sobre los ', 'Read more about ') + esc(bLabel) + ' &rarr;</a>' : '') + '</div>'
+      + (p.breed ? '<a class="pcard-more" href="' + (breedLink(p.breed) || '/razas') + '" data-keep="1">' + T('Leer más sobre los ', 'Read more about ') + esc(bLabel) + ' &rarr;</a>' : '') + '</div>'
       + '</div></article>';
+  }
+
+  /* pasa a la foto de al lado (flechas en PC, dedo en el movil) */
+  function cardGo(i, dir) {
+    var p = ALL[i]; if (!p || p._ph.length < 2) return;
+    var m = el('cph-' + i); if (!m) return;
+    var k = ((+m.dataset.k || 0) + dir + p._ph.length) % p._ph.length;
+    delete m.dataset.f; m.dataset.o = p._ph[k]; m.dataset.k = k;
+    m.src = tx(p._ph[k], 520, 62); m.style.visibility = '';
+    var card = m.closest('.pcard');
+    var box = card && card.querySelector('.pcard-thumbs');
+    if (box) box.querySelectorAll('img').forEach(function (im) { im.classList.toggle('on', +im.dataset.k === k); });
   }
 
   /* cambia la foto principal de una tarjeta al tocar una miniatura */
@@ -1029,6 +1079,11 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       }).join('') + '</div>';
     updColorBtn();
 
+    // el "aqui" del aviso de arriba (vive fuera de la rejilla y de los chips)
+    document.addEventListener('click', function (e) {
+      if (e.target.closest && e.target.closest('.aqui-btn')) { e.preventDefault(); openRequest({}); }
+    });
+
     // chips de razas
     var chips = el('breed-chips');
     chips.innerHTML = breedList.map(function (x) {
@@ -1093,6 +1148,52 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     if (!document.querySelector('.ov.open') && !el('lbx').classList.contains('open')) document.body.style.overflow = '';
   }
 
+  /* ── bloque de raza para la ficha ───────────────────────────────────── */
+  /* La enciclopedia guarda kg y cm; aqui se vende en Estados Unidos, asi que se pasa a lb e in. */
+  function aLibras(s) {
+    var m = String(s || '').match(/([\d.]+)\s*[-–—]\s*([\d.]+)\s*kg/i);
+    if (m) return Math.round(+m[1] * 2.205) + '–' + Math.round(+m[2] * 2.205) + ' lb';
+    var u = String(s || '').match(/([\d.]+)\s*kg/i);
+    return u ? Math.round(+u[1] * 2.205) + ' lb' : (s || '');
+  }
+  function aPulgadas(s) {
+    var m = String(s || '').match(/([\d.]+)\s*[-–—]\s*([\d.]+)\s*cm/i);
+    if (m) return Math.round(+m[1] / 2.54) + '–' + Math.round(+m[2] / 2.54) + '"';
+    var u = String(s || '').match(/([\d.]+)\s*cm/i);
+    return u ? Math.round(+u[1] / 2.54) + '"' : (s || '');
+  }
+  function barra(nombre, v) {
+    v = Number(v) || 0; if (!v) return '';
+    return '<div><span class="n">' + esc(nombre) + '</span><span class="bar"><i style="width:' + Math.round(v / 5 * 100) + '%"></i></span></div>';
+  }
+  function breedBlock(p) {
+    var bi = breedInfo(p.breed); if (!bi) return '';
+    var b = bi.raw || {}, nom = breedLabel(p.breed);
+    var stats = [];
+    if (b.weight) stats.push([aLibras(b.weight), T('Peso adulto', 'Adult weight')]);
+    if (b.height) stats.push([aPulgadas(b.height), T('Altura', 'Height')]);
+    if (b.lifespan) stats.push([esc(String(b.lifespan).replace(/a\u00f1os?/i, T('a\u00f1os', 'years'))), T('Esperanza de vida', 'Lifespan')]);
+    var rates = barra(T('Familia', 'Family'), b.family) + barra(T('Con niños', 'With kids'), b.kids)
+      + barra(T('Energía', 'Energy'), b.energy) + barra(T('Entrenamiento', 'Training'), b.trainability)
+      + barra(T('Cuidado', 'Grooming'), b.grooming) + barra(T('Apartamento', 'Apartment'), b.apartment);
+    // Una barra sola (las mezclas solo traen energia) queda coja: o van varias o ninguna.
+    var barrasSueltas = (rates.match(/<div>/g) || []).length; if (barrasSueltas < 3) rates = '';
+    var txt = '';
+    if (b.parents) txt += '<p class="pd-btxt"><b>' + T('Cruce', 'Cross') + ':</b> ' + esc(b.parents) + '</p>';
+    if (bi.desc) txt += '<p class="pd-btxt">' + esc(bi.desc) + '</p>';
+    if (bi.coats && bi.coats.length) txt += '<p class="pd-btxt"><b>' + T('Pelaje', 'Coat') + ':</b> ' + esc(bi.coats.join(', ')) + '</p>';
+    if (bi.care) txt += '<p class="pd-btxt"><b>' + T('Cuidado', 'Care') + ':</b> ' + esc(bi.care) + '</p>';
+    if (bi.health) txt += '<p class="pd-btxt"><b>' + T('Salud', 'Health') + ':</b> ' + esc(bi.health) + '</p>';
+    if (!stats.length && !rates && !txt && !(bi.temperament || []).length) return '';
+    var url = p.breed ? breedLink(p.breed) : null;
+    var enlace = url ? '<a class="pd-guide" href="' + url + '">' + T('Guía completa del ', 'Full guide to the ') + esc(nom) + svg(IC.arrow) + '</a>' : '';
+    return '<div class="pd-breed"><h4>' + T('Sobre el ', 'About the ') + esc(nom) + '</h4>'
+      + (stats.length ? '<div class="pd-bstats">' + stats.map(function (s) { return '<div><div class="v">' + s[0] + '</div><div class="l">' + s[1] + '</div></div>'; }).join('') + '</div>' : '')
+      + (bi.temperament && bi.temperament.length ? '<div class="pd-btemp">' + bi.temperament.slice(0, 6).map(function (t) { return '<span>' + esc(t) + '</span>'; }).join('') + '</div>' : '')
+      + (rates ? '<div class="pd-brate">' + rates + '</div>' : '')
+      + txt + enlace + '</div>';
+  }
+
   /* ── ficha del cachorro ─────────────────────────────────────────────── */
   var DET = { p: null, ph: [], idx: 0, crop: false };
   function openDetail(i) {
@@ -1114,7 +1215,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     var enc = encodeURIComponent(msg);
 
     el('pdIn').innerHTML =
-      '<div class="pd-head"><div class="b">' + esc(p.breed || '') + '</div><h3>' + esc(p.name || p.breed || T('Cachorro', 'Puppy')) + '</h3></div>'
+      '<div class="pd-head"><h3>' + esc(breedLabel(p.breed) || T('Cachorro', 'Puppy')) + '</h3>' + (p.name ? '<div class="b">' + esc(p.name) + '</div>' : '') + '</div>'
       + '<div class="pd-main' + (p._crop ? ' crop' : '') + '">'
       + imgTag(DET.ph[0] || '', 900, 70, (p.breed || '') + ' ' + (p.name || ''), ' id="pd-img"')
       + '<span class="zoom">' + T('Toca para ampliar', 'Tap to enlarge') + (DET.ph.length > 1 ? ' · ' + DET.ph.length : '') + '</span></div>'
@@ -1122,8 +1223,9 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
         return imgTag(u, 160, 60, '', ' data-k="' + k + '" class="' + (k === 0 ? 'on' : '') + '"');
       }).join('') + '</div>' : '')
       + '<div class="pd-price">' + money(p.price_public) + ' <small>USD</small></div>'
-      + '<p class="pd-note">' + T('Incluye <b>delivery a todo Estados Unidos</b>. Disponibilidad sujeta a confirmación con el criador; la entrega se realiza entre 2 y 5 días.', 'Includes <b>delivery anywhere in the USA</b>. Availability subject to confirmation with the breeder; delivery takes 2 to 5 days.') + '</p>'
+      + '<p class="pd-note">' + T('Disponibilidad sujeta a confirmación con el criador. La entrega se coordina contigo y se realiza entre 2 y 5 días; el costo del envío depende del estado.', 'Availability subject to confirmation with the breeder. Delivery is arranged with you and takes 2 to 5 days; shipping cost depends on the state.') + '</p>'
       + '<div class="pd-specs">' + specs.map(function (s) { return '<div><span>' + esc(s[0]) + '</span><span>' + esc(s[1]) + '</span></div>'; }).join('') + '</div>'
+      + breedBlock(p)
       + '<div class="pd-acts">'
       + '<button type="button" class="btn-solid" data-act="request-this">' + svg(IC.paw) + T('Solicitar este cachorro', 'Request this puppy') + '</button>'
       + '<a class="btn-outline2" href="https://wa.me/' + WA + '?text=' + enc + '" target="_blank" rel="noopener">' + svg(IC.chat) + T('Preguntar por WhatsApp', 'Ask on WhatsApp') + '</a>'
@@ -1380,6 +1482,8 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
         if (act.dataset.act === 'clear') clearAll();
         return;
       }
+      var nav = e.target.closest('[data-nav]');
+      if (nav) { e.stopPropagation(); cardGo(+nav.dataset.i, +nav.dataset.nav); return; }
       var th = e.target.closest('[data-th]');
       if (th) { e.stopPropagation(); cardSwap(th); return; }
       if (e.target.closest('a, summary')) return;
@@ -1390,6 +1494,24 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       if (e.key !== 'Enter' && e.key !== ' ') return;
       var c = e.target.closest && e.target.closest('.pcard');
       if (c && e.target === c) { e.preventDefault(); openDetail(+c.dataset.i); }
+    });
+
+    // deslizar con el dedo sobre la foto de la tarjeta
+    var tX = 0, tY = 0, tCard = null;
+    grid.addEventListener('touchstart', function (e) {
+      var ph = e.target.closest && e.target.closest('.pcard-ph');
+      tCard = ph ? ph.closest('.pcard') : null;
+      if (!tCard) return;
+      tX = e.touches[0].clientX; tY = e.touches[0].clientY;
+    }, { passive: true });
+    grid.addEventListener('touchend', function (e) {
+      if (!tCard) return;
+      var dx = e.changedTouches[0].clientX - tX, dy = e.changedTouches[0].clientY - tY;
+      var c = tCard; tCard = null;
+      // solo si el gesto es claramente horizontal: si no, es que esta bajando la pagina
+      if (Math.abs(dx) < 40 || Math.abs(dx) < Math.abs(dy) * 1.4) return;
+      e.preventDefault();
+      cardGo(+c.dataset.i, dx < 0 ? 1 : -1);
     });
 
     var qt;
@@ -1405,7 +1527,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     el('pf-clear').addEventListener('click', clearAll);
     el('pf-toggle').addEventListener('click', function () { el('pf-wrap').classList.toggle('open'); });
     el('btn-more').addEventListener('click', function () { render(false); });
-    el('btn-intl').addEventListener('click', openIntl);
+    var bIntl = el('btn-intl'); if (bIntl) bIntl.addEventListener('click', openIntl);
 
     // color
     el('pf-color-btn').addEventListener('click', function (e) { e.stopPropagation(); el('pf-colors').classList.toggle('open'); });
