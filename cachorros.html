@@ -591,7 +591,11 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     if (!u) return '';
     var i = u.indexOf(OBJ);
     if (i < 0) return u;
-    return u.slice(0, i) + REN + u.slice(i + OBJ.length) + '?width=' + w + '&quality=' + q;
+    // OJO: con solo ?width, el redimensionado de Supabase pone ese ancho pero CONSERVA la
+    // altura original: una foto de 4032x3024 salia como 520x4032, estirada, y en la tarjeta
+    // se veia un trozo de pelo. Hay que dar ancho Y alto con resize=contain para que respete
+    // la proporcion (y de paso pesa 5 veces menos: 43 KB en vez de 232 KB).
+    return u.slice(0, i) + REN + u.slice(i + OBJ.length) + '?width=' + w + '&height=' + w + '&resize=contain&quality=' + q;
   }
   window.__bpImgFallback = function (img) {
     if (img.dataset.o && !img.dataset.f) { img.dataset.f = '1'; img.src = img.dataset.o; return; }
@@ -604,11 +608,15 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       var box = im.closest ? im.closest('.pcard-ph, .pd-main') : null;
       if (!box) return;
       var r = im.naturalHeight / im.naturalWidth;
-      var alta = r > 1.08 && r <= 1.95;      // vertical normal: se enseña entera
-      var altisima = r > 1.95;               // tira: se llena el marco por arriba
-      box.classList.toggle('alta', alta);
+      // Solo se recorta por dentro si la foto ya es casi cuadrada: ahi cover no se come nada.
+      // Todo lo demas (apaisada o vertical) se enseña ENTERA. Recortar una foto apaisada
+      // dentro de un marco cuadrado dejaba al perro fuera del encuadre.
+      var cuadrada = r >= 0.88 && r <= 1.14;
+      var altisima = r > 2.4;                // tira muy larga: no cabe, se llena por arriba
+      var entera = !cuadrada && !altisima;
+      box.classList.toggle('alta', entera);
       box.classList.toggle('altisima', altisima);
-      if (alta) box.style.setProperty('--bgimg', 'url("' + (im.currentSrc || im.src) + '")');
+      if (entera) box.style.setProperty('--bgimg', 'url("' + (im.currentSrc || im.src) + '")');
       else box.style.removeProperty('--bgimg');
     } catch (e) { }
   };
