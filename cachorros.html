@@ -166,6 +166,11 @@
 .pcard-ph.alta img, .pd-main.alta img { object-fit:contain; position:relative; z-index:1; }
 /* con la foto entera el recorte del logo del criador se hace por abajo, que es donde va */
 .pcard-ph.alta.crop img, .pd-main.alta.crop img { width:100%; height:100%; margin-top:0; clip-path:inset(0 0 7% 0); }
+/* Vendido: se sigue viendo 3 dias, pero apagado y sin botones de compra. */
+.pcard.vendido .pcard-ph img { filter:grayscale(0.75) brightness(0.94); }
+.pcard.vendido .pcard-price { color:var(--ink-soft); text-decoration:line-through; }
+.pcard-ph .tag.ido { background:#6B5A4E; }
+.pcard.vendido .pcard-see { background:#EFE7DC; color:var(--ink-2); box-shadow:none; }
 .pcard-ph .tag { position:absolute; top:11px; left:11px; z-index:2; background:var(--orange); color:#fff; font-size:10.5px; font-weight:700; letter-spacing:0.04em; text-transform:uppercase; padding:4px 10px; border-radius:999px; }
 .pcard-ph .cnt { position:absolute; left:11px; bottom:11px; z-index:2; display:inline-flex; align-items:center; gap:5px; background:rgba(45,36,33,0.6); color:#fff; font-size:11px; font-weight:700; padding:4px 9px; border-radius:999px; -webkit-backdrop-filter:blur(3px); backdrop-filter:blur(3px); }
 .pcard-ph .cnt .ic { width:12px; height:12px; }
@@ -990,6 +995,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
 
   /* ── tarjetas ───────────────────────────────────────────────────────── */
   function card(p) {
+    var ido = p.estado === 'vendido';   // vendido: se ensena 3 dias, apagado
     var meta = [];
     if (p._sex) meta.push(sexLabel(p._sex));
     if (p._age) meta.push(p._age);
@@ -1009,10 +1015,10 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       : '';
 
     var bLabel = breedLabel(p.breed);
-    return '<article class="pcard" role="button" tabindex="0" data-i="' + p._i + '" aria-label="' + esc((p.name || bLabel || '') + ' — ' + T('ver ficha', 'view details')) + '">'
+    return '<article class="pcard' + (ido ? ' vendido' : '') + '" role="button" tabindex="0" data-i="' + p._i + '" aria-label="' + esc((p.name || bLabel || '') + ' — ' + T('ver ficha', 'view details')) + '">'
       + '<div class="pcard-ph' + (p._crop ? ' crop' : '') + '">'
       + imgTag(p._ph[0], 520, 62, (p.breed || 'Cachorro') + ' ' + (p.name || ''), ' id="cph-' + p._i + '" data-k="0"')
-      + '<span class="tag">' + T('Disponible', 'Available') + '</span>'
+      + '<span class="tag' + (ido ? ' ido' : '') + '">' + (ido ? T('No disponible', 'Found a Home') : T('Disponible', 'Available')) + '</span>'
       + '<span class="brand"><i></i>BrightPuppy</span>'
       + (p._ph.length > 1 ? '<span class="cnt">' + svg(IC.cam) + p._ph.length + '</span>' : '')
       + (p._ph.length > 1 ? '<button type="button" class="ph-nav prev" data-nav="-1" data-i="' + p._i + '" aria-label="' + T('Foto anterior', 'Previous photo') + '"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15 5l-7 7 7 7"/></svg></button>'
@@ -1026,7 +1032,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       + '<div class="pcard-price">' + money(p.price_public) + (p.price_public != null && !isNaN(p.price_public) ? ' <small>USD</small>' : '') + '</div>'
       + (rows.length ? '<div class="pcard-rows">' + rows.map(function (r) { return '<div><span>' + esc(r[0]) + '</span><span>' + esc(r[1]) + '</span></div>'; }).join('') + '</div>' : '')
       + '<div class="pcard-acts">'
-      + '<span class="pcard-see">' + T('Ver ficha completa', 'See full details') + svg(IC.arrow) + '</span>'
+      + '<span class="pcard-see">' + (ido ? T('Ya encontró hogar', 'Found a home') : T('Ver ficha completa', 'See full details')) + svg(IC.arrow) + '</span>'
       + (p.breed ? '<a class="pcard-more" href="' + (breedLink(p.breed) || '/razas') + '" data-keep="1">' + T('Leer más sobre los ', 'Read more about ') + esc(bLabel) + ' &rarr;</a>' : '') + '</div>'
       + '</div></article>';
   }
@@ -1315,7 +1321,10 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       + '<div class="pd-specs">' + specs.map(function (s) { return '<div><span>' + esc(s[0]) + '</span><span>' + esc(s[1]) + '</span></div>'; }).join('') + '</div>'
       + breedBlock(p)
       + '<div class="pd-acts">'
-      + '<button type="button" class="btn-solid" data-act="request-this">' + svg(IC.paw) + T('Solicitar este cachorro', 'Request this puppy') + '</button>'
+      + (p.estado === 'vendido'
+          ? '<div style="padding:13px 16px;border-radius:12px;background:#F6F1E9;border:1px solid var(--line);font-size:13.5px;color:var(--ink-2);text-wrap:pretty"><b style="color:var(--ink)">' + T('Este cachorro ya encontró hogar.', 'This puppy found a home.') + '</b> ' + T('Escríbenos y te avisamos en cuanto tengamos otro de la misma raza.', 'Message us and we will let you know as soon as we have another one of the same breed.') + '</div>'
+            + '<button type="button" class="btn-solid" data-act="request">' + svg(IC.paw) + T('Búscame uno igual', 'Find me one like this') + '</button>'
+          : '<button type="button" class="btn-solid" data-act="request-this">' + svg(IC.paw) + T('Solicitar este cachorro', 'Request this puppy') + '</button>')
       + '<a class="btn-outline2" href="https://wa.me/' + WA + '?text=' + enc + '" target="_blank" rel="noopener">' + svg(IC.chat) + T('Preguntar por WhatsApp', 'Ask on WhatsApp') + '</a>'
       + '<a class="btn-outline2" href="sms:+' + WA + '?&body=' + enc + '">' + svg(IC.sms) + T('Preguntar por SMS', 'Ask by text') + '</a>'
       + '</div>'

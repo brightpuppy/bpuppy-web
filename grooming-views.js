@@ -386,7 +386,7 @@ ${pickup ? isMember ? "\u{1F690} Pickup & Delivery: " + t(["Incluido (miembro)",
 \u{1F4C5} ${t(["Fecha", "Date"])}: ${dateStr} ${t(["a las", "at"])} ${time}
 \u{1F464} ${t(["Nombre", "Name"])}: ${ownerName}
 \u{1F4DE} ${t(["Tel\xE9fono", "Phone"])}: ${phone}${promoCode ? "\n\u{1F3AB} " + t(["C\xF3digo promo", "Promo code"]) + ": " + promoCode : ""}${notes ? "\n\u{1F4DD} " + t(["Notas", "Notes"]) + ": " + notes : ""}`);
-    return `https://wa.me/19294287300?text=${msg}`;
+    return `https://wa.me/18084928294?text=${msg}`;
   };
   const submitBooking = async () => {
     if (!canConfirm || bookStatus === "sending") return;

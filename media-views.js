@@ -70,7 +70,7 @@ function useReveal() {
 }
 function MediaApp({ visibility = {} }) {
   const v = visibility;
-  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.news !== false && /* @__PURE__ */ React.createElement(NewsSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.aipods !== false && /* @__PURE__ */ React.createElement(AIPodcastsSection, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
+  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), /* @__PURE__ */ React.createElement(BannerHistoria, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.news !== false && /* @__PURE__ */ React.createElement(NewsSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.aipods !== false && /* @__PURE__ */ React.createElement(AIPodcastsSection, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
 }
 function MediaHero() {
   const t = useT();
@@ -501,6 +501,25 @@ function ShortCard({ id, idx }) {
     )
   );
 }
+// Luis: un banner despues de la portada para que la gente cuente su historia con nosotros.
+function BannerHistoria() {
+  const t = useT();
+  const h = React.createElement;
+  const asunto = encodeURIComponent(t(["Quiero contar mi historia", "I want to share my story"]));
+  return h("section", { style: { padding: "clamp(28px,4vw,52px) clamp(24px,6vw,120px)", background: MC.bg } },
+    h("div", { style: { maxWidth: 980, margin: "0 auto", border: "1px solid " + MC.border, borderRadius: 20, padding: "clamp(24px,3.4vw,38px)", background: "linear-gradient(135deg,#FFF5EC,#FDEAF3)", display: "flex", flexWrap: "wrap", gap: 20, alignItems: "center", justifyContent: "space-between" } },
+      h("div", { style: { flex: "1 1 320px", minWidth: 0 } },
+        h("h3", { style: { fontFamily: "Bricolage Grotesque, sans-serif", fontSize: "clamp(21px,2.6vw,28px)", fontWeight: 700, letterSpacing: "-0.02em", margin: "0 0 8px", color: "#2D2421", textWrap: "balance" } },
+          t(["Contacta a Bright Puppy para contar tu historia", "Contact Bright Puppy to share your story"])),
+        h("p", { style: { margin: 0, fontSize: "clamp(14px,1.6vw,16px)", lineHeight: 1.6, color: "#6B5A4E", textWrap: "pretty" } },
+          t(["Comparte tu historia con nosotros y con el mundo, para inspirar a otros.", "Share your story with us and with the world, to inspire others."]))),
+      h("a", { href: "mailto:hello@bpuppy.us?subject=" + asunto,
+        style: { flex: "0 0 auto", display: "inline-flex", alignItems: "center", gap: 9, background: "#F58220", color: "#fff", fontWeight: 700, fontSize: 15, padding: "14px 26px", borderRadius: 999, textDecoration: "none", boxShadow: "0 10px 24px -12px rgba(245,130,32,0.9)" } },
+        t(["Escríbenos", "Write to us"]),
+        h("svg", { width: "16", height: "16", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.4", strokeLinecap: "round", strokeLinejoin: "round" },
+          h("path", { d: "M5 12h14" }), h("path", { d: "M13 6l6 6-6 6" })))));
+}
+
 function InterviewsSection() {
   const t = useT();
   const [ref, visible] = useReveal();
