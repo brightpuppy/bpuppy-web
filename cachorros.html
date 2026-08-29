@@ -375,15 +375,15 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
   .page-hero h1 { font-size:clamp(34px,8.6vw,42px); margin:0 0 9px; letter-spacing:-0.035em; }
   .page-hero .lede { font-size:14.5px; line-height:1.5; max-width:40ch; }
 
-  .hero-note { margin-top:15px; padding:13px 0; gap:10px; }
-  .hero-note .ic { width:18px; height:18px; margin-top:1px; }
+  .hero-note { margin-top:15px; padding:13px 0; gap:0; }
+  .hero-note .ic { display:none; }
   .hero-note p { font-size:13.5px; line-height:1.55; }
   .aqui-btn { padding:2px 11px; font-weight:700; }
 
   /* Las cinco garantías, en corrido y separadas por puntos */
   .hero-facts { display:block; margin-top:13px; font-size:12.5px; line-height:1.8;
                 color:rgba(255,255,255,0.86); text-wrap:pretty; }
-  .hero-fact { display:inline; padding:0; border:0; background:none; border-radius:0;
+  .hero-fact { display:inline; padding:0; border:0; background:none; border-radius:0; white-space:nowrap;
                font-size:inherit; font-weight:600; color:inherit; letter-spacing:0.01em; }
   .hero-fact .ic { display:none; }
   .hero-fact b { font-weight:700; color:#fff; }
@@ -396,23 +396,22 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
                                             top:50%; height:44px; transform:translateY(-50%); }
   .hero-fact-btn:hover { background:none; }
 
-  /* Enlaces de confianza: una sola línea que se desliza con el dedo */
-  .sec-links { padding:16px 0 0; }
-  .links-row { flex-wrap:nowrap; justify-content:flex-start; gap:19px;
-               overflow-x:auto; overscroll-behavior-x:contain;
-               -webkit-overflow-scrolling:touch; scrollbar-width:none;
-               --g:24px; margin-inline:calc(var(--g) * -1); padding-inline:var(--g); }
-  .links-row::-webkit-scrollbar { display:none; }
-  .link-card { flex:0 0 auto; min-height:44px; padding:0; gap:7px;
-               background:none; border:0; border-radius:0; font-size:13px;
-               white-space:nowrap; }
-  .link-card .ic { width:15px; height:15px; }
+  /* Enlaces de confianza: rejilla de dos columnas, todo a la vista */
+  .sec-links { padding:15px 0 0; }
+  .links-row { display:grid; grid-template-columns:1fr 1fr; gap:8px; }
+  .link-card { min-height:44px; justify-content:center; padding:0 12px; gap:8px;
+               font-size:12.5px; white-space:nowrap; }
+  .link-card:last-child { grid-column:1 / -1; }
+  .link-card .ic { width:15px; height:15px; flex:0 0 auto; }
   .link-card:hover { transform:none; }
 
   /* Y el listado empieza antes */
   .pup-sec { padding:26px 0 64px; }
+  /* Arriba ya pone Cachorros disponibles en grande: el volanillo Disponibles ahora
+     era la tercera vez seguida que se decia lo mismo. En movil sobra. */
   .pup-head { margin-bottom:16px; }
-  .pup-head h2 { margin:8px 0 0; }
+  .pup-head .eyebrow { display:none; }
+  .pup-head h2 { font-size:25px; margin:0; }
   .bp-fin-wrap { margin:0 0 16px; }
 
   .pf-btn.pf-toggle { display:inline-flex; }
@@ -437,7 +436,6 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
   .url-note .btn-solid { width:100%; }
   .rq-res { padding:14px 0 4px; }
 }
-@media (max-width:700px) { .links-row { --g:16px; } }
 @media (max-width:340px) { .pup-grid { grid-template-columns:1fr; } }
 </style>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"PetStore","name":"BPuppy","url":"https://bpuppy.us/cachorros","telephone":"+19294287300","image":"https://bpuppy.us/assets/og-brand.jpg","priceRange":"$$","address":{"@type":"PostalAddress","addressRegion":"FL","addressCountry":"US"},"areaServed":[{"@type":"State","name":"Florida"},{"@type":"State","name":"New Jersey"},{"@type":"City","name":"Boston"}],"description":"Puppies from our partner breeder network across the USA, with a written health guarantee and vaccines up to date. Availability is confirmed at the time of your request and delivery takes 2 to 5 days. Any breed can be requested."}</script>
