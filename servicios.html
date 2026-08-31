@@ -1,0 +1,427 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<script>try{var _bl=localStorage.getItem('bpuppy-lang');if(!_bl){_bl=(((navigator.language||navigator.userLanguage||'')+'').toLowerCase().indexOf('es')===0)?'es':'en';localStorage.setItem('bpuppy-lang',_bl);}document.documentElement.lang=_bl;}catch(e){}</script>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Servicios para mascotas · Cuidadores, paseadores y más | BPuppy</title>
+<meta name="description" content="Directorio de cuidadores, paseadores, entrenadores y guarderías para mascotas. Contacta directo, sin intermediarios. Anúnciate gratis.">
+<link rel="canonical" href="https://bpuppy.us/servicios">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Servicios para mascotas | BPuppy">
+<meta property="og:description" content="Cuidadores, paseadores, entrenadores y guarderías. Contacta directo. Anúnciate gratis.">
+<meta property="og:image" content="https://bpuppy.us/assets/og-brand.jpg">
+<meta property="og:url" content="https://bpuppy.us/servicios">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,500;12..96,600;12..96,700;12..96,800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Instrument+Serif:ital@0;1&display=swap">
+<link rel="icon" href="/favicon.ico" sizes="any">
+<link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png">
+<link rel="icon" type="image/webp" href="/assets/favicon.webp">
+<link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
+<link rel="stylesheet" href="styles.css?v=1785890000000">
+<script src="https://unpkg.com/react@18.3.1/umd/react.production.min.js" crossorigin="anonymous"></script>
+<script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.production.min.js" crossorigin="anonymous"></script>
+<style>
+/* ── Portada ─────────────────────────────────────────────────────────────── */
+.sv-hero { background:linear-gradient(100deg, rgba(45,36,33,0.88) 0%, rgba(45,36,33,0.62) 46%, rgba(45,36,33,0.22) 100%), var(--dark-sec,#5C4F48); color:#fff; padding:128px 0 60px; position:relative; overflow:hidden; }
+.sv-hero h1 { font-family:var(--display); font-size:clamp(38px,6.2vw,78px); font-weight:600; letter-spacing:-0.03em; line-height:0.98; margin:0 0 14px; max-width:17ch; }
+.sv-hero h1 em { font-family:var(--serif); font-style:italic; color:#FFB877; font-weight:400; }
+.sv-hero p { font-size:clamp(15px,1.6vw,18px); max-width:52ch; line-height:1.6; margin:0; color:rgba(255,255,255,0.88); text-wrap:pretty; }
+
+/* El aviso importa tanto como el listado: aquí no se cobra ni se responde por nadie. */
+.sv-aviso { margin-top:26px; max-width:64ch; border-top:1px solid rgba(255,255,255,0.28); border-bottom:1px solid rgba(255,255,255,0.28); padding:16px 0; font-size:13.5px; line-height:1.62; color:rgba(255,255,255,0.82); text-wrap:pretty; }
+.sv-aviso b { color:#FFB877; font-weight:700; }
+
+/* ── Barra de filtros ────────────────────────────────────────────────────── */
+.sv-sec { padding:44px 0 90px; background:var(--bg); }
+.sv-bar { display:flex; gap:9px; flex-wrap:wrap; align-items:center; margin-bottom:26px; }
+.sv-sel { padding:9px 32px 9px 13px; border:1px solid var(--line); border-radius:10px; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink); background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%236B5A4E' stroke-width='2.2' stroke-linecap='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E") no-repeat right 10px center/15px; appearance:none; -webkit-appearance:none; cursor:pointer; }
+.sv-sel:focus { border-color:var(--orange); outline:none; }
+.sv-sel.on { border-color:var(--orange); color:var(--orange); background-color:rgba(245,130,32,0.06); }
+.sv-count { font-size:13px; color:var(--ink-soft); margin-left:auto; }
+
+/* ── Fichas ──────────────────────────────────────────────────────────────── */
+.sv-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(285px,1fr)); gap:16px; }
+.sv-card { display:flex; flex-direction:column; background:var(--paper); border:1px solid var(--line); border-radius:16px; padding:20px 20px 18px; transition:border-color .18s, transform .18s; }
+.sv-card:hover { border-color:var(--orange); transform:translateY(-2px); }
+.sv-card h3 { font-family:var(--display); font-size:18px; font-weight:700; letter-spacing:-0.015em; margin:0 0 3px; color:var(--ink); }
+.sv-card .biz { font-size:12.5px; color:var(--ink-soft); font-weight:600; margin:0 0 10px; }
+.sv-tags { display:flex; gap:6px; flex-wrap:wrap; margin:0 0 12px; }
+.sv-tag { font-size:11px; font-weight:700; letter-spacing:0.02em; color:var(--orange); border:1px solid rgba(245,130,32,0.35); border-radius:999px; padding:3px 10px; }
+.sv-meta { font-size:12.5px; color:var(--ink-2); line-height:1.6; margin:0 0 10px; }
+.sv-about { font-size:13.5px; color:var(--ink-2); line-height:1.6; margin:0 0 14px; text-wrap:pretty; }
+.sv-acts { display:flex; gap:8px; flex-wrap:wrap; margin-top:auto; }
+.sv-btn { display:inline-flex; align-items:center; gap:7px; padding:9px 15px; border-radius:999px; border:1px solid var(--line); background:none; font-family:inherit; font-size:12.5px; font-weight:700; color:var(--ink-2); text-decoration:none; cursor:pointer; transition:border-color .16s, color .16s; }
+.sv-btn:hover { border-color:var(--orange); color:var(--orange); }
+.sv-btn.solid { background:var(--orange); border-color:var(--orange); color:#fff; }
+.sv-btn.solid:hover { background:#E0631A; color:#fff; }
+.sv-btn svg { width:14px; height:14px; }
+
+/* ── Cuando no hay nadie todavía ─────────────────────────────────────────── */
+.sv-vacio { border:1px dashed var(--line); border-radius:18px; padding:44px 28px; text-align:center; background:var(--paper); }
+.sv-vacio h3 { font-family:var(--display); font-size:21px; font-weight:700; margin:0 0 8px; color:var(--ink); }
+.sv-vacio p { font-size:14.5px; color:var(--ink-2); line-height:1.65; margin:0 auto 20px; max-width:46ch; text-wrap:pretty; }
+
+/* ── Alta de proveedor ───────────────────────────────────────────────────── */
+.sv-alta { padding:70px 0 90px; background:var(--paper); border-top:1px solid var(--line); }
+.sv-alta h2 { font-family:var(--display); font-size:clamp(27px,3.4vw,44px); font-weight:600; letter-spacing:-0.025em; margin:0 0 10px; }
+.sv-alta h2 em { font-family:var(--serif); font-style:italic; color:var(--orange); font-weight:400; }
+.sv-alta .lede { font-size:15px; color:var(--ink-2); line-height:1.65; max-width:56ch; margin:0 0 30px; text-wrap:pretty; }
+.sv-form { display:grid; grid-template-columns:repeat(2,1fr); gap:14px; max-width:720px; }
+.sv-form .ancho { grid-column:1 / -1; }
+.sv-lbl { display:block; font-size:12.5px; font-weight:700; color:var(--ink-2); margin:0 0 6px; }
+.sv-in { width:100%; padding:12px 14px; border:1px solid var(--line); border-radius:11px; font-family:inherit; font-size:15px; color:var(--ink); background:#fff; outline:none; }
+.sv-in:focus { border-color:var(--orange); }
+textarea.sv-in { min-height:96px; resize:vertical; line-height:1.55; }
+.sv-tipos { display:flex; gap:8px; flex-wrap:wrap; }
+.sv-tipo { padding:9px 16px; border:1px solid var(--line); border-radius:999px; background:#fff; font-family:inherit; font-size:13px; font-weight:600; color:var(--ink-2); cursor:pointer; transition:border-color .16s, color .16s; }
+.sv-tipo.on { border-color:var(--orange); color:var(--orange); background:rgba(245,130,32,0.06); }
+.sv-check { display:flex; align-items:flex-start; gap:10px; font-size:13px; color:var(--ink-2); line-height:1.55; cursor:pointer; }
+.sv-check input { margin-top:3px; width:16px; height:16px; accent-color:var(--orange); flex:0 0 auto; }
+.sv-nota { font-size:12.5px; color:var(--ink-soft); line-height:1.6; text-wrap:pretty; }
+.sv-msg { font-size:13.5px; font-weight:600; padding:12px 15px; border-radius:11px; display:none; }
+.sv-msg.err { display:block; background:rgba(220,38,38,0.08); border:1px solid rgba(220,38,38,0.28); color:#B91C1C; }
+.sv-msg.ok { display:block; background:rgba(22,163,74,0.08); border:1px solid rgba(22,163,74,0.3); color:#15803D; }
+
+@media (max-width:760px) {
+  .sv-hero { padding:96px 0 34px; }
+  .sv-hero h1 { font-size:clamp(34px,8.6vw,42px); }
+  .sv-hero p { font-size:14.5px; }
+  .sv-aviso { margin-top:16px; padding:13px 0; font-size:12.5px; }
+  .sv-sec { padding:26px 0 60px; }
+  .sv-grid { grid-template-columns:1fr; }
+  .sv-form { grid-template-columns:1fr; }
+  .sv-count { margin-left:0; width:100%; }
+  .sv-in { font-size:16px; }   /* 16px: iOS no hace zoom al enfocar */
+}
+</style>
+</head>
+<body>
+<div id="__chrome-hdr"></div>
+
+<section class="sv-hero">
+  <div class="container">
+    <h1 data-es="Servicios para tu &lt;em&gt;mascota&lt;/em&gt;" data-en="Services for your &lt;em&gt;pet&lt;/em&gt;">Servicios para tu <em>mascota</em></h1>
+    <p data-es="Cuidadores, paseadores, entrenadores y guarderías cerca de ti. Los contactas directo, sin intermediarios." data-en="Sitters, walkers, trainers and daycares near you. You contact them directly, with no middleman.">Cuidadores, paseadores, entrenadores y guarderías cerca de ti. Los contactas directo, sin intermediarios.</p>
+    <div class="sv-aviso" id="sv-aviso"></div>
+  </div>
+</section>
+
+<section class="sv-sec">
+  <div class="container">
+    <div class="sv-bar">
+      <select id="sv-state" class="sv-sel"></select>
+      <select id="sv-type" class="sv-sel"></select>
+      <span class="sv-count" id="sv-count"></span>
+    </div>
+    <div id="sv-list"></div>
+  </div>
+</section>
+
+<section class="sv-alta" id="anunciate">
+  <div class="container">
+    <h2 data-es="¿Cuidas mascotas? &lt;em&gt;Anúnciate gratis.&lt;/em&gt;" data-en="Do you care for pets? &lt;em&gt;List yourself free.&lt;/em&gt;">¿Cuidas mascotas? <em>Anúnciate gratis.</em></h2>
+    <p class="lede" data-es="Publicamos tu ficha para que la gente de tu zona te encuentre y te escriba directo. No cobramos comisión ni nos metemos en el trato. Revisamos cada solicitud antes de publicarla." data-en="We list you so people in your area can find you and message you directly. We take no commission and we stay out of the deal. Every application is reviewed before it goes live.">Publicamos tu ficha para que la gente de tu zona te encuentre y te escriba directo. No cobramos comisión ni nos metemos en el trato. Revisamos cada solicitud antes de publicarla.</p>
+
+    <form class="sv-form" id="sv-form" autocomplete="on">
+      <div>
+        <label class="sv-lbl" for="sv-name" data-es="Tu nombre" data-en="Your name">Tu nombre</label>
+        <input id="sv-name" class="sv-in" type="text" autocomplete="name" maxlength="90">
+      </div>
+      <div>
+        <label class="sv-lbl" for="sv-business" data-es="Negocio (si tienes)" data-en="Business (if any)">Negocio (si tienes)</label>
+        <input id="sv-business" class="sv-in" type="text" autocomplete="organization" maxlength="90">
+      </div>
+
+      <div class="ancho">
+        <span class="sv-lbl" data-es="¿Qué ofreces?" data-en="What do you offer?">¿Qué ofreces?</span>
+        <div class="sv-tipos" id="sv-tipos"></div>
+      </div>
+
+      <div>
+        <label class="sv-lbl" for="sv-city" data-es="Ciudad" data-en="City">Ciudad</label>
+        <input id="sv-city" class="sv-in" type="text" autocomplete="address-level2" maxlength="60">
+      </div>
+      <div>
+        <label class="sv-lbl" for="sv-st" data-es="Estado" data-en="State">Estado</label>
+        <input id="sv-st" class="sv-in" type="text" list="sv-states" autocomplete="address-level1" maxlength="40">
+        <datalist id="sv-states"></datalist>
+      </div>
+
+      <div class="ancho">
+        <label class="sv-lbl" for="sv-zone" data-es="Zona que cubres" data-en="Area you cover">Zona que cubres</label>
+        <input id="sv-zone" class="sv-in" type="text" maxlength="160" data-es-ph="Ej. Bronx y Yonkers, voy a domicilio hasta 15 millas" data-en-ph="e.g. Bronx and Yonkers, I travel up to 15 miles">
+      </div>
+
+      <div>
+        <label class="sv-lbl" for="sv-email" data-es="Correo" data-en="Email">Correo</label>
+        <input id="sv-email" class="sv-in" type="email" autocomplete="email" maxlength="120">
+      </div>
+      <div>
+        <label class="sv-lbl" for="sv-phone" data-es="Teléfono o WhatsApp" data-en="Phone or WhatsApp">Teléfono o WhatsApp</label>
+        <input id="sv-phone" class="sv-in" type="tel" autocomplete="tel" maxlength="24">
+      </div>
+
+      <div>
+        <label class="sv-lbl" for="sv-rate" data-es="Tarifa aproximada" data-en="Rough rate">Tarifa aproximada</label>
+        <input id="sv-rate" class="sv-in" type="text" maxlength="90" data-es-ph="Ej. desde $25 el paseo" data-en-ph="e.g. from $25 per walk">
+      </div>
+      <div>
+        <label class="sv-lbl" for="sv-years" data-es="Años de experiencia" data-en="Years of experience">Años de experiencia</label>
+        <input id="sv-years" class="sv-in" type="number" min="0" max="70" inputmode="numeric">
+      </div>
+
+      <div class="ancho">
+        <label class="sv-lbl" for="sv-about" data-es="Cuéntanos de ti" data-en="Tell us about you">Cuéntanos de ti</label>
+        <textarea id="sv-about" class="sv-in" maxlength="900" data-es-ph="Qué haces, con qué animales, cómo trabajas…" data-en-ph="What you do, which animals, how you work…"></textarea>
+      </div>
+
+      <div class="ancho">
+        <label class="sv-check">
+          <input type="checkbox" id="sv-insured">
+          <span data-es="Tengo seguro de responsabilidad civil" data-en="I carry liability insurance">Tengo seguro de responsabilidad civil</span>
+        </label>
+      </div>
+      <div class="ancho">
+        <label class="sv-check">
+          <input type="checkbox" id="sv-acepta">
+          <span data-es="Entiendo que BrightPuppy solo publica mi ficha: no gestiona el pago, no verifica lo que digo aquí y no responde por el servicio que yo preste." data-en="I understand BrightPuppy only lists me: it does not handle payment, does not verify what I state here and is not responsible for the service I provide.">Entiendo que BrightPuppy solo publica mi ficha: no gestiona el pago, no verifica lo que digo aquí y no responde por el servicio que yo preste.</span>
+        </label>
+      </div>
+
+      <div class="ancho"><div class="sv-msg" id="sv-msg"></div></div>
+      <div class="ancho">
+        <button type="submit" class="sv-btn solid" id="sv-send" style="padding:14px 28px;font-size:14.5px" data-es="Enviar solicitud" data-en="Send application">Enviar solicitud</button>
+      </div>
+      <p class="sv-nota ancho" data-es="Al enviarla la revisamos a mano. Si la publicamos, tu ficha aparece con el contacto que dejaste aquí." data-en="We review every application by hand. If we publish it, your listing shows the contact details you left here.">Al enviarla la revisamos a mano. Si la publicamos, tu ficha aparece con el contacto que dejaste aquí.</p>
+    </form>
+  </div>
+</section>
+
+<div id="__chrome-ftr"></div>
+
+<script>
+(function () {
+  'use strict';
+  var EDGE = 'https://oqqwmcplljirbreowrll.supabase.co/functions/v1/services_dir';
+  var EN = (document.documentElement.lang || 'es').indexOf('en') === 0;
+  function T(es, en) { return EN ? en : es; }
+  function el(id) { return document.getElementById(id); }
+  function esc(v) { return String(v == null ? '' : v).replace(/[&<>"]/g, function (c) { return { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]; }); }
+
+  /* Los siete servicios, con su nombre en los dos idiomas. */
+  var TIPOS = [
+    { k: 'sitter', es: 'Cuidador', en: 'Pet sitter' },
+    { k: 'paseador', es: 'Paseador', en: 'Dog walker' },
+    { k: 'entrenador', es: 'Entrenador', en: 'Trainer' },
+    { k: 'guarderia', es: 'Guardería', en: 'Daycare' },
+    { k: 'transporte', es: 'Transporte', en: 'Transport' },
+    { k: 'groomer', es: 'Grooming', en: 'Grooming' },
+    { k: 'otro', es: 'Otro', en: 'Other' }
+  ];
+  function tipoLbl(k) { for (var i = 0; i < TIPOS.length; i++) if (TIPOS[i].k === k) return T(TIPOS[i].es, TIPOS[i].en); return k; }
+
+  var ESTADOS = [['AL','Alabama'],['AK','Alaska'],['AZ','Arizona'],['AR','Arkansas'],['CA','California'],['CO','Colorado'],['CT','Connecticut'],['DE','Delaware'],['DC','District of Columbia'],['FL','Florida'],['GA','Georgia'],['HI','Hawaii'],['ID','Idaho'],['IL','Illinois'],['IN','Indiana'],['IA','Iowa'],['KS','Kansas'],['KY','Kentucky'],['LA','Louisiana'],['ME','Maine'],['MD','Maryland'],['MA','Massachusetts'],['MI','Michigan'],['MN','Minnesota'],['MS','Mississippi'],['MO','Missouri'],['MT','Montana'],['NE','Nebraska'],['NV','Nevada'],['NH','New Hampshire'],['NJ','New Jersey'],['NM','New Mexico'],['NY','New York'],['NC','North Carolina'],['ND','North Dakota'],['OH','Ohio'],['OK','Oklahoma'],['OR','Oregon'],['PA','Pennsylvania'],['PR','Puerto Rico'],['RI','Rhode Island'],['SC','South Carolina'],['SD','South Dakota'],['TN','Tennessee'],['TX','Texas'],['UT','Utah'],['VT','Vermont'],['VA','Virginia'],['WA','Washington'],['WV','West Virginia'],['WI','Wisconsin'],['WY','Wyoming']];
+  var ALIAS_ES = { 'NUEVA YORK': 'NY', 'NUEVA JERSEY': 'NJ', 'CAROLINA DEL NORTE': 'NC', 'CAROLINA DEL SUR': 'SC', 'DAKOTA DEL NORTE': 'ND', 'DAKOTA DEL SUR': 'SD', 'NUEVO MEXICO': 'NM', 'NUEVO MÉXICO': 'NM', 'LUISIANA': 'LA', 'PENSILVANIA': 'PA', 'HAWAI': 'HI', 'HAWÁI': 'HI', 'MISISIPI': 'MS', 'MISURI': 'MO', 'TEJAS': 'TX', 'NUEVA HAMPSHIRE': 'NH', 'VIRGINIA OCCIDENTAL': 'WV' };
+  /* Se guarda siempre el código de dos letras, escriba lo que escriba la persona. */
+  function normEstado(v) {
+    var raw = String(v == null ? '' : v).trim();
+    if (!raw) return '';
+    var up = raw.toUpperCase();
+    if (ALIAS_ES[up]) return ALIAS_ES[up];
+    for (var i = 0; i < ESTADOS.length; i++) if (ESTADOS[i][0] === up || ESTADOS[i][1].toUpperCase() === up) return ESTADOS[i][0];
+    return raw.slice(0, 20);
+  }
+  function nombreEstado(c) { for (var i = 0; i < ESTADOS.length; i++) if (ESTADOS[i][0] === c) return ESTADOS[i][1]; return c; }
+
+  /* El aviso: lo primero que hay que dejar claro es que aquí no se paga nada ni
+     respondemos por nadie. Va como texto, no como letra pequeña escondida. */
+  el('sv-aviso').innerHTML = T(
+    '<b>Cómo funciona:</b> BrightPuppy solo publica el directorio. No cobramos comisión, no gestionamos el pago y no verificamos a quien se anuncia — el trato es directo entre tú y la persona que elijas. Pide referencias y acuerda todo por escrito antes de dejar a tu mascota.',
+    '<b>How this works:</b> BrightPuppy only publishes the directory. We take no commission, we do not handle payment and we do not verify who lists here &mdash; the arrangement is directly between you and whoever you pick. Ask for references and agree everything in writing before leaving your pet.'
+  );
+
+  /* ── filtros ─────────────────────────────────────────────────────────── */
+  var F = { state: '', type: '' };
+  var CACHE = { by_state: {}, total: 0 };
+
+  function pintaFiltros() {
+    var s = el('sv-state');
+    var codes = Object.keys(CACHE.by_state).sort(function (a, b) { return CACHE.by_state[b] - CACHE.by_state[a]; });
+    s.innerHTML = '<option value="">' + esc(T('Todo Estados Unidos', 'All of the USA')) + '</option>'
+      + codes.map(function (c) { return '<option value="' + esc(c) + '">' + esc(nombreEstado(c)) + ' (' + CACHE.by_state[c] + ')</option>'; }).join('');
+    s.value = F.state;
+    s.className = F.state ? 'sv-sel on' : 'sv-sel';
+
+    var t = el('sv-type');
+    t.innerHTML = '<option value="">' + esc(T('Todos los servicios', 'All services')) + '</option>'
+      + TIPOS.map(function (x) { return '<option value="' + x.k + '">' + esc(T(x.es, x.en)) + '</option>'; }).join('');
+    t.value = F.type;
+    t.className = F.type ? 'sv-sel on' : 'sv-sel';
+  }
+
+  function ficha(p) {
+    var zona = [p.city, p.state].filter(Boolean).join(', ');
+    var meta = [];
+    if (zona) meta.push(esc(zona));
+    if (p.zone_note) meta.push(esc(p.zone_note));
+    if (p.years_exp) meta.push(esc(p.years_exp) + ' ' + esc(T('años de experiencia', 'years experience')));
+    if (p.rate_note) meta.push('<b>' + esc(p.rate_note) + '</b>');
+    if (p.insured) meta.push(esc(T('dice tener seguro', 'says they are insured')));
+
+    var acts = [];
+    if (p.whatsapp) acts.push('<a class="sv-btn solid" target="_blank" rel="noopener" href="https://wa.me/' + esc(String(p.whatsapp).replace(/\D/g, '')) + '">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-11.9 7.6L3 21l1.9-5.9A8.4 8.4 0 1 1 21 11.5z"/></svg>WhatsApp</a>');
+    if (p.phone) acts.push('<a class="sv-btn" href="sms:+1' + esc(String(p.phone).replace(/\D/g, '').slice(-10)) + '">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-8.5 8.4H4l2.3-2.3A8.4 8.4 0 1 1 21 11.5z"/></svg>SMS</a>');
+    if (p.email) acts.push('<a class="sv-btn" href="mailto:' + esc(p.email) + '">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="M3.5 7l8.5 6 8.5-6"/></svg>'
+      + esc(T('Correo', 'Email')) + '</a>');
+    if (p.website) acts.push('<a class="sv-btn" target="_blank" rel="noopener nofollow" href="' + esc(p.website) + '">'
+      + '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3c2.6 2.5 4 5.6 4 9s-1.4 6.5-4 9c-2.6-2.5-4-5.6-4-9s1.4-6.5 4-9z"/></svg>Web</a>');
+
+    return '<article class="sv-card">'
+      + '<h3>' + esc(p.name) + '</h3>'
+      + (p.business ? '<p class="biz">' + esc(p.business) + '</p>' : '')
+      + '<div class="sv-tags">' + (p.service_types || []).map(function (k) { return '<span class="sv-tag">' + esc(tipoLbl(k)) + '</span>'; }).join('') + '</div>'
+      + (meta.length ? '<p class="sv-meta">' + meta.join(' &middot; ') + '</p>' : '')
+      + (p.about ? '<p class="sv-about">' + esc(p.about) + '</p>' : '')
+      + '<div class="sv-acts">' + acts.join('') + '</div>'
+      + '</article>';
+  }
+
+  function vacio() {
+    var donde = F.state ? nombreEstado(F.state) : T('tu zona', 'your area');
+    return '<div class="sv-vacio">'
+      + '<h3>' + esc(T('Todavía no hay nadie en ' + donde, 'Nobody listed in ' + donde + ' yet')) + '</h3>'
+      + '<p>' + esc(T('Estamos empezando el directorio. Si cuidas, paseas o entrenas mascotas, anúnciate: es gratis y te encuentran los dueños de tu zona.',
+                      'We are just starting this directory. If you sit, walk or train pets, list yourself: it is free and owners in your area will find you.')) + '</p>'
+      + '<a class="sv-btn solid" href="#anunciate" style="padding:13px 26px">' + esc(T('Anúnciate gratis', 'List yourself free')) + '</a>'
+      + '</div>';
+  }
+
+  function cargar() {
+    el('sv-list').innerHTML = '<p style="color:var(--ink-soft);font-size:14px">' + esc(T('Buscando…', 'Loading…')) + '</p>';
+    fetch(EDGE, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ action: 'list', state: F.state, type: F.type }) })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || !d.ok) throw 0;
+        CACHE.by_state = d.by_state || {};
+        CACHE.total = d.total || 0;
+        pintaFiltros();
+        var L = d.providers || [];
+        el('sv-count').textContent = L.length ? (L.length + ' ' + T(L.length === 1 ? 'servicio' : 'servicios', L.length === 1 ? 'service' : 'services')) : '';
+        el('sv-list').innerHTML = L.length ? ('<div class="sv-grid">' + L.map(ficha).join('') + '</div>') : vacio();
+      })
+      .catch(function () {
+        el('sv-list').innerHTML = '<p style="color:var(--ink-soft);font-size:14px">' + esc(T('No se pudo cargar el directorio. Recarga la página.', 'Could not load the directory. Please reload.')) + '</p>';
+      });
+  }
+
+  el('sv-state').addEventListener('change', function (e) { F.state = e.target.value; cargar(); });
+  el('sv-type').addEventListener('change', function (e) { F.type = e.target.value; cargar(); });
+
+  /* ── alta ────────────────────────────────────────────────────────────── */
+  el('sv-states').innerHTML = ESTADOS.map(function (e) { return '<option value="' + e[1] + '">'; }).join('');
+  var elegidos = {};
+  el('sv-tipos').innerHTML = TIPOS.map(function (x) {
+    return '<button type="button" class="sv-tipo" data-k="' + x.k + '">' + esc(T(x.es, x.en)) + '</button>';
+  }).join('');
+  el('sv-tipos').addEventListener('click', function (e) {
+    var b = e.target.closest('[data-k]'); if (!b) return;
+    var k = b.dataset.k;
+    if (elegidos[k]) { delete elegidos[k]; b.classList.remove('on'); }
+    else { elegidos[k] = true; b.classList.add('on'); }
+  });
+
+  function aviso(txt, clase) { var m = el('sv-msg'); m.textContent = txt; m.className = 'sv-msg ' + clase; }
+
+  /* Autoguardado: si se va y vuelve, no pierde lo escrito (regla de Luis). */
+  var CAMPOS = ['sv-name', 'sv-business', 'sv-city', 'sv-st', 'sv-zone', 'sv-email', 'sv-phone', 'sv-rate', 'sv-years', 'sv-about'];
+  var LLAVE = 'bp_servicios_borrador';
+  function guardar() {
+    try {
+      var o = { tipos: Object.keys(elegidos) };
+      CAMPOS.forEach(function (id) { o[id] = el(id).value; });
+      localStorage.setItem(LLAVE, JSON.stringify(o));
+    } catch (e) {}
+  }
+  try {
+    var prev = JSON.parse(localStorage.getItem(LLAVE) || 'null');
+    if (prev) {
+      CAMPOS.forEach(function (id) { if (prev[id]) el(id).value = prev[id]; });
+      (prev.tipos || []).forEach(function (k) {
+        elegidos[k] = true;
+        var b = el('sv-tipos').querySelector('[data-k="' + k + '"]');
+        if (b) b.classList.add('on');
+      });
+    }
+  } catch (e) {}
+  CAMPOS.forEach(function (id) { el(id).addEventListener('input', guardar); });
+  el('sv-tipos').addEventListener('click', guardar);
+
+  el('sv-form').addEventListener('submit', function (ev) {
+    ev.preventDefault();
+    var nombre = el('sv-name').value.trim();
+    var correo = el('sv-email').value.trim();
+    var tipos = Object.keys(elegidos);
+    if (!nombre) return aviso(T('Escribe tu nombre.', 'Enter your name.'), 'err');
+    if (!tipos.length) return aviso(T('Elige al menos un servicio.', 'Pick at least one service.'), 'err');
+    if (!el('sv-city').value.trim() || !el('sv-st').value.trim()) return aviso(T('Dinos tu ciudad y tu estado.', 'Tell us your city and state.'), 'err');
+    if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(correo)) return aviso(T('Correo no válido.', 'Invalid email.'), 'err');
+    if (!el('sv-phone').value.replace(/\D/g, '') && !correo) return aviso(T('Deja al menos una forma de contacto.', 'Leave at least one way to contact you.'), 'err');
+    if (!el('sv-acepta').checked) return aviso(T('Marca la casilla para poder publicar tu ficha.', 'Tick the box so we can list you.'), 'err');
+
+    var btn = el('sv-send');
+    btn.disabled = true; btn.style.opacity = '.7';
+    aviso(T('Enviando…', 'Sending…'), 'ok');
+
+    fetch(EDGE, {
+      method: 'POST', headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'apply', name: nombre, business: el('sv-business').value.trim(),
+        service_types: tipos, city: el('sv-city').value.trim(), state: normEstado(el('sv-st').value),
+        zone_note: el('sv-zone').value.trim(), about: el('sv-about').value.trim(),
+        rate_note: el('sv-rate').value.trim(), email: correo, phone: el('sv-phone').value,
+        years_exp: el('sv-years').value, insured: el('sv-insured').checked,
+        source: 'servicios'
+      })
+    }).then(function (r) { return r.json(); }).then(function (d) {
+      btn.disabled = false; btn.style.opacity = '1';
+      if (d && d.ok) {
+        try { localStorage.removeItem(LLAVE); } catch (e) {}
+        aviso(T('Recibido. Lo revisamos y te avisamos cuando tu ficha esté publicada.',
+                'Got it. We will review it and let you know when your listing is live.'), 'ok');
+        el('sv-form').reset();
+        Object.keys(elegidos).forEach(function (k) { delete elegidos[k]; });
+        [].forEach.call(el('sv-tipos').children, function (b) { b.classList.remove('on'); });
+      } else {
+        aviso(T('No se pudo enviar. Revisa los datos e inténtalo de nuevo.', 'Could not send. Check the details and try again.'), 'err');
+      }
+    }).catch(function () {
+      btn.disabled = false; btn.style.opacity = '1';
+      aviso(T('No se pudo enviar. Inténtalo de nuevo.', 'Could not send. Try again.'), 'err');
+    });
+  });
+
+  /* Se puede llegar con la zona puesta: /servicios?estado=NY&tipo=paseador */
+  try {
+    var q = new URLSearchParams(location.search);
+    var st = normEstado(q.get('estado') || q.get('state') || '');
+    if (st) F.state = st;
+    var tp = String(q.get('tipo') || q.get('type') || '').toLowerCase();
+    for (var i = 0; i < TIPOS.length; i++) if (TIPOS[i].k === tp) F.type = tp;
+  } catch (e) {}
+
+  pintaFiltros();
+  cargar();
+})();
+</script>
+
+<script src="i18n.js?v=1787348000000"></script>
+<script src="chrome.js?v=1788192000000"></script>
+<script src="Servicios.inline0.js?v=1788199200000"></script>
+<script src="chat-widget.js?v=1787348000000"></script>
+</body>
+</html>
