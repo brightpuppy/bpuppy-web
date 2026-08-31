@@ -61,6 +61,34 @@
 
   var WORD = '<div style="font-family:\'Bricolage Grotesque\',sans-serif;font-weight:800;font-size:21px;letter-spacing:-0.02em;margin-bottom:18px"><span style="color:' + INK + '">B</span><span style="color:' + ACC + '"> Social</span></div>';
   var EYEBROW = '<div style="font-size:10.5px;font-weight:800;letter-spacing:.2em;text-transform:uppercase;color:' + ACC + ';margin-bottom:14px">' + t("Por invitación · En construcción", "Invite-only · In the works") + '</div>';
+  /* Se guarda SIEMPRE el codigo de dos letras ("NY"), escriba lo que escriba la persona:
+     asi el piloto de Nueva York puede filtrar por un solo valor. Fuera de EE.UU. se
+     guarda tal cual lo escribio (provincia, region...). */
+  var US_STATES = [["AL","Alabama"],["AK","Alaska"],["AZ","Arizona"],["AR","Arkansas"],["CA","California"],
+    ["CO","Colorado"],["CT","Connecticut"],["DE","Delaware"],["DC","District of Columbia"],["FL","Florida"],
+    ["GA","Georgia"],["HI","Hawaii"],["ID","Idaho"],["IL","Illinois"],["IN","Indiana"],["IA","Iowa"],
+    ["KS","Kansas"],["KY","Kentucky"],["LA","Louisiana"],["ME","Maine"],["MD","Maryland"],
+    ["MA","Massachusetts"],["MI","Michigan"],["MN","Minnesota"],["MS","Mississippi"],["MO","Missouri"],
+    ["MT","Montana"],["NE","Nebraska"],["NV","Nevada"],["NH","New Hampshire"],["NJ","New Jersey"],
+    ["NM","New Mexico"],["NY","New York"],["NC","North Carolina"],["ND","North Dakota"],["OH","Ohio"],
+    ["OK","Oklahoma"],["OR","Oregon"],["PA","Pennsylvania"],["PR","Puerto Rico"],["RI","Rhode Island"],
+    ["SC","South Carolina"],["SD","South Dakota"],["TN","Tennessee"],["TX","Texas"],["UT","Utah"],
+    ["VT","Vermont"],["VA","Virginia"],["WA","Washington"],["WV","West Virginia"],["WI","Wisconsin"],["WY","Wyoming"]];
+  var ES_ALIAS = { "NUEVA YORK":"NY", "NUEVA JERSEY":"NJ", "CAROLINA DEL NORTE":"NC", "CAROLINA DEL SUR":"SC",
+    "DAKOTA DEL NORTE":"ND", "DAKOTA DEL SUR":"SD", "NUEVO MEXICO":"NM", "NUEVO MÉXICO":"NM", "LUISIANA":"LA",
+    "PENSILVANIA":"PA", "HAWAI":"HI", "HAWÁI":"HI", "MISISIPI":"MS", "MISURI":"MO", "TEJAS":"TX",
+    "NUEVA HAMPSHIRE":"NH", "VIRGINIA OCCIDENTAL":"WV", "DISTRITO DE COLUMBIA":"DC" };
+  function normState(v) {
+    var raw = String(v == null ? "" : v).trim();
+    if (!raw) return "";
+    var up = raw.toUpperCase();
+    if (ES_ALIAS[up]) return ES_ALIAS[up];
+    for (var i = 0; i < US_STATES.length; i++) {
+      if (US_STATES[i][0] === up || US_STATES[i][1].toUpperCase() === up) return US_STATES[i][0];
+    }
+    return raw.slice(0, 40);
+  }
+
   function lbl(x) { return '<div style="font-size:12.5px;font-weight:700;color:' + INK + ';margin:2px 0 7px;text-align:left">' + x + '</div>'; }
   function fieldCss() { return "width:100%;padding:13px 15px;border-radius:12px;border:1px solid " + LINE + ";background:#fffdf9;color:" + INK + ";font-size:15px;font-family:inherit;outline:none;margin-bottom:10px"; }
   function primaryCss() { return "width:100%;padding:15px 18px;border:none;border-radius:999px;background:" + ACC + ";color:#fffaf3;font-weight:800;font-size:15.5px;font-family:inherit;cursor:pointer;box-shadow:0 10px 24px rgba(168,95,45,0.32)"; }
@@ -94,6 +122,8 @@
         lbl(t("Fecha de nacimiento", "Date of birth")) +
         '<input id="bpg-dob" type="date" max="' + (new Date().toISOString().slice(0,10)) + '" style="' + fieldCss() + '" autocomplete="bday">' +
         '<input id="bpg-country" style="' + fieldCss() + '" placeholder="' + t("Tu país", "Your country") + '" autocomplete="country-name">' +
+        '<input id="bpg-state" list="bpg-states" style="' + fieldCss() + '" placeholder="' + t("Tu estado o provincia", "Your state or province") + '" autocomplete="address-level1">' +
+        '<datalist id="bpg-states">' + US_STATES.map(function (e) { return '<option value="' + e[1] + '">'; }).join("") + '</datalist>' +
         '<input id="bpg-city" style="' + fieldCss() + '" placeholder="' + t("Tu ciudad", "Your city") + '" autocomplete="address-level2">' +
         lbl(t("¿Tienes mascota?", "Do you have a pet?")) +
         '<div style="display:flex;gap:8px;margin-bottom:8px">' +
@@ -145,17 +175,19 @@
       var dob = (document.getElementById("bpg-dob").value || "").trim();
       var country = (document.getElementById("bpg-country").value || "").trim();
       var city = (document.getElementById("bpg-city").value || "").trim();
+      var state = normState(document.getElementById("bpg-state").value);
       if (!name) return showErr(t("Escribe tu nombre.", "Enter your name."));
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]{2,}$/.test(email)) return showErr(t("Correo no válido.", "Invalid email."));
       var age = ageFromDob(dob);
       if (!dob || age === null) return showErr(t("Escribe tu fecha de nacimiento.", "Enter your date of birth."));
       if (age < 18) return showErr(t("Debes ser mayor de 18 años para ser parte de B Social.", "You must be 18 or older to join B Social."));
       if (!country) return showErr(t("Escribe tu país.", "Enter your country."));
+      if (!state) return showErr(t("Escribe tu estado o provincia.", "Enter your state or province."));
       if (!city) return showErr(t("Escribe tu ciudad.", "Enter your city."));
       myEmail = email.toLowerCase();
       var btn = document.getElementById("bpg-send"); btn.disabled = true; btn.textContent = t("Enviando…", "Sending…");
       api("request", {
-        name: name, email: email, dob: dob, country: country, city: city,
+        name: name, email: email, dob: dob, country: country, city: city, state: state,
         source: "landing", referred_by: qref, lang: EN ? "en" : "es",
         has_pet: petHas, pet_type: (petHas === true ? petType : ""),
         pet_name: (petHas === true ? (document.getElementById("bpg-petname").value || "").trim() : ""),
