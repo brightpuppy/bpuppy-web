@@ -510,6 +510,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
         </div>
         <select id="pf-sex" class="pf-select"></select>
         <select id="pf-age" class="pf-select"></select>
+        <select id="pf-size" class="pf-select"></select>
         <select id="pf-price" class="pf-select"></select>
         <button type="button" class="pf-btn" id="pf-color-btn"><span data-es="Color" data-en="Color">Color</span></button>
         <select id="pf-sort" class="pf-select"></select>
@@ -593,7 +594,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
   var PAGE = 24;
 
   var ALL = [], VIEW = [], shown = 0, ready = false;
-  var F = { breed: '', sex: '', age: '', price: '', colors: [], q: '', sort: 'mix' };
+  var F = { breed: '', sex: '', age: '', size: '', price: '', colors: [], q: '', sort: 'mix' };
   // Raza pedida por URL (anuncio/correo) que hoy no tenemos: la usamos para el CTA de solicitud.
   var WANT = '', NOTE_OFF = false;
   // Precios de delivery por estado (tabla delivery_prices, lectura publica).
@@ -886,6 +887,11 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       if (v) { var hit = findBreed(v); if (hit) F.breed = hit; else WANT = titleize(v); }
       v = sexFromParam(q.get('sexo') || q.get('sex') || q.get('gender')); if (v) F.sex = v;
       var cs = colorsFromParam(q.get('color') || q.get('colors')); if (cs.length) F.colors = cs;
+      v = String(q.get('tamano') || q.get('tamaño') || q.get('size') || '').toLowerCase().trim();
+      if (v) { var MAP = { pequeno: 'small', 'pequeño': 'small', chico: 'small', small: 'small',
+                           mediano: 'medium', medio: 'medium', medium: 'medium',
+                           grande: 'large', large: 'large', big: 'large' };
+               if (MAP[v]) F.size = MAP[v]; }
       v = priceFromParam(q.get('precio') || q.get('price')); if (v) F.price = v;
       v = (q.get('q') || q.get('buscar') || '').trim();
       if (v) { F.q = norm(v); var qi = el('pf-q'); if (qi) qi.value = v; }
@@ -930,6 +936,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       p._age = ageLabel(p._w);
       p._sex = p.gender === 'female' || p.gender === 'male' ? p.gender : '';
       p._ck = colorKeys(p.color);
+      p._size = sizeOf(p.breed);
       p._s = norm([p.name, p.breed, p.color, sexLabel(p._sex)].filter(Boolean).join(' '));
       return p;
     });
@@ -940,6 +947,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     if (F.breed && p.breed !== F.breed) return false;
     if (F.sex && p._sex !== F.sex) return false;
     if (F.age) { var a = ageDef(F.age); if (!a || !a.f(p._w)) return false; }
+    if (F.size && p._size !== F.size) return false;
     if (F.price) { var pd = priceDef(F.price); if (!pd || p.price_public == null || !pd.f(Number(p.price_public))) return false; }
     if (F.colors.length) {
       if (!p._ck.length) return false;
@@ -980,6 +988,37 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
   var BREED_ALIAS = { 'yorkie': 'yorkshire terrier', 'yorky': 'yorkshire terrier', 'yorkies': 'yorkshire terrier', 'frenchie': 'french bulldog', 'frenchies': 'french bulldog', 'frances': 'french bulldog', 'doxie': 'dachshund', 'salchicha': 'dachshund', 'teckel': 'dachshund', 'pom': 'pomeranian', 'pomerania': 'pomeranian', 'lab': 'labrador retriever', 'golden': 'golden retriever', 'aussie': 'australian shepherd', 'mini schnauzer': 'miniature schnauzer', 'schnauzer miniatura': 'miniature schnauzer', 'caniche': 'standard poodle', 'bichon': 'bichon frise' };
   function bnorm(s) { return String(s || '').toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, ' ').trim(); }
   var BI_CACHE = {};
+  /* El tamaño sale de la RAZA, no del cachorro: un Golden de 8 semanas pesa 10 lb y va a
+     pesar 70. La etiqueta dice el peso ADULTO para no confundir a nadie. */
+  var SIZES = [
+    { k: 'small',  es: 'Pequeño', en: 'Small',  es2: 'hasta 25 lb', en2: 'up to 25 lb' },
+    { k: 'medium', es: 'Mediano', en: 'Medium', es2: '25 a 55 lb',  en2: '25 to 55 lb' },
+    { k: 'large',  es: 'Grande',  en: 'Large',  es2: 'más de 55 lb', en2: 'over 55 lb' }
+  ];
+  /* La enciclopedia tambien usa valores a medias ('medium-large', 'small-medium'): sin esto
+     esos perros no caian en ningun grupo y desaparecian de los tres filtros. */
+  function sizeBucket(v) {
+    v = String(v || '').toLowerCase();
+    if (v.indexOf('large') >= 0 || v.indexOf('giant') >= 0) return 'large';
+    if (v.indexOf('medium') >= 0) return 'medium';
+    if (v.indexOf('small') >= 0 || v.indexOf('toy') >= 0) return 'small';
+    return '';
+  }
+  function sizeDef(k) { for (var i = 0; i < SIZES.length; i++) if (SIZES[i].k === k) return SIZES[i]; return null; }
+  /* Ojo con los calificativos: "Toy Poodle" y "Mini Goldendoodle" casan con la ficha del
+     Poodle y del Goldendoodle, que son perros grandes. Manda lo que dice el propio anuncio. */
+  var CHICO = /\b(toy|teacup|micro|mini|miniature|petite|pocket|enano)\b/i;
+  var GRANDOTE = /\b(giant|gigante|king|standard)\b/i;
+  function sizeOf(breedStr) {
+    var b = String(breedStr || '');
+    if (CHICO.test(b)) return 'small';
+    /* breedInfo() devuelve un objeto reducido para la tarjeta; el tamano vive en .raw */
+    var inf = breedInfo(b);
+    var sz = sizeBucket(inf && inf.raw && inf.raw.size);
+    if (sz) return (GRANDOTE.test(b) && sz === 'medium') ? 'large' : sz;
+    return '';
+  }
+
   function breedInfo(breedStr) {
     var nb = bnorm(breedStr); if (!nb) return null;
     if (BI_CACHE[nb] !== undefined) return BI_CACHE[nb];
@@ -1144,6 +1183,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     if (F.breed) chips.push(['breed', F.breed]);
     if (F.sex) chips.push(['sex', sexLabel(F.sex)]);
     if (F.age) { var a = ageDef(F.age); if (a) chips.push(['age', T(a.es, a.en)]); }
+    if (F.size) { var sz = sizeDef(F.size); if (sz) chips.push(['size', T(sz.es, sz.en)]); }
     if (F.price) { var pd = priceDef(F.price); if (pd) chips.push(['price', T(pd.es, pd.en)]); }
     F.colors.forEach(function (k) { chips.push(['color:' + k, colorLabel(k)]); });
     if (F.q) chips.push(['q', '"' + F.q + '"']);
@@ -1193,6 +1233,12 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       var n = ALL.filter(function (p) { return a.f(p._w); }).length;
       return { v: a.k, l: T(a.es, a.en) + ' (' + n + ')' };
     }), F.age);
+
+    // tamaño (adulto, según la raza)
+    fillSelect('pf-size', T('Todos los tamaños', 'Any size'), SIZES.map(function (sz) {
+      var n = ALL.filter(function (p) { return p._size === sz.k; }).length;
+      return { v: sz.k, l: T(sz.es, sz.en) + ' · ' + T(sz.es2, sz.en2) + ' (' + n + ')' };
+    }), F.size);
 
     // precio
     fillSelect('pf-price', T('Todos los precios', 'Any price'), PRICES.map(function (pr) {
@@ -1268,7 +1314,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     render(true);
   }
   function clearAll() {
-    F = { breed: '', sex: '', age: '', price: '', colors: [], q: '', sort: F.sort };
+    F = { breed: '', sex: '', age: '', size: '', price: '', colors: [], q: '', sort: F.sort };
     WANT = '';
     el('pf-q').value = '';
     buildControls();
@@ -1424,6 +1470,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     if (F.breed) f.push(T('Raza', 'Breed') + ': ' + F.breed);
     if (F.sex) f.push(sexLabel(F.sex));
     if (F.age) { var a = ageDef(F.age); if (a) f.push(T(a.es, a.en)); }
+    if (F.size) { var sz = sizeDef(F.size); if (sz) f.push(T(sz.es, sz.en) + ' (' + T(sz.es2, sz.en2) + ')'); }
     if (F.price) { var pd = priceDef(F.price); if (pd) f.push(T(pd.es, pd.en)); }
     if (F.colors.length) f.push(T('Color', 'Color') + ': ' + F.colors.map(colorLabel).join(', '));
     if (F.q) f.push('"' + F.q + '"');
@@ -1669,6 +1716,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
     });
     el('pf-sex').addEventListener('change', function (e) { F.sex = e.target.value; e.target.className = e.target.value ? 'pf-select on' : 'pf-select'; render(true); });
     el('pf-age').addEventListener('change', function (e) { F.age = e.target.value; e.target.className = e.target.value ? 'pf-select on' : 'pf-select'; render(true); });
+    el('pf-size').addEventListener('change', function (e) { F.size = e.target.value; e.target.className = e.target.value ? 'pf-select on' : 'pf-select'; render(true); });
     el('pf-price').addEventListener('change', function (e) { F.price = e.target.value; e.target.className = e.target.value ? 'pf-select on' : 'pf-select'; render(true); });
     el('pf-sort').addEventListener('change', function (e) { F.sort = e.target.value; render(true); });
     el('pf-clear').addEventListener('click', clearAll);
@@ -1706,6 +1754,7 @@ select.fld { -webkit-appearance:none; appearance:none; padding-right:34px; curso
       if (k === 'breed') { setBreed(''); buildControls(); return; }
       if (k === 'sex') F.sex = '';
       else if (k === 'age') F.age = '';
+      else if (k === 'size') F.size = '';
       else if (k === 'price') F.price = '';
       else if (k === 'q') { F.q = ''; el('pf-q').value = ''; }
       else if (k.indexOf('color:') === 0) { var i = F.colors.indexOf(k.slice(6)); if (i >= 0) F.colors.splice(i, 1); }
