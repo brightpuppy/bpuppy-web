@@ -58,7 +58,7 @@ function BottomNav({ screen, setScreen, bs }) {
       {
         key: btn.id,
         onClick: () => setScreen(btn.id),
-        style: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "7px 4px 6px", background: active ? `rgba(255,85,32,0.1)` : "transparent", border: "none", borderRadius: 999, cursor: "pointer", transition: "all .15s" }
+        style: { flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 3, padding: "7px 4px 6px", background: active ? `rgba(245,130,32,0.1)` : "transparent", border: "none", borderRadius: 999, cursor: "pointer", transition: "all .15s" }
       },
       btn.icon(active),
       /* @__PURE__ */ React.createElement("span", { style: { fontSize: 9.5, fontWeight: 600, color: active ? bs.brand : bs.soft } }, btn.label)
@@ -170,10 +170,10 @@ function BSocialTweaks({ theme, setThemeFn }) {
   if (!visible) return null;
   const themes = [
     { key: "clean", label: "Clean", color: "#F58220" },
-    { key: "electric", label: "Electric", color: "#0EA5E9" },
-    { key: "midnight", label: "Midnight", color: "#FF5520" },
-    { key: "violet", label: "Violet", color: "#9B6FFF" },
-    { key: "warm", label: "Warm", color: "#F55820" }
+    { key: "electric", label: "Electric", color: "#2E6B50" },
+    { key: "midnight", label: "Midnight", color: "#F58220" },
+    { key: "violet", label: "Violet", color: "#2E6B50" },
+    { key: "warm", label: "Warm", color: "#F58220" }
   ];
   return /* @__PURE__ */ React.createElement("div", { style: { position: "fixed", bottom: 20, right: 20, zIndex: 9999, background: "#18181e", border: "1px solid rgba(255,255,255,0.12)", borderRadius: 16, padding: "16px 18px", boxShadow: "0 16px 48px rgba(0,0,0,0.6)", minWidth: 200, fontFamily: "Plus Jakarta Sans,sans-serif" } }, /* @__PURE__ */ React.createElement("div", { style: { display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 14 } }, /* @__PURE__ */ React.createElement("span", { style: { fontWeight: 700, fontSize: 13, color: "#fff" } }, "Tweaks"), /* @__PURE__ */ React.createElement("button", { onClick: () => {
     setVisible(false);
@@ -193,8 +193,8 @@ function BSocialTweaks({ theme, setThemeFn }) {
 const SU = "https://oqqwmcplljirbreowrll.supabase.co";
 const ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9xcXdtY3BsbGppcmJyZW93cmxsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzczMTY0NTQsImV4cCI6MjA5Mjg5MjQ1NH0.t-PFS9h62ag7Gmqzs8exQjV9eL1p-4V7E2syv4GPzW4";
 function App() {
-  const [screen, setScreen] = useState("welcome");
-  const [themeName, setThemeName] = useState("clean");
+  const [screen, setScreen] = useState("feed");
+  const [themeName, setThemeName] = useState("bosque");
   const [isWide, setIsWide] = useState(typeof window !== "undefined" ? window.innerWidth >= 900 : true);
   const [posts, setPosts] = useState(() => BSDATA.posts.map((p) => ({ ...p })));
   const [authed, setAuthed] = useState(false);
@@ -423,7 +423,7 @@ function App() {
     }
   };
   const toggleSave = (id) => setPosts((prev) => prev.map((p) => p.id === id ? { ...p, saved: !p.saved } : p));
-  const MobileContent = () => /* @__PURE__ */ React.createElement("div", { style: { height: "100%", display: "flex", flexDirection: "column", overflow: "hidden", background: bs.bg } }, /* @__PURE__ */ React.createElement("a", { href: "/", style: { display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", background: bs.surface, borderBottom: `1px solid ${bs.border}`, textDecoration: "none", color: bs.ink2, fontSize: 12.5, fontWeight: 600, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 12H5" }), /* @__PURE__ */ React.createElement("path", { d: "M12 19l-7-7 7-7" })), window.pick ? window.pick(["Volver a BPuppy", "Back to BPuppy"], lang) : "Volver a BPuppy"), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto" }, className: "bs-scr" }, /* @__PURE__ */ React.createElement(ScreenView, { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost: setOpenPost })), screen !== "upload" && /* @__PURE__ */ React.createElement(BottomNav, { screen, setScreen, bs }));
+  const MobileContent = () => /* @__PURE__ */ React.createElement("div", { style: { height: "100%", display: "flex", flexDirection: "column", overflow: "hidden", background: bs.bg } }, /* @__PURE__ */ React.createElement("a", { href: "/", style: { display: "flex", alignItems: "center", gap: 6, padding: "9px 16px", background: bs.surface, borderBottom: `1px solid ${bs.border}`, textDecoration: "none", color: bs.ink2, fontSize: 12.5, fontWeight: 600, flexShrink: 0 } }, /* @__PURE__ */ React.createElement("svg", { width: "14", height: "14", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round" }, /* @__PURE__ */ React.createElement("path", { d: "M19 12H5" }), /* @__PURE__ */ React.createElement("path", { d: "M12 19l-7-7 7-7" })), window.pick ? window.pick(["Volver a BPuppy", "Back to BPuppy"], lang) : "Volver a BPuppy"), screen !== "profile" && window.BSTopBar && /* @__PURE__ */ React.createElement(window.BSTopBar, { screen, setScreen }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto" }, className: "bs-scr" }, /* @__PURE__ */ React.createElement(ScreenView, { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost: setOpenPost })), screen !== "upload" && /* @__PURE__ */ React.createElement(BottomNav, { screen, setScreen, bs }));
   const wrap = (children) => LangCtx ? /* @__PURE__ */ React.createElement(LangCtx.Provider, { value: { lang, setLang } }, children) : children;
   if (!loggedIn) {
     return wrap(
@@ -431,7 +431,7 @@ function App() {
     );
   }
   return wrap(
-    /* @__PURE__ */ React.createElement(BSCtx.Provider, { value: bs }, isWide ? /* @__PURE__ */ React.createElement("div", { style: { height: "100vh", display: "flex", background: bs.bg, overflow: "hidden" } }, /* @__PURE__ */ React.createElement(DesktopSidebar, { screen, setScreen, bs }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto", background: bs.bg }, className: "bs-scr" }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 660, margin: "0 auto", borderLeft: `1px solid ${bs.border}`, borderRight: `1px solid ${bs.border}`, minHeight: "100%" } }, /* @__PURE__ */ React.createElement(ScreenView, { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost: setOpenPost }))), (screen === "feed" || screen === "discover") && /* @__PURE__ */ React.createElement(RightRail, { bs })) : /* @__PURE__ */ React.createElement("div", { style: { height: "100vh", overflow: "hidden", background: bs.bg } }, /* @__PURE__ */ React.createElement(MobileContent, null)), openPost && /* @__PURE__ */ React.createElement(PostDetail, { post: openPost, onClose: () => setOpenPost(null) }), /* @__PURE__ */ React.createElement(BSocialTweaks, { theme: themeName, setThemeFn: setThemeName }))
+    /* @__PURE__ */ React.createElement(BSCtx.Provider, { value: bs }, isWide ? /* @__PURE__ */ React.createElement("div", { style: { height: "100vh", display: "flex", background: bs.bg, overflow: "hidden" } }, /* @__PURE__ */ React.createElement(DesktopSidebar, { screen, setScreen, bs }), /* @__PURE__ */ React.createElement("div", { style: { flex: 1, overflowY: "auto", background: bs.bg }, className: "bs-scr" }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 660, margin: "0 auto", borderLeft: `1px solid ${bs.border}`, borderRight: `1px solid ${bs.border}`, minHeight: "100%" } }, screen !== "profile" && window.BSTopBar && /* @__PURE__ */ React.createElement(window.BSTopBar, { screen, setScreen }), /* @__PURE__ */ React.createElement(ScreenView, { screen, setScreen, posts, toggleLike, toggleSave, onOpenPost: setOpenPost }))), (screen === "feed" || screen === "discover") && /* @__PURE__ */ React.createElement(RightRail, { bs })) : /* @__PURE__ */ React.createElement("div", { style: { height: "100vh", overflow: "hidden", background: bs.bg } }, /* @__PURE__ */ React.createElement(MobileContent, null)), openPost && /* @__PURE__ */ React.createElement(PostDetail, { post: openPost, onClose: () => setOpenPost(null) }), /* @__PURE__ */ React.createElement(BSocialTweaks, { theme: themeName, setThemeFn: setThemeName }))
   );
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(App, null));
