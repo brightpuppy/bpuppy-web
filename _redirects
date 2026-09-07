@@ -1,14 +1,23 @@
 # Cloudflare redirects — BPuppy (canonicalize old URLs -> clean lowercase)
+
+# Cachorros y gatos disponibles: ocultos mientras el Cazador esta apagado.
+# La gente va a solicitar su cachorro, que es donde iba antes. Volver atras = quitar estas lineas.
+/cachorros                  /solicitud           301
+/cachorros.html             /solicitud           301
+/gatos                      /solicitud           301
+/gatos.html                 /solicitud           301
+/razas-gatos                /solicitud           301
+/razas-gatos.html           /solicitud           301
 /Home.html                  /                    301
 /Home                      /                    301
-/Cachorros.html             /cachorros           301
-/Cachorros                 /cachorros           301
-/Gatos.html                 /gatos               301
-/Gatos                     /gatos               301
+/Cachorros.html             /solicitud           301
+/Cachorros                 /solicitud           301
+/Gatos.html                 /solicitud           301
+/Gatos                     /solicitud           301
 /Razas-Perros.html          /razas               301
 /Razas-Perros              /razas               301
-/Razas-Gatos.html           /razas-gatos         301
-/Razas-Gatos               /razas-gatos         301
+/Razas-Gatos.html           /solicitud           301
+/Razas-Gatos               /solicitud           301
 /Adopciones.html            /adopciones          301
 /Adopciones                /adopciones          301
 /Adopciones-Gatos.html      /adopciones-gatos    301
