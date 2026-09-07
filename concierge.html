@@ -61,7 +61,7 @@ p{margin:0 0 16px;max-width:64ch}
 /* ---------- barra ---------- */
 .bar{background:var(--verde-hondo);position:sticky;top:0;z-index:30;border-bottom:1px solid rgba(200,164,92,.2)}
 .bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:70px}
-.logo{font-family:var(--display);font-size:23px;font-weight:500;letter-spacing:.01em;text-decoration:none;color:var(--sobre-verde)}
+.logo{font-family:var(--display);font-size:23px;font-weight:500;letter-spacing:.01em;text-decoration:none;color:var(--sobre-verde);display:inline-flex;align-items:center;min-height:44px}
 .logo em{font-style:normal;color:var(--oro)}
 .bar .cta{
   font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
@@ -211,9 +211,12 @@ footer{background:var(--verde-hondo);color:var(--sobre-verde2);padding:44px 0}
 footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:baseline}
 footer p{margin:0;font-size:14px;max-width:none}
 footer b{color:var(--sobre-verde);font-weight:400}
-footer a{color:var(--oro);text-decoration:none}
+/* El telefono es un enlace de llamada: tiene que ser comodo de tocar en movil. */
+footer a{color:var(--oro);text-decoration:none;display:inline-flex;align-items:center;min-height:44px;padding:0 2px}
 footer a:hover{text-decoration:underline}
 
+/* En tablet, auto-fit dejaba huerfanos: 3+1 en las credenciales y 2+1 en la
+   situacion. Con 4 y 3 elementos hay que fijar el reparto, no dejarlo al ancho. */
 @media (max-width:900px){
   .hero-grid{grid-template-columns:1fr}
   .hero-txt{padding:56px 28px 48px;order:2}
@@ -221,12 +224,25 @@ footer a:hover{text-decoration:underline}
   .hero-foto::after{background:linear-gradient(180deg,rgba(15,43,34,.25) 0%,rgba(15,43,34,.8) 100%)}
   .servicio-grid,.form-grid{grid-template-columns:1fr;gap:40px}
   section{padding:60px 0}
-  .tres > div,.muro > div,.entrega li{border-right:0;padding-right:0}
-  .tres > div,.muro > div{border-bottom:1px solid var(--linea);padding-bottom:26px}
-  .oscuro .tres > div,.muro > div{border-bottom-color:var(--linea-oro)}
-  .cred{border-right:0;border-bottom:1px solid rgba(200,164,92,.16);padding-bottom:22px}
-  .cred:last-child{border-bottom:0}
+  .credenciales .wrap{grid-template-columns:repeat(2,1fr)}   /* 2 x 2, nunca 3 + 1 */
+  .cred{padding:22px 24px 22px 0;border-bottom:1px solid rgba(200,164,92,.16)}
+  .cred:nth-child(2n){border-right:0}
+  .cred:nth-last-child(-n+2){border-bottom:0}
+  .tres{grid-template-columns:1fr}                            /* 3 bloques: 3 columnas o 1, nunca 2 */
+  .tres > div{border-right:0;padding:26px 0;border-bottom:1px solid var(--linea)}
+  .tres > div:last-child{border-bottom:0;padding-bottom:0}
+  .tres p{max-width:56ch}
+  .oscuro .tres > div{border-bottom-color:var(--linea-oro)}
+  .muro > div{border-right:0;padding-right:0;padding-bottom:26px;border-bottom:1px solid var(--linea-oro)}
+  .muro > div:last-child{border-bottom:0;padding-bottom:0}
+  .entrega li{border-right:0;padding-right:0}
   .bar .cta{display:none}
+}
+@media (max-width:560px){
+  .credenciales .wrap{grid-template-columns:1fr}
+  .cred{border-right:0;padding-right:0}
+  .cred:nth-last-child(-n+2){border-bottom:1px solid rgba(200,164,92,.16)}
+  .cred:last-child{border-bottom:0}
 }
 </style>
 </head>
