@@ -114,11 +114,13 @@ p{margin:0 0 16px;max-width:66ch}
 
 /* pasos: secuencia real, por eso van numerados */
 .pasos{counter-reset:p;margin:28px 0 0;padding:0;list-style:none;border:1px solid var(--linea);background:var(--sup)}
-.pasos li{counter-increment:p;display:grid;grid-template-columns:56px 1fr;gap:18px;padding:20px 24px;border-bottom:1px solid var(--linea)}
+/* Tres hijos (::before, b, span) en dos columnas: hay que mandar b y span a la
+   segunda, o el parrafo cae en la columna de 56px y se estira en vertical. */
+.pasos li{counter-increment:p;display:grid;grid-template-columns:56px 1fr;gap:4px 18px;padding:20px 24px;border-bottom:1px solid var(--linea)}
 .pasos li:last-child{border-bottom:0}
-.pasos li::before{content:counter(p);font-family:var(--display);font-size:26px;line-height:1;color:var(--laton)}
-.pasos b{display:block;font-size:15.5px;margin-bottom:4px}
-.pasos span{font-size:14.5px;color:var(--tinta2);line-height:1.55}
+.pasos li::before{content:counter(p);grid-column:1;grid-row:1 / span 2;font-family:var(--display);font-size:26px;line-height:1.1;color:var(--laton)}
+.pasos b{grid-column:2;font-size:15.5px}
+.pasos span{grid-column:2;font-size:14.5px;color:var(--tinta2);line-height:1.55;max-width:62ch}
 
 /* ---------- formulario ---------- */
 #contacto{background:var(--sup)}
