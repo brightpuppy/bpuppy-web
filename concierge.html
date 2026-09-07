@@ -9,154 +9,224 @@
 <meta name="robots" content="noindex,nofollow">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600;700&family=Newsreader:opsz,wght@6..72,400;6..72,500;6..72,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
 <link rel="icon" href="/favicon.ico" sizes="any">
 <link rel="apple-touch-icon" href="/assets/apple-touch-icon.png">
 <style>
 :root{
-  --papel:#F5F7F8; --sup:#FFFFFF; --sup2:#EBEEF1;
-  --tinta:#141C24; --tinta2:#3E4C58; --tinta3:#6D7B88;
-  --linea:#D6DCE1; --linea2:#B6C0C9;
-  --laton:#8F6427; --laton-fondo:#F2E7D6;
-  --verde:#2C6449;
-  --display:"Newsreader",Georgia,"Times New Roman",serif;
-  --cuerpo:"Archivo","Helvetica Neue",Helvetica,sans-serif;
+  /* Verde de biblioteca y oro apagado. El oro claro es para texto sobre verde;
+     el oscuro para texto sobre marfil, donde el claro no tendria contraste. */
+  --verde:#0F2B22;
+  --verde-hondo:#0A1E18;
+  --verde-medio:#1A4437;
+  --oro:#C8A45C;
+  --oro-hondo:#8A6A28;
+  --marfil:#F5F6F3;
+  --blanco:#FFFFFF;
+  --tinta:#12211C;
+  --tinta2:#41544C;
+  --tinta3:#6D8079;
+  --sobre-verde:#E9EFEA;
+  --sobre-verde2:#A9BEB4;
+  --linea:#DCE1DC;
+  --linea-oro:rgba(200,164,92,.32);
+  --display:"Cormorant Garamond",Georgia,"Times New Roman",serif;
+  --cuerpo:"Jost","Helvetica Neue",Helvetica,sans-serif;
   --mono:"IBM Plex Mono",ui-monospace,Consolas,monospace;
-  --max:1080px;
+  --max:1140px;
 }
 *{box-sizing:border-box}
 html{scroll-behavior:smooth}
-@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important;animation:none!important}}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}*{transition:none!important}}
 body{
-  margin:0;background:var(--papel);color:var(--tinta);
-  font-family:var(--cuerpo);font-size:16px;line-height:1.62;
+  margin:0;background:var(--marfil);color:var(--tinta);
+  font-family:var(--cuerpo);font-size:16.5px;font-weight:300;line-height:1.68;
   -webkit-font-smoothing:antialiased;text-wrap:pretty;overflow-x:hidden;
 }
-.wrap{max-width:var(--max);margin:0 auto;padding:0 24px}
+img{max-width:100%;display:block}
+.wrap{max-width:var(--max);margin:0 auto;padding:0 28px}
+
+.eyebrow{
+  font-family:var(--mono);font-size:10.5px;font-weight:400;letter-spacing:.22em;
+  text-transform:uppercase;margin:0 0 16px;color:var(--oro-hondo);
+}
+.oscuro .eyebrow{color:var(--oro)}
+h1,h2,h3.grande{font-family:var(--display);font-weight:400;letter-spacing:-.005em;text-wrap:balance}
+h1{font-size:clamp(40px,6.2vw,68px);line-height:1.04;margin:0}
+h2{font-size:clamp(30px,4.4vw,44px);line-height:1.1;margin:0 0 18px;max-width:20ch}
+h3{font-family:var(--cuerpo);font-size:16px;font-weight:500;margin:0 0 8px;letter-spacing:.005em}
+p{margin:0 0 16px;max-width:64ch}
+.lede{font-size:18px;line-height:1.7;color:var(--tinta2);max-width:52ch}
 
 /* ---------- barra ---------- */
-.bar{border-bottom:1px solid var(--linea);background:var(--sup);position:sticky;top:0;z-index:20}
-.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:64px}
-.logo{font-family:var(--display);font-size:20px;font-weight:600;letter-spacing:-.01em;text-decoration:none;color:var(--tinta)}
-.logo span{color:var(--laton)}
-.bar a.cta{
-  font-size:14px;font-weight:600;text-decoration:none;color:var(--tinta);
-  border:1px solid var(--linea2);padding:10px 18px;min-height:44px;display:inline-flex;align-items:center;
+.bar{background:var(--verde-hondo);position:sticky;top:0;z-index:30;border-bottom:1px solid rgba(200,164,92,.2)}
+.bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:70px}
+.logo{font-family:var(--display);font-size:23px;font-weight:500;letter-spacing:.01em;text-decoration:none;color:var(--sobre-verde)}
+.logo em{font-style:normal;color:var(--oro)}
+.bar .cta{
+  font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
+  text-decoration:none;color:var(--oro);border:1px solid var(--linea-oro);
+  padding:12px 20px;min-height:44px;display:inline-flex;align-items:center;
+  transition:background .2s,border-color .2s;
 }
-.bar a.cta:hover{border-color:var(--laton);color:var(--laton)}
+.bar .cta:hover{background:rgba(200,164,92,.1);border-color:var(--oro)}
 
 /* ---------- portada ---------- */
-.hero{border-bottom:1px solid var(--linea);background:var(--sup)}
-.hero .wrap{padding:64px 24px 56px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:56px;align-items:start}
-.kicker{font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;color:var(--laton);margin:0 0 20px}
-h1{
-  font-family:var(--display);font-weight:500;font-size:clamp(34px,5.2vw,54px);line-height:1.06;
-  letter-spacing:-.02em;margin:0;text-wrap:balance;
-}
-.lede{font-size:17.5px;line-height:1.62;color:var(--tinta2);margin:22px 0 0;max-width:52ch}
-.acciones{display:flex;flex-wrap:wrap;gap:12px;margin-top:30px}
+.hero{background:var(--verde);color:var(--sobre-verde);position:relative;overflow:hidden}
+.hero-grid{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,.92fr);gap:0;align-items:stretch;max-width:var(--max);margin:0 auto}
+.hero-txt{padding:82px 48px 82px 28px}
+.hero h1{color:var(--blanco)}
+.hero .lede{color:var(--sobre-verde2);margin-top:26px}
+.hero-foto{position:relative;min-height:520px}
+.hero-foto img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:58% center}
+/* Un velo verde ata la foto a la paleta en vez de dejarla pegada encima. */
+.hero-foto::after{content:"";position:absolute;inset:0;background:linear-gradient(90deg,var(--verde) 0%,rgba(15,43,34,.42) 32%,rgba(15,43,34,.12) 100%)}
+.acciones{display:flex;flex-wrap:wrap;gap:14px;margin-top:36px}
 .btn{
-  display:inline-flex;align-items:center;justify-content:center;min-height:48px;padding:12px 26px;
-  font-size:15px;font-weight:600;text-decoration:none;border:1px solid var(--laton);color:var(--laton);
-  background:transparent;cursor:pointer;font-family:inherit;
+  display:inline-flex;align-items:center;justify-content:center;min-height:52px;padding:14px 32px;
+  font-family:var(--mono);font-size:11.5px;letter-spacing:.16em;text-transform:uppercase;
+  text-decoration:none;cursor:pointer;border:1px solid var(--oro);
+  background:var(--oro);color:var(--verde-hondo);font-weight:500;
+  transition:background .2s,color .2s;
 }
-.btn:hover{background:var(--laton-fondo)}
-.btn.solido{background:var(--tinta);border-color:var(--tinta);color:#fff}
-.btn.solido:hover{background:#000;border-color:#000}
-.hero-ficha{border:1px solid var(--linea);padding:0}
-.hero-ficha dl{margin:0}
-.hero-ficha div{padding:16px 20px;border-bottom:1px solid var(--linea);display:flex;justify-content:space-between;gap:14px;align-items:baseline}
-.hero-ficha div:last-child{border-bottom:0}
-.hero-ficha dt{margin:0;font-size:13.5px;color:var(--tinta3)}
-.hero-ficha dd{margin:0;font-size:14.5px;font-weight:600;text-align:right}
+.btn:hover{background:#D8B570;border-color:#D8B570}
+.btn.linea{background:transparent;color:var(--oro)}
+.btn.linea:hover{background:rgba(200,164,92,.12);color:var(--oro)}
+.claro .btn{background:var(--verde);border-color:var(--verde);color:var(--marfil)}
+.claro .btn:hover{background:var(--verde-hondo);border-color:var(--verde-hondo)}
+
+/* franja de credenciales */
+.credenciales{background:var(--verde-hondo);border-top:1px solid rgba(200,164,92,.2)}
+.credenciales .wrap{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:0}
+.cred{padding:26px 30px 26px 0;border-right:1px solid rgba(200,164,92,.16)}
+.cred:last-child{border-right:0}
+.cred dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--oro);margin:0 0 8px}
+.cred dd{margin:0;font-family:var(--display);font-size:21px;line-height:1.25;color:var(--sobre-verde)}
 
 /* ---------- secciones ---------- */
-section{padding:64px 0;border-bottom:1px solid var(--linea)}
-section:last-of-type{border-bottom:0}
-.eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--tinta3);margin:0 0 12px}
-h2{font-family:var(--display);font-weight:500;font-size:clamp(26px,3.6vw,36px);line-height:1.14;letter-spacing:-.015em;margin:0 0 14px;text-wrap:balance;max-width:22ch}
-h3{font-size:16.5px;font-weight:600;margin:0 0 8px}
-p{margin:0 0 16px;max-width:66ch}
-.gris{background:var(--sup)}
+section{padding:88px 0}
+.oscuro{background:var(--verde);color:var(--sobre-verde)}
+.oscuro h2{color:var(--blanco)}
+.oscuro p{color:var(--sobre-verde2)}
+.claro{background:var(--marfil)}
+.claro + .claro{padding-top:0}
 
-/* problema / servicio */
-.par{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0;border:1px solid var(--linea);background:var(--sup);margin-top:28px}
-.par > div{padding:22px 24px;border-right:1px solid var(--linea)}
-.par > div:last-child{border-right:0}
-.par h3{color:var(--tinta)}
-.par p{font-size:14.5px;color:var(--tinta2);margin:0}
-.par .rot{font-family:var(--mono);font-size:10.5px;letter-spacing:.12em;text-transform:uppercase;margin:0 0 10px;color:var(--laton)}
+/* situacion: tres columnas separadas por hairline */
+.tres{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:0;margin-top:44px;border-top:1px solid var(--linea)}
+.tres > div{padding:26px 28px 0 0;border-right:1px solid var(--linea)}
+.tres > div:last-child{border-right:0;padding-right:0}
+.tres .num{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--oro-hondo);margin:0 0 12px}
+.tres p{font-size:14.5px;color:var(--tinta2);margin:0;max-width:34ch}
+.oscuro .tres{border-color:var(--linea-oro)}
+.oscuro .tres > div{border-color:var(--linea-oro)}
+.oscuro .tres .num{color:var(--oro)}
 
-/* servicios */
-.servicios{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0;border:1px solid var(--linea);background:var(--sup);margin-top:28px}
-.serv{padding:24px;border-right:1px solid var(--linea);display:flex;flex-direction:column;gap:8px}
-.serv:last-child{border-right:0}
-.serv .dur{font-family:var(--mono);font-size:11.5px;color:var(--tinta3);margin-top:auto;padding-top:12px}
-.serv p{font-size:14.5px;color:var(--tinta2);margin:0}
+/* servicio: foto + lista */
+.servicio-grid{display:grid;grid-template-columns:minmax(0,.85fr) minmax(0,1fr);gap:56px;align-items:center}
+.foto-marco{position:relative;border:1px solid var(--linea-oro);padding:12px}
+.foto-marco img{aspect-ratio:4/3;object-fit:cover;width:100%}
+.lista-serv{list-style:none;margin:0;padding:0}
+.lista-serv li{padding:22px 0;border-bottom:1px solid var(--linea-oro);display:grid;grid-template-columns:1fr auto;gap:6px 24px;align-items:baseline}
+.lista-serv li:first-child{border-top:1px solid var(--linea-oro)}
+.lista-serv .nom{font-family:var(--display);font-size:25px;color:var(--blanco);grid-column:1}
+.lista-serv .dur{font-family:var(--mono);font-size:10.5px;letter-spacing:.16em;text-transform:uppercase;color:var(--oro);grid-column:2;text-align:right;white-space:nowrap}
+.lista-serv .des{grid-column:1 / -1;font-size:14.5px;color:var(--sobre-verde2);margin:0;max-width:56ch}
 
-/* lista de entregables */
-.entrega{list-style:none;margin:26px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:1px;background:var(--linea);border:1px solid var(--linea)}
-.entrega li{background:var(--sup);padding:20px 22px;margin:0}
-.entrega b{display:block;font-size:15px;margin-bottom:5px}
-.entrega span{font-size:14px;color:var(--tinta2);line-height:1.55}
+/* entregables */
+.entrega{list-style:none;margin:44px 0 0;padding:0;display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0;border-top:1px solid var(--linea)}
+.entrega li{padding:26px 30px 26px 0;border-right:1px solid var(--linea);border-bottom:1px solid var(--linea);margin:0}
+.entrega li b{display:block;font-family:var(--display);font-size:22px;font-weight:500;margin-bottom:8px}
+.entrega li span{font-size:14.5px;color:var(--tinta2);line-height:1.6;display:block;max-width:38ch}
 
-/* confidencialidad: dos columnas ve / no ve */
-.muro{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:0;border:1px solid var(--linea);background:var(--sup);margin-top:28px}
-.muro > div{padding:24px;border-right:1px solid var(--linea)}
-.muro > div:last-child{border-right:0}
-.muro h3{font-family:var(--mono);font-size:11px;letter-spacing:.12em;text-transform:uppercase;margin-bottom:14px}
-.muro .si h3{color:var(--verde)}
-.muro .no h3{color:var(--tinta3)}
-.muro ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
-.muro li{font-size:14.5px;color:var(--tinta2);padding-left:18px;position:relative;line-height:1.55}
-.muro li::before{content:"";position:absolute;left:0;top:.62em;width:8px;height:1px;background:var(--linea2)}
-.muro .si li::before{background:var(--verde)}
+/* banda del skyline */
+.banda{position:relative;min-height:340px;display:grid;place-items:center;background:var(--verde-hondo);overflow:hidden}
+.banda img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;filter:grayscale(1) contrast(1.08) brightness(.75)}
+.banda::after{content:"";position:absolute;inset:0;background:var(--verde);mix-blend-mode:multiply;opacity:.72}
+.banda .cita{position:relative;z-index:2;text-align:center;padding:56px 28px;max-width:820px}
+.banda .cita p{font-family:var(--display);font-size:clamp(24px,3.4vw,36px);line-height:1.28;color:var(--blanco);margin:0;max-width:none;text-wrap:balance}
+.banda .cita .pie{font-family:var(--mono);font-size:10.5px;letter-spacing:.2em;text-transform:uppercase;color:var(--oro);margin-top:22px}
 
-/* pasos: secuencia real, por eso van numerados */
-.pasos{counter-reset:p;margin:28px 0 0;padding:0;list-style:none;border:1px solid var(--linea);background:var(--sup)}
-/* Tres hijos (::before, b, span) en dos columnas: hay que mandar b y span a la
-   segunda, o el parrafo cae en la columna de 56px y se estira en vertical. */
-.pasos li{counter-increment:p;display:grid;grid-template-columns:56px 1fr;gap:4px 18px;padding:20px 24px;border-bottom:1px solid var(--linea)}
-.pasos li:last-child{border-bottom:0}
-.pasos li::before{content:counter(p);grid-column:1;grid-row:1 / span 2;font-family:var(--display);font-size:26px;line-height:1.1;color:var(--laton)}
-.pasos b{grid-column:2;font-size:15.5px}
-.pasos span{grid-column:2;font-size:14.5px;color:var(--tinta2);line-height:1.55;max-width:62ch}
+/* confidencialidad */
+.muro{display:grid;grid-template-columns:repeat(auto-fit,minmax(290px,1fr));gap:0;margin-top:44px;border-top:1px solid var(--linea-oro)}
+.muro > div{padding:28px 34px 0 0;border-right:1px solid var(--linea-oro)}
+.muro > div:last-child{border-right:0;padding-right:0}
+.muro h3{font-family:var(--mono);font-size:10px;letter-spacing:.2em;text-transform:uppercase;margin-bottom:20px;font-weight:400}
+.muro .si h3{color:var(--oro)}
+.muro .no h3{color:var(--sobre-verde2)}
+.muro ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:14px}
+.muro li{font-size:15px;color:var(--sobre-verde2);padding-left:22px;position:relative;line-height:1.55}
+.muro li::before{content:"";position:absolute;left:0;top:.68em;width:11px;height:1px;background:rgba(169,190,180,.5)}
+.muro .si li{color:var(--sobre-verde)}
+.muro .si li::before{background:var(--oro)}
+
+/* pasos: secuencia real, por eso van numerados.
+   Tres hijos (::before, b, span) en dos columnas: b y span van a la 2 o el
+   parrafo cae en la columna estrecha y se estira en vertical. */
+.pasos{counter-reset:p;margin:44px 0 0;padding:0;list-style:none;border-top:1px solid var(--linea)}
+.pasos li{counter-increment:p;display:grid;grid-template-columns:74px 1fr;gap:6px 26px;padding:26px 0;border-bottom:1px solid var(--linea)}
+.pasos li::before{
+  content:counter(p,decimal-leading-zero);grid-column:1;grid-row:1 / span 2;
+  font-family:var(--mono);font-size:11px;letter-spacing:.14em;color:var(--oro-hondo);padding-top:7px;
+}
+.pasos b{grid-column:2;font-family:var(--display);font-size:24px;font-weight:500}
+.pasos span{grid-column:2;font-size:15px;color:var(--tinta2);line-height:1.62;max-width:58ch}
 
 /* ---------- formulario ---------- */
-#contacto{background:var(--sup)}
-.form-grid{display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.1fr);gap:56px;align-items:start}
-form{display:grid;gap:16px}
-.fila{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:16px}
-label{display:block;font-size:13.5px;font-weight:500;color:var(--tinta2);margin-bottom:6px}
-label .op{color:var(--tinta3);font-weight:400}
-input,select,textarea{
-  width:100%;font-family:inherit;font-size:15px;color:var(--tinta);background:var(--papel);
-  border:1px solid var(--linea2);padding:12px 14px;min-height:48px;border-radius:0;
+#contacto{background:var(--blanco);border-top:1px solid var(--linea)}
+.form-grid{display:grid;grid-template-columns:minmax(0,.82fr) minmax(0,1fr);gap:64px;align-items:start}
+form{display:grid;gap:18px}
+.fila{display:grid;grid-template-columns:repeat(auto-fit,minmax(170px,1fr));gap:18px}
+label{
+  display:block;font-family:var(--mono);font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;
+  color:var(--tinta3);margin-bottom:9px;
 }
-textarea{min-height:110px;resize:vertical;line-height:1.55}
-input:focus,select:focus,textarea:focus{outline:2px solid var(--laton);outline-offset:-1px;border-color:var(--laton);background:var(--sup)}
+label .op{text-transform:none;letter-spacing:.02em;font-size:10.5px}
+input,select,textarea{
+  width:100%;font-family:var(--cuerpo);font-size:16px;font-weight:300;color:var(--tinta);
+  background:transparent;border:0;border-bottom:1px solid var(--linea);
+  padding:11px 2px;min-height:46px;border-radius:0;transition:border-color .2s;
+}
+select{cursor:pointer}
+textarea{min-height:96px;resize:vertical;line-height:1.6;border:1px solid var(--linea);padding:12px 14px}
+input:hover,select:hover,textarea:hover{border-color:var(--tinta3)}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--oro-hondo);border-bottom-width:2px}
+textarea:focus{border-width:1px;outline:1px solid var(--oro-hondo);outline-offset:-2px}
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
-.aviso{font-size:13px;color:var(--tinta3);line-height:1.55;margin:0}
+.aviso{font-size:14px;color:var(--tinta3);line-height:1.6}
+.aviso b{color:var(--tinta);font-weight:500}
 #estado{font-size:14.5px;margin:0;min-height:22px}
-#estado.mal{color:#96382C}
-#estado.bien{color:var(--verde)}
-.hecho{border:1px solid var(--verde);background:#F1F7F3;padding:22px 24px}
-.hecho h3{color:var(--verde);margin-bottom:6px}
-.hecho p{margin:0;font-size:14.5px;color:var(--tinta2)}
+#estado.mal{color:#8E3226}
+#estado.bien{color:var(--verde-medio)}
+.hecho{border:1px solid var(--linea-oro);border-left:2px solid var(--oro);background:var(--marfil);padding:28px 30px}
+.hecho h3{font-family:var(--display);font-size:24px;font-weight:500;color:var(--verde);margin-bottom:8px}
+.hecho p{margin:0;font-size:15px;color:var(--tinta2)}
+.sello{display:flex;flex-wrap:wrap;gap:0;margin-top:32px;border-top:1px solid var(--linea)}
+.sello div{padding:16px 26px 0 0;border-right:1px solid var(--linea);flex:1 1 140px}
+.sello div:last-child{border-right:0}
+.sello dt{font-family:var(--mono);font-size:9.5px;letter-spacing:.18em;text-transform:uppercase;color:var(--tinta3);margin:0 0 6px}
+.sello dd{margin:0;font-family:var(--display);font-size:19px;color:var(--verde)}
 
 /* ---------- pie ---------- */
-footer{padding:36px 0;background:var(--papel);border-top:1px solid var(--linea)}
-footer .wrap{display:flex;flex-wrap:wrap;gap:14px;justify-content:space-between;align-items:baseline}
-footer p{margin:0;font-size:13px;color:var(--tinta3);max-width:none}
-footer a{color:var(--laton)}
+footer{background:var(--verde-hondo);color:var(--sobre-verde2);padding:44px 0}
+footer .wrap{display:flex;flex-wrap:wrap;gap:16px;justify-content:space-between;align-items:baseline}
+footer p{margin:0;font-size:14px;max-width:none}
+footer b{color:var(--sobre-verde);font-weight:400}
+footer a{color:var(--oro);text-decoration:none}
+footer a:hover{text-decoration:underline}
 
-@media (max-width:820px){
-  .hero .wrap{grid-template-columns:1fr;gap:36px;padding:44px 24px 40px}
-  .form-grid{grid-template-columns:1fr;gap:36px}
-  .par > div,.serv,.muro > div{border-right:0;border-bottom:1px solid var(--linea)}
-  .par > div:last-child,.serv:last-child,.muro > div:last-child{border-bottom:0}
-  section{padding:48px 0}
-  .bar a.cta{display:none}
+@media (max-width:900px){
+  .hero-grid{grid-template-columns:1fr}
+  .hero-txt{padding:56px 28px 48px;order:2}
+  .hero-foto{min-height:300px;order:1}
+  .hero-foto::after{background:linear-gradient(180deg,rgba(15,43,34,.25) 0%,rgba(15,43,34,.8) 100%)}
+  .servicio-grid,.form-grid{grid-template-columns:1fr;gap:40px}
+  section{padding:60px 0}
+  .tres > div,.muro > div,.entrega li{border-right:0;padding-right:0}
+  .tres > div,.muro > div{border-bottom:1px solid var(--linea);padding-bottom:26px}
+  .oscuro .tres > div,.muro > div{border-bottom-color:var(--linea-oro)}
+  .cred{border-right:0;border-bottom:1px solid rgba(200,164,92,.16);padding-bottom:22px}
+  .cred:last-child{border-bottom:0}
+  .bar .cta{display:none}
 }
 </style>
 </head>
@@ -164,99 +234,122 @@ footer a{color:var(--laton)}
 
 <div class="bar">
   <div class="wrap">
-    <a class="logo" href="/concierge">Pet <span>Concierge</span></a>
+    <a class="logo" href="/concierge">Pet <em>Concierge</em></a>
     <a class="cta" href="#contacto">Request information</a>
   </div>
 </div>
 
 <div class="hero">
-  <div class="wrap">
-    <div>
-      <p class="kicker">For co-op and condo boards</p>
+  <div class="hero-grid">
+    <div class="hero-txt oscuro">
+      <p class="eyebrow">For co-op and condo boards</p>
       <h1>One insured provider instead of eleven strangers with keys.</h1>
-      <p class="lede">Dog walking, vet transport and grooming for the residents of your building, run by one company with one certificate of insurance, one point of contact and a written record of every visit. Residents pay for what they use. The corporation pays nothing.</p>
+      <p class="lede">Dog walking, vet transport and grooming for the residents of your building — one company, one certificate of insurance, one point of contact, and a written record of every visit. Residents pay for what they use. The corporation pays nothing.</p>
       <div class="acciones">
-        <a class="btn solido" href="#contacto">Request information</a>
-        <a class="btn" href="#confidencialidad">What the board sees</a>
+        <a class="btn" href="#contacto">Request information</a>
+        <a class="btn linea" href="#confidencialidad">What the board sees</a>
       </div>
     </div>
-    <div class="hero-ficha">
-      <dl>
-        <div><dt>Cost to the building</dt><dd>None</dd></div>
-        <div><dt>Certificate of insurance</dt><dd>Yes, naming the corporation</dd></div>
-        <div><dt>Staff entering the building</dt><dd>Assigned and named in advance</dd></div>
-        <div><dt>Resident data shared with the board</dt><dd>None</dd></div>
-        <div><dt>Operated by</dt><dd>BrightPuppy LLC</dd></div>
-      </dl>
+    <div class="hero-foto">
+      <img src="/assets/historia-2-nydelivery.webp" alt="A family greeting a pet handler on a New York brownstone block" fetchpriority="high">
     </div>
   </div>
 </div>
 
-<div class="wrap">
+<div class="credenciales">
+  <div class="wrap">
+    <dl class="cred"><dt>Cost to the building</dt><dd>None</dd></dl>
+    <dl class="cred"><dt>Certificate of insurance</dt><dd>Names the corporation</dd></dl>
+    <dl class="cred"><dt>Staff entering</dt><dd>Named in advance</dd></dl>
+    <dl class="cred"><dt>Resident data to the board</dt><dd>None</dd></dl>
+  </div>
+</div>
 
-  <section>
+<section class="claro">
+  <div class="wrap">
     <p class="eyebrow">The situation</p>
     <h2>Most buildings already have pet services. They just have no control over them.</h2>
-    <p>Residents hire walkers privately. Each one hires someone different, and the building ends up letting people it has never met come and go with keys to occupied apartments.</p>
-    <div class="par">
+    <p class="lede">Residents hire walkers privately. Each one hires someone different, and the building ends up letting people it has never met come and go with keys to occupied apartments.</p>
+    <div class="tres">
       <div>
-        <p class="rot">Today</p>
+        <p class="num">Today</p>
         <h3>Nobody knows who is in the building</h3>
         <p>A different walker every few months, arranged by text message. The front desk has no list and no way to check one against the other.</p>
       </div>
       <div>
-        <p class="rot">Today</p>
+        <p class="num">Today</p>
         <h3>No insurance behind the door</h3>
         <p>If a dog bites someone in the lobby or a walker floods a unit, there is often no policy to point at, and the question lands on the board.</p>
       </div>
       <div>
-        <p class="rot">Today</p>
+        <p class="num">Today</p>
         <h3>Nothing is written down</h3>
-        <p>When something goes wrong, there is no record of who was there, at what time, or what happened. The super remembers, or nobody does.</p>
+        <p>When something goes wrong there is no record of who was there, at what time, or what happened. The super remembers, or nobody does.</p>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section class="gris" style="margin:0 -24px;padding-left:24px;padding-right:24px">
-    <p class="eyebrow">The service</p>
-    <h2>Three services, the same people every week.</h2>
-    <p>Staff are assigned to your building, not rotated through it. The front desk gets the names and the schedule in advance.</p>
-    <div class="servicios">
-      <div class="serv">
-        <h3>Dog walking</h3>
-        <p>Scheduled walks with a written start and end time. Cancel or reschedule up to 12 hours ahead.</p>
-        <p class="dur">30 minutes</p>
+<section class="oscuro">
+  <div class="wrap">
+    <div class="servicio-grid">
+      <div class="foto-marco">
+        <img src="/assets/header-solicitud.webp" alt="A resident at home with her dog" loading="lazy">
       </div>
-      <div class="serv">
-        <h3>Vet transport</h3>
-        <p>Pick-up, the appointment, and back home. The resident does not have to leave work.</p>
-        <p class="dur">90 minutes</p>
-      </div>
-      <div class="serv">
-        <h3>Grooming</h3>
-        <p>Full groom, booked through the same account. Cancel or reschedule up to 24 hours ahead.</p>
-        <p class="dur">120 minutes</p>
+      <div>
+        <p class="eyebrow">The service</p>
+        <h2>Three services, the same people every week.</h2>
+        <p>Staff are assigned to your building, not rotated through it. The front desk gets the names and the schedule in advance.</p>
+        <ul class="lista-serv">
+          <li>
+            <span class="nom">Dog walking</span>
+            <span class="dur">30 min · 12 h notice</span>
+            <p class="des">Scheduled walks with a written start and end time.</p>
+          </li>
+          <li>
+            <span class="nom">Vet transport</span>
+            <span class="dur">90 min · 24 h notice</span>
+            <p class="des">Pick-up, the appointment, and back home. The resident does not have to leave work.</p>
+          </li>
+          <li>
+            <span class="nom">Grooming</span>
+            <span class="dur">120 min · 24 h notice</span>
+            <p class="des">Full groom, booked through the same account.</p>
+          </li>
+        </ul>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section>
+<section class="claro">
+  <div class="wrap">
     <p class="eyebrow">What the board gets</p>
-    <h2>The paperwork a board actually asks for, before it asks.</h2>
+    <h2>The paperwork a board asks for, before it asks.</h2>
     <ul class="entrega">
-      <li><b>Certificate of insurance</b><span>General liability and care-custody-control, with the corporation and the managing agent named as additional insured. Renewed copies sent automatically.</span></li>
+      <li><b>Certificate of insurance</b><span>General liability and care-custody-control, with the corporation and the managing agent named as additional insured. Renewals sent automatically.</span></li>
       <li><b>W-9 and signed agreement</b><span>Executed electronically. Both stay downloadable from your board portal for as long as the agreement is active.</span></li>
-      <li><b>Named staff</b><span>Who is assigned to your building, with the schedule. Changes are sent to the front desk before they happen, not after.</span></li>
-      <li><b>Incident reports</b><span>Anything that happens in a common area is written up and shared with you, with the date, the location and what was done about it.</span></li>
+      <li><b>Named staff</b><span>Who is assigned to your building, with the schedule. Changes reach the front desk before they happen, not after.</span></li>
+      <li><b>Incident reports</b><span>Anything in a common area is written up and shared with you: the date, the location and what was done about it.</span></li>
       <li><b>House rules respected</b><span>Service elevator hours, freight entrance, leash and muzzle rules, quiet hours. Tell us once and it goes into the schedule.</span></li>
       <li><b>One phone number</b><span>One company to call. Not eleven.</span></li>
     </ul>
-  </section>
+  </div>
+</section>
 
-  <section class="gris" id="confidencialidad" style="margin:0 -24px;padding-left:24px;padding-right:24px">
+<div class="banda">
+  <img src="/assets/historia-3-nyoffice.webp" alt="The Manhattan skyline" loading="lazy">
+  <div class="cita">
+    <p>We do not contact a single resident until the board tells us to.</p>
+    <p class="pie">Operating in New York</p>
+  </div>
+</div>
+
+<section class="oscuro" id="confidencialidad">
+  <div class="wrap">
     <p class="eyebrow">Confidentiality</p>
     <h2>The board sees the building. It never sees the residents.</h2>
-    <p>This is not a promise about our intentions. It is how the system is built: the board portal cannot retrieve resident records, because the queries that would return them do not exist on that side.</p>
+    <p class="lede">This is not a promise about our intentions. It is how the system is built: the board portal cannot retrieve resident records, because the queries that would return them do not exist on that side.</p>
     <div class="muro">
       <div class="si">
         <h3>The board sees</h3>
@@ -279,9 +372,11 @@ footer a{color:var(--laton)}
         </ul>
       </div>
     </div>
-  </section>
+  </div>
+</section>
 
-  <section>
+<section class="claro">
+  <div class="wrap">
     <p class="eyebrow">Getting started</p>
     <h2>Four steps. The building signs nothing on the first call.</h2>
     <ol class="pasos">
@@ -290,18 +385,22 @@ footer a{color:var(--laton)}
       <li><b>Agreement signed</b><span>Electronically, by whoever the board designates. The corporation is named on the policy the same week.</span></li>
       <li><b>Residents enroll</b><span>The building gets its own sign-up page. We do not contact residents before this point, and we never solicit anyone the board has not approved us to reach.</span></li>
     </ol>
-  </section>
+  </div>
+</section>
 
-</div>
-
-<section id="contacto">
+<section id="contacto" class="claro">
   <div class="wrap">
     <div class="form-grid">
       <div>
         <p class="eyebrow">Request information</p>
         <h2>Tell us about the building.</h2>
-        <p>No cost, no obligation, and nothing goes to your residents. One of us replies within one business day.</p>
+        <p class="aviso">No cost, no obligation, and nothing goes to your residents. One of us replies within one business day.</p>
         <p class="aviso">Prefer to talk? Call or text <b>+1 (929) 428-7300</b>.</p>
+        <dl class="sello">
+          <div><dt>Operated by</dt><dd>BrightPuppy LLC</dd></div>
+          <div><dt>Coverage</dt><dd>Licensed &amp; insured</dd></div>
+          <div><dt>Serving</dt><dd>New York</dd></div>
+        </dl>
       </div>
 
       <div>
@@ -353,8 +452,8 @@ footer a{color:var(--laton)}
 
           <div class="hp" aria-hidden="true"><label for="website">Website</label><input id="website" name="website" type="text" tabindex="-1" autocomplete="off"></div>
 
-          <div class="acciones" style="margin-top:4px">
-            <button class="btn solido" type="submit" id="enviar">Send request</button>
+          <div class="acciones" style="margin-top:6px">
+            <button class="btn" type="submit" id="enviar">Send request</button>
           </div>
           <p id="estado" role="status" aria-live="polite"></p>
         </form>
