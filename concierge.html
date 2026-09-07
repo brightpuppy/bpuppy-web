@@ -61,7 +61,9 @@ p{margin:0 0 16px;max-width:64ch}
 /* ---------- barra ---------- */
 .bar{background:var(--verde-hondo);position:sticky;top:0;z-index:30;border-bottom:1px solid rgba(200,164,92,.2)}
 .bar .wrap{display:flex;align-items:center;justify-content:space-between;gap:16px;min-height:70px}
-.logo{font-family:var(--display);font-size:23px;font-weight:500;letter-spacing:.01em;text-decoration:none;color:var(--sobre-verde);display:inline-flex;align-items:center;min-height:44px}
+/* inline-flex da los 44px de zona tactil pero se come el espacio entre las dos
+   palabras (cada una pasa a ser un item), asi que el hueco lo pone el gap. */
+.logo{font-family:var(--display);font-size:23px;font-weight:500;letter-spacing:.01em;text-decoration:none;color:var(--sobre-verde);display:inline-flex;align-items:center;gap:.26em;min-height:44px}
 .logo em{font-style:normal;color:var(--oro)}
 .bar .cta{
   font-family:var(--mono);font-size:11px;letter-spacing:.16em;text-transform:uppercase;
