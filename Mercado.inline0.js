@@ -187,12 +187,14 @@
   /* Sin saber que se clica, curar la tienda es ir a ciegas. */
   function cuenta(id) {
     try {
-      var cuerpo = JSON.stringify([{ product_id: id, lista: F.lista || null, lang: ES ? "es" : "en" }]);
-      if (navigator.sendBeacon) {
-        navigator.sendBeacon(API + "market_clicks?apikey=" + encodeURIComponent(ANON), new Blob([cuerpo], { type: "application/json" }));
-      } else {
-        fetch(API + "market_clicks", { method: "POST", keepalive: true, headers: { apikey: ANON, Authorization: "Bearer " + ANON, "Content-Type": "application/json", Prefer: "return=minimal" }, body: cuerpo });
-      }
+      var cuerpo = JSON.stringify([{ product_id: id, lista: F.lista || null, lang: ES ? "es" : "en", token: D.kit ? D.kit.token : null }]);
+      // Nada de sendBeacon: no puede poner Authorization y PostgREST lo rechaza.
+      fetch(API + "market_clicks", {
+        method: "POST",
+        keepalive: true,
+        headers: { apikey: ANON, Authorization: "Bearer " + ANON, "Content-Type": "application/json", Prefer: "return=minimal" },
+        body: cuerpo
+      }).catch(function () {});
     } catch (e) {}
   }
 
@@ -203,6 +205,7 @@
     guardaUrl();
   }
   function guardaUrl() {
+    if (D.kit) return;   // el enlace del cliente no se reescribe
     try {
       var q = [];
       if (F.lista) q.push("lista=" + F.lista);
@@ -233,18 +236,63 @@
     );
   }
 
+  /* ── Modo kit ─────────────────────────────────────────────────────────
+     Con ?k=<token> la pagina deja de ser escaparate y se vuelve la lista que
+     le mandamos a esa persona: su nombre, el de su cachorro, sin filtros y
+     sin las otras colecciones. El token se resuelve por una funcion de la
+     base (market_kit), porque market_sends guarda nombres y no puede abrirse. */
+  function leeToken() {
+    try { return (new URLSearchParams(location.search).get("k") || "").trim(); } catch (e) { return ""; }
+  }
+
+  function pintaKit() {
+    var k = D.kit;
+    var hero = document.querySelector(".mk-hero .container");
+    if (hero) {
+      var quien = k.mascota ? t("para ", "for ") + k.mascota : (k.nombre ? t("para ", "for ") + k.nombre : "");
+      hero.innerHTML =
+        '<p style="font-size:11px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:var(--orange);margin:0 0 10px">' +
+          esc(k.de_parte_de || "BrightPuppy") + "</p>" +
+        "<h1>" + esc(t(k.titulo_es, k.titulo_en)) +
+          (quien ? ' <em>' + esc(quien) + "</em>" : "") + "</h1>" +
+        (t(k.intro_es, k.intro_en) ? "<p>" + esc(t(k.intro_es, k.intro_en)) + "</p>" : "") +
+        '<p class="mk-aviso">' + t(
+          "<b>Aviso:</b> esto no es una tienda nuestra. Compras en Amazon o donde prefieras; si entras por aquí nos llevamos una comisión de afiliado, y a ti no te cuesta un centavo más.",
+          "<b>Disclosure:</b> this is not our store. You buy from Amazon or wherever you like; if you go through us we earn an affiliate commission, and it costs you nothing extra."
+        ) + "</p>";
+    }
+    var cols = document.querySelector(".mk-cols");
+    if (cols) cols.style.display = "none";
+    var bar = el("mk-bar");
+    if (bar) bar.style.display = "none";
+    try { document.title = t(k.titulo_es, k.titulo_en) + " · BPuppy"; } catch (e) {}
+    F.lista = k.list_slug;
+  }
+
   function arranca() {
     var g = el("mk-grid");
     if (g) g.innerHTML = '<div class="mk-grid">' + new Array(10).join('<div class="mk-cargando"></div>') + "</div>";
     legal();
     leeUrl();
 
+    var tok = leeToken();
+    var elKit = tok
+      ? fetch(API + "rpc/market_kit", {
+          method: "POST",
+          headers: { apikey: ANON, Authorization: "Bearer " + ANON, "Content-Type": "application/json" },
+          body: JSON.stringify({ p_token: tok })
+        }).then(function (r) { return r.ok ? r.json() : []; }).catch(function () { return []; })
+      : Promise.resolve([]);
+
     Promise.all([
       pedir("market_products?select=id,name_es,name_en,desc_es,desc_en,image_url,category,species,stages,sizes,store,product_url,price_ref,reviewed_at,position&status=eq.published&order=category,position&limit=500"),
       pedir("market_lists?select=slug,title_es,title_en,species,position&active=is.true&order=position"),
       pedir("market_stores?select=slug,name,link_template,affiliate_tag,show_price,price_note_es,price_note_en&active=is.true"),
-      pedir("market_list_items?select=list_slug,product_id,position&order=position&limit=2000")
+      pedir("market_list_items?select=list_slug,product_id,position&order=position&limit=2000"),
+      elKit
     ]).then(function (r) {
+      var k = (r[4] && r[4][0]) || null;
+      if (k) { D.kit = k; D.kit.token = tok; if (k.lang === "en" || k.lang === "es") ES = (k.lang !== "en"); }
       D.productos = r[0] || [];
       D.listas = r[1] || [];
       (r[2] || []).forEach(function (s) { D.tiendas[s.slug] = s; });
@@ -257,6 +305,7 @@
         pintaGrid([]);
         return;
       }
+      if (D.kit) { pintaKit(); pintaGrid(filtra()); return; }
       pintaColecciones();
       pinta();
     });
