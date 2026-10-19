@@ -34,8 +34,13 @@
 /Historia                  /historia            301
 /Garantia.html              /garantia            301
 /Garantia                  /garantia            301
-/Tienda.html                /tienda              301
-/Tienda                    /tienda              301
+# La ranura de Tienda llevaba anos apagada (pagina "proximamente", sin publicar):
+# ahora ese sitio lo ocupa el Mercado. Todas van al destino final porque
+# Cloudflare no encadena redirecciones.
+/tienda                     /mercado             301
+/tienda.html                /mercado             301
+/Tienda.html                /mercado             301
+/Tienda                     /mercado             301
 /Social.html                /social              301
 /Social                    /social              301
 /Solicitud.html             /solicitud           301

@@ -15,6 +15,7 @@
       { id:'Gatos-Entregados',       label:'Gatos Entregados',       url:'/gatos-entregados',     category:'Servicios' },
       { id:'Adopciones',             label:'Adopciones',             url:'/adopciones',           category:'Principal' },
       { id:'Tienda',       label:'Tienda',           url:'/tienda',       category:'Principal' },
+      { id:'Mercado',      label:'Mercado',          url:'/mercado',      category:'Principal' },
       { id:'Media',        label:'Media',            url:'/media',        category:'Contenido' },
       { id:'Blog',         label:'Blog',             url:'/blog',         category:'Contenido' },
       { id:'Social',       label:'Social',           url:'/social',       category:'Contenido' },
@@ -65,7 +66,7 @@
   var DEFAULTS = {
     Home: true, Cachorros: true, 'Cachorros-Entregados': true, 'Gatos-Entregados': false,
     Nosotros: true, 'Razas-Perros': true, Media: true,
-    Adopciones: true, Tienda: false, Blog: true, Grooming: true,
+    Adopciones: true, Tienda: false, Mercado: true, Blog: true, Grooming: true,
     Gatos: true, 'Razas-Gatos': true, Historia: true, Social: true,
   };
 
