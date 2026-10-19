@@ -8,6 +8,71 @@ const ceSb = (() => {
     return null;
   }
 })();
+var h = React.createElement;
+var EG_BASE = "assets/entregas-galeria/";
+(function(){ try{ if(!document.getElementById("eg-css")){ var s=document.createElement("style"); s.id="eg-css"; s.textContent=".eg-note{display:flex;align-items:center;gap:10px;background:linear-gradient(90deg,rgba(245,130,32,.10),rgba(245,130,32,.02));border:1px solid rgba(245,130,32,.28);border-radius:14px;padding:13px 18px;font-size:15px;color:var(--ink);line-height:1.5}.eg-grid{column-count:4;column-gap:12px}@media(max-width:1100px){.eg-grid{column-count:3}}@media(max-width:720px){.eg-grid{column-count:2}}.eg-grid figure{margin:0 0 12px;break-inside:avoid;-webkit-column-break-inside:avoid;border-radius:14px;overflow:hidden;cursor:zoom-in;position:relative;background:var(--bg-2,#efeae6)}.eg-grid img{width:100%;display:block;transition:transform .5s ease,opacity .6s ease}.eg-grid figure:hover img{transform:scale(1.045)}.eg-lb{position:fixed;inset:0;z-index:99999;background:rgba(22,17,15,.94);display:flex;align-items:center;justify-content:center;animation:egLbIn .2s ease}@keyframes egLbIn{from{opacity:0}to{opacity:1}}.eg-lb img{max-width:92vw;max-height:86vh;border-radius:10px;box-shadow:0 20px 70px rgba(0,0,0,.6);-webkit-user-select:none;user-select:none}.eg-lb-x{position:absolute;top:16px;right:18px;width:44px;height:44px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#fff;font-size:20px;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}.eg-lb-x:hover{background:rgba(255,255,255,.26)}.eg-lb-nav{position:absolute;top:50%;transform:translateY(-50%);width:52px;height:52px;border-radius:50%;border:none;background:rgba(255,255,255,.14);color:#fff;font-size:30px;line-height:1;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s}.eg-lb-nav:hover{background:rgba(255,255,255,.28)}.eg-lb-prev{left:16px}.eg-lb-next{right:16px}.eg-lb-count{position:absolute;bottom:18px;left:50%;transform:translateX(-50%);color:rgba(255,255,255,.85);font-size:13px;font-weight:600;background:rgba(0,0,0,.35);padding:5px 14px;border-radius:999px}.eg-top{position:fixed;left:18px;bottom:18px;z-index:900;width:46px;height:46px;border-radius:50%;border:none;background:var(--orange,#F58220);color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(245,130,32,.45);transition:opacity .3s ease,transform .15s}.eg-top:hover{transform:translateY(-3px)}@media(max-width:720px){.eg-lb-nav{width:44px;height:44px;font-size:26px}.eg-top{left:14px;bottom:14px}}"; document.head.appendChild(s); } }catch(e){} })();
+function BackToTop(){
+  var ref = React.useState(false);
+  var show = ref[0], setShow = ref[1];
+  React.useEffect(function(){
+    var onS = function(){ setShow(window.scrollY > 700); };
+    window.addEventListener("scroll", onS, { passive: true }); onS();
+    return function(){ window.removeEventListener("scroll", onS); };
+  }, []);
+  return h("button", { "aria-label": "Volver arriba", className: "eg-top", onClick: function(){ window.scrollTo({ top: 0, behavior: "smooth" }); }, style: { opacity: show ? 1 : 0, pointerEvents: show ? "auto" : "none" } },
+    h("svg", { width: 20, height: 20, viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2.4, strokeLinecap: "round", strokeLinejoin: "round" }, h("path", { d: "M12 19V5" }), h("path", { d: "M5 12l7-7 7 7" })));
+}
+function EntregasGaleria(){
+  var L = useLang(); var lang = L.lang;
+  var t = function(es, en){ return lang === "en" ? en : es; };
+  var sF = React.useState(null); var files = sF[0], setFiles = sF[1];
+  var sS = React.useState(48); var shown = sS[0], setShown = sS[1];
+  var sI = React.useState(-1); var idx = sI[0], setIdx = sI[1];
+  var sentRef = React.useRef(null);
+  React.useEffect(function(){
+    fetch(EG_BASE + "index.json").then(function(r){ return r.json(); }).then(function(d){ setFiles((d && d.files) || []); }).catch(function(){ setFiles([]); });
+  }, []);
+  React.useEffect(function(){
+    if (!files || !sentRef.current) return;
+    var io = new IntersectionObserver(function(es){ if (es[0].isIntersecting) setShown(function(s){ return s + 48; }); }, { rootMargin: "800px" });
+    io.observe(sentRef.current);
+    return function(){ io.disconnect(); };
+  }, [files, shown]);
+  React.useEffect(function(){
+    if (idx < 0 || !files) return;
+    var onKey = function(e){
+      if (e.key === "Escape") setIdx(-1);
+      else if (e.key === "ArrowRight") setIdx(function(i){ return i >= files.length - 1 ? i : i + 1; });
+      else if (e.key === "ArrowLeft") setIdx(function(i){ return i <= 0 ? i : i - 1; });
+    };
+    window.addEventListener("keydown", onKey);
+    var prev = document.body.style.overflow; document.body.style.overflow = "hidden";
+    return function(){ window.removeEventListener("keydown", onKey); document.body.style.overflow = prev; };
+  }, [idx, files]);
+  if (files === null) return h("div", { style: { display: "flex", justifyContent: "center", padding: "60px 0" } }, h("div", { className: "bp-spinner" }));
+  if (!files.length) return null;
+  var visible = files.slice(0, shown);
+  var close = function(){ setIdx(-1); };
+  return h("section", { style: { padding: "8px clamp(20px,5vw,80px) clamp(56px,7vw,90px)" } },
+    h("div", { style: { maxWidth: 1180, margin: "0 auto" } },
+      h("div", { className: "eg-note" },
+        h("span", { style: { fontSize: 18 } }, "\u{1F1E9}\u{1F1F4}"),
+        h("span", null, t("En Rep\xFAblica Dominicana tambi\xE9n somos ", "In the Dominican Republic we are also "), h("strong", null, "Cachorros RD"), ".")),
+      h("div", { style: { fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--orange)", margin: "28px 0 14px" } }, files.length, t(" momentos de entrega", " delivery moments")),
+      h("div", { className: "eg-grid" }, visible.map(function(f, i){
+        return h("figure", { key: f, onClick: function(){ setIdx(i); } },
+          h("img", { src: EG_BASE + f, alt: t("Cachorro entregado", "Delivered puppy"), loading: "lazy", decoding: "async", onLoad: function(e){ e.currentTarget.style.opacity = 1; }, style: { opacity: 0 } }));
+      })),
+      shown < files.length && h("div", { ref: sentRef, style: { height: 1 } }),
+      shown < files.length && h("div", { style: { textAlign: "center", padding: "26px 0 0" } },
+        h("button", { onClick: function(){ setShown(function(s){ return s + 48; }); }, style: { background: "var(--paper)", border: "1px solid var(--line)", color: "var(--ink)", padding: "12px 22px", borderRadius: 999, fontWeight: 700, cursor: "pointer", fontSize: 14 } }, t("Ver m\xE1s fotos", "Show more photos")))),
+    idx >= 0 && h("div", { className: "eg-lb", onClick: close },
+      h("button", { className: "eg-lb-x", "aria-label": "Cerrar", onClick: close }, "✕"),
+      idx > 0 && h("button", { className: "eg-lb-nav eg-lb-prev", "aria-label": "Anterior", onClick: function(e){ e.stopPropagation(); setIdx(function(i){ return i - 1; }); } }, "‹"),
+      h("img", { src: EG_BASE + files[idx], alt: "", onClick: function(e){ e.stopPropagation(); } }),
+      idx < files.length - 1 && h("button", { className: "eg-lb-nav eg-lb-next", "aria-label": "Siguiente", onClick: function(e){ e.stopPropagation(); setIdx(function(i){ return i + 1; }); } }, "›"),
+      h("div", { className: "eg-lb-count" }, (idx + 1) + " / " + files.length)));
+}
 function getAge(p, lang) {
   const w = p.age_weeks || (p.birth_date ? Math.floor((Date.now() - new Date(p.birth_date)) / 6048e5) : null);
   if (!w) return null;
@@ -49,7 +114,7 @@ function EntregadosRoot() {
   React.useEffect(function(){ return window.bpOnLang ? window.bpOnLang(setLang) : void 0; }, []);
   React.useEffect(function(){ document.documentElement.lang = lang; }, [lang]);
   var setLangBoth = function(l){ setLang(l); try { localStorage.setItem("bpuppy-lang", l); } catch(e){} };
-  return /* @__PURE__ */ React.createElement(LangContext.Provider, { value: { lang: lang, setLang: setLangBoth } }, /* @__PURE__ */ React.createElement(Header, { overDark: true }), /* @__PURE__ */ React.createElement("main", null, /* @__PURE__ */ React.createElement(CachorrosEntregados, null)), /* @__PURE__ */ React.createElement(Footer, null));
+  return /* @__PURE__ */ React.createElement(LangContext.Provider, { value: { lang: lang, setLang: setLangBoth } }, /* @__PURE__ */ React.createElement(Header, { overDark: true }), /* @__PURE__ */ React.createElement("main", null, /* @__PURE__ */ React.createElement(CachorrosEntregados, null), /* @__PURE__ */ React.createElement(EntregasGaleria, null)), /* @__PURE__ */ React.createElement(Footer, null), /* @__PURE__ */ React.createElement(BackToTop, null));
 }
 ReactDOM.createRoot(document.getElementById("root")).render(/* @__PURE__ */ React.createElement(EntregadosRoot, null));
 
