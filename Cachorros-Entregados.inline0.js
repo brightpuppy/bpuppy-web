@@ -44,12 +44,9 @@ function EntregasGaleria(){
     fetch(EG_BASE + "index.json").then(function(r){ return r.json(); }).then(function(d){ setFiles((d && d.files) || []); }).catch(function(){ setFiles([]); });
   }, []);
 
-  React.useEffect(function(){
-    if (!files || !sentRef.current) return;
-    var io = new IntersectionObserver(function(es){ if (es[0].isIntersecting) setShown(function(s){ return s + PASO; }); }, { rootMargin: "900px" });
-    io.observe(sentRef.current);
-    return function(){ io.disconnect(); };
-  }, [files, shown]);
+  // Sin carga automatica al bajar: hacia crecer la pagina sin parar, que es
+  // justo el "tanto scroll" del que se quejaba Luis. Quien quiera mas, pulsa;
+  // quien quiera verlas todas, usa el pase, que no hace scroll ninguno.
 
   React.useEffect(function(){
     if (idx < 0 || !files) return;
@@ -74,6 +71,12 @@ function EntregasGaleria(){
   }, [pasando, idx, files]);
 
   function abrirPase(){ setIdx(0); setPasando(true); }
+  React.useEffect(function(){
+    window.__egAbrirPase = abrirPase;
+    window.__egTotal = (files && files.length) || 0;
+    try { window.dispatchEvent(new CustomEvent("eg:listo")); } catch (e) {}
+    return function(){ window.__egAbrirPase = null; };
+  }, [files]);
 
   function elegirTam(v){
     setSize(v);
@@ -142,8 +145,6 @@ function EntregasGaleria(){
         return h("figure", { key: f, onClick: function(){ setIdx(i); } },
           h("img", { src: EG_BASE + f, alt: t("Cachorro entregado", "Delivered puppy"), loading: "lazy", decoding: "async", onLoad: function(e){ e.currentTarget.style.opacity = 1; }, style: { opacity: 0 } }));
       })),
-
-      shown < files.length && h("div", { ref: sentRef, style: { height: 1 } }),
 
       h("div", { className: "eg-acc" },
         shown < files.length && h("button", { className: "eg-mas", onClick: function(){ setShown(function(s){ return s + PASO; }); } },
@@ -216,8 +217,35 @@ function CachorrosEntregados() {
       setStatus("ok");
     });
   }, []);
-  return /* @__PURE__ */ React.createElement("div", { style: { background: "var(--bg)", minHeight: "60vh" } }, /* @__PURE__ */ React.createElement("section", { style: { background: "linear-gradient(100deg, rgba(45,36,33,0.82) 0%, rgba(45,36,33,0.55) 45%, rgba(45,36,33,0.12) 100%), url('assets/header-cachorros.webp') center right/cover no-repeat, var(--dark-sec,#2D2421)", padding: "120px clamp(20px,5vw,80px) 64px", position: "relative", overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(45% 60% at 18% 50%, rgba(0,0,0,0.35), transparent 70%)", pointerEvents: "none" } }), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 800, position: "relative", zIndex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#FFB877", marginBottom: 14 } }, t("BPuppy \xB7 Historias", "BPuppy \xB7 Stories")), /* @__PURE__ */ React.createElement("h1", { style: { fontFamily: "var(--display)", fontSize: "clamp(40px,7vw,88px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.93, margin: "0 0 20px", color: "#fff", textShadow: "0 2px 14px rgba(0,0,0,0.4)" } }, t("Ya en su", "Already"), /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("em", { style: { fontFamily: "var(--serif)", fontStyle: "italic", color: "#FFB877" } }, t("hogar.", "home."))), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 17, color: "rgba(255,255,255,0.88)", lineHeight: 1.65, maxWidth: "48ch", margin: 0, textShadow: "0 1px 8px rgba(0,0,0,0.4)" } }, t("Cada cachorro que entregamos lleva nuestro coraz\xF3n. Aqu\xED celebramos a las familias que ya encontraron a su compa\xF1ero perfecto.", "Every puppy we deliver carries a piece of our heart. Here we celebrate the families who have already found their perfect companion.")))),/* @__PURE__ */ React.createElement("section", { style: { padding: "clamp(48px,6vw,80px) clamp(20px,5vw,80px)" } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 1100, margin: "0 auto" } }, status === "loading" && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, padding: "80px 0" } }, /* @__PURE__ */ React.createElement("div", { className: "bp-spinner" }), /* @__PURE__ */ React.createElement("p", { style: { color: "var(--ink-2)", fontSize: 15 } }, "Cargando historias\u2026")), status === "error" && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", padding: "80px 24px", color: "var(--ink-2)" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 48, marginBottom: 16 } }, "\u{1F43E}"), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 16 } }, t("No se pudieron cargar los cachorros entregados.", "We could not load the delivered puppies."))), status === "ok" && puppies.length === 0 && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", padding: "80px 24px", color: "var(--ink-2)" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 56, marginBottom: 16 } }, "\u{1F436}"), /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "var(--display)", fontSize: 28, fontWeight: 700, marginBottom: 12 } }, t("Pronto habr\xE1 historias aqu\xED", "Stories coming soon")), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 15 } }, t("Estamos construyendo esta secci\xF3n. \xA1Vuelve pronto!", "We are building this section. Check back soon!")), /* @__PURE__ */ React.createElement("a", { href: "/cachorros", style: { display: "inline-block", marginTop: 24, background: "var(--orange)", color: "#fff", padding: "12px 24px", borderRadius: 999, fontWeight: 700, textDecoration: "none" } }, t("Ver disponibles", "See available"))), status === "ok" && puppies.length > 0 && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 32 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--orange)", marginBottom: 8 } }, puppies.length, t(" cachorros entregados", " puppies delivered")), /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "var(--display)", fontSize: "clamp(28px,4vw,48px)", fontWeight: 700, letterSpacing: "-0.03em", color: "var(--ink)", margin: 0 } }, t("Familias que confiaron en nosotros", "Families who trusted us"))), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 20 } }, puppies.map((p) => /* @__PURE__ */ React.createElement(DeliveredCard, { key: p.id, p })))))));
+  return /* @__PURE__ */ React.createElement("div", { style: { background: "var(--bg)", minHeight: "60vh" } }, /* @__PURE__ */ React.createElement("section", { style: { background: "linear-gradient(100deg, rgba(45,36,33,0.82) 0%, rgba(45,36,33,0.55) 45%, rgba(45,36,33,0.12) 100%), url('assets/header-cachorros.webp') center right/cover no-repeat, var(--dark-sec,#2D2421)", padding: "120px clamp(20px,5vw,80px) 64px", position: "relative", overflow: "hidden" } }, /* @__PURE__ */ React.createElement("div", { style: { position: "absolute", inset: 0, background: "radial-gradient(45% 60% at 18% 50%, rgba(0,0,0,0.35), transparent 70%)", pointerEvents: "none" } }), /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 800, position: "relative", zIndex: 1 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, letterSpacing: "0.16em", textTransform: "uppercase", color: "#FFB877", marginBottom: 14 } }, t("BPuppy \xB7 Historias", "BPuppy \xB7 Stories")), /* @__PURE__ */ React.createElement("h1", { style: { fontFamily: "var(--display)", fontSize: "clamp(40px,7vw,88px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.93, margin: "0 0 20px", color: "#fff", textShadow: "0 2px 14px rgba(0,0,0,0.4)" } }, t("Ya en su", "Already"), /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("em", { style: { fontFamily: "var(--serif)", fontStyle: "italic", color: "#FFB877" } }, t("hogar.", "home."))), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 17, color: "rgba(255,255,255,0.88)", lineHeight: 1.65, maxWidth: "48ch", margin: 0, textShadow: "0 1px 8px rgba(0,0,0,0.4)" } }, t("Cada cachorro que entregamos lleva nuestro coraz\xF3n. Aqu\xED celebramos a las familias que ya encontraron a su compa\xF1ero perfecto.", "Every puppy we deliver carries a piece of our heart. Here we celebrate the families who have already found their perfect companion.")), /* @__PURE__ */ React.createElement(BotonPase, { t: t }))),/* @__PURE__ */ React.createElement("section", { style: { padding: "clamp(48px,6vw,80px) clamp(20px,5vw,80px)" } }, /* @__PURE__ */ React.createElement("div", { style: { maxWidth: 1100, margin: "0 auto" } }, status === "loading" && /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "center", justifyContent: "center", flexDirection: "column", gap: 16, padding: "80px 0" } }, /* @__PURE__ */ React.createElement("div", { className: "bp-spinner" }), /* @__PURE__ */ React.createElement("p", { style: { color: "var(--ink-2)", fontSize: 15 } }, "Cargando historias\u2026")), status === "error" && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", padding: "80px 24px", color: "var(--ink-2)" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 48, marginBottom: 16 } }, "\u{1F43E}"), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 16 } }, t("No se pudieron cargar los cachorros entregados.", "We could not load the delivered puppies."))), status === "ok" && puppies.length === 0 && /* @__PURE__ */ React.createElement("div", { style: { textAlign: "center", padding: "80px 24px", color: "var(--ink-2)" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 56, marginBottom: 16 } }, "\u{1F436}"), /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "var(--display)", fontSize: 28, fontWeight: 700, marginBottom: 12 } }, t("Pronto habr\xE1 historias aqu\xED", "Stories coming soon")), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 15 } }, t("Estamos construyendo esta secci\xF3n. \xA1Vuelve pronto!", "We are building this section. Check back soon!")), /* @__PURE__ */ React.createElement("a", { href: "/cachorros", style: { display: "inline-block", marginTop: 24, background: "var(--orange)", color: "#fff", padding: "12px 24px", borderRadius: 999, fontWeight: 700, textDecoration: "none" } }, t("Ver disponibles", "See available"))), status === "ok" && puppies.length > 0 && /* @__PURE__ */ React.createElement(React.Fragment, null, /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 32 } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 11, fontWeight: 700, letterSpacing: "0.14em", textTransform: "uppercase", color: "var(--orange)", marginBottom: 8 } }, puppies.length, t(" cachorros entregados", " puppies delivered")), /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "var(--display)", fontSize: "clamp(28px,4vw,48px)", fontWeight: 700, letterSpacing: "-0.03em", color: "var(--ink)", margin: 0 } }, t("Familias que confiaron en nosotros", "Families who trusted us"))), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(240px,1fr))", gap: 20 } }, puppies.map((p) => /* @__PURE__ */ React.createElement(DeliveredCard, { key: p.id, p })))))));
 }
+// Vive en el hero pero dispara la galeria, que se monta despues: espera a que
+// esta avise ("eg:listo") y entonces aparece con cuantas fotos hay.
+function BotonPase(props) {
+  var t = props.t;
+  var s = React.useState(0); var total = s[0], setTotal = s[1];
+  React.useEffect(function(){
+    var mirar = function(){ if (window.__egAbrirPase) setTotal(window.__egTotal || 0); };
+    mirar();
+    window.addEventListener("eg:listo", mirar);
+    return function(){ window.removeEventListener("eg:listo", mirar); };
+  }, []);
+  if (!total) return null;
+  return /* @__PURE__ */ React.createElement("button", {
+    onClick: function(){ if (window.__egAbrirPase) window.__egAbrirPase(); },
+    style: {
+      display: "inline-flex", alignItems: "center", gap: 10, marginTop: 26,
+      minHeight: 48, padding: "0 22px", borderRadius: 999,
+      border: "1px solid rgba(255,255,255,0.55)", background: "rgba(255,255,255,0.10)",
+      color: "#fff", font: "inherit", fontSize: 14.5, fontWeight: 700,
+      cursor: "pointer", backdropFilter: "blur(4px)"
+    }
+  },
+    /* @__PURE__ */ React.createElement("svg", { viewBox: "0 0 24 24", width: 14, height: 14, fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true" },
+      /* @__PURE__ */ React.createElement("path", { d: "M8 5.5v13l10-6.5z" })),
+    t("Ver las " + total + " fotos", "See all " + total + " photos"));
+}
+
 function EntregadosRoot() {
   const [lang, setLang] = React.useState(function(){ return (window.bpGetLang && window.bpGetLang()) || "es"; });
   React.useEffect(function(){ return window.bpOnLang ? window.bpOnLang(setLang) : void 0; }, []);
