@@ -1,6 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /catalogo
+Disallow: /mercado
 Disallow: /portal
 Disallow: /social
 Disallow: /stock
