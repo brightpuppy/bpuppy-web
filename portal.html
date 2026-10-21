@@ -319,6 +319,12 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
   .g2{grid-template-columns:1fr}
   .modal{padding:19px;border-radius:19px}
 }
+.pv-vid { padding:0; overflow:hidden; margin-bottom:16px; }
+.pv-vid-h { padding:16px 18px 12px; }
+.pv-vid-t { font-size:17px; font-weight:800; letter-spacing:-0.01em; color:var(--ink,#2D2421); }
+.pv-vid-d { font-size:13.5px; line-height:1.55; color:var(--ink-2,#6B5A4E); margin-top:4px; text-wrap:pretty; }
+.pv-vid-f { position:relative; width:100%; aspect-ratio:16/9; background:#000; }
+.pv-vid-f iframe { position:absolute; inset:0; width:100%; height:100%; border:0; display:block; }
 </style>
 </head>
 <body>
@@ -1363,8 +1369,60 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
   function paneMascotas(d){
     var cards=(d.pets||[]).map(petCard).join('');
     cards+='<div class="addtile" onclick="petAdd()"><div class="plus">+</div>'+PT('Agregar otra mascota','Add another pet')+'</div>';
-    return '<div class="pets">'+cards+'</div>';
+    return '<div id="pv-video"></div><div class="pets">'+cards+'</div>';
   }
+  /* El video de bienvenida: se elige por la especie de la mascota y por los
+     dias desde que se la llevaron. */
+  function videoDelCliente(d){
+    var host=document.getElementById('pv-video');
+    if(!host) return;
+    var pets=(d.pets||[]);
+    if(!pets.length) return;
+
+    // Dias desde la mascota mas reciente. Sin fecha se asume recien llegada:
+    // es el caso que de verdad importa y el error cae del lado bueno.
+    var dias=0, hay=false;
+    pets.forEach(function(p){
+      var f=p.delivered_at||p.created_at||p.since;
+      if(!f) return;
+      var t=Date.parse(f); if(isNaN(t)) return;
+      var dd=Math.floor((Date.now()-t)/86400000);
+      if(!hay||dd<dias){ dias=dd; hay=true; }
+    });
+
+    var especies={};
+    pets.forEach(function(p){
+      var s=String(p.species||p.kind||'').toLowerCase();
+      if(/cat|gat/.test(s)) especies.cat=1; else especies.dog=1;
+    });
+
+    fetch(SUPA+'/rest/v1/portal_videos?select=youtube_id,title_es,title_en,desc_es,desc_en,species,desde_dias,hasta_dias&active=is.true&order=position',
+      { headers:{ apikey:ANON, Authorization:'Bearer '+ANON } })
+      .then(function(r){ return r.ok?r.json():[]; })
+      .then(function(vs){
+        var v=(vs||[]).filter(function(x){
+          if(x.species && !especies[x.species]) return false;
+          if(dias < (x.desde_dias||0)) return false;
+          if(x.hasta_dias!=null && dias > x.hasta_dias) return false;
+          return true;
+        })[0];
+        if(!v) return;
+        var ti=PT(v.title_es,v.title_en), de=PT(v.desc_es,v.desc_en);
+        host.innerHTML=
+          '<div class="card pv-vid">'+
+            '<div class="pv-vid-h">'+
+              '<div class="pv-vid-t">'+esc(ti)+'</div>'+
+              (de?'<div class="pv-vid-d">'+esc(de)+'</div>':'')+
+            '</div>'+
+            '<div class="pv-vid-f">'+
+              '<iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(v.youtube_id)+'?rel=0" '+
+                'title="'+esc(ti)+'" loading="lazy" allowfullscreen '+
+                'allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>'+
+            '</div>'+
+          '</div>';
+      }).catch(function(){});
+  }
+
   function paneGrooming(d){
     var ms=(d.memberships||[]).filter(function(m){return String(m.status||'')!=='cancelled';});
     var out='';
@@ -1702,6 +1760,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<div class="pane" data-p="cuenta">'+paneCuenta(d)+'</div>';
 
     root.innerHTML=html;
+    videoDelCliente(d);
     loadLoyalty(); // Puntos B (solo miembros; no-op si no hay tarjeta)
 
     root.querySelectorAll('.tab').forEach(function(b){
