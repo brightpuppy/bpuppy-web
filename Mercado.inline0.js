@@ -17,7 +17,8 @@
     { k: "paseo",         es: "Paseo y viaje",   en: "Walks & travel" },
     { k: "higiene",       es: "Aseo",            en: "Grooming" },
     { k: "salud",         es: "Salud",           en: "Health" },
-    { k: "entrenamiento", es: "Entrenamiento",   en: "Training" }
+    { k: "entrenamiento", es: "Entrenamiento",   en: "Training" },
+    { k: "ropa",          es: "Ropa",            en: "Clothing" }
   ];
   var ETAPAS = [
     { k: "new_owner",     es: "Recién llegado", en: "Just arrived", sp: "" },
@@ -187,16 +188,25 @@
   function pintaDestacados() {
     var c = el("mk-dest");
     if (!c) return;
+    // La temporada que toque hoy va la primera. Si no toca ninguna, no sale.
+    var hoy = (function(){ var d=new Date(); return String(d.getMonth()+1).padStart(2,"0")+"-"+String(d.getDate()).padStart(2,"0"); })();
+    var temp = D.listas.filter(function (l) {
+      if (!l.temporada || !l.desde_md || !l.hasta_md) return false;
+      return (l.desde_md <= l.hasta_md)
+        ? (hoy >= l.desde_md && hoy <= l.hasta_md)
+        : (hoy >= l.desde_md || hoy <= l.hasta_md);
+    })[0];
     var dest = D.listas.filter(function (l) { return l.destacada; });
+    if (temp) dest = [temp].concat(dest);
     if (!dest.length) { c.innerHTML = ""; return; }
     c.innerHTML = dest.map(function (l) {
       var n = (D.enLista[l.slug] || []).length;
       var gato = l.species === "cat";
-      return '<button class="mk-d' + (gato ? " mk-d-gato" : "") + (F.lista === l.slug ? " on" : "") +
-          '" data-l="' + esc(l.slug) + '">' +
+      var est = l.temporada && l.color_1 ? ' style="border-color:' + esc(l.color_1) + '"' : "";
+      return '<button class="mk-d' + (gato ? " mk-d-gato" : "") + (l.temporada ? " mk-d-temp" : "") +
+          (F.lista === l.slug ? " on" : "") + '" data-l="' + esc(l.slug) + '"' + est + ">" +
         (l.foto ? '<img src="' + esc(l.foto) + '" alt="" loading="lazy">' : "") +
-        "<span><b>" + esc(t(l.title_es, l.title_en)) + "</b>" +
-        "<span>" + n + t(" artículos", " items") + "</span></span></button>";
+        "<span><b>" + esc(t(l.title_es, l.title_en)) + "</b></span></button>";
     }).join("");
     [].forEach.call(c.querySelectorAll(".mk-d"), function (b) {
       b.addEventListener("click", function () {
@@ -229,13 +239,35 @@
   }
 
   /* ── Cabecera de resultados ───────────────────────────────────────────── */
+  /* En el movil el buscador estaba dentro de los filtros, o sea escondido tras
+     un boton: nadie lo encontraba. Ahora va suelto encima de los articulos y
+     ocupa todo el ancho. En escritorio se queda solo el del lateral. */
+  function pintaBuscadorMovil() {
+    var c = el("mk-busca-movil");
+    if (!c) return;
+    c.innerHTML = '<div class="mk-busca">' + ICO.lupa +
+      '<input id="mk-q2" type="search" autocomplete="off" placeholder="' + t("Buscar…", "Search…") + '" value="' + esc(F.busca) + '">' +
+      (F.busca ? '<button class="equis" id="mk-q2-x" aria-label="' + t("Borrar", "Clear") + '">\u2715</button>' : "") + "</div>";
+    var q = el("mk-q2");
+    if (q) {
+      var tq = null;
+      q.addEventListener("input", function () {
+        clearTimeout(tq);
+        var v = q.value;
+        tq = setTimeout(function () { F.busca = v; pinta("movil"); }, 220);
+      });
+    }
+    var x = el("mk-q2-x");
+    if (x) x.addEventListener("click", function () { F.busca = ""; pinta(); });
+  }
+
   function pintaCabecera(n) {
     var h = el("mk-head");
     if (!h) return;
     h.innerHTML =
       '<button class="mk-abrir' + (movilAbierto ? " on" : "") + '" id="mk-abrir">' + ICO.filtros +
         t("Filtros", "Filters") + "</button>" +
-      '<span class="mk-head-r"><span class="mk-cnt">' + n + t(" artículos", " items") + "</span>" +
+      '<span class="mk-head-r">' +
       '<button class="mk-share" id="mk-share">' + ICO.enlace +
         '<span>' + t("Compartir", "Share") + "</span></button></span>";
     var sh = el("mk-share");
@@ -332,18 +364,57 @@
     } catch (e) {}
   }
 
+  /* Al entrar en una temporada la pagina toma sus colores. Se tocan solo dos
+     variables: nada de un tema aparte que luego hay que mantener en paralelo. */
+  /* La cabecera de la temporada. Se guardan los textos originales la primera
+     vez para poder volver, y se escapa lo que viene de la base porque
+     bpTraduceEstaticos pinta con innerHTML (los titulos llevan <em>). */
+  var cabOrig = null;
+  function cabeceraDeTemporada(l) {
+    var h1 = el("mk-h1"), sub = el("mk-sub");
+    if (!h1 || !sub) return;
+    if (!cabOrig) cabOrig = [h1.getAttribute("data-es"), h1.getAttribute("data-en"),
+                             sub.getAttribute("data-es"), sub.getAttribute("data-en")];
+    var v = l
+      ? [esc(l.title_es), esc(l.title_en || l.title_es), esc(l.intro_es || ""), esc(l.intro_en || l.intro_es || "")]
+      : cabOrig;
+    h1.setAttribute("data-es", v[0]);  h1.setAttribute("data-en", v[1]);
+    sub.setAttribute("data-es", v[2]); sub.setAttribute("data-en", v[3]);
+    sub.style.display = (v[2] || v[3]) ? "" : "none";
+    if (window.bpTraduceEstaticos) { try { window.bpTraduceEstaticos(); } catch (e) {} }
+  }
+
+  function vistePorTemporada() {
+    var l = D.listas.filter(function (x) { return x.slug === F.lista && x.temporada; })[0];
+    var r = document.documentElement;
+    if (l && l.color_1) {
+      r.style.setProperty("--orange", l.color_1);
+      if (l.color_2) r.style.setProperty("--mk-azul", l.color_2);
+      document.body.classList.add("mk-temp");
+      cabeceraDeTemporada(l);
+    } else {
+      r.style.removeProperty("--orange");
+      r.style.removeProperty("--mk-azul");
+      document.body.classList.remove("mk-temp");
+      cabeceraDeTemporada(null);
+    }
+  }
+
   function pinta(mantenerFoco) {
     var lista = filtra();
-    var q = el("mk-q");
+    var cual = (mantenerFoco === "movil") ? "mk-q2" : "mk-q";
+    var q = el(cual);
     var foco = mantenerFoco && q && document.activeElement === q;
     var cursor = foco ? q.selectionStart : null;
+    vistePorTemporada();
     pintaDestacados();
     pintaAviso();
     pintaLateral();
+    pintaBuscadorMovil();
     pintaCabecera(lista.length);
     pintaGrid(lista);
     if (foco) {
-      var q2 = el("mk-q");
+      var q2 = el(cual);
       if (q2) { q2.focus(); try { q2.setSelectionRange(cursor, cursor); } catch (e) {} }
     }
     guardaUrl();
@@ -432,7 +503,7 @@
 
     Promise.all([
       pedir("market_products?select=id,name_es,name_en,desc_es,desc_en,image_url,category,species,stages,sizes,store,product_url,price_ref,reviewed_at,position&status=eq.published&order=category,position&limit=500"),
-      pedir("market_lists?select=slug,title_es,title_en,intro_es,intro_en,nota_es,nota_en,nota_lista,destacada,foto,species,position&active=is.true&order=position"),
+      pedir("market_lists?select=slug,title_es,title_en,intro_es,intro_en,nota_es,nota_en,nota_lista,destacada,foto,temporada,color_1,color_2,desde_md,hasta_md,species,position&active=is.true&order=position"),
       pedir("market_stores?select=slug,name,link_template,affiliate_tag,show_price,price_note_es,price_note_en&active=is.true"),
       pedir("market_list_items?select=list_slug,product_id,position&order=position&limit=2000"),
       elKit
