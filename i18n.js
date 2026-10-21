@@ -428,6 +428,29 @@ window.bpOnLang = function(cb) {
     window.removeEventListener("storage", sh);
   };
 };
+/* Textos fijos del HTML marcados con data-es / data-en.
+   Se usa innerHTML y no textContent porque algunos llevan <em> o <b> dentro;
+   el contenido es nuestro, escrito a mano en el propio HTML. */
+function bpTraduceEstaticos(lang) {
+  var en = (lang || bpSavedLang() || "es") === "en";
+  var nodos = document.querySelectorAll("[data-es][data-en]");
+  for (var i = 0; i < nodos.length; i++) {
+    var n = nodos[i];
+    var v = n.getAttribute(en ? "data-en" : "data-es");
+    if (v != null && n.innerHTML !== v) n.innerHTML = v;
+  }
+}
+window.bpTraduceEstaticos = bpTraduceEstaticos;
+(function () {
+  var ya = function () { try { bpTraduceEstaticos(); } catch (e) {} };
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", ya);
+  else ya();
+  // Y cuando el visitante cambia de idioma con el botin del menu.
+  window.addEventListener("bpuppy:lang", function (e) {
+    try { bpTraduceEstaticos(e && e.detail); } catch (err) {}
+  });
+})();
+
 Object.assign(window, { STRINGS, pick, LangContext, useLang, useT });
 
 })();

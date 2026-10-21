@@ -178,6 +178,54 @@
     if (qx) qx.addEventListener("click", function () { F.busca = ""; pinta(); });
   }
 
+  /* ── Botones destacados ───────────────────────────────────────────────
+     Arriba a la derecha, con su miniatura. Son la puerta de entrada: la mayoria
+     de la gente llega sabiendo si tiene un cachorro recien llegado, un perro
+     hecho o un gatito, y no quiere pelearse con los filtros. */
+  function pintaDestacados() {
+    var c = el("mk-dest");
+    if (!c) return;
+    var dest = D.listas.filter(function (l) { return l.destacada; });
+    if (!dest.length) { c.innerHTML = ""; return; }
+    c.innerHTML = dest.map(function (l) {
+      var n = (D.enLista[l.slug] || []).length;
+      var gato = l.species === "cat";
+      return '<button class="mk-d' + (gato ? " mk-d-gato" : "") + (F.lista === l.slug ? " on" : "") +
+          '" data-l="' + esc(l.slug) + '">' +
+        (l.foto ? '<img src="' + esc(l.foto) + '" alt="" loading="lazy">' : "") +
+        "<span><b>" + esc(t(l.title_es, l.title_en)) + "</b>" +
+        "<span>" + n + t(" artículos", " items") + "</span></span></button>";
+    }).join("");
+    [].forEach.call(c.querySelectorAll(".mk-d"), function (b) {
+      b.addEventListener("click", function () {
+        var slug = b.getAttribute("data-l");
+        F.lista = (F.lista === slug) ? "" : slug;
+        F.categoria = ""; F.etapa = "";
+        pinta();
+      });
+    });
+  }
+
+  /* El aviso de una lista: manda a la que de verdad le toca. */
+  function pintaAviso() {
+    var a = el("mk-aviso");
+    if (!a) return;
+    var l = D.listas.filter(function (x) { return x.slug === F.lista; })[0];
+    var txt = l ? t(l.nota_es, l.nota_en) : "";
+    if (!l || !txt) { a.innerHTML = ""; return; }
+    var destino = D.listas.filter(function (x) { return x.slug === l.nota_lista; })[0];
+    a.innerHTML = '<div class="mk-aviso"><span>' + esc(txt) +
+      (destino ? ' <button data-ir="' + esc(destino.slug) + '">' + esc(t(destino.title_es, destino.title_en)) + " \u2192</button>" : "") +
+      "</span></div>";
+    var b = a.querySelector("button[data-ir]");
+    if (b) b.addEventListener("click", function () {
+      F.lista = b.getAttribute("data-ir");
+      F.categoria = ""; F.etapa = "";
+      pinta();
+      try { window.scrollTo({ top: 0, behavior: "smooth" }); } catch (e) { window.scrollTo(0, 0); }
+    });
+  }
+
   /* ── Cabecera de resultados ───────────────────────────────────────────── */
   function pintaCabecera(n) {
     var h = el("mk-head");
@@ -246,6 +294,8 @@
     var q = el("mk-q");
     var foco = mantenerFoco && q && document.activeElement === q;
     var cursor = foco ? q.selectionStart : null;
+    pintaDestacados();
+    pintaAviso();
     pintaLateral();
     pintaCabecera(lista.length);
     pintaGrid(lista);
@@ -304,6 +354,8 @@
     }
     var lat = el("mk-lat");
     if (lat) lat.style.display = "none";
+    var dst = el("mk-dest");
+    if (dst) dst.style.display = "none";
     var cols = document.querySelector(".mk-cols");
     if (cols) cols.style.gridTemplateColumns = "minmax(0,1fr)";
     try { document.title = t(k.titulo_es, k.titulo_en) + " · BPuppy"; } catch (e) {}
@@ -337,7 +389,7 @@
 
     Promise.all([
       pedir("market_products?select=id,name_es,name_en,desc_es,desc_en,image_url,category,species,stages,sizes,store,product_url,price_ref,reviewed_at,position&status=eq.published&order=category,position&limit=500"),
-      pedir("market_lists?select=slug,title_es,title_en,intro_es,intro_en,species,position&active=is.true&order=position"),
+      pedir("market_lists?select=slug,title_es,title_en,intro_es,intro_en,nota_es,nota_en,nota_lista,destacada,foto,species,position&active=is.true&order=position"),
       pedir("market_stores?select=slug,name,link_template,affiliate_tag,show_price,price_note_es,price_note_en&active=is.true"),
       pedir("market_list_items?select=list_slug,product_id,position&order=position&limit=2000"),
       elKit
