@@ -87,6 +87,11 @@ body.mk-blanca, .mk-top, .mk-sec, .mk-legal { background:#fff; }
 /* ── Articulos ───────────────────────────────────────────────────────── */
 .mk-head { display:flex; align-items:center; justify-content:space-between; gap:14px; flex-wrap:wrap; margin-bottom:12px; min-height:30px; }
 .mk-cnt { font-size:12.5px; font-weight:600; color:var(--ink-soft); }
+.mk-head-r { display:flex; align-items:center; gap:12px; margin-left:auto; }
+.mk-share { display:inline-flex; align-items:center; gap:7px; min-height:36px; padding:0 14px; border:1px solid var(--mk-linea); border-radius:999px; background:#fff; font:inherit; font-size:12.5px; font-weight:700; color:var(--ink-2); cursor:pointer; transition:border-color .15s, color .15s; }
+.mk-share:hover { border-color:var(--orange); color:var(--orange); }
+.mk-share.ok { border-color:#16a34a; color:#16a34a; }
+.mk-share svg { width:14px; height:14px; flex:none; }
 .mk-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(192px,1fr)); gap:13px; }
 .mk-card { display:flex; flex-direction:column; background:#fff; border:1px solid var(--mk-linea); border-radius:15px; overflow:hidden; transition:border-color .16s, transform .16s, box-shadow .16s; }
 .mk-card:hover { border-color:var(--orange); transform:translateY(-2px); box-shadow:0 12px 28px -18px rgba(45,36,33,.35); }
@@ -123,6 +128,8 @@ body.mk-blanca, .mk-top, .mk-sec, .mk-legal { background:#fff; }
   .mk-lat { position:static; max-height:none; overflow:visible; display:none; margin-bottom:16px; padding:14px 0 2px; border-right:0; border-bottom:1px solid var(--mk-linea); }
   .mk-lat.abierta { display:block; }
   .mk-op { min-height:44px; }
+  .mk-share { min-height:44px; }
+  .mk-share span { display:none; }
   .mk-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
   .mk-desc { display:none; }
   .mk-tag .mk-sep, .mk-tag .mk-tienda { display:none; }
@@ -168,7 +175,7 @@ body.mk-blanca, .mk-top, .mk-sec, .mk-legal { background:#fff; }
 
 <script src="i18n.js?v=1792586547094"></script>
 <script src="chrome.js?v=1792502611821"></script>
-<script src="Mercado.inline0.js?v=1792586597663"></script>
+<script src="Mercado.inline0.js?v=1792586957205"></script>
 <script src="chat-widget.js?v=1787348000000"></script>
 </body>
 </html>

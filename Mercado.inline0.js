@@ -49,6 +49,8 @@
   var ICO = {
     salir: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7 17 17 7M9 7h8v8"/></svg>',
     lupa: '<svg class="lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
+    enlace: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.1 0l2.9-2.9a5 5 0 0 0-7.1-7.1L11.5 4.4"/><path d="M14 11a5 5 0 0 0-7.1 0L4 13.9a5 5 0 0 0 7.1 7.1l1.4-1.4"/></svg>',
+    hecho: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>',
     filtros: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M7 12h10M10 18h4"/></svg>',
     perro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5.2 7 3.4v3.2M14 5.2l3-1.8v3.2"/><path d="M7 6.6c-.7 1.3-1 2.7-1 4.2 0 4 2.7 6.8 6 6.8s6-2.8 6-6.8c0-1.5-.3-2.9-1-4.2"/><path d="M10.5 11.5h.01M13.5 11.5h.01M12 14.2c-.7 0-1.2.4-1.2.9s.5.9 1.2.9 1.2-.4 1.2-.9-.5-.9-1.2-.9Z"/><path d="M9 17.4V21M15 17.4V21"/></svg>',
     gato: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8.4 4.6 3.6 8.4 6.2M18 8.4l1.4-4.8-3.8 2.6"/><path d="M4.6 10.6C4.6 15 7.9 18.4 12 18.4s7.4-3.4 7.4-7.8c0-1-.2-2-.5-2.9"/><path d="M9.6 11.4h.01M14.4 11.4h.01M12 13.6v1.2M12 14.8c-.6.7-1.5.9-2.3.6M12 14.8c.6.7 1.5.9 2.3.6"/></svg>'
@@ -233,7 +235,12 @@
     h.innerHTML =
       '<button class="mk-abrir' + (movilAbierto ? " on" : "") + '" id="mk-abrir">' + ICO.filtros +
         t("Filtros", "Filters") + "</button>" +
-      '<span class="mk-cnt">' + n + t(" artículos", " items") + "</span>";
+      '<span class="mk-head-r"><span class="mk-cnt">' + n + t(" artículos", " items") + "</span>" +
+      '<button class="mk-share" id="mk-share">' + ICO.enlace +
+        '<span>' + t("Compartir", "Share") + "</span></button></span>";
+    var sh = el("mk-share");
+    if (sh) sh.addEventListener("click", function () { comparte(sh); });
+
     var b = el("mk-abrir");
     if (b) b.addEventListener("click", function () {
       movilAbierto = !movilAbierto;
@@ -241,6 +248,42 @@
       if (lat) lat.classList.toggle("abierta", movilAbierto);
       b.classList.toggle("on", movilAbierto);
     });
+  }
+
+  /* ── Compartir ────────────────────────────────────────────────────────
+     Se comparte lo que se esta viendo. En modo kit se comparte la version
+     PUBLICA de la lista: el enlace con token es personal del cliente. */
+  function enlaceParaCompartir() {
+    if (D.kit) return location.origin + "/mercado?lista=" + encodeURIComponent(D.kit.list_slug);
+    return location.href;
+  }
+  function tituloParaCompartir() {
+    var l = D.listas.filter(function (x) { return x.slug === (D.kit ? D.kit.list_slug : F.lista); })[0];
+    if (l) return t(l.title_es, l.title_en) + " · BrightPuppy";
+    return t("Lo que de verdad hace falta · BrightPuppy", "What you actually need · BrightPuppy");
+  }
+  function comparte(boton) {
+    var url = enlaceParaCompartir();
+    var titulo = tituloParaCompartir();
+    // En el movil, la hoja de compartir del propio telefono: WhatsApp, correo,
+    // lo que tenga. En el escritorio casi nunca existe, y ahi se copia.
+    if (navigator.share) {
+      navigator.share({ title: titulo, url: url }).catch(function () {});
+      return;
+    }
+    var ok = function () {
+      boton.classList.add("ok");
+      boton.innerHTML = ICO.hecho + "<span>" + t("Enlace copiado", "Link copied") + "</span>";
+      setTimeout(function () {
+        boton.classList.remove("ok");
+        boton.innerHTML = ICO.enlace + "<span>" + t("Compartir", "Share") + "</span>";
+      }, 2200);
+    };
+    try {
+      navigator.clipboard.writeText(url).then(ok, function () { window.prompt(t("Copia el enlace:", "Copy the link:"), url); });
+    } catch (e) {
+      window.prompt(t("Copia el enlace:", "Copy the link:"), url);
+    }
   }
 
   /* ── Rejilla ──────────────────────────────────────────────────────────── */
