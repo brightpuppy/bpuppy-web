@@ -313,10 +313,11 @@
   function legal() {
     var p = el("mk-legal-txt");
     if (!p) return;
-    p.textContent = t(
+    // La frase de Amazon va TEXTUAL en los dos idiomas: su acuerdo la exige asi.
+    p.innerHTML = "<strong>As an Amazon Associate I earn from qualifying purchases.</strong> " + esc(t(
       "BrightPuppy participa en programas de afiliados. Si compras por un enlace de esta página podemos ganar una comisión, sin coste adicional para ti. Los precios y la disponibilidad los pone cada tienda y cambian sin aviso: el precio bueno es el que veas al abrir el enlace. No vendemos ni enviamos estos artículos y no somos responsables de la compra, el envío ni la garantía, que corren a cuenta de la tienda. Nada de lo que hay aquí es consejo veterinario; para medicación, pulgas o cualquier duda de salud, pregunta a tu veterinario.",
       "BrightPuppy takes part in affiliate programs. If you buy through a link on this page we may earn a commission at no extra cost to you. Prices and availability are set by each retailer and change without notice: the real price is the one you see when you open the link. We do not sell or ship these items and we are not responsible for the purchase, shipping or warranty, which are the retailer's. Nothing here is veterinary advice; for medication, fleas or any health question, ask your vet."
-    );
+    ));
   }
 
   function arranca() {
