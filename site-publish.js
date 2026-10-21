@@ -66,7 +66,7 @@
   var DEFAULTS = {
     Home: true, Cachorros: true, 'Cachorros-Entregados': true, 'Gatos-Entregados': false,
     Nosotros: true, 'Razas-Perros': true, Media: true,
-    Adopciones: true, Tienda: false, Mercado: false, Blog: true, Grooming: true,
+    Adopciones: true, Tienda: false, Mercado: true, Blog: true, Grooming: true,
     Gatos: true, 'Razas-Gatos': true, Historia: true, Social: true,
   };
 
