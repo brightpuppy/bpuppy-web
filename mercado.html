@@ -112,6 +112,17 @@ body.mk-temp .mk-card:hover { border-color:var(--orange); }
 .mk-go { margin-top:auto; display:inline-flex; align-items:center; justify-content:space-between; gap:8px; min-height:42px; padding:0 13px; border:1px solid var(--mk-linea); border-radius:999px; font-size:12.5px; font-weight:700; color:var(--ink-2); text-decoration:none; transition:border-color .15s, color .15s; }
 .mk-go:hover { border-color:var(--orange); color:var(--orange); }
 .mk-go svg { width:13px; height:13px; flex:none; }
+/* El botón de "Ver artículo" manda; compartir va al lado, del mismo alto para
+   que la fila quede a ras — nada de un botón más bajo que el otro. */
+.mk-acc { margin-top:auto; display:flex; align-items:stretch; gap:7px; }
+.mk-acc .mk-go { margin-top:0; flex:1; min-width:0; }
+.mk-sh1 { flex:none; width:42px; min-height:42px; display:inline-flex; align-items:center; justify-content:center; border:1px solid var(--mk-linea); border-radius:999px; background:#fff; color:var(--ink-2); cursor:pointer; padding:0; transition:border-color .15s, color .15s; }
+.mk-sh1:hover { border-color:var(--orange); color:var(--orange); }
+.mk-sh1 svg { width:15px; height:15px; }
+.mk-shmenu { position:absolute; z-index:60; width:186px; background:#fff; border:1px solid var(--mk-linea); border-radius:13px; box-shadow:0 16px 40px -12px rgba(45,36,33,.28); padding:5px; display:flex; flex-direction:column; }
+.mk-shmenu a, .mk-shmenu button { display:flex; align-items:center; gap:10px; min-height:40px; padding:0 11px; border:0; border-radius:9px; background:none; font:inherit; font-size:13px; font-weight:600; color:var(--ink); text-decoration:none; cursor:pointer; text-align:left; width:100%; }
+.mk-shmenu a:hover, .mk-shmenu button:hover { background:rgba(45,36,33,.05); }
+.mk-shmenu svg { width:16px; height:16px; flex:none; color:var(--ink-soft); }
 
 .mk-vacio { border:1px dashed var(--mk-linea); border-radius:18px; padding:50px 28px; text-align:center; background:#fff; }
 .mk-vacio p { font-size:14.5px; color:var(--ink-2); line-height:1.65; margin:0 auto; max-width:46ch; text-wrap:pretty; }
@@ -143,6 +154,13 @@ body.mk-temp .mk-card:hover { border-color:var(--orange); }
   /* El del lateral sobra cuando ya hay uno arriba. */
   .mk-lat .mk-busca { display:none; }
   .mk-op { min-height:44px; }
+  /* Al meter compartir al lado, "Ver artículo" se partía en dos líneas en la
+     rejilla de dos columnas. Se aprieta el botón, no se parte el texto. */
+  .mk-acc { gap:6px; }
+  .mk-acc .mk-go { padding:0 10px; font-size:12px; gap:5px; white-space:nowrap; }
+  .mk-acc .mk-go svg { width:12px; height:12px; }
+  .mk-sh1 { width:44px; min-height:44px; }
+  .mk-acc .mk-go { min-height:44px; }
   .mk-share { min-height:44px; }
   .mk-share span { display:none; }
   .mk-grid { grid-template-columns:repeat(2,1fr); gap:10px; }
@@ -191,7 +209,7 @@ body.mk-temp .mk-card:hover { border-color:var(--orange); }
 
 <script src="i18n.js?v=1792586547094"></script>
 <script src="chrome.js?v=1792502611821"></script>
-<script src="Mercado.inline0.js?v=1792844657"></script>
+<script src="Mercado.inline0.js?v=1792847848031"></script>
 <script src="chat-widget.js?v=1787348000000"></script>
 </body>
 </html>

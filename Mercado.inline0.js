@@ -30,7 +30,7 @@
   ];
 
   var D = { productos: [], listas: [], tiendas: {}, enLista: {}, kit: null };
-  var F = { especie: "", categoria: "", etapa: "", tienda: "", lista: "", busca: "" };
+  var F = { especie: "", categoria: "", etapa: "", tienda: "", lista: "", busca: "", art: "" };
   var movilAbierto = false;
 
   function esc(s) {
@@ -52,6 +52,10 @@
     lupa: '<svg class="lupa" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>',
     enlace: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 13a5 5 0 0 0 7.1 0l2.9-2.9a5 5 0 0 0-7.1-7.1L11.5 4.4"/><path d="M14 11a5 5 0 0 0-7.1 0L4 13.9a5 5 0 0 0 7.1 7.1l1.4-1.4"/></svg>',
     hecho: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m5 13 4 4L19 7"/></svg>',
+    compartir: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="18" cy="5" r="2.6"/><circle cx="6" cy="12" r="2.6"/><circle cx="18" cy="19" r="2.6"/><path d="m8.3 10.8 7.4-4.3M8.3 13.2l7.4 4.3"/></svg>',
+    wa: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.4 8.4 0 0 1-12.6 7.3L3 20.5l1.8-5.3A8.4 8.4 0 1 1 21 11.5Z"/><path d="M8.8 8.3c.3-.1.6 0 .8.3l.8 1.4c.1.3.1.6-.1.8l-.5.5c.5 1 1.3 1.8 2.3 2.3l.5-.5c.2-.2.5-.3.8-.1l1.4.8c.3.2.4.5.3.8-.3.8-1.1 1.3-2 1.2-2.6-.4-4.7-2.5-5.1-5.1-.1-.9.4-1.7 1.2-2"/></svg>',
+    sms: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.2c0 3.8-3.6 6.9-8 6.9-.9 0-1.8-.1-2.6-.4L5 20l1.2-3.1A6.6 6.6 0 0 1 5 11.2c0-3.8 3.6-6.9 8-6.9s8 3.1 8 6.9Z"/></svg>',
+    correo: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="5" width="18" height="14" rx="2.5"/><path d="m3.6 6.6 7.4 5.2c.6.4 1.4.4 2 0l7.4-5.2"/></svg>',
     filtros: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 6h18M7 12h10M10 18h4"/></svg>',
     perro: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M10 5.2 7 3.4v3.2M14 5.2l3-1.8v3.2"/><path d="M7 6.6c-.7 1.3-1 2.7-1 4.2 0 4 2.7 6.8 6 6.8s6-2.8 6-6.8c0-1.5-.3-2.9-1-4.2"/><path d="M10.5 11.5h.01M13.5 11.5h.01M12 14.2c-.7 0-1.2.4-1.2.9s.5.9 1.2.9 1.2-.4 1.2-.9-.5-.9-1.2-.9Z"/><path d="M9 17.4V21M15 17.4V21"/></svg>',
     gato: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M6 8.4 4.6 3.6 8.4 6.2M18 8.4l1.4-4.8-3.8 2.6"/><path d="M4.6 10.6C4.6 15 7.9 18.4 12 18.4s7.4-3.4 7.4-7.8c0-1-.2-2-.5-2.9"/><path d="M9.6 11.4h.01M14.4 11.4h.01M12 13.6v1.2M12 14.8c-.6.7-1.5.9-2.3.6M12 14.8c.6.7 1.5.9 2.3.6"/></svg>'
@@ -86,7 +90,15 @@
     }
     return true;
   }
-  function filtra() { return D.productos.filter(function (p) { return pasa(p, null); }); }
+  function filtra() {
+    // Enlace compartido: se abre en ese articulo y los filtros no pintan nada.
+    if (F.art) {
+      var uno = D.productos.filter(function (p) { return p.id === F.art; });
+      if (uno.length) return uno;
+      F.art = "";   // ya no existe: mejor la tienda entera que una pagina vacia
+    }
+    return D.productos.filter(function (p) { return pasa(p, null); });
+  }
   function cuantos(campo, valor) {
     return D.productos.filter(function (p) {
       if (!pasa(p, campo)) return false;
@@ -151,6 +163,7 @@
     [].forEach.call(lat.querySelectorAll(".mk-op"), function (b) {
       b.addEventListener("click", function () {
         var campo = b.getAttribute("data-c"), valor = b.getAttribute("data-v");
+        F.art = "";   // tocar un filtro saca del articulo suelto
         F[campo] = (F[campo] === valor) ? "" : valor;
         if (campo === "especie") {
           var e = ETAPAS.filter(function (x) { return x.k === F.etapa; })[0];
@@ -173,7 +186,7 @@
         clearTimeout(tq);
         var v = q.value;
         // Se repinta solo al parar de escribir: si no, el campo pierde el foco a cada tecla.
-        tq = setTimeout(function () { F.busca = v; pinta(true); }, 220);
+        tq = setTimeout(function () { F.art = ""; F.busca = v; pinta(true); }, 220);
       });
       if (F.busca) { q.focus(); try { q.setSelectionRange(q.value.length, q.value.length); } catch (e) {} }
     }
@@ -222,6 +235,14 @@
   function pintaAviso() {
     var a = el("mk-aviso");
     if (!a) return;
+    if (F.art) {
+      a.innerHTML = '<div class="mk-aviso"><span>' +
+        esc(t("Te compartieron este artículo.", "Someone shared this item with you.")) +
+        ' <button data-todo="1">' + esc(t("Ver toda la tienda", "See the whole store")) + " →</button></span></div>";
+      var bt = a.querySelector("button[data-todo]");
+      if (bt) bt.addEventListener("click", function () { F.art = ""; pinta(); });
+      return;
+    }
     var l = D.listas.filter(function (x) { return x.slug === F.lista; })[0];
     var txt = l ? t(l.nota_es, l.nota_en) : "";
     if (!l || !txt) { a.innerHTML = ""; return; }
@@ -254,7 +275,7 @@
       q.addEventListener("input", function () {
         clearTimeout(tq);
         var v = q.value;
-        tq = setTimeout(function () { F.busca = v; pinta("movil"); }, 220);
+        tq = setTimeout(function () { F.art = ""; F.busca = v; pinta("movil"); }, 220);
       });
     }
     var x = el("mk-q2-x");
@@ -294,6 +315,74 @@
     if (l) return t(l.title_es, l.title_en) + " · BrightPuppy";
     return t("Lo que de verdad hace falta · BrightPuppy", "What you actually need · BrightPuppy");
   }
+  /* Compartir UN artículo.
+     Se comparte SIEMPRE nuestra página (/mercado?art=<id>), nunca el enlace de
+     Amazon: si alguien reenvía el de Amazon, la comisión se pierde por el camino.
+     En el móvil sale la hoja del propio teléfono, que ya trae todas las apps que
+     tenga puestas. En el escritorio casi nunca existe, y ahí se ofrece el menú. */
+  function enlaceArticulo(id) {
+    return location.origin + "/mercado?art=" + encodeURIComponent(id);
+  }
+  function textoArticulo(p) {
+    var n = t(p.name_es, p.name_en);
+    return t("Mira esto para tu mascota: " + n, "Check this out for your pet: " + n);
+  }
+  function comparteArticulo(id, boton) {
+    var p = D.productos.filter(function (x) { return x.id === id; })[0];
+    if (!p) return;
+    var url = enlaceArticulo(id), txt = textoArticulo(p);
+    if (navigator.share) {
+      navigator.share({ title: t(p.name_es, p.name_en), text: txt, url: url }).catch(function () {});
+      return;
+    }
+    menuCompartir(boton, url, txt);
+  }
+
+  /* El menú del escritorio. Cada opción abre la app que tenga configurada:
+     wa.me abre WhatsApp, sms: el mensajero, mailto: el correo. */
+  function menuCompartir(boton, url, txt) {
+    cierraMenu();
+    var m = document.createElement("div");
+    m.className = "mk-shmenu";
+    m.innerHTML =
+      '<a href="https://wa.me/?text=' + encodeURIComponent(txt + " " + url) + '" target="_blank" rel="noopener">' + ICO.wa + "<span>WhatsApp</span></a>" +
+      '<a href="sms:?&body=' + encodeURIComponent(txt + " " + url) + '">' + ICO.sms + "<span>" + t("Mensaje", "Text") + "</span></a>" +
+      '<a href="mailto:?subject=' + encodeURIComponent(t("Algo para tu mascota", "Something for your pet")) + "&body=" + encodeURIComponent(txt + "\n\n" + url) + '">' + ICO.correo + "<span>" + t("Correo", "Email") + "</span></a>" +
+      '<button type="button" class="mk-shcopy">' + ICO.enlace + "<span>" + t("Copiar enlace", "Copy link") + "</span></button>";
+    document.body.appendChild(m);
+
+    var r = boton.getBoundingClientRect();
+    var ancho = 186;
+    var izq = Math.min(Math.max(8, r.left + r.width / 2 - ancho / 2), window.innerWidth - ancho - 8);
+    m.style.left = Math.round(izq) + "px";
+    // Si no cabe debajo, va encima: en una tarjeta de abajo se saldría de la pantalla.
+    var abajo = r.bottom + 8 + 180 < window.innerHeight;
+    m.style.top = Math.round(abajo ? (r.bottom + window.scrollY + 8) : (r.top + window.scrollY - 8 - m.offsetHeight)) + "px";
+
+    m.querySelector(".mk-shcopy").addEventListener("click", function () {
+      var ok = function () {
+        var s = m.querySelector(".mk-shcopy span");
+        if (s) s.textContent = t("Copiado", "Copied");
+        setTimeout(cierraMenu, 900);
+      };
+      try { navigator.clipboard.writeText(url).then(ok, function () { window.prompt(t("Copia el enlace:", "Copy the link:"), url); cierraMenu(); }); }
+      catch (e) { window.prompt(t("Copia el enlace:", "Copy the link:"), url); cierraMenu(); }
+    });
+    [].forEach.call(m.querySelectorAll("a"), function (a) { a.addEventListener("click", function () { setTimeout(cierraMenu, 80); }); });
+    setTimeout(function () {
+      document.addEventListener("click", fueraMenu);
+      document.addEventListener("keydown", escMenu);
+    }, 0);
+  }
+  function cierraMenu() {
+    var m = document.querySelector(".mk-shmenu");
+    if (m) m.remove();
+    document.removeEventListener("click", fueraMenu);
+    document.removeEventListener("keydown", escMenu);
+  }
+  function fueraMenu(e) { if (!e.target.closest || !e.target.closest(".mk-shmenu")) cierraMenu(); }
+  function escMenu(e) { if (e.key === "Escape") cierraMenu(); }
+
   function comparte(boton) {
     var url = enlaceParaCompartir();
     var titulo = tituloParaCompartir();
@@ -339,14 +428,20 @@
           '<h3 class="mk-name">' + esc(t(p.name_es, p.name_en)) + "</h3>" +
           (desc ? '<p class="mk-desc">' + esc(desc) + "</p>" : "") +
           // Sin precio: Amazon no deja mostrarlo guardado. Se va a verlo alli.
-          '<a class="mk-go" href="' + esc(enlace(p)) + '" target="_blank" rel="sponsored nofollow noopener" data-id="' + esc(p.id) + '">' +
-            "<span>" + t("Ver artículo", "View item") + "</span>" + ICO.salir +
-          "</a>" +
+          '<div class="mk-acc">' +
+            '<a class="mk-go" href="' + esc(enlace(p)) + '" target="_blank" rel="sponsored nofollow noopener" data-id="' + esc(p.id) + '">' +
+              "<span>" + t("Ver artículo", "View item") + "</span>" + ICO.salir +
+            "</a>" +
+            '<button class="mk-sh1" data-sh="' + esc(p.id) + '" aria-label="' + t("Compartir", "Share") + '" title="' + t("Compartir", "Share") + '">' + ICO.compartir + "</button>" +
+          "</div>" +
         "</div></article>";
     }).join("") + "</div>";
 
     [].forEach.call(g.querySelectorAll(".mk-go"), function (a) {
       a.addEventListener("click", function () { cuenta(a.getAttribute("data-id")); });
+    });
+    [].forEach.call(g.querySelectorAll(".mk-sh1"), function (b) {
+      b.addEventListener("click", function (e) { e.preventDefault(); comparteArticulo(b.getAttribute("data-sh"), b); });
     });
   }
 
@@ -424,6 +519,7 @@
     if (D.kit) return;   // el enlace del cliente no se reescribe
     try {
       var q = [];
+      if (F.art) q.push("art=" + encodeURIComponent(F.art));
       if (F.lista) q.push("lista=" + F.lista);
       if (F.especie) q.push("para=" + (F.especie === "dog" ? "perro" : "gato"));
       if (F.categoria) q.push("cat=" + F.categoria);
@@ -435,6 +531,7 @@
   function leeUrl() {
     try {
       var q = new URLSearchParams(location.search);
+      F.art = q.get("art") || "";
       var para = (q.get("para") || q.get("for") || "").toLowerCase();
       if (para === "perro" || para === "dog") F.especie = "dog";
       if (para === "gato" || para === "cat") F.especie = "cat";
