@@ -386,7 +386,10 @@ function Header({ overDark }) {
       <div className="container hdr-row">
         <a href="/" className="hdr-logo" aria-label="BPuppy">
           <img src={overDark && !scrolled ? 'assets/logo-clean-light.webp' : 'assets/logo-clean.webp'} alt="BPuppy logo" />
-          <span className="wm notranslate">Bright Puppy</span>
+          {/* El movil esconde "Bright Puppy" (no cabe con el burger) y ensena
+              "BPuppy": la marca sola no se lee como B a ese tamano. */}
+          <span className="wm wm-full notranslate">Bright Puppy</span>
+          <span className="wm wm-short notranslate">BPuppy</span>
         </a>
         <nav className="nav">
           {pv['Cachorros'] !== false && <NavItem label={t(STRINGS.nav.puppies)} href="/razas" items={cachItems} navClass="bp-nav-glow"/>}

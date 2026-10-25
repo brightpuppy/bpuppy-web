@@ -153,7 +153,13 @@ a { color: inherit; text-decoration: none; }
 .hdr-logo { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .hdr-logo img { width: 46px; height: auto; }
 .hdr-logo .wm { font-family: var(--display); font-weight: 700; font-size: 22px; letter-spacing: -0.02em; color: var(--ink); transition: color .3s ease; white-space: nowrap; margin-top: 4px; }
-.hdr.over-dark .wm { color: #fff; }
+.hdr-logo .wm-short { display: none; } /* el nombre corto: solo sale en el movil */
+.hdr.over-dark .wm { color: #fff; text-shadow: 0 1px 3px rgba(0,0,0,.45); }
+/* Sobre un hero oscuro el logo va con contorno BLANCO, y la B solo se lee por
+   ese contorno porque la marca va rellena. Si el video pasa por una zona clara
+   el contorno se pierde y queda una mancha: la sombra lo despega de cualquier
+   fondo. */
+.hdr.over-dark .hdr-logo img { filter: drop-shadow(0 1px 2px rgba(0,0,0,.42)) drop-shadow(0 0 1px rgba(0,0,0,.3)); }
 .hdr-portal { color: var(--ink-2); background: rgba(45,36,33,.06); transition: background .2s ease, color .2s ease, transform .2s ease; }
 .hdr-portal:hover { background: var(--orange); color: #fff; transform: translateY(-1px); }
 .hdr.over-dark .hdr-portal { color: rgba(255,255,255,.9); background: rgba(255,255,255,.14); }
@@ -318,7 +324,16 @@ html.media-dark .hdr .nav-dropdown a { color: var(--ink) !important; }
 }
 @keyframes bpRainbowShift { to { background-position:200% center; } }
 @media (max-width: 560px) {
-  .hdr-logo .wm { display: none; } /* solo el ícono del logo en móviles chicos para que el burger entre */
+  /* "Bright Puppy" no cabe junto al burger, pero dejar la cabecera sin UNA sola
+     letra tampoco vale: va el nombre corto, el mismo que usa el portal. */
+  .hdr-logo .wm-full { display: none; }
+  .hdr-logo .wm-short { display: inline; font-size: 19px; }
+  .hdr-logo img { width: 52px; } /* a 46px la cintura de la B no se distingue */
+}
+@media (max-width: 359px) {
+  /* Pantallas de 320: aqui ya no cabe ni el nombre corto. */
+  .hdr-logo .wm-short { display: none; }
+  .hdr-logo img { width: 48px; }
 }
 
 /* ── Hero ── */
