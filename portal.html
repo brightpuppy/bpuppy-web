@@ -49,7 +49,45 @@ header .brand img{height:28px}
 .hbtn:hover{border-color:var(--orange);color:var(--orange2);transform:translateY(-1px)}
 .hbtn.ghost{border-style:dashed}
 
-.wrap{max-width:960px;margin:0 auto;padding:0 16px 80px}
+.wrap{max-width:1140px;margin:0 auto;padding:0 16px 80px}
+
+/* ── el perfil: menú a la izquierda, lo tuyo al centro ── */
+.shell{display:grid;grid-template-columns:232px minmax(0,1fr);gap:24px;align-items:start}
+.main{min-width:0}
+.sidenav{position:sticky;top:16px;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);
+  box-shadow:var(--shadow);padding:15px 12px 13px}
+.sntit{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);padding:0 10px 8px}
+.snl{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:11px;color:var(--ink);
+  text-decoration:none;font-size:13.5px;font-weight:700;border:none;background:none;width:100%;
+  font-family:inherit;text-align:left;cursor:pointer;transition:background .15s,color .15s}
+.snl:hover{background:var(--paper);color:var(--orange2)}
+.snl.on{background:color-mix(in srgb,var(--orange) 11%,var(--bg));color:var(--orange2)}
+.snl svg{flex-shrink:0;opacity:.72}
+.snl:hover svg,.snl.on svg{opacity:1}
+.snsep{height:1px;background:var(--line2);margin:12px 4px}
+/* El degradado va AQUÍ, en el span, no en el .snl: dentro de un flex se rompe. */
+.snsocial{display:inline-block;background:linear-gradient(90deg,#F55820,#E83860,#7C3AED,#2563EB,#12A47A,#F5A623,#F55820);
+  background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:slide 7s linear infinite;font-weight:800}
+@media(max-width:900px){
+  .shell{grid-template-columns:1fr;gap:0}
+  .sidenav{position:static;order:2;margin-top:26px}
+  .main{order:1}
+}
+
+/* ── la historia de tu cachorro ── */
+.tl{position:relative;padding-left:27px;margin-top:4px}
+.tl:before{content:"";position:absolute;left:7px;top:7px;bottom:7px;width:2px;
+  background:linear-gradient(var(--orange),var(--line2))}
+.tli{position:relative;padding-bottom:17px}
+.tli:last-child{padding-bottom:0}
+.tli .dot{position:absolute;left:-27px;top:2px;width:16px;height:16px;border-radius:50%;
+  border:3px solid var(--bg);background:var(--line);box-shadow:0 0 0 1px var(--line2)}
+.tli.hit .dot{background:var(--orange)}
+.tli.soon .dot{background:var(--blue)}
+.tlk{font-size:11px;font-weight:800;letter-spacing:.05em;text-transform:uppercase;color:var(--soft)}
+.tlt{font-size:14.5px;font-weight:700;line-height:1.3;margin-top:2px}
+.tlx{font-size:12.5px;color:var(--ink2);line-height:1.5;margin-top:3px;text-wrap:pretty}
 
 /* ── avatar (sin foto de portada) ── */
 /* Banda de color suave arriba, solo para dar aire. El avatar YA no se recorta:
@@ -317,7 +355,10 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
   .idcard .rainbow{margin:0 -17px}
   .av{width:98px;height:98px;margin-top:-48px;font-size:33px}
   h1.nm{font-size:23px}
-  .stats{grid-template-columns:repeat(2,1fr)}
+  .stats{grid-template-columns:repeat(4,1fr);gap:6px}
+  .stat{padding:10px 4px;border-radius:12px}
+  .stat b{font-size:18px}
+  .stat span{font-size:9px;margin-top:3px;letter-spacing:0}
   .g2{grid-template-columns:1fr}
   .modal{padding:19px;border-radius:19px}
 }
@@ -1455,11 +1496,166 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     }catch(e){ alert(PT('No se pudo abrir.','Could not open it.')); }
   };
 
+  /* ═══ MENÚ LATERAL ═══
+     A la izquierda, el resto de la casa: lo que el cliente puede querer abrir
+     sin tener que buscarlo. Son enlaces de verdad (se abren en su pestaña). */
+  function sidenavHtml(){
+    var items=[
+      ['/', 'home', PT('Inicio de B Puppy','B Puppy home')],
+      ['/adopciones', 'paw', PT('Cachorros disponibles','Available puppies')],
+      ['/razas', 'compass', PT('Descubre otras razas','Explore breeds')],
+      ['/media#guias', 'book', PT('Gu\u00edas en video','Video guides')],
+      ['/blog', 'chat', PT('Blog','Blog')],
+      ['/mercado', 'tag', PT('Tienda','Shop')],
+      ['/entregados', 'heart', PT('Entregas felices','Happy deliveries')],
+      ['/grooming', 'scissors', PT('Grooming','Grooming')],
+      ['/solicitud', 'pen', PT('Solicitar un cachorro','Request a puppy')]
+    ];
+    return '<aside class="sidenav">'+
+      '<div class="sntit">'+PT('Mi cuenta','My account')+'</div>'+
+      '<button type="button" class="snl" onclick="goTab(\'cuenta\')">'+svg('mail',17)+PT('Mis datos','My details')+'</button>'+
+      '<button type="button" class="snl" onclick="profileEdit()">'+svg('pen',17)+PT('Editar mi perfil','Edit my profile')+'</button>'+
+      '<div class="snsep"></div>'+
+      '<div class="sntit">'+PT('BrightPuppy','BrightPuppy')+'</div>'+
+      items.map(function(i){
+        return '<a class="snl" href="'+i[0]+'">'+svg(i[1],17)+esc(i[2])+'</a>';
+      }).join('')+
+      '<a class="snl" href="/social">'+svg('users',17)+'<span class="snsocial">B Social</span></a>'+
+      '</aside>';
+  }
+
+  /* ═══ LA HISTORIA ═══
+     Se arma con lo que ya sabemos de él: cuándo llegó su cachorro, sus baños,
+     su plan, sus insignias. Nada inventado: si no hay fecha, no hay fila. */
+  function historia(d){
+    var ev=[], hoy=_todayISO();
+    function add(fecha, clave, titulo, detalle, estado){
+      if(!fecha) return;
+      var f=String(fecha).slice(0,10);
+      if(!/^\d{4}-\d{2}-\d{2}$/.test(f)) return;
+      ev.push({f:f, k:clave, t:titulo, x:detalle||'', s:estado||(f>hoy?'soon':'hit')});
+    }
+    (d.puppies||[]).forEach(function(p){
+      var n=esc(p.name||PT('tu cachorro','your puppy'));
+      add(p.birth_date, PT('Naci\u00f3','Born'), n+PT(' naci\u00f3',' was born'), p.breed?esc(p.breed):'');
+      add(p.delivered_at, PT('El gran d\u00eda','The big day'), n+PT(' lleg\u00f3 a casa',' came home'),
+        PT('El d\u00eda que empez\u00f3 todo.','The day it all started.'));
+    });
+    (d.pets||[]).forEach(function(p){
+      add(p.created_at, PT('Familia','Family'), PT('Sumaste a ','You added ')+esc(p.name||'')+PT(' a tu perfil',' to your profile'), '');
+    });
+    (d.memberships||[]).forEach(function(m){
+      if(String(m.status||'')==='cancelled') return;
+      add(m.created_at, PT('Plan','Plan'), PT('Empez\u00f3 tu ','Your ')+esc(planPretty(m.plan))+PT('',' started'), '');
+    });
+    (d.bookings||[]).forEach(function(b){
+      if(!b.appointment_date) return;
+      var st=String(b.status||'').toLowerCase();
+      if(st==='cancelled') return;
+      var quien=esc(b.pet_name||PT('tu mascota','your pet'));
+      if(st==='completed') add(b.appointment_date, PT('Spa','Spa'), quien+PT(' sali\u00f3 impecable',' came out spotless'), esc(String(b.services||'')).slice(0,80));
+      else if(String(b.appointment_date)>=hoy) add(b.appointment_date, PT('Lo que viene','Coming up'), PT('Cita de ','Appointment for ')+quien, b.appointment_time?esc(b.appointment_time):'', 'soon');
+    });
+    (d.badges||[]).forEach(function(b){
+      add(b.awarded_at, PT('Logro','Badge'), esc(bName(b)), '');
+    });
+    ev.sort(function(a,b){ return b.f.localeCompare(a.f); });
+    return ev;
+  }
+  function historiaHtml(d){
+    var ev=historia(d);
+    if(!ev.length) return '';
+    var corte=7, hay=ev.length>corte;
+    function fila(e){
+      return '<div class="tli '+e.s+'"><span class="dot"></span>'+
+        '<div class="tlk">'+e.k+' \u00b7 '+esc(fmtD(e.f))+'</div>'+
+        '<div class="tlt">'+e.t+'</div>'+
+        (e.x?('<div class="tlx">'+e.x+'</div>'):'')+'</div>';
+    }
+    return '<div class="card"><div class="ttl">'+svg('clock',18)+' '+PT('Su historia con nosotros','Your story with us')+'</div>'+
+      '<div class="tl" id="tl-box">'+ev.slice(0,corte).map(fila).join('')+
+        (hay?('<div id="tl-mas" style="display:none">'+ev.slice(corte).map(fila).join('')+'</div>'):'')+'</div>'+
+      (hay?('<button class="lnk" style="margin-top:12px" onclick="verHistoria(this)">'+PT('Ver toda la historia','See the whole story')+' ('+ev.length+')</button>'):'')+
+      '</div>';
+  }
+  window.verHistoria=function(bt){
+    var m=document.getElementById('tl-mas'); if(!m) return;
+    var abierto=m.style.display!=='none';
+    m.style.display=abierto?'none':'';
+    bt.innerHTML=abierto?(PT('Ver toda la historia','See the whole story')):(PT('Ver menos','Show less'));
+  };
+
+  /* ═══ LA FICHA DE SU CACHORRO ═══ */
+  function edadDe(iso){
+    if(!iso) return '';
+    var n=new Date(String(iso).slice(0,10)+'T12:00:00'); if(isNaN(n)) return '';
+    var m=Math.floor((Date.now()-n.getTime())/2629800000);
+    if(m<1) return PT('reci\u00e9n nacido','newborn');
+    if(m<24) return m+' '+PT(m===1?'mes':'meses',m===1?'month':'months');
+    var a=Math.floor(m/12);
+    return a+' '+PT(a===1?'a\u00f1o':'a\u00f1os',a===1?'year':'years');
+  }
+  function fotosDe(p){
+    var fs=[];
+    if(p.photo_url) fs.push(p.photo_url);
+    (p.photos||[]).forEach(function(x){
+      var u=(x&&typeof x==='object')?(x.url||x.src||''):String(x||'');
+      if(u&&fs.indexOf(u)<0) fs.push(u);
+    });
+    if(p.delivery_photo_url&&fs.indexOf(p.delivery_photo_url)<0) fs.push(p.delivery_photo_url);
+    return fs;
+  }
+  window.verFoto=function(url,titulo){
+    modal(esc(titulo||''),'<img src="'+esc(url)+'" alt="" style="width:100%;border-radius:14px;display:block">',620);
+  };
+  function panePuppy(d){
+    var ps=(d.puppies||[]);
+    if(!ps.length) return '';
+    return ps.map(function(p){
+      var fotos=fotosDe(p), n=esc(p.name||PT('Tu cachorro','Your puppy'));
+      var datos=[
+        [PT('Raza','Breed'), p.breed],
+        [PT('Color','Color'), p.color],
+        [PT('Sexo','Sex'), p.gender],
+        [PT('Naci\u00f3','Born'), p.birth_date?(fmtD(String(p.birth_date).slice(0,10))+' \u00b7 '+edadDe(p.birth_date)):''],
+        [PT('Lleg\u00f3 a casa','Came home'), p.delivered_at?fmtD(String(p.delivered_at).slice(0,10)):''],
+        [PT('Microchip','Microchip'), p.microchip],
+        [PT('Pedigr\u00ed','Pedigree'), (p.pedigree_org&&p.pedigree_verificado_el)?(p.pedigree_org+(p.pedigree_number?(' \u00b7 '+p.pedigree_number):'')):'']
+      ].filter(function(x){ return String(x[1]||'').trim(); });
+      return '<div class="card">'+
+        '<div class="ttl">'+svg('star',18)+' '+n+'</div>'+
+        (p.short_story?('<p class="muted" style="margin:8px 0 0">'+esc(p.short_story)+'</p>'):'')+
+        (fotos.length?('<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(min(132px,100%),1fr));gap:9px;margin-top:14px">'+
+          fotos.slice(0,12).map(function(u){
+            return '<button type="button" onclick="verFoto(\''+esc(u)+'\',\''+n+'\')" style="border:1px solid var(--line);background:none;padding:0;border-radius:12px;overflow:hidden;aspect-ratio:1;cursor:pointer">'+
+              '<img src="'+esc(u)+'" alt="" loading="lazy" onerror="this.closest(\'button\').style.display=\'none\'" style="width:100%;height:100%;object-fit:cover;display:block"></button>';
+          }).join('')+'</div>'):'')+
+        (datos.length?('<div style="margin-top:15px">'+datos.map(function(x){
+          return '<div class="row"><span class="k">'+x[0]+'</span><span class="v">'+esc(x[1])+'</span></div>';
+        }).join('')+'</div>'):'')+
+      '</div>';
+    }).join('');
+  }
+
+  /* ═══ PORTADA ═══
+     Lo primero que ve: lo que viene, su historia, y luego lo de descubrir.
+     Los videos van en una tira pequeña, no de reproductor gigante. */
+  function paneInicio(d){
+    var na=nextApptAny();
+    var saludo = na
+      ? ('<div class="card"><div class="ttl">'+svg('calendar',18)+' '+PT('Lo que viene','Coming up')+'</div>'+
+         '<div class="row"><span class="k">'+esc(na.pet_name||PT('tu mascota','your pet'))+'</span>'+
+         '<span class="v">'+esc(fmtD(na.appointment_date))+(na.appointment_time?(' \u00b7 '+esc(na.appointment_time)):'')+'</span></div>'+
+         '<button class="btn sm" style="margin-top:12px" onclick="goTab(\'grooming\')">'+PT('Ver mi cita','See my appointment')+'</button></div>')
+      : '';
+    return saludo + historiaHtml(d) + '<div id="pv-video"></div>' + paneDescubre();
+  }
+
   /* ═══ PANELES ═══ */
   function paneMascotas(d){
     var cards=(d.pets||[]).map(petCard).join('');
     cards+='<div class="addtile" onclick="petAdd()"><div class="plus">+</div>'+PT('Agregar otra mascota','Add another pet')+'</div>';
-    return '<div id="pv-video"></div><div class="pets">'+cards+'</div>';
+    return '<div class="pets">'+cards+'</div>';
   }
   /* Los videos del cliente: que vea cada cual lo decide la FILA en
      portal_videos (especie de la mascota + dias desde que se la llevo), no el
@@ -1498,11 +1694,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
           return true;
         });
         if(!lista.length) return;
-        // El primero que le toca va grande; el resto de la serie debajo y en
-        // miniatura, para no cargarle tres reproductores de entrada.
-        var v=lista[0], resto=lista.slice(1);
-        var ti=PT(v.title_es,v.title_en), de=PT(v.desc_es,v.desc_en);
-        var mas=resto.map(function(x){
+        // Todos en miniatura: esto es una ayuda, no el protagonista de la página.
+        var mas=lista.map(function(x){
           var xt=PT(x.title_es,x.title_en), xd=PT(x.desc_es,x.desc_en);
           return '<div class="pv-item" data-yt="'+esc(x.youtube_id)+'" role="button" tabindex="0">'+
               '<div class="pv-thumb">'+
@@ -1514,16 +1707,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         }).join('');
         host.innerHTML=
           '<div class="card pv-vid">'+
-            '<div class="pv-vid-h">'+
-              '<div class="pv-vid-t">'+esc(ti)+'</div>'+
-              (de?'<div class="pv-vid-d">'+esc(de)+'</div>':'')+
-            '</div>'+
-            '<div class="pv-vid-f">'+
-              '<iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(v.youtube_id)+'?rel=0" '+
-                'title="'+esc(ti)+'" loading="lazy" allowfullscreen '+
-                'allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>'+
-            '</div>'+
-            (mas?('<div class="pv-more"><div class="pv-more-h">'+PT('M\u00e1s de la serie','More from the series')+'</div><div class="pv-more-g">'+mas+'</div></div>'):'')+
+            '<div class="pv-more" style="border-top:none;padding-top:16px"><div class="pv-more-h">'+PT('Tu cachorro, paso a paso','Your puppy, step by step')+'</div>'+
+              '<div class="pv-more-g">'+mas+'</div></div>'+
             '<div class="pv-foot"><a href="/media#guias">'+PT('Ver toda la serie','See the whole series')+'</a></div>'+
           '</div>';
         // El reproductor entra al pulsar, justo donde estaba la miniatura.
@@ -1841,15 +2026,14 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     var naLineHtml = na0 ? ('<div class="nextcita"><span class="ic">'+svg('calendar',16,2)+'</span><div style="min-width:0"><div class="k">'+PT('Tu próxima cita','Your next appointment')+'</div><div class="v">'+esc(na0.pet_name||PT('tu mascota','your pet'))+' · '+esc(fmtD(na0.appointment_date))+(na0.appointment_time?(' · '+esc(na0.appointment_time)):'')+'</div></div></div>') : '';
     var aboutBlockHtml = '<div class="aboutme">'+(c.about?('<p>'+esc(c.about)+'</p>'):('<p class="ph">'+PT('Cuéntanos algo sobre ti — se ve en tu perfil.','Tell us a bit about yourself — it shows on your profile.')+'</p>'))+'<button class="lnk" onclick="editAbout()">'+svg('pen',13,2)+' '+(c.about?PT('Editar','Edit'):PT('Escribir sobre mí','Write about me'))+'</button></div>';
 
-    /* Sin foto de portada — solo un aire de color arriba para que la tarjeta respire. */
-    coverHost.innerHTML='<div class="topband"></div>';
+    /* La banda de color ya no va suelta a lo ancho: entra con la columna del centro. */
+    coverHost.innerHTML='';
 
     var html='<div class="idcard rise"><div class="rainbow"></div>'+
       '<div class="av">'+(c.photo_url?('<img src="'+esc(c.photo_url)+'" alt="">'):esc(initials))+
         '<button class="pen" onclick="setPhoto(\'avatar\')" title="'+PT('Cambiar foto','Change photo')+'">'+svg('cam',14,2)+'</button></div>'+
       '<h1 class="nm">'+PT('Hola, ','Hi, ')+esc(String(name||'').split(' ')[0]||name)+'</h1>'+
       '<div class="sub">'+esc(d.email)+(loc?(' · '+esc(loc)):'')+'</div>'+
-      (top?('<div class="memchip" style="border-color:'+top.color+';color:'+top.color+'">'+svg('star',13,2)+' '+PT('Miembro ','Member ')+esc(top.label)+'</div>'):'')+
       naLineHtml+
       '<div style="text-align:center;margin:8px 0 2px"><button class="btn sm" onclick="profileEdit()">'+svg('pen',14)+' '+PT('Editar mi perfil','Edit my profile')+'</button></div>'+
       '<div class="stats">'+
@@ -1863,24 +2047,28 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       (profileComplete(c)?'':'<div class="nudge">'+PT('Completa tu perfil y desbloqueas la insignia <b>Perfil Completo</b>.','Complete your profile and unlock the <b>Complete Profile</b> badge.')+'</div>')+
       '</div>';
 
-    var tabs=[['mascotas','paw',PT('Mascotas','Pets'),nPets],
+    var pups=(d.puppies||[]);
+    var tabs=[['inicio','sparkle',PT('Inicio','Home'),0]];
+    if(pups.length) tabs.push(['cachorro','star',pups.length===1?(pups[0].name||PT('Mi cachorro','My puppy')):PT('Mis cachorros','My puppies'),0]);
+    tabs=tabs.concat([['mascotas','paw',PT('Mascotas','Pets'),nPets],
               ['grooming','scissors','Grooming',0],
               ['pagos','card',PT('Pagos','Payments'),0],
-              ['descubre','compass',PT('Descubre','Discover'),0],
               ['logros','trophy',PT('Logros','Badges'),earned],
-              ['cuenta','mail',PT('Cuenta','Account'),0]];
+              ['cuenta','mail',PT('Cuenta','Account'),0]]);
     html+='<div class="tabs">'+tabs.map(function(t,i){
       return '<button class="tab'+(i===0?' on':'')+'" data-t="'+t[0]+'">'+svg(t[1],16)+' '+esc(t[2])+(t[3]?('<span class="n">'+t[3]+'</span>'):'')+'</button>';
     }).join('')+'</div>';
 
-    html+='<div class="pane on" data-p="mascotas">'+paneMascotas(d)+'</div>'+
+    html+='<div class="pane on" data-p="inicio">'+paneInicio(d)+'</div>'+
+      (pups.length?('<div class="pane" data-p="cachorro">'+panePuppy(d)+'</div>'):'')+
+      '<div class="pane" data-p="mascotas">'+paneMascotas(d)+'</div>'+
       '<div class="pane" data-p="grooming">'+paneGrooming(d)+'</div>'+
       '<div class="pane" data-p="pagos">'+panePagos(d)+'</div>'+
-      '<div class="pane" data-p="descubre">'+paneDescubre()+'</div>'+
       '<div class="pane" data-p="logros">'+paneLogros(d)+'</div>'+
       '<div class="pane" data-p="cuenta">'+paneCuenta(d)+'</div>';
 
-    root.innerHTML=html;
+    // Menú a la izquierda, lo suyo al centro.
+    root.innerHTML='<div class="shell">'+sidenavHtml()+'<div class="main"><div class="topband"></div>'+html+'</div></div>';
     videoDelCliente(d);
     loadLoyalty(); // Puntos B (solo miembros; no-op si no hay tarjeta)
 
@@ -1900,7 +2088,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     try{
       if(!window._openPm && !window._openResched){
         var _sv=localStorage.getItem('bp_ptab_'+(d.email||''));
-        if(_sv && _sv!=='mascotas'){ var _tb=root.querySelector('.tab[data-t="'+_sv+'"]'); if(_tb) _tb.click(); }
+        if(_sv && _sv!=='inicio'){ var _tb=root.querySelector('.tab[data-t="'+_sv+'"]'); if(_tb) _tb.click(); }
       }
     }catch(e){}
 
@@ -1967,20 +2155,66 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     return out;
   }
 
-  async function load(){
-    root.innerHTML='<div class="card"><div class="center"><div class="spin"></div>'+PT('Cargando tu perfil…','Loading your profile…')+'</div></div>';
+  /* Lo ultimo que vio, guardado en su propio dispositivo. Si vuelve de otra app
+     o el movil descarto la pestana, se pinta al instante y se refresca por
+     detras. Nunca sustituye al dato real: solo evita la pantalla en blanco. */
+  var _pintado=false, _ultimo=0;
+  function cacheKey(em){ return 'bp_pdata_'+String(em||'').toLowerCase(); }
+  function guardarCache(d){
+    try{
+      var t=JSON.stringify({t:Date.now(),d:d});
+      if(t.length>900000) return;           // sin pasarse: no es un almacen
+      localStorage.setItem(cacheKey(d.email),t);
+    }catch(e){}
+  }
+  function leerCache(em){
+    try{
+      var r=localStorage.getItem(cacheKey(em)); if(!r) return null;
+      var o=JSON.parse(r);
+      return (o&&o.d&&o.d.email)?o.d:null;
+    }catch(e){ return null; }
+  }
+  function olvidarCache(em){ try{ localStorage.removeItem(cacheKey(em)); }catch(e){} }
+
+  async function load(opts){
+    var callado = !!(opts&&opts.callado);
     var s=await sb.auth.getSession();
-    var tok=s.data&&s.data.session&&s.data.session.access_token;
+    var ses=s.data&&s.data.session;
+    var tok=ses&&ses.access_token;
+    var em=(ses&&ses.user&&ses.user.email||'').toLowerCase();
     if(!tok){ showLogin({k:'err',t:PT('Sesión expirada, vuelve a entrar.','Session expired, sign in again.')}); return; }
+
+    if(!_pintado && !callado){
+      var vieja=em?leerCache(em):null;
+      if(vieja){ try{ render(vieja); _pintado=true; }catch(e){} }
+      else root.innerHTML='<div class="card"><div class="center"><div class="spin"></div>'+PT('Cargando tu perfil…','Loading your profile…')+'</div></div>';
+    }
     try{
       var r=await fetch(SUPA+'/functions/v1/portal_data',{method:'POST',headers:{'Authorization':'Bearer '+tok,'apikey':ANON,'Content-Type':'application/json'},body:'{}'});
       var d=await r.json();
-      if(d.error){ root.innerHTML='<div class="card"><div class="msg err">'+esc(d.error)+'</div></div>'; return; }
-      render(d);
-    }catch(e){ root.innerHTML='<div class="card"><div class="msg err">'+PT('No pudimos cargar tu perfil. Intenta de nuevo.','We could not load your profile. Try again.')+'</div></div>'; }
+      if(d.error){
+        if(_pintado) return;                // ya esta viendo algo: no se lo tumbamos
+        root.innerHTML='<div class="card"><div class="msg err">'+esc(d.error)+'</div></div>'; return;
+      }
+      _ultimo=Date.now();
+      render(d); _pintado=true; guardarCache(d);
+    }catch(e){
+      if(_pintado) return;
+      root.innerHTML='<div class="card"><div class="msg err">'+PT('No pudimos cargar tu perfil. Intenta de nuevo.','We could not load your profile. Try again.')+'</div></div>';
+    }
   }
 
+  // Al volver a la pestana: refresco callado, y solo si ya se enfrio.
+  document.addEventListener('visibilitychange',function(){
+    if(document.visibilityState!=='visible') return;
+    if(!_pintado) return;
+    if(Date.now()-_ultimo < 60000) return;
+    load({callado:true});
+  });
+
   document.getElementById('logout').onclick=function(e){ e.preventDefault();
+    try{ olvidarCache(D&&D.email); }catch(_e){}
+    _pintado=false;
     sb.auth.signOut().then(function(){ showLogin({k:'info',t:PT('Sesión cerrada.','Signed out.')}); document.getElementById('logout').style.display='none'; }); };
 
   // ---- Retorno de Stripe tras pagar servicios extra (?addon=cs_...) ----
