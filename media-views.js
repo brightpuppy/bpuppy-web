@@ -699,7 +699,8 @@ function NewsSection() {
 // La serie de videos de cachorros. Para anadir un capitulo: un objeto mas aqui.
 const GUIAS = [
   { id: "0AuM52oUje4", cap: ["Cap\u00edtulo 01", "Chapter 01"], titulo: ["Manual b\u00e1sico del cachorro", "Puppy basics"] },
-  { id: "2aTfCN4QY6Y", cap: ["Cap\u00edtulo 02", "Chapter 02"], titulo: ["Ense\u00f1arle a hacer sus necesidades", "Potty training"] }
+  { id: "2aTfCN4QY6Y", cap: ["Cap\u00edtulo 02", "Chapter 02"], titulo: ["Ense\u00f1arle a hacer sus necesidades", "Potty training"] },
+  { id: "YhBmd2BGE6g", cap: ["Cap\u00edtulo 03", "Chapter 03"], titulo: ["Nutrici\u00f3n natural", "Natural nutrition"] }
 ];
 // Los videos NO se cargan de entrada: se pinta la miniatura y el iframe entra al
 // pulsar. Dos iframes de YouTube mas en una pagina que ya lleva varios se notan.
