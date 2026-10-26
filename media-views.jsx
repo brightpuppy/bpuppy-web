@@ -1,3 +1,6 @@
+// NO ES LA FUENTE. Lo que se sirve es media-views.js (no hay build jsx->js).
+// Este fichero esta DESFASADO: le faltan secciones enteras que si existen en el .js
+// (BannerHistoria, NewsSection, AIPodcastsSection, GuiasSection). Edita el .js.
 // media-views.jsx — B Media page (dark hero + kinetic typography)
 
 const MC = {

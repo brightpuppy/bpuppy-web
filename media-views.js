@@ -70,7 +70,7 @@ function useReveal() {
 }
 function MediaApp({ visibility = {} }) {
   const v = visibility;
-  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), /* @__PURE__ */ React.createElement(BannerHistoria, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.news !== false && /* @__PURE__ */ React.createElement(NewsSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.aipods !== false && /* @__PURE__ */ React.createElement(AIPodcastsSection, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
+  return /* @__PURE__ */ React.createElement("div", { style: { background: MC.bg, color: MC.ink, fontFamily: "Plus Jakarta Sans, sans-serif", paddingTop: 80 } }, v.hero !== false && /* @__PURE__ */ React.createElement(MediaHero, null), /* @__PURE__ */ React.createElement(BannerHistoria, null), v.guias !== false && /* @__PURE__ */ React.createElement(GuiasSection, null), v.entrevistas !== false && /* @__PURE__ */ React.createElement(InterviewsSection, null), v.news !== false && /* @__PURE__ */ React.createElement(NewsSection, null), v.podcast !== false && /* @__PURE__ */ React.createElement(PodcastSection, null), v.aipods !== false && /* @__PURE__ */ React.createElement(AIPodcastsSection, null), v.videos !== false && /* @__PURE__ */ React.createElement(VideosSection, null), v.cta !== false && /* @__PURE__ */ React.createElement(MediaFooterCTA, null));
 }
 function MediaHero() {
   const t = useT();
@@ -207,7 +207,7 @@ function CommercialCard({ item }) {
 function VideosSection() {
   const t = useT();
   const [ref, visible] = useReveal();
-  return /* @__PURE__ */ React.createElement("section", { id: "videos", ref, style: { padding: "clamp(80px,10vw,140px) clamp(24px,6vw,120px)", background: MC.bg, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(36px)", transition: "opacity 0.7s ease, transform 0.7s ease" } }, /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 56 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: MC.brand, marginBottom: 14 } }, t(["01 \u2014 Videos", "01 \u2014 Videos"])), /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(44px,7.5vw,96px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.92, margin: 0, color: MC.ink } }, t(["Comerciales", "Commercials"]), /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("span", { style: { color: MC.soft, fontWeight: 300 } }, "BPuppy"))), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(360px,1fr))", gap: 22 } }, COMERCIALES.map(function(item) {
+  return /* @__PURE__ */ React.createElement("section", { id: "videos", ref, style: { padding: "clamp(80px,10vw,140px) clamp(24px,6vw,120px)", background: MC.bg, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(36px)", transition: "opacity 0.7s ease, transform 0.7s ease" } }, /* @__PURE__ */ React.createElement("div", { style: { marginBottom: 56 } }, /* @__PURE__ */ React.createElement("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 12, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: MC.brand, marginBottom: 14 } }, t(["01 \u2014 Videos", "01 \u2014 Videos"])), /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(44px,7.5vw,96px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.92, margin: 0, color: MC.ink } }, t(["Comerciales", "Commercials"]), /* @__PURE__ */ React.createElement("br", null), /* @__PURE__ */ React.createElement("span", { style: { color: MC.soft, fontWeight: 300 } }, "BPuppy"))), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(min(360px,100%),1fr))", gap: 22 } }, COMERCIALES.map(function(item) {
     return /* @__PURE__ */ React.createElement(CommercialCard, { key: item.id, item });
   })));
 }
@@ -523,7 +523,7 @@ function BannerHistoria() {
 function InterviewsSection() {
   const t = useT();
   const [ref, visible] = useReveal();
-  return /* @__PURE__ */ React.createElement("section", { ref, style: { padding: "clamp(80px,10vw,140px) clamp(24px,6vw,120px)", background: MC.bg, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(36px)", transition: "opacity 0.7s ease, transform 0.7s ease" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: MC.brand, marginBottom: 14 } }, t(["03 \u2014 Entrevistas", "03 \u2014 Interviews"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 56, flexWrap: "wrap", gap: 24 } }, /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(44px,7.5vw,96px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.92, margin: 0, color: MC.ink } }, t(["Cara", "Face"]), /* @__PURE__ */ React.createElement("br", null), t(["a cara", "to face"])), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 16, color: MC.ink2, lineHeight: 1.6, maxWidth: "36ch", margin: 0 } }, t(["Conversaciones profundas con los expertos que marcan la pauta en el mundo de las mascotas.", "In-depth conversations with the experts setting the standard in the world of pets."]))), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(380px,1fr))", gap: 24, marginBottom: 72 } }, [
+  return /* @__PURE__ */ React.createElement("section", { ref, style: { padding: "clamp(80px,10vw,140px) clamp(24px,6vw,120px)", background: MC.bg, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(36px)", transition: "opacity 0.7s ease, transform 0.7s ease" } }, /* @__PURE__ */ React.createElement("div", { style: { fontSize: 12, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: MC.brand, marginBottom: 14 } }, t(["03 \u2014 Entrevistas", "03 \u2014 Interviews"])), /* @__PURE__ */ React.createElement("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 56, flexWrap: "wrap", gap: 24 } }, /* @__PURE__ */ React.createElement("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(44px,7.5vw,96px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.92, margin: 0, color: MC.ink } }, t(["Cara", "Face"]), /* @__PURE__ */ React.createElement("br", null), t(["a cara", "to face"])), /* @__PURE__ */ React.createElement("p", { style: { fontSize: 16, color: MC.ink2, lineHeight: 1.6, maxWidth: "36ch", margin: 0 } }, t(["Conversaciones profundas con los expertos que marcan la pauta en el mundo de las mascotas.", "In-depth conversations with the experts setting the standard in the world of pets."]))), /* @__PURE__ */ React.createElement("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(380px,100%),1fr))", gap: 24, marginBottom: 72 } }, [
     { id: INTERVIEW_ID, label: ["Entrevista completa \u2014 BPuppy", "Full interview \u2014 BPuppy"], tag: ["Entrevista", "Interview"] },
     { id: "J5Q6c3wy0QE", label: ["Caring Hands Humane Society \u2014 Newton, Kansas \xB7 Primera parte", "Caring Hands Humane Society \u2014 Newton, Kansas \xB7 Part one"], tag: ["Entrevista \xB7 Refugio", "Interview \xB7 Shelter"] }
   ].map(function(iv) {
@@ -562,7 +562,7 @@ function AIPodcastsSection() {
     h("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 40, flexWrap: "wrap", gap: 24 } },
       h("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(40px,6.5vw,88px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.92, margin: 0, color: MC.ink } }, t(["Para escuchar", "Press play"])),
       h("p", { style: { fontSize: 16, color: MC.ink2, lineHeight: 1.6, maxWidth: "36ch", margin: 0 } }, t(["Nuestras historias, ahora en voz. Ponle play y ll\xE9vatelas contigo.", "Our stories, now in audio. Press play and take them with you."]))),
-    h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(360px,1fr))", gap: 20 } }, pods.map(function(p) {
+    h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(min(360px,100%),1fr))", gap: 20 } }, pods.map(function(p) {
       return h("div", { key: p.slug || p.title, style: { background: MC.surface, border: "1px solid " + MC.border, borderRadius: 18, padding: 18, boxShadow: "0 6px 30px rgba(0,0,0,0.05)" } },
         h("div", { style: { display: "flex", gap: 14, alignItems: "center", marginBottom: 12 } },
           p.cover_url ? h("img", { src: p.cover_url, alt: p.title, loading: "lazy", style: { width: 74, height: 74, borderRadius: 14, objectFit: "cover", flexShrink: 0 } }) : h("div", { style: { width: 74, height: 74, borderRadius: 14, background: MC.grad, flexShrink: 0, display: "grid", placeItems: "center", color: "#fff", fontSize: 26 } }, "▶"),
@@ -654,7 +654,7 @@ function NewsSection() {
     const on = active === c[0];
     return h("button", { key: c[0], onClick: function() { setActive(c[0]); }, style: { border: "1px solid " + (on ? MC.ink : MC.border), background: on ? MC.ink : "transparent", color: on ? "#fff" : MC.ink2, borderRadius: 999, padding: "7px 15px", fontSize: 13, fontWeight: 700, cursor: "pointer", fontFamily: "inherit", transition: "all .15s" } }, c[1]);
   }));
-  const feat = featured ? h("a", { href: "/media/noticias/" + encodeURIComponent(featured.slug), style: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(300px,1fr))", background: MC.surface, border: "1px solid " + MC.border, borderRadius: 22, overflow: "hidden", textDecoration: "none", color: MC.ink, marginBottom: 26, boxShadow: "0 10px 50px rgba(0,0,0,0.07)" } },
+  const feat = featured ? h("a", { href: "/media/noticias/" + encodeURIComponent(featured.slug), style: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(300px,100%),1fr))", background: MC.surface, border: "1px solid " + MC.border, borderRadius: 22, overflow: "hidden", textDecoration: "none", color: MC.ink, marginBottom: 26, boxShadow: "0 10px 50px rgba(0,0,0,0.07)" } },
     featured.cover_url ? h("img", { src: featured.cover_url, alt: featured.title, loading: "lazy", style: { width: "100%", height: "100%", minHeight: 240, objectFit: "cover", display: "block" } }) : null,
     h("div", { style: { padding: "clamp(24px,3vw,40px)", display: "flex", flexDirection: "column", justifyContent: "center" } },
       h("div", { style: { display: "flex", alignItems: "center", gap: 10, marginBottom: 12, flexWrap: "wrap" } },
@@ -695,6 +695,68 @@ function NewsSection() {
         onMouseLeave: function(e) { e.currentTarget.style.borderColor = MC.border; e.currentTarget.style.color = MC.ink; }
       }, t(["Ver m\xE1s noticias (" + faltan + ")", "See more news (" + faltan + ")"]))
     ) : null);
+}
+// La serie de videos de cachorros. Para anadir un capitulo: un objeto mas aqui.
+const GUIAS = [
+  { id: "0AuM52oUje4", cap: ["Cap\u00edtulo 01", "Chapter 01"], titulo: ["Manual b\u00e1sico del cachorro", "Puppy basics"] },
+  { id: "2aTfCN4QY6Y", cap: ["Cap\u00edtulo 02", "Chapter 02"], titulo: ["Ense\u00f1arle a hacer sus necesidades", "Potty training"] }
+];
+// Los videos NO se cargan de entrada: se pinta la miniatura y el iframe entra al
+// pulsar. Dos iframes de YouTube mas en una pagina que ya lleva varios se notan.
+function GuiaCard({ g }) {
+  const t = useT();
+  const { lang } = useLang();
+  const h = React.createElement;
+  const _p = React.useState(false);
+  const play = _p[0], setPlay = _p[1];
+  return h("div", { style: { borderRadius: 20, overflow: "hidden", background: MC.surface, border: "1px solid " + MC.border, boxShadow: "0 8px 48px rgba(0,0,0,0.07)" } },
+    h("div", { style: { aspectRatio: "16/9", position: "relative", background: "#000" } },
+      play ? h("iframe", {
+        src: "https://www.youtube.com/embed/" + g.id + "?autoplay=1&rel=0&modestbranding=1&cc_load_policy=1&cc_lang_pref=" + lang,
+        title: t(g.titulo),
+        allow: "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture",
+        allowFullScreen: true,
+        style: { position: "absolute", inset: 0, width: "100%", height: "100%", border: "none", display: "block" }
+      }) : h("button", {
+        type: "button",
+        onClick: function() { setPlay(true); },
+        "aria-label": t(["Reproducir: ", "Play: "]) + t(g.titulo),
+        style: { position: "absolute", inset: 0, width: "100%", height: "100%", padding: 0, border: "none", cursor: "pointer", background: "#000", display: "block" }
+      },
+        h("img", {
+          src: "https://i.ytimg.com/vi/" + g.id + "/maxresdefault.jpg",
+          alt: "", loading: "lazy",
+          // Algunos videos no tienen maxres; la de siempre si existe.
+          onError: function(e) { if (e.currentTarget.src.indexOf("maxres") > -1) e.currentTarget.src = "https://i.ytimg.com/vi/" + g.id + "/hqdefault.jpg"; },
+          style: { position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", display: "block" }
+        }),
+        // Las portadas de estos videos son claras: con el circulo a medias se perdia.
+        h("span", { style: { position: "absolute", left: "50%", top: "50%", transform: "translate(-50%,-50%)", width: 66, height: 66, borderRadius: "50%", background: "rgba(0,0,0,.62)", border: "2px solid rgba(255,255,255,.95)", boxShadow: "0 4px 18px rgba(0,0,0,.35)", display: "flex", alignItems: "center", justifyContent: "center" } },
+          h("svg", { width: "24", height: "24", viewBox: "0 0 24 24", fill: "#fff" }, h("polygon", { points: "6 4 20 12 6 20 6 4" }))))
+    ),
+    h("div", { style: { padding: "16px 20px 20px" } },
+      h("div", { style: { fontSize: 9.5, fontWeight: 700, color: MC.brand, letterSpacing: "0.1em", textTransform: "uppercase", marginBottom: 4 } }, t(g.cap)),
+      h("div", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: 18, fontWeight: 700, color: MC.ink, letterSpacing: "-0.015em", lineHeight: 1.25, textWrap: "pretty" } }, t(g.titulo))));
+}
+function GuiasSection() {
+  const t = useT();
+  const [ref, visible] = useReveal();
+  const h = React.createElement;
+  return h("section", { id: "guias", ref, style: { padding: "clamp(70px,9vw,130px) clamp(24px,6vw,120px)", background: MC.bg2, opacity: visible ? 1 : 0, transform: visible ? "translateY(0)" : "translateY(36px)", transition: "opacity 0.7s ease, transform 0.7s ease" } },
+    h("div", { style: { fontSize: 12, fontWeight: 700, letterSpacing: "0.18em", textTransform: "uppercase", color: MC.brand, marginBottom: 14 } }, t(["05 \u2014 Gu\u00edas", "05 \u2014 Guides"])),
+    h("div", { style: { display: "flex", alignItems: "flex-end", justifyContent: "space-between", marginBottom: 48, flexWrap: "wrap", gap: 24 } },
+      h("h2", { style: { fontFamily: "Bricolage Grotesque,sans-serif", fontSize: "clamp(40px,6.5vw,88px)", fontWeight: 800, letterSpacing: "-0.04em", lineHeight: 0.92, margin: 0, color: MC.ink } },
+        t(["Tu cachorro,", "Your puppy,"]), h("br", null),
+        h("span", { style: { color: MC.soft, fontWeight: 300 } }, t(["paso a paso", "step by step"]))),
+      h("p", { style: { fontSize: 16, color: MC.ink2, lineHeight: 1.6, maxWidth: "36ch", margin: 0, textWrap: "pretty" } },
+        t(["V\u00eddeos cortos sobre lo que necesita un cachorro reci\u00e9n llegado a casa. Vamos a\u00f1adiendo cap\u00edtulos.", "Short videos (in Spanish) about what a puppy needs when it first comes home. We keep adding chapters."]))),
+    h("div", { style: { display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(min(380px,100%),1fr))", gap: 24 } },
+      GUIAS.map(function(g) { return h(GuiaCard, { key: g.id, g }); })),
+    h("a", { href: "https://www.youtube.com/@bpuppyus", target: "_blank", rel: "noopener",
+      style: { display: "inline-flex", alignItems: "center", gap: 8, marginTop: 28, fontSize: 14.5, fontWeight: 600, color: MC.ink2, textDecoration: "none", borderBottom: "1px solid " + MC.borderStrong, paddingBottom: 2 } },
+      t(["Ver el canal completo", "See the full channel"]),
+      h("svg", { width: "15", height: "15", viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: "2.2", strokeLinecap: "round", strokeLinejoin: "round" },
+        h("path", { d: "M5 12h14" }), h("path", { d: "M13 6l6 6-6 6" }))));
 }
 function MediaFooterCTA() {
   const t = useT();
