@@ -321,10 +321,26 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 }
 .pv-vid { padding:0; overflow:hidden; margin-bottom:16px; }
 .pv-vid-h { padding:16px 18px 12px; }
-.pv-vid-t { font-size:17px; font-weight:800; letter-spacing:-0.01em; color:var(--ink,#2D2421); }
-.pv-vid-d { font-size:13.5px; line-height:1.55; color:var(--ink-2,#6B5A4E); margin-top:4px; text-wrap:pretty; }
+.pv-vid-t { font-size:17px; font-weight:800; letter-spacing:-0.01em; color:var(--ink); }
+.pv-vid-d { font-size:13.5px; line-height:1.55; color:var(--ink2); margin-top:4px; text-wrap:pretty; }
 .pv-vid-f { position:relative; width:100%; aspect-ratio:16/9; background:#000; }
 .pv-vid-f iframe { position:absolute; inset:0; width:100%; height:100%; border:0; display:block; }
+.pv-more { border-top:1px solid var(--line2); padding:15px 18px 2px; }
+.pv-more-h { font-size:11px; font-weight:800; letter-spacing:.1em; text-transform:uppercase; color:var(--soft); }
+.pv-more-g { display:grid; gap:12px; margin-top:12px; }
+.pv-item { display:grid; grid-template-columns:134px 1fr; gap:13px; align-items:center; cursor:pointer; }
+.pv-item:focus-visible { outline:2px solid var(--orange); outline-offset:3px; border-radius:10px; }
+.pv-thumb { position:relative; aspect-ratio:16/9; border-radius:10px; overflow:hidden; background:#000; }
+.pv-thumb img { width:100%; height:100%; object-fit:cover; display:block; }
+.pv-thumb iframe { position:absolute; inset:0; width:100%; height:100%; border:0; display:block; }
+.pv-play { position:absolute; left:50%; top:50%; transform:translate(-50%,-50%); width:34px; height:34px; border-radius:50%; background:rgba(0,0,0,.6); border:1.5px solid rgba(255,255,255,.95); color:#fff; display:flex; align-items:center; justify-content:center; }
+.pv-item:hover .pv-play { background:rgba(0,0,0,.78); }
+.pv-it b { display:block; font-size:14px; font-weight:800; color:var(--ink); line-height:1.3; }
+.pv-it i { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; font-style:normal; font-size:12.5px; line-height:1.5; color:var(--ink2); margin-top:4px; text-wrap:pretty; }
+.pv-playing { grid-template-columns:1fr; cursor:default; }
+.pv-foot { padding:14px 18px 16px; }
+.pv-foot a { font-size:13px; font-weight:700; color:var(--orange2); text-decoration:none; border-bottom:1.5px solid currentColor; padding-bottom:1px; }
+@media (max-width:420px){ .pv-item { grid-template-columns:108px 1fr; gap:11px; } }
 </style>
 </head>
 <body>
@@ -1371,8 +1387,9 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     cards+='<div class="addtile" onclick="petAdd()"><div class="plus">+</div>'+PT('Agregar otra mascota','Add another pet')+'</div>';
     return '<div id="pv-video"></div><div class="pets">'+cards+'</div>';
   }
-  /* El video de bienvenida: se elige por la especie de la mascota y por los
-     dias desde que se la llevaron. */
+  /* Los videos del cliente: que vea cada cual lo decide la FILA en
+     portal_videos (especie de la mascota + dias desde que se la llevo), no el
+     codigo. El primero que le toca va grande y el resto de la serie debajo. */
   function videoDelCliente(d){
     var host=document.getElementById('pv-video');
     if(!host) return;
@@ -1400,14 +1417,27 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       { headers:{ apikey:ANON, Authorization:'Bearer '+ANON } })
       .then(function(r){ return r.ok?r.json():[]; })
       .then(function(vs){
-        var v=(vs||[]).filter(function(x){
+        var lista=(vs||[]).filter(function(x){
           if(x.species && !especies[x.species]) return false;
           if(dias < (x.desde_dias||0)) return false;
           if(x.hasta_dias!=null && dias > x.hasta_dias) return false;
           return true;
-        })[0];
-        if(!v) return;
+        });
+        if(!lista.length) return;
+        // El primero que le toca va grande; el resto de la serie debajo y en
+        // miniatura, para no cargarle tres reproductores de entrada.
+        var v=lista[0], resto=lista.slice(1);
         var ti=PT(v.title_es,v.title_en), de=PT(v.desc_es,v.desc_en);
+        var mas=resto.map(function(x){
+          var xt=PT(x.title_es,x.title_en), xd=PT(x.desc_es,x.desc_en);
+          return '<div class="pv-item" data-yt="'+esc(x.youtube_id)+'" role="button" tabindex="0">'+
+              '<div class="pv-thumb">'+
+                '<img src="https://i.ytimg.com/vi/'+encodeURIComponent(x.youtube_id)+'/mqdefault.jpg" alt="" loading="lazy">'+
+                '<span class="pv-play"><svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5.5v13l11-6.5z"/></svg></span>'+
+              '</div>'+
+              '<div class="pv-it"><b>'+esc(xt)+'</b>'+(xd?('<i>'+esc(xd)+'</i>'):'')+'</div>'+
+            '</div>';
+        }).join('');
         host.innerHTML=
           '<div class="card pv-vid">'+
             '<div class="pv-vid-h">'+
@@ -1419,7 +1449,24 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
                 'title="'+esc(ti)+'" loading="lazy" allowfullscreen '+
                 'allow="accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>'+
             '</div>'+
+            (mas?('<div class="pv-more"><div class="pv-more-h">'+PT('M\u00e1s de la serie','More from the series')+'</div><div class="pv-more-g">'+mas+'</div></div>'):'')+
+            '<div class="pv-foot"><a href="/media#guias">'+PT('Ver toda la serie','See the whole series')+'</a></div>'+
           '</div>';
+        // El reproductor entra al pulsar, justo donde estaba la miniatura.
+        Array.prototype.forEach.call(host.querySelectorAll('.pv-item'), function(it){
+          function abrir(){
+            var box=it.querySelector('.pv-thumb'); if(!box) return;
+            var id=it.getAttribute('data-yt')||'', b=it.querySelector('b');
+            box.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+encodeURIComponent(id)+'?rel=0&autoplay=1" '+
+              'title="'+esc(b?b.textContent:'')+'" allowfullscreen '+
+              'allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>';
+            it.classList.add('pv-playing');
+            it.removeAttribute('role'); it.removeAttribute('tabindex');
+            it.onclick=null; it.onkeydown=null;
+          }
+          it.onclick=abrir;
+          it.onkeydown=function(e){ if(e.key==='Enter'||e.key===' '){ e.preventDefault(); abrir(); } };
+        });
       }).catch(function(){});
   }
 
