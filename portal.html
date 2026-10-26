@@ -75,6 +75,33 @@ header .brand img{height:28px}
   .main{order:1}
 }
 
+/* ── el álbum ── */
+.albg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(148px,100%),1fr));gap:10px}
+.albi{position:relative;aspect-ratio:1;border-radius:14px;overflow:hidden;border:1px solid var(--line);
+  background:var(--paper);cursor:pointer;padding:0}
+.albi img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .3s cubic-bezier(.2,.8,.3,1)}
+.albi:hover img{transform:scale(1.04)}
+.albi .mk2{position:absolute;right:7px;top:7px;width:25px;height:25px;border-radius:50%;
+  background:rgba(23,18,15,.62);color:#fff;display:grid;place-items:center;backdrop-filter:blur(4px)}
+.albadd{display:grid;place-items:center;gap:6px;aspect-ratio:1;border-radius:14px;cursor:pointer;
+  border:1.5px dashed var(--line);background:var(--bg);color:var(--soft);font-family:inherit;
+  font-size:12.5px;font-weight:700;transition:border-color .16s,color .16s}
+.albadd:hover{border-color:var(--orange);color:var(--orange2)}
+
+/* ── el calendario de salud ── */
+.sal{display:flex;align-items:flex-start;gap:12px;padding:11px 0;border-top:1px solid var(--line2)}
+.sal:first-of-type{border-top:none;padding-top:4px}
+.sal .mk{width:26px;height:26px;border-radius:50%;flex-shrink:0;display:grid;place-items:center;
+  border:1.5px solid var(--line);color:var(--soft);background:var(--bg);margin-top:1px}
+.sal.ya .mk{border-color:var(--green);color:var(--green)}
+.sal.toca .mk{border-color:var(--orange);background:var(--orange);color:#fff}
+.sal .qu{font-size:14px;font-weight:700;line-height:1.3}
+.sal.ya .qu{color:var(--soft);text-decoration:line-through}
+.sal .cu{font-size:12px;color:var(--ink2);margin-top:2px}
+.sal.toca .cu{color:var(--orange2);font-weight:700}
+.salpie{font-size:11.5px;color:var(--soft);line-height:1.5;margin-top:13px;padding-top:11px;
+  border-top:1px dashed var(--line);text-wrap:pretty}
+
 /* ── la historia de tu cachorro ── */
 .tl{position:relative;padding-left:27px;margin-top:4px}
 .tl:before{content:"";position:absolute;left:7px;top:7px;bottom:7px;width:2px;
@@ -1637,6 +1664,149 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     }).join('');
   }
 
+  /* ═══ EL ÁLBUM ═══
+     Sus fotos. Privadas salvo que él diga lo contrario, foto por foto.
+     Lee y escribe con su propia sesión: la RLS de pet_photos solo le deja ver
+     y tocar lo suyo (mis_client_ids), así que no hace falta un edge. */
+  var ALBUM=null, _albCargando=false;
+  async function cargarAlbum(){
+    if(_albCargando) return; _albCargando=true;
+    try{
+      var r=await sb.from('pet_photos').select('id,url,caption,shared,created_at')
+        .is('deleted_at',null).order('created_at',{ascending:false}).limit(200);
+      ALBUM = (r && !r.error && r.data) ? r.data : [];
+    }catch(e){ ALBUM=[]; }
+    _albCargando=false;
+    pintarAlbum();
+  }
+  function paneAlbum(){
+    return '<div class="card"><div class="ttl">'+svg('cam',18)+' '+PT('Su \u00e1lbum','The album')+'</div>'+
+      '<p class="muted" style="margin:7px 0 14px">'+PT('Tus fotos son tuyas. Si quieres, puedes marcar alguna para que se vea en B Social \u2014 el resto no sale de aqu\u00ed.','Your photos are yours. You can mark one to show on B Social \u2014 the rest never leaves this page.')+'</p>'+
+      '<div id="alb-host"><div class="center"><div class="spin"></div></div></div></div>';
+  }
+  function pintarAlbum(){
+    var host=document.getElementById('alb-host'); if(!host) return;
+    var fs2=ALBUM||[];
+    host.innerHTML='<div class="albg">'+
+      '<button type="button" class="albadd" onclick="albumAdd()">'+svg('plus',22,2)+PT('Agregar foto','Add a photo')+'</button>'+
+      fs2.map(function(f){
+        return '<button type="button" class="albi" onclick="albumOpen(\''+esc(f.id)+'\')">'+
+          '<img src="'+esc(f.url)+'" alt="'+esc(f.caption||'')+'" loading="lazy" onerror="this.closest(\'button\').style.display=\'none\'">'+
+          (f.shared?('<span class="mk2" title="'+PT('Se ve en B Social','Shown on B Social')+'">'+svg('users',13,2.2)+'</span>'):'')+
+        '</button>';
+      }).join('')+'</div>'+
+      (fs2.length?'':('<p class="muted" style="margin:14px 0 0;font-size:12.5px">'+PT('Todav\u00eda no hay fotos. La primera suele ser la del d\u00eda que lleg\u00f3.','No photos yet. The first one is usually from the day they arrived.')+'</p>'));
+  }
+  window.albumAdd=function(){
+    var cid=D&&D.client&&D.client.id;
+    if(!cid){ alert(PT('Completa tu perfil antes de subir fotos.','Complete your profile before uploading photos.')); return; }
+    pickPhoto(async function(url){
+      var pet=(D.pets||[])[0];
+      try{
+        var r=await sb.from('pet_photos').insert({ client_id:cid, pet_id:pet?pet.id:null, url:url });
+        if(r.error) throw r.error;   // supabase-js no lanza: hay que mirar .error
+      }catch(e){ alert(PT('No se pudo guardar la foto.','We could not save the photo.')); return; }
+      cargarAlbum();
+    });
+  };
+  window.albumOpen=function(id){
+    var f=(ALBUM||[]).filter(function(x){ return String(x.id)===String(id); })[0];
+    if(!f) return;
+    var ov=modal(esc(fmtD(String(f.created_at).slice(0,10))),
+      '<img src="'+esc(f.url)+'" alt="" style="width:100%;border-radius:14px;display:block">'+
+      '<label class="ptog" style="display:flex;align-items:center;gap:11px;margin-top:15px;cursor:pointer">'+
+        '<span class="lt" style="display:flex;align-items:center;gap:9px;flex:1">'+
+          '<span class="ic" style="background:var(--paper);color:var(--violet)">'+svg('users',16,2)+'</span>'+
+          '<span><b style="font-size:14px">'+PT('Mostrarla en B Social','Show it on B Social')+'</b>'+
+          '<br><span class="muted" style="font-size:12px">'+PT('Solo esta foto. Puedes quitarla cuando quieras.','Just this photo. You can take it down whenever you want.')+'</span></span>'+
+        '</span>'+
+        '<input type="checkbox" id="alb-sh"'+(f.shared?' checked':'')+'>'+
+      '</label>'+
+      '<button class="btn w" id="alb-del" style="margin-top:13px;color:#b91c1c;border-color:#fecaca">'+svg('trash',15)+' '+PT('Quitar del \u00e1lbum','Remove from the album')+'</button>', 480);
+    var sh=ov.querySelector('#alb-sh');
+    sh.onchange=async function(){
+      var on=!!sh.checked;
+      try{
+        var r=await sb.from('pet_photos').update({shared:on}).eq('id',f.id);
+        if(r.error) throw r.error;
+        f.shared=on; pintarAlbum();
+      }catch(e){ sh.checked=!on; alert(PT('No se pudo cambiar.','Could not change it.')); }
+    };
+    ov.querySelector('#alb-del').onclick=async function(){
+      if(!confirm(PT('\u00bfQuitar esta foto de tu \u00e1lbum?','Remove this photo from your album?'))) return;
+      try{
+        var r=await sb.from('pet_photos').update({deleted_at:new Date().toISOString()}).eq('id',f.id);
+        if(r.error) throw r.error;
+        ov.close(); cargarAlbum();
+      }catch(e){ alert(PT('No se pudo quitar.','Could not remove it.')); }
+    };
+  };
+
+  /* ═══ SU SALUD, POR EDAD ═══
+     Pauta ORIENTATIVA, la de siempre para un cachorro. No somos veterinarios y
+     el pie de la tarjeta lo dice: la pauta buena es la que ponga el suyo. Se
+     marca sola con lo que el cliente ya anotó en vacunas/desparasitación. */
+  var PAUTA_PERRO=[
+    {sem:8,  es:'Primera DHPP (moquillo, parvovirus)', en:'First DHPP (distemper, parvo)', busca:/dhpp|pentava|quintu|moquillo|parvo|distemper/i},
+    {sem:12, es:'Segunda DHPP', en:'Second DHPP', busca:null},
+    {sem:16, es:'Tercera DHPP y rabia', en:'Third DHPP and rabies', busca:/rabia|rabies/i},
+    {sem:26, es:'Revisi\u00f3n de los 6 meses', en:'Six-month check-up', busca:/revis|check/i},
+    {sem:52, es:'Refuerzo anual', en:'Annual booster', busca:/refuerzo|booster|anual|annual/i}
+  ];
+  var PAUTA_GATO=[
+    {sem:8,  es:'Primera trivalente (FVRCP)', en:'First FVRCP', busca:/fvrcp|trivalente|triple/i},
+    {sem:12, es:'Segunda trivalente', en:'Second FVRCP', busca:null},
+    {sem:16, es:'Tercera trivalente y rabia', en:'Third FVRCP and rabies', busca:/rabia|rabies/i},
+    {sem:52, es:'Refuerzo anual', en:'Annual booster', busca:/refuerzo|booster|anual|annual/i}
+  ];
+  function semanasDesde(iso){
+    var n=new Date(String(iso).slice(0,10)+'T12:00:00');
+    if(isNaN(n)) return null;
+    return Math.floor((Date.now()-n.getTime())/604800000);
+  }
+  function masSemanas(iso,sem){
+    var n=new Date(String(iso).slice(0,10)+'T12:00:00');
+    if(isNaN(n)) return '';
+    n.setDate(n.getDate()+sem*7);
+    return n.toISOString().slice(0,10);
+  }
+  // Un animal con fecha de nacimiento: primero el cachorro que nos compro
+  // (ahi sabemos si es perro o gato), si no, su mascota de grooming.
+  function paraLaSalud(d){
+    var p=(d.puppies||[]).filter(function(x){ return x.birth_date; })[0];
+    if(p) return { nombre:p.name, nace:p.birth_date, gato:/cat|gat/i.test(String(p.animal_type||'')), puestas:(p.vaccinations||[]) };
+    var m=(d.pets||[]).filter(function(x){ return x.birthdate; })[0];
+    if(m) return { nombre:m.name, nace:m.birthdate, gato:false, puestas:((m.vaccinations||[]).concat(m.deworming||[])) };
+    return null;
+  }
+  function saludHtml(d){
+    var a=paraLaSalud(d);
+    if(!a) return '';
+    var sem=semanasDesde(a.nace);
+    if(sem==null || sem>110) return '';     // pasado el primer año ya manda su veterinario
+    var pauta=a.gato?PAUTA_GATO:PAUTA_PERRO;
+    var texto=(a.puestas||[]).join(' ').toLowerCase();
+    var queda=false;
+    var filas=pauta.map(function(x){
+      var ya = sem>x.sem+3 || (x.busca && x.busca.test(texto) && sem>=x.sem-2);
+      var toca = !ya && sem>=x.sem-2;
+      if(!ya) queda=true;   // si ya esta todo hecho, la tarjeta no pinta nada
+      var cuando = ya ? PT('ya est\u00e1','done')
+        : (toca ? PT('le toca ahora','due now')
+                : (PT('hacia el ','around ')+esc(fmtD(masSemanas(a.nace,x.sem)))));
+      return '<div class="sal '+(ya?'ya':(toca?'toca':''))+'">'+
+        '<span class="mk">'+svg(ya?'check':(toca?'plus':'clock'),14,2.2)+'</span>'+
+        '<div style="min-width:0"><div class="qu">'+PT(x.es,x.en)+'</div>'+
+        '<div class="cu">'+cuando+' \u00b7 '+PT('a las ','at ')+x.sem+' '+PT('semanas','weeks')+'</div></div></div>';
+    }).join('');
+    if(!queda) return '';
+    return '<div class="card"><div class="ttl">'+svg('shield',18)+' '+PT('La salud de ','Health for ')+esc(a.nombre||PT('tu cachorro','your puppy'))+'</div>'+
+      '<p class="muted" style="margin:7px 0 13px">'+PT('Lo que suele tocar a su edad. Lo que ya anotaste aparece tachado.','What is usually due at this age. Whatever you noted already shows crossed out.')+'</p>'+
+      filas+
+      '<div class="salpie">'+PT('Esto es una gu\u00eda, no una receta: la pauta que vale es la que te d\u00e9 tu veterinario, que conoce a tu mascota y tu zona.','This is a guide, not a prescription: the schedule that counts is the one your vet gives you \u2014 they know your pet and your area.')+'</div>'+
+      '</div>';
+  }
+
   /* ═══ PORTADA ═══
      Lo primero que ve: lo que viene, su historia, y luego lo de descubrir.
      Los videos van en una tira pequeña, no de reproductor gigante. */
@@ -1648,7 +1818,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
          '<span class="v">'+esc(fmtD(na.appointment_date))+(na.appointment_time?(' \u00b7 '+esc(na.appointment_time)):'')+'</span></div>'+
          '<button class="btn sm" style="margin-top:12px" onclick="goTab(\'grooming\')">'+PT('Ver mi cita','See my appointment')+'</button></div>')
       : '';
-    return saludo + historiaHtml(d) + '<div id="pv-video"></div>' + paneDescubre();
+    return saludo + saludHtml(d) + historiaHtml(d) + '<div id="pv-video"></div>' + paneDescubre();
   }
 
   /* ═══ PANELES ═══ */
@@ -2050,7 +2220,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     var pups=(d.puppies||[]);
     var tabs=[['inicio','sparkle',PT('Inicio','Home'),0]];
     if(pups.length) tabs.push(['cachorro','star',pups.length===1?(pups[0].name||PT('Mi cachorro','My puppy')):PT('Mis cachorros','My puppies'),0]);
-    tabs=tabs.concat([['mascotas','paw',PT('Mascotas','Pets'),nPets],
+    tabs=tabs.concat([['album','cam',PT('\u00c1lbum','Album'),0],
+              ['mascotas','paw',PT('Mascotas','Pets'),nPets],
               ['grooming','scissors','Grooming',0],
               ['pagos','card',PT('Pagos','Payments'),0],
               ['logros','trophy',PT('Logros','Badges'),earned],
@@ -2061,6 +2232,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 
     html+='<div class="pane on" data-p="inicio">'+paneInicio(d)+'</div>'+
       (pups.length?('<div class="pane" data-p="cachorro">'+panePuppy(d)+'</div>'):'')+
+      '<div class="pane" data-p="album">'+paneAlbum()+'</div>'+
       '<div class="pane" data-p="mascotas">'+paneMascotas(d)+'</div>'+
       '<div class="pane" data-p="grooming">'+paneGrooming(d)+'</div>'+
       '<div class="pane" data-p="pagos">'+panePagos(d)+'</div>'+
@@ -2079,6 +2251,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         root.querySelectorAll('.tab').forEach(function(x){ x.classList.toggle('on',x===b); });
         root.querySelectorAll('.pane').forEach(function(p){ p.classList.toggle('on',p.getAttribute('data-p')===t); });
         if(t==='pagos') loadCard();
+        if(t==='album' && ALBUM===null) cargarAlbum();
         // Al cambiar de pestaña en el cell, si veníamos scrolleados abajo (pane largo), subir para ver el contenido (sin scrollIntoView).
         try{ var _te=root.querySelector('.tabs'); if(_te){ var _yy=_te.getBoundingClientRect().top+window.pageYOffset-10; if(window.pageYOffset>_yy+4) window.scrollTo({top:_yy,behavior:'smooth'}); } }catch(_e){}
       };
