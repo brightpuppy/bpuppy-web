@@ -68,8 +68,10 @@ header .brand img{height:28px}
 .av{position:relative;width:118px;height:118px;margin:-56px 0 0;border-radius:50%;border:5px solid var(--bg);
   background:linear-gradient(135deg,#F55820,#E83860);display:grid;place-items:center;color:#fff;
   font-family:'Bricolage Grotesque',sans-serif;font-size:40px;font-weight:800;box-shadow:0 10px 26px -8px rgba(36,28,24,.44)}
-/* La imagen se recorta redonda, pero el botón de cámara (.pen) queda FUERA y visible. */
-.av img{width:100%;height:100%;object-fit:cover;border-radius:50%}
+/* La imagen se recorta redonda, pero el botón de cámara (.pen) queda FUERA y visible.
+   Va en absoluto A PROPÓSITO: dentro de un grid con place-items:center el
+   height:100% no se resuelve y una foto vertical se sale de la tarjeta. */
+.av img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:50%}
 .av .pen{position:absolute;right:-2px;bottom:-2px;width:30px;height:30px;border-radius:50%;border:2.5px solid var(--bg);
   background:var(--ink);color:#fff;display:grid;place-items:center;cursor:pointer;transition:transform .16s}
 .av .pen:hover{transform:scale(1.12)}
@@ -131,7 +133,7 @@ h1.nm{font-family:'Bricolage Grotesque',sans-serif;font-size:27px;font-weight:80
   transition:transform .18s cubic-bezier(.2,.8,.3,1),box-shadow .18s,border-color .18s}
 .pet:hover{transform:translateY(-4px);box-shadow:var(--shadow-lift);border-color:var(--orange)}
 .pet .ph{height:132px;background:linear-gradient(135deg,#FFEEDC,#FFE1EA);display:grid;place-items:center;position:relative;overflow:hidden}
-.pet .ph img{width:100%;height:100%;object-fit:cover}
+.pet .ph img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover}
 .pet .bd{padding:12px 14px 14px}
 .pet .nm2{font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:800}
 .pet .br{display:inline-block;margin-top:4px;font-size:11.5px;font-weight:700;color:var(--orange2);
@@ -339,6 +341,13 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 .pv-it i { display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; font-style:normal; font-size:12.5px; line-height:1.5; color:var(--ink2); margin-top:4px; text-wrap:pretty; }
 .pv-playing { grid-template-columns:1fr; cursor:default; }
 .pv-foot { padding:14px 18px 16px; }
+.cropbox{position:relative;width:280px;max-width:100%;aspect-ratio:1;margin:0 auto;border-radius:16px;overflow:hidden;background:#17120f;touch-action:none}
+.cropbox canvas{display:block;width:100%;height:100%;cursor:grab}
+.cropbox canvas:active{cursor:grabbing}
+.cropmask{position:absolute;inset:0;pointer-events:none;border-radius:50%;border:2px solid rgba(255,255,255,.92);box-shadow:0 0 0 9999px rgba(23,18,15,.55)}
+.croprow{display:flex;align-items:center;gap:11px;margin-top:15px;color:var(--soft)}
+.croprow input{flex:1;accent-color:var(--orange);height:3px}
+.cropnote{text-align:center;margin:10px 0 0;font-size:12.5px}
 .pv-foot a { font-size:13px; font-weight:700; color:var(--orange2); text-decoration:none; border-bottom:1.5px solid currentColor; padding-bottom:1px; }
 @media (max-width:420px){ .pv-item { grid-template-columns:108px 1fr; gap:11px; } }
 </style>
@@ -612,20 +621,85 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
   };
 
   /* ═══ subir foto ═══ */
+  /* ═══ Encuadrar la foto antes de subirla ═══
+     Como en cualquier red: arrastras, acercas y lo que se ve en el círculo es
+     lo que se guarda. Sale cuadrada (512) y ligera, así que se ve igual de
+     bien en el portal, en el CRM y en los correos. */
+  function cropPhoto(file, cb){
+    var LADO=280, SALIDA=512;
+    var ov=modal(PT('Encuadra tu foto','Frame your photo'),
+      '<div class="cropbox"><canvas id="cp-cv" width="'+LADO+'" height="'+LADO+'"></canvas><div class="cropmask"></div></div>'+
+      '<div class="croprow">'+svg('search',15)+'<input type="range" id="cp-z" min="100" max="320" value="100" aria-label="'+PT('Acercar','Zoom')+'">'+svg('search',19)+'</div>'+
+      '<p class="muted cropnote">'+PT('Arrastra la foto para colocarla.','Drag the photo to place it.')+'</p>'+
+      '<button class="btn pri w" id="cp-ok" style="margin-top:14px" disabled>'+PT('Cargando…','Loading…')+'</button>', 360);
+    var cv=ov.querySelector('#cp-cv'), ctx=cv.getContext('2d'),
+        zo=ov.querySelector('#cp-z'), ok=ov.querySelector('#cp-ok');
+    var im=null, iw=0, ih=0, base=1, zoom=1, tx=0, ty=0, drag=null;
+
+    function pintar(){
+      if(!im) return;
+      var s=base*zoom, w=iw*s, hh=ih*s;
+      // La foto siempre tapa el cuadro entero: nunca un borde vacío.
+      var lx=Math.max(0,(w-LADO)/2), ly=Math.max(0,(hh-LADO)/2);
+      tx=Math.max(-lx,Math.min(lx,tx)); ty=Math.max(-ly,Math.min(ly,ty));
+      ctx.clearRect(0,0,LADO,LADO);
+      ctx.drawImage(im,(LADO-w)/2+tx,(LADO-hh)/2+ty,w,hh);
+    }
+    function factor(){ var r=cv.getBoundingClientRect(); return r.width?(LADO/r.width):1; }
+
+    cv.addEventListener('pointerdown',function(e){ drag={x:e.clientX,y:e.clientY}; try{cv.setPointerCapture(e.pointerId);}catch(_){} });
+    cv.addEventListener('pointermove',function(e){ if(!drag) return; var f=factor(); tx+=(e.clientX-drag.x)*f; ty+=(e.clientY-drag.y)*f; drag={x:e.clientX,y:e.clientY}; pintar(); });
+    cv.addEventListener('pointerup',function(){ drag=null; });
+    cv.addEventListener('pointercancel',function(){ drag=null; });
+    zo.oninput=function(){ zoom=Number(zo.value)/100; pintar(); };
+
+    (async function(){
+      try{
+        // from-image respeta la orientación EXIF del móvil (si no, salen tumbadas).
+        if(window.createImageBitmap) im=await createImageBitmap(file,{imageOrientation:'from-image'});
+      }catch(e){ im=null; }
+      if(!im){
+        try{
+          im=await new Promise(function(res,rej){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=rej; i.src=URL.createObjectURL(file); });
+        }catch(e){ ov.close(); alert(PT('No pudimos abrir esa foto.','We could not open that photo.')); return; }
+      }
+      iw=im.naturalWidth||im.width; ih=im.naturalHeight||im.height;
+      if(!iw||!ih){ ov.close(); alert(PT('No pudimos abrir esa foto.','We could not open that photo.')); return; }
+      base=Math.max(LADO/iw, LADO/ih);
+      ok.disabled=false; ok.textContent=PT('Usar esta foto','Use this photo');
+      pintar();
+    })();
+
+    ok.onclick=function(){
+      if(!im) return;
+      var out=document.createElement('canvas'); out.width=out.height=SALIDA;
+      var o=out.getContext('2d'); o.imageSmoothingQuality='high';
+      var k=SALIDA/LADO, s=base*zoom*k, w=iw*s, hh=ih*s;
+      o.drawImage(im,(SALIDA-w)/2+tx*k,(SALIDA-hh)/2+ty*k,w,hh);
+      ok.disabled=true; ok.textContent=PT('Subiendo…','Uploading…');
+      out.toBlob(function(b){
+        if(!b){ ok.disabled=false; ok.textContent=PT('Usar esta foto','Use this photo'); return; }
+        cb(b, function(){ ov.close(); }, function(){ ok.disabled=false; ok.textContent=PT('Usar esta foto','Use this photo'); });
+      },'image/jpeg',0.9);
+    };
+  }
+
   function pickPhoto(cb){
     var inp=document.getElementById('upfile');
     inp.value='';
-    inp.onchange=async function(){
+    inp.onchange=function(){
       var f=inp.files&&inp.files[0]; if(!f) return;
-      if(f.size>8*1024*1024){ alert(PT('La foto es muy grande (máx. 8 MB).','That photo is too big (8 MB max).')); return; }
-      try{
-        var ext=(f.name.split('.').pop()||'jpg').toLowerCase().replace(/[^a-z0-9]/g,'')||'jpg';
-        var path=(D&&D.client&&D.client.id?D.client.id:'anon')+'/'+Date.now()+'.'+ext;
-        var up=await sb.storage.from('portal-photos').upload(path,f,{upsert:true,contentType:f.type||'image/jpeg'});
-        if(up.error) throw up.error;
-        var pub=sb.storage.from('portal-photos').getPublicUrl(path);
-        cb(pub.data.publicUrl);
-      }catch(e){ alert(PT('No se pudo subir la foto.','We could not upload the photo.')); }
+      // El límite puede ser ancho: lo que sube es el recorte, no el original.
+      if(f.size>25*1024*1024){ alert(PT('La foto es muy grande (máx. 25 MB).','That photo is too big (25 MB max).')); return; }
+      cropPhoto(f, async function(blob, hecho, falla){
+        try{
+          var path=(D&&D.client&&D.client.id?D.client.id:'anon')+'/'+Date.now()+'.jpg';
+          var up=await sb.storage.from('portal-photos').upload(path,blob,{upsert:true,contentType:'image/jpeg'});
+          if(up.error) throw up.error;
+          var pub=sb.storage.from('portal-photos').getPublicUrl(path);
+          hecho(); cb(pub.data.publicUrl);
+        }catch(e){ falla(); alert(PT('No se pudo subir la foto.','We could not upload the photo.')); }
+      });
     };
     inp.click();
   }
@@ -836,7 +910,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         return '<span class="dchip" style="border-radius:10px">'+svg('check',12)+' '+esc(s.service||'')+' · '+left+'/'+tot+' '+PT('visitas','visits')+'</span>'; }).join('')+'</div>'):'';
     var ov=modal(esc(p.name||PT('Mi mascota','My pet')),
       '<div id="pv-ph" style="height:170px;border-radius:16px;overflow:hidden;background:linear-gradient(135deg,#FFEEDC,#FFE1EA);display:grid;place-items:center;position:relative;margin-bottom:6px">'+
-        (p.photo_url?('<img src="'+esc(p.photo_url)+'" style="width:100%;height:100%;object-fit:cover">'):('<span style="color:var(--orange);opacity:.55">'+svg('paw',60,1.4)+'</span>'))+
+        (p.photo_url?('<img src="'+esc(p.photo_url)+'" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">'):('<span style="color:var(--orange);opacity:.55">'+svg('paw',60,1.4)+'</span>'))+
         '<button class="camchip" id="pv-cam">'+svg('cam',15)+' '+PT('Cambiar foto','Change photo')+'</button>'+
       '</div>'+
       (pend?('<div class="msg info">'+PT('<b>En revisión</b> quiere decir que ya la registramos y nuestro equipo la está confirmando (raza, tamaño y cuidados). En cuanto quede lista te avisamos y podrás agendar con ella.','<b>Under review</b> means we registered your pet and our team is confirming the details (breed, size, care). We\'ll let you know the moment it\'s ready to book.')+'</div>'):'')+
