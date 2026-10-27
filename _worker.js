@@ -1,3 +1,5 @@
+import { BLOG_SEO } from "./blog-seo.js";
+
 const EN = {
   title: "Available Puppies · BrightPuppy",
   desc: "Handpicked puppies just for you — photos, prices and payment options.",
@@ -7,6 +9,9 @@ const SUPA_ANON = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIs
 const SITE = "https://bpuppy.us";
 class SetText { constructor(t){this.t=t;} element(el){ el.setInnerContent(this.t);} }
 class SetAttr { constructor(n,v){this.n=n;this.v=v;} element(el){ el.setAttribute(this.n,this.v);} }
+// Para el JSON-LD: setInnerContent escapa las comillas y romperia el JSON. Va en
+// crudo, y antes se sustituye "<" por \u003c para que nada pueda cerrar el script.
+class SetRaw { constructor(t){this.t=t;} element(el){ el.setInnerContent(this.t, {html:true});} }
 function esc(s){ return String(s==null?"":s).replace(/[&<>"]/g,function(c){return {"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c];}); }
 function smsRedirectPage(to, body){
   const num = String(to||"").replace(/[^\d]/g,"");
@@ -203,6 +208,39 @@ function newsArticlePage(p, relacionadas){
     '<div class="foot"><a href="' + SITE + '/media#noticias">' + home + '</a></div>' +
     '</article></main></body></html>';
 }
+// Cabecera propia de un articulo del blog (/blog?art=N). Reescribe la de blog.html
+// ANTES de enviarla, que es lo unico que Google se lee seguro. Los datos salen de
+// blog-seo.js, generado desde blog-data.js (ver su cabecera).
+function blogArticleHead(res, id, a){
+  const canonical = SITE + "/blog?art=" + encodeURIComponent(id);
+  const ttl = a.te + " | BPuppy Blog";
+  const ld = {
+    "@context":"https://schema.org", "@type":"Article",
+    "headline": a.te, "description": a.de,
+    "image": [a.img],
+    "inLanguage": "en",
+    "author": { "@type":"Organization", "name":"BrightPuppy", "url": SITE },
+    "publisher": { "@type":"Organization", "name":"BrightPuppy", "logo": { "@type":"ImageObject", "url": SITE + "/assets/logo-clean.webp" } },
+    "mainEntityOfPage": { "@type":"WebPage", "@id": canonical },
+    "isPartOf": { "@type":"Blog", "name":"BPuppy Blog", "@id": SITE + "/blog" }
+  };
+  // Las fechas del blog son mes y ano ("May 2025"): se emite YYYY-MM, sin inventar dia.
+  if (a.iso) { ld.datePublished = a.iso; ld.dateModified = a.iso; }
+  const json = JSON.stringify(ld).replace(/</g, "\\u003c");
+  return new HTMLRewriter()
+    .on("title", new SetText(ttl))
+    .on('link[rel="canonical"]', new SetAttr("href", canonical))
+    .on('meta[name="description"]', new SetAttr("content", a.de))
+    .on('meta[property="og:title"]', new SetAttr("content", ttl))
+    .on('meta[property="og:description"]', new SetAttr("content", a.de))
+    .on('meta[property="og:url"]', new SetAttr("content", canonical))
+    .on('meta[property="og:type"]', new SetAttr("content", "article"))
+    .on('meta[property="og:image"]', new SetAttr("content", a.img))
+    .on('meta[name="twitter:image"]', new SetAttr("content", a.img))
+    .on('script[type="application/ld+json"]', new SetRaw(json))
+    .transform(res);
+}
+
 function notFoundPage(){
   return `<!doctype html><html lang="es"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><link rel="icon" href="/favicon.ico" sizes="any"><link rel="icon" type="image/png" sizes="32x32" href="/assets/favicon-32.png"><link rel="apple-touch-icon" href="/assets/apple-touch-icon.png"><title>Noticia no encontrada · BrightPuppy</title><meta name="robots" content="noindex"><style>body{font-family:-apple-system,system-ui,Arial,sans-serif;background:#FAF7F2;color:#2D2421;min-height:100vh;display:flex;align-items:center;justify-content:center;text-align:center;padding:24px;margin:0}a{color:#F58220;font-weight:700;text-decoration:none}</style></head><body><div><h1>Esta noticia no está disponible</h1><p><a href="`+SITE+`/media">Ver todas las noticias →</a></p></div></body></html>`;
 }
@@ -243,6 +281,15 @@ export default {
     try {
       const url = new URL(request.url);
       const p = url.pathname.replace(/\/+$/,"");
+      if (p === "/blog" || p === "/blog.html") {
+        const bid = url.searchParams.get("art");
+        const art = bid ? BLOG_SEO[String(bid)] : null;
+        // Sin ?art=, o con uno que ya no existe, se queda la cabecera del indice:
+        // ese canonical a /blog es justo lo que toca para una URL sin contenido.
+        if (!art) return res;
+        if (!(res.headers.get("content-type")||"").toLowerCase().includes("text/html")) return res;
+        return blogArticleHead(res, bid, art);
+      }
       if (p !== "/catalogo" && p !== "/catalogo.html") return res;
       const lang = ((url.searchParams.get("lang")||"").toLowerCase()==="en") ? "en":"es";
       const ct = (res.headers.get("content-type")||"").toLowerCase();

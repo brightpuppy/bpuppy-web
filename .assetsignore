@@ -6,3 +6,4 @@ _archive/**
 _worker.js
 wrangler.jsonc
 .assetsignore
+blog-seo.js
