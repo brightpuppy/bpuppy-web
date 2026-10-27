@@ -697,6 +697,8 @@ function NewsSection() {
     ) : null);
 }
 // La serie de videos de cachorros. Para anadir un capitulo: un objeto mas aqui.
+// OJO: anadir un capitulo es un objeto aqui Y una entrada en el JSON-LD de
+// VideoObject que vive en media.html (si no, Google no lo ve).
 const GUIAS = [
   { id: "0AuM52oUje4", cap: ["Cap\u00edtulo 01", "Chapter 01"], titulo: ["Manual b\u00e1sico del cachorro", "Puppy basics"] },
   { id: "2aTfCN4QY6Y", cap: ["Cap\u00edtulo 02", "Chapter 02"], titulo: ["Ense\u00f1arle a hacer sus necesidades", "Potty training"] },
