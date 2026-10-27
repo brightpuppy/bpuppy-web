@@ -270,6 +270,21 @@ export default {
       const rel = (await fetchNews(relQ)) || [];
       return new Response(newsArticlePage(post, rel), { headers: { "content-type":"text/html; charset=utf-8", "cache-control":"public, max-age=300, s-maxage=600" } });
     }
+    // Sitemap de imagenes: las 767 fotos de /entregados las pinta el JS, asi que
+    // Google Imagenes no las ve en el HTML. La lista sale del propio index.json de
+    // la carpeta, que es lo que lee la pagina, para que no se quede viejo.
+    if (p0 === "/sitemap-images.xml") {
+      let files = [];
+      try {
+        const r = await env.ASSETS.fetch(new URL("/assets/entregas-galeria/index.json", url0).toString());
+        if (r.ok) { const j = await r.json(); if (Array.isArray(j.files)) files = j.files; }
+      } catch(e){}
+      const imgs = files.map(function(f){ return "<image:image><image:loc>" + esc(SITE + "/assets/entregas-galeria/" + f) + "</image:loc></image:image>"; }).join("");
+      const xml = '<?xml version="1.0" encoding="UTF-8"?>' +
+        '<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:image="http://www.google.com/schemas/sitemap-image/1.1">' +
+        '<url><loc>' + SITE + '/entregados</loc>' + imgs + '</url></urlset>';
+      return new Response(xml, { headers: { "content-type":"application/xml; charset=utf-8", "cache-control":"public, max-age=3600" } });
+    }
     // Sitemap de noticias (para Google / indexación)
     if (p0 === "/sitemap-news.xml") {
       const rows = await fetchNews("status=eq.published&select=slug,updated_at,published_at&order=published_at.desc&limit=1000") || [];

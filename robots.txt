@@ -10,3 +10,4 @@ Disallow: /firmar
 
 Sitemap: https://bpuppy.us/sitemap.xml
 Sitemap: https://bpuppy.us/sitemap-news.xml
+Sitemap: https://bpuppy.us/sitemap-images.xml

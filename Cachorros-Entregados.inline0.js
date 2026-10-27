@@ -217,7 +217,7 @@ function EntregasGaleria(){
     idx >= 0 && h("div", { className: "eg-lb", onClick: close, onTouchStart: onTouchStart, onTouchEnd: onTouchEnd },
       h("button", { className: "eg-lb-x", "aria-label": t("Cerrar", "Close"), onClick: close }, "\u2715"),
       idx > 0 && h("button", { className: "eg-lb-nav eg-lb-prev", "aria-label": t("Anterior", "Previous"), onClick: function(e){ e.stopPropagation(); setIdx(function(i){ return i - 1; }); } }, "\u2039"),
-      h("img", { className: "eg-foto", src: EG_BASE + files[idx], alt: "", onClick: function(e){ e.stopPropagation(); } }),
+      h("img", { className: "eg-foto", src: EG_BASE + files[idx], alt: t("Cachorro entregado a su familia", "Puppy delivered to its family"), onClick: function(e){ e.stopPropagation(); } }),
       idx < files.length - 1 && h("button", { className: "eg-lb-nav eg-lb-next", "aria-label": t("Siguiente", "Next"), onClick: function(e){ e.stopPropagation(); setIdx(function(i){ return i + 1; }); } }, "\u203A"),
       h("button", { className: "eg-play", onClick: function(e){ e.stopPropagation(); setPasando(function(p){ return !p; }); } },
         h("svg", { viewBox: "0 0 24 24", fill: "none", stroke: "currentColor", strokeWidth: 2, strokeLinecap: "round", strokeLinejoin: "round", "aria-hidden": "true" },
@@ -235,7 +235,7 @@ function EntregasGaleria(){
               salida.push(h("span", { key: "x" + p, className: "eg-hueco", "aria-hidden": "true" }));
             } else {
               salida.push(h("img", (function(real){ return {
-                key: files[real], src: EG_BASE + files[real], alt: "", loading: "lazy", decoding: "async",
+                key: files[real], src: EG_BASE + files[real], alt: t("Cachorro entregado a su familia", "Puppy delivered to its family"), loading: "lazy", decoding: "async",
                 className: real === idx ? "on" : "",
                 onClick: function(e){ e.stopPropagation(); setIdx(real); }
               }; })(p)));
