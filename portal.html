@@ -116,14 +116,24 @@ header .brand img{height:28px}
 .tlt{font-size:14.5px;font-weight:700;line-height:1.3;margin-top:2px}
 .tlx{font-size:12.5px;color:var(--ink2);line-height:1.5;margin-top:3px;text-wrap:pretty}
 
-/* ── avatar (sin foto de portada) ── */
-/* Banda de color suave arriba, solo para dar aire. El avatar YA no se recorta:
-   la tarjeta deja de tener overflow:hidden y el avatar cabe completo dentro. */
-.topband{height:96px;border-radius:0 0 26px 26px;background:
-  linear-gradient(135deg,#FFE9D2,#FFD9E4 45%,#E4E7FF);border:1px solid var(--line);border-top:none}
+/* ── portada y avatar ── */
+/* La banda de arriba es su portada. Sin foto se queda el degradado de siempre.
+   El avatar NO se recorta: la tarjeta no tiene overflow:hidden y cabe completo. */
+.cover{position:relative;height:172px;border-radius:0 0 26px 26px;overflow:hidden;
+  border:1px solid var(--line);border-top:none;background:linear-gradient(135deg,#FFE9D2,#FFD9E4 45%,#E4E7FF)}
+.cover>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block}
+/* Mientras la coloca: se arrastra con el dedo y el borde lo recuerda. */
+.cover.mov{box-shadow:inset 0 0 0 2px var(--orange);touch-action:none}
+.cover.mov>img{cursor:grab}
+.cover.mov>img:active{cursor:grabbing}
+.covbtns{position:absolute;right:13px;bottom:13px;display:flex;gap:7px;z-index:2}
+/* El chip nace con position:absolute para el visor de fotos: aqui va en fila. */
+.covbtns .camchip{position:static}
+.covhint{position:absolute;left:14px;top:12px;z-index:2;color:#fff;font-size:12.5px;font-weight:700;
+  text-shadow:0 1px 6px rgba(23,18,15,.75);display:flex;align-items:center;gap:6px}
 .camchip{position:absolute;right:14px;bottom:14px;display:inline-flex;align-items:center;gap:6px;
   padding:8px 14px;border-radius:999px;border:1px solid rgba(255,255,255,.5);background:rgba(36,28,24,.5);
-  color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(6px);transition:background .16s}
+  color:#fff;font-family:inherit;font-size:12px;font-weight:700;cursor:pointer;backdrop-filter:blur(6px);transition:background .16s;white-space:nowrap}
 .camchip:hover{background:rgba(36,28,24,.72)}
 
 .idcard{position:relative;margin:-34px 0 0;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);
@@ -377,7 +387,12 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 @media(max-width:640px){
   .acct{grid-template-columns:1fr}
   .wrap{padding:0 12px 70px}
-  .topband{height:78px;border-radius:0 0 20px 20px}
+  .cover{height:132px;border-radius:0 0 20px 20px}
+  .covbtns{right:9px;bottom:9px}
+  /* En el móvil manda la foto: del chip se queda el icono. */
+  .covbtns .camchip{padding:10px;gap:0}
+  .covbtns .camchip .t{display:none}
+  .cropbox.wide{width:100%}
   .idcard{padding:0 17px 18px;border-radius:18px}
   .idcard .rainbow{margin:0 -17px}
   .av{width:98px;height:98px;margin-top:-48px;font-size:33px}
@@ -413,9 +428,30 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 .cropbox canvas{display:block;width:100%;height:100%;cursor:grab}
 .cropbox canvas:active{cursor:grabbing}
 .cropmask{position:absolute;inset:0;pointer-events:none;border-radius:50%;border:2px solid rgba(255,255,255,.92);box-shadow:0 0 0 9999px rgba(23,18,15,.55)}
+/* La portada se encuadra apaisada: el recuadro ES lo que se va a ver. */
+.cropbox.wide{width:340px;aspect-ratio:16/6}
+.cropbox.wide .cropmask{border-radius:0;box-shadow:none;border:1px dashed rgba(255,255,255,.6)}
 .croprow{display:flex;align-items:center;gap:11px;margin-top:15px;color:var(--soft)}
 .croprow input{flex:1;accent-color:var(--orange);height:3px}
 .cropnote{text-align:center;margin:10px 0 0;font-size:12.5px}
+
+/* ── privacidad ── */
+.privmaster{display:flex;align-items:center;gap:12px;padding:14px;border:1.5px solid var(--line);border-radius:14px;margin-bottom:16px;cursor:pointer}
+.privmaster.on{border-color:var(--orange)}
+.privmaster .ic{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;flex-shrink:0;background:var(--paper)}
+.privmaster.on .ic{background:#FFF2E6;color:var(--orange2)}
+.privmaster.on .sw{background:var(--orange)}
+.privmaster.on .sw::after{transform:translateX(18px)}
+.privnever{margin-top:16px;border-top:1px dashed var(--line2);padding-top:13px}
+.privnever li{font-size:12.5px;color:var(--ink2);line-height:1.75;list-style:none;display:flex;align-items:center;gap:7px}
+.privnever li svg{color:var(--soft);flex-shrink:0}
+.pvcard{border:1px solid var(--line);border-radius:16px;overflow:hidden;background:var(--bg)}
+.pvcard .pvtop{height:92px;background:linear-gradient(135deg,#FFE9D2,#FFD9E4 45%,#E4E7FF);position:relative}
+.pvcard .pvtop img{width:100%;height:100%;object-fit:cover;display:block}
+.pvcard .pvin{padding:0 16px 16px}
+.pvcard .pvav{width:72px;height:72px;margin:-36px 0 0;border-radius:50%;border:4px solid var(--bg);object-fit:cover;background:var(--paper);display:block}
+.pvcard .pvnm{font-family:'Bricolage Grotesque',sans-serif;font-size:19px;font-weight:800;margin:9px 0 2px}
+.pvempty{font-size:12.5px;color:var(--soft);font-style:italic}
 .pv-foot a { font-size:13px; font-weight:700; color:var(--orange2); text-decoration:none; border-bottom:1.5px solid currentColor; padding-bottom:1px; }
 @media (max-width:420px){ .pv-item { grid-template-columns:108px 1fr; gap:11px; } }
 </style>
@@ -514,7 +550,13 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     calendar:'<rect x="4" y="5" width="16" height="15" rx="2"/><path d="M4 9.5h16M8.5 3v4M15.5 3v4"/>',
     sparkle:'<path d="M12 3l1.8 5.2L19 10l-5.2 1.8L12 17l-1.8-5.2L5 10l5.2-1.8z"/>',
     trash:'<path d="M5 7h14M9 7V5h6v2M6 7l1 13h10l1-13"/>',
-    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>'
+    info:'<circle cx="12" cy="12" r="9"/><path d="M12 11v5M12 8h.01"/>',
+    image:'<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 16l5-5 4 4 3-3 6 6"/><circle cx="8.6" cy="9.6" r="1.2"/>',
+    images:'<rect x="7" y="3.5" width="14" height="11" rx="2"/><path d="M3 8v10.5A2 2 0 0 0 5 20.5h12"/><circle cx="11" cy="8" r="1.1"/><path d="M8 12.5l3-3 4 4"/>',
+    eye:'<path d="M2.5 12S6 5.5 12 5.5 21.5 12 21.5 12 18 18.5 12 18.5 2.5 12 2.5 12z"/><circle cx="12" cy="12" r="3"/>',
+    globe:'<circle cx="12" cy="12" r="9"/><path d="M3.2 9h17.6M3.2 15h17.6"/><path d="M12 3c2.5 2.5 2.5 15 0 18M12 3c-2.5 2.5-2.5 15 0 18"/>',
+    x:'<path d="M6 6l12 12M18 6L6 18"/>',
+    move:'<path d="M12 3v18M3 12h18"/><path d="M12 3l-2.5 2.5M12 3l2.5 2.5M12 21l-2.5-2.5M12 21l2.5-2.5M3 12l2.5-2.5M3 12l2.5 2.5M21 12l-2.5-2.5M21 12l2.5 2.5"/>'
   };
   function svg(n,s,st){ s=s||20; return '<svg width="'+s+'" height="'+s+'" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="'+(st||1.7)+'" stroke-linecap="round" stroke-linejoin="round" style="display:inline-block;vertical-align:middle">'+(IC[n]||'')+'</svg>'; }
 
@@ -690,87 +732,143 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 
   /* ═══ subir foto ═══ */
   /* ═══ Encuadrar la foto antes de subirla ═══
-     Como en cualquier red: arrastras, acercas y lo que se ve en el círculo es
-     lo que se guarda. Sale cuadrada (512) y ligera, así que se ve igual de
-     bien en el portal, en el CRM y en los correos. */
-  function cropPhoto(file, cb){
-    var LADO=280, SALIDA=512;
-    var ov=modal(PT('Encuadra tu foto','Frame your photo'),
-      '<div class="cropbox"><canvas id="cp-cv" width="'+LADO+'" height="'+LADO+'"></canvas><div class="cropmask"></div></div>'+
-      '<div class="croprow">'+svg('search',15)+'<input type="range" id="cp-z" min="100" max="320" value="100" aria-label="'+PT('Acercar','Zoom')+'">'+svg('search',19)+'</div>'+
+     Como en cualquier red: arrastras, acercas y lo que se ve en el recuadro es
+     lo que se guarda. Del avatar sale un cuadrado (512) y de la portada una
+     banda ancha (1600x600), ligeras las dos.
+     Del perfil subimos TAMBIEN el original, para que pueda volver a encuadrarlo
+     cuando quiera sin buscar el archivo otra vez. Lo que ven el CRM y los
+     correos sigue siendo el recorte: ahi no cambia nada. */
+  var MAXSRC=1400;                       // lado mayor del original que guardamos
+
+  function reescala(im,iw,ih,max){
+    var k=Math.min(1,max/Math.max(iw,ih));
+    var c=document.createElement('canvas');
+    c.width=Math.max(1,Math.round(iw*k)); c.height=Math.max(1,Math.round(ih*k));
+    var x=c.getContext('2d'); x.imageSmoothingQuality='high';
+    x.drawImage(im,0,0,c.width,c.height);
+    return c;
+  }
+
+  // fuente: el archivo que acaba de elegir, o la URL de su original para recolocarlo.
+  function cropPhoto(fuente, cb, opt){
+    opt=opt||{};
+    var ancha=!!opt.ancha;
+    var RATIO=ancha?(16/6):1;
+    var LADO=ancha?340:280, ALTO=Math.round(LADO/RATIO);
+    var SAL=ancha?1600:512, SALH=Math.round(SAL/RATIO);
+    var p0=opt.pos||null;
+    var ov=modal(ancha?PT('Coloca tu portada','Place your cover'):PT('Encuadra tu foto','Frame your photo'),
+      '<div class="cropbox'+(ancha?' wide':'')+'"><canvas id="cp-cv" width="'+LADO+'" height="'+ALTO+'"></canvas><div class="cropmask"></div></div>'+
+      '<div class="croprow">'+svg('search',15)+'<input type="range" id="cp-z" min="100" max="320" value="'+Math.round(Math.min(3.2,Math.max(1,(p0&&p0.z)||1))*100)+'" aria-label="'+PT('Acercar','Zoom')+'">'+svg('search',19)+'</div>'+
       '<p class="muted cropnote">'+PT('Arrastra la foto para colocarla.','Drag the photo to place it.')+'</p>'+
-      '<button class="btn pri w" id="cp-ok" style="margin-top:14px" disabled>'+PT('Cargando…','Loading…')+'</button>', 360);
+      '<button class="btn pri w" id="cp-ok" style="margin-top:14px" disabled>'+PT('Cargando…','Loading…')+'</button>', ancha?430:360);
     var cv=ov.querySelector('#cp-cv'), ctx=cv.getContext('2d'),
         zo=ov.querySelector('#cp-z'), ok=ov.querySelector('#cp-ok');
-    var im=null, iw=0, ih=0, base=1, zoom=1, tx=0, ty=0, drag=null;
+    var im=null, iw=0, ih=0, base=1, zoom=Math.min(3.2,Math.max(1,(p0&&p0.z)||1)), tx=0, ty=0, drag=null;
 
     function pintar(){
       if(!im) return;
       var s=base*zoom, w=iw*s, hh=ih*s;
-      // La foto siempre tapa el cuadro entero: nunca un borde vacío.
-      var lx=Math.max(0,(w-LADO)/2), ly=Math.max(0,(hh-LADO)/2);
+      // La foto siempre tapa el recuadro entero: nunca un borde vacío.
+      var lx=Math.max(0,(w-LADO)/2), ly=Math.max(0,(hh-ALTO)/2);
       tx=Math.max(-lx,Math.min(lx,tx)); ty=Math.max(-ly,Math.min(ly,ty));
-      ctx.clearRect(0,0,LADO,LADO);
-      ctx.drawImage(im,(LADO-w)/2+tx,(LADO-hh)/2+ty,w,hh);
+      ctx.clearRect(0,0,LADO,ALTO);
+      ctx.drawImage(im,(LADO-w)/2+tx,(ALTO-hh)/2+ty,w,hh);
     }
     function factor(){ var r=cv.getBoundingClientRect(); return r.width?(LADO/r.width):1; }
 
+    // Al soltar fuera del recuadro, el clic caería en el fondo del modal y lo
+    // cerraría con el encuadre a medias: ese clic se descarta.
+    var movido=false;
+    ov.addEventListener('click',function(e){ if(movido){ movido=false; e.stopPropagation(); } },true);
     cv.addEventListener('pointerdown',function(e){ drag={x:e.clientX,y:e.clientY}; try{cv.setPointerCapture(e.pointerId);}catch(_){} });
-    cv.addEventListener('pointermove',function(e){ if(!drag) return; var f=factor(); tx+=(e.clientX-drag.x)*f; ty+=(e.clientY-drag.y)*f; drag={x:e.clientX,y:e.clientY}; pintar(); });
+    cv.addEventListener('pointermove',function(e){ if(!drag) return; var f=factor(); tx+=(e.clientX-drag.x)*f; ty+=(e.clientY-drag.y)*f; drag={x:e.clientX,y:e.clientY}; movido=true; pintar(); });
     cv.addEventListener('pointerup',function(){ drag=null; });
     cv.addEventListener('pointercancel',function(){ drag=null; });
     zo.oninput=function(){ zoom=Number(zo.value)/100; pintar(); };
 
     (async function(){
+      var dato=fuente;
+      if(typeof fuente==='string'){
+        // Se baja con fetch y no con <img src>: así el canvas no queda "manchado" y se puede exportar.
+        try{ var rr=await fetch(fuente,{mode:'cors',cache:'reload'}); if(!rr.ok) throw 0; dato=await rr.blob(); }
+        catch(e){ ov.close(); alert(PT('No pudimos abrir esa foto.','We could not open that photo.')); return; }
+      }
       try{
         // from-image respeta la orientación EXIF del móvil (si no, salen tumbadas).
-        if(window.createImageBitmap) im=await createImageBitmap(file,{imageOrientation:'from-image'});
+        if(window.createImageBitmap) im=await createImageBitmap(dato,{imageOrientation:'from-image'});
       }catch(e){ im=null; }
       if(!im){
         try{
-          im=await new Promise(function(res,rej){ var i=new Image(); i.onload=function(){res(i);}; i.onerror=rej; i.src=URL.createObjectURL(file); });
+          im=await new Promise(function(res,rej){ var i2=new Image(); i2.onload=function(){res(i2);}; i2.onerror=rej; i2.src=URL.createObjectURL(dato); });
         }catch(e){ ov.close(); alert(PT('No pudimos abrir esa foto.','We could not open that photo.')); return; }
       }
       iw=im.naturalWidth||im.width; ih=im.naturalHeight||im.height;
       if(!iw||!ih){ ov.close(); alert(PT('No pudimos abrir esa foto.','We could not open that photo.')); return; }
-      base=Math.max(LADO/iw, LADO/ih);
+      base=Math.max(LADO/iw, ALTO/ih);
+      if(p0){ tx=Number(p0.x||0)*LADO; ty=Number(p0.y||0)*ALTO; }
       ok.disabled=false; ok.textContent=PT('Usar esta foto','Use this photo');
       pintar();
     })();
 
     ok.onclick=function(){
       if(!im) return;
-      var out=document.createElement('canvas'); out.width=out.height=SALIDA;
+      var out=document.createElement('canvas'); out.width=SAL; out.height=SALH;
       var o=out.getContext('2d'); o.imageSmoothingQuality='high';
-      var k=SALIDA/LADO, s=base*zoom*k, w=iw*s, hh=ih*s;
-      o.drawImage(im,(SALIDA-w)/2+tx*k,(SALIDA-hh)/2+ty*k,w,hh);
+      var k=SAL/LADO, s=base*zoom*k, w=iw*s, hh=ih*s;
+      o.drawImage(im,(SAL-w)/2+tx*k,(SALH-hh)/2+ty*k,w,hh);
+      var pos={x:Number((tx/LADO).toFixed(4)), y:Number((ty/ALTO).toFixed(4)), z:Number(zoom.toFixed(3))};
+      var hecho=function(){ ov.close(); };
+      var falla=function(){ ok.disabled=false; ok.textContent=PT('Usar esta foto','Use this photo'); };
       ok.disabled=true; ok.textContent=PT('Subiendo…','Uploading…');
       out.toBlob(function(b){
-        if(!b){ ok.disabled=false; ok.textContent=PT('Usar esta foto','Use this photo'); return; }
-        cb(b, function(){ ov.close(); }, function(){ ok.disabled=false; ok.textContent=PT('Usar esta foto','Use this photo'); });
+        if(!b){ falla(); return; }
+        if(typeof fuente==='string' || !opt.original){ cb(b,null,pos,hecho,falla); return; }
+        reescala(im,iw,ih,MAXSRC).toBlob(function(ob){ cb(b,ob,pos,hecho,falla); },'image/jpeg',0.88);
       },'image/jpeg',0.9);
     };
   }
 
-  function pickPhoto(cb){
+  async function subirBlob(blob, etiqueta){
+    var quien=(D&&D.client&&D.client.id)?D.client.id:'anon';
+    var path=quien+'/'+etiqueta+'-'+Date.now()+'.jpg';
+    var up=await sb.storage.from('portal-photos').upload(path,blob,{upsert:true,contentType:'image/jpeg'});
+    if(up.error) throw up.error;
+    return sb.storage.from('portal-photos').getPublicUrl(path).data.publicUrl;
+  }
+
+  // cb(url, src, pos): src solo viene si se pidio guardar el original.
+  function pickPhoto(cb, opt){
+    opt=opt||{};
     var inp=document.getElementById('upfile');
     inp.value='';
     inp.onchange=function(){
       var f=inp.files&&inp.files[0]; if(!f) return;
       // El límite puede ser ancho: lo que sube es el recorte, no el original.
       if(f.size>25*1024*1024){ alert(PT('La foto es muy grande (máx. 25 MB).','That photo is too big (25 MB max).')); return; }
-      cropPhoto(f, async function(blob, hecho, falla){
+      cropPhoto(f, async function(blob, orig, pos, hecho, falla){
         try{
-          var path=(D&&D.client&&D.client.id?D.client.id:'anon')+'/'+Date.now()+'.jpg';
-          var up=await sb.storage.from('portal-photos').upload(path,blob,{upsert:true,contentType:'image/jpeg'});
-          if(up.error) throw up.error;
-          var pub=sb.storage.from('portal-photos').getPublicUrl(path);
-          hecho(); cb(pub.data.publicUrl);
+          var url=await subirBlob(blob, opt.ancha?'cover':'foto');
+          var src=null;
+          if(orig) src=await subirBlob(orig, opt.ancha?'cover-src':'foto-src');
+          hecho(); cb(url, src, pos);
         }catch(e){ falla(); alert(PT('No se pudo subir la foto.','We could not upload the photo.')); }
-      });
+      }, opt);
     };
     inp.click();
   }
+
+  // Volver a encuadrar lo que ya subio, sin pedirle el archivo otra vez.
+  function recortarOtraVez(url, pos, cb, opt){
+    opt=opt||{};
+    cropPhoto(url, async function(blob, _orig, pos2, hecho, falla){
+      try{
+        var u=await subirBlob(blob, opt.ancha?'cover':'foto');
+        hecho(); cb(u, pos2);
+      }catch(e){ falla(); alert(PT('No se pudo guardar.','Could not save it.')); }
+    }, { ancha:!!opt.ancha, pos:pos });
+  }
+
   async function api(body){
     var s=await sb.auth.getSession();
     var tok=s.data&&s.data.session&&s.data.session.access_token;
@@ -1095,6 +1193,269 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     };
   };
 
+  /* ═══ SU PERFIL: PORTADA, FOTO Y PRIVACIDAD ═══
+     La portada, el encuadre y lo que deja ver viven en client_profile, no en
+     clients: asi los edita el con su propia sesion (RLS por mis_client_ids) y
+     no hay que abrir la tabla de datos personales a nadie.
+     Lo que es PUBLICO lo decide la base, no este archivo: la vista
+     public_profiles solo saca el campo cuyo interruptor esta en true. */
+  var PROF=null;
+  var PRIVCLAVES=['photo','cover','city','about','pets','badges','photos','since'];
+
+  async function cargarPerfil(){
+    try{
+      var cid=D&&D.client&&D.client.id;
+      if(!cid){ PROF=null; return; }
+      var r=await sb.from('client_profile').select('*').eq('client_id',cid).maybeSingle();
+      PROF=(r && !r.error && r.data) ? r.data : null;   // supabase-js no lanza: hay que mirar .error
+    }catch(e){ PROF=null; }
+  }
+  async function guardarPerfil(patch){
+    var cid=D&&D.client&&D.client.id; if(!cid) return false;
+    var fila={}; for(var k in patch) fila[k]=patch[k];
+    fila.client_id=cid; fila.updated_at=new Date().toISOString();
+    try{
+      var r=await sb.from('client_profile').upsert(fila,{onConflict:'client_id'});
+      if(r && r.error) return false;
+    }catch(e){ return false; }
+    PROF=PROF||{client_id:cid};
+    for(var k2 in patch) PROF[k2]=patch[k2];
+    return true;
+  }
+  function privacidad(){
+    var p=(PROF&&PROF.privacy)||{};
+    return (p && typeof p==='object') ? p : {};
+  }
+  function esPublico(){ return privacidad().public===true; }
+
+  /* ── la portada ── */
+  function coverY(){
+    var cp=(PROF&&PROF.cover_pos)||null;
+    var y=cp&&typeof cp.oy==='number'?cp.oy:50;
+    return Math.max(0,Math.min(100,y));
+  }
+  function coverHtml(c){
+    var url=(c&&c.cover_url)||'';
+    return '<div class="cover" id="cover">'+
+      (url?('<img src="'+esc(url)+'" alt="" style="object-position:50% '+coverY()+'%">'):'')+
+      '<div class="covbtns" id="covbtns">'+
+        '<button type="button" class="camchip" onclick="fotoMenu(\'cover\')">'+svg('cam',15)+'<span class="t">'+(url?PT('Portada','Cover'):PT('Poner portada','Add a cover'))+'</span></button>'+
+      '</div></div>';
+  }
+  function pintarPortada(){
+    var el=document.getElementById('cover'); if(!el) return;
+    var img=el.querySelector('img'); if(img) img.style.objectPosition='50% '+coverY()+'%';
+  }
+
+  // Colocarla a mano, como en cualquier red: se arrastra arriba y abajo.
+  window.coverMove=function(){
+    var el=document.getElementById('cover'); if(!el) return;
+    var img=el.querySelector('img'); if(!img) return;
+    var btns=document.getElementById('covbtns'); if(!btns) return;
+    var y0=coverY(), y=y0, drag=null;
+    var botones=btns.innerHTML;
+    el.classList.add('mov');
+    var hint=document.createElement('div');
+    hint.className='covhint'; hint.innerHTML=svg('move',15)+' '+PT('Arrastra para colocarla','Drag to place it');
+    el.appendChild(hint);
+    btns.innerHTML='<button type="button" class="camchip" id="cov-ok">'+svg('check',15)+'<span class="t">'+PT('Guardar','Save')+'</span></button>'+
+                   '<button type="button" class="camchip" id="cov-no">'+svg('x',15,2)+'<span class="t">'+PT('Cancelar','Cancel')+'</span></button>';
+    function margen(){
+      var nw=img.naturalWidth||1, nh=img.naturalHeight||1;
+      var alto=nh*(el.clientWidth/nw);
+      return Math.max(1, alto-el.clientHeight);
+    }
+    function mueve(e){
+      if(!drag) return;
+      // Arrastrar hacia abajo enseña la parte de arriba: la posición baja.
+      y=Math.max(0,Math.min(100, y-((e.clientY-drag)/margen())*100));
+      img.style.objectPosition='50% '+y+'%';
+      drag=e.clientY;
+    }
+    // Con propiedades y no con addEventListener: si entra y sale varias veces
+    // no se acumulan, que si no la foto acabaría moviéndose el doble.
+    img.onpointerdown=function(e){ drag=e.clientY; try{img.setPointerCapture(e.pointerId);}catch(_){} };
+    img.onpointermove=mueve;
+    img.onpointerup=function(){ drag=null; };
+    img.onpointercancel=function(){ drag=null; };
+    function salir(){
+      el.classList.remove('mov');
+      img.onpointerdown=img.onpointermove=img.onpointerup=img.onpointercancel=null;
+      try{hint.remove();}catch(_){}
+      // Solo sus botones: repintar el portal entero te sacaría de la pestaña donde estés.
+      btns.innerHTML=botones;
+      pintarPortada();
+    }
+    btns.querySelector('#cov-no').onclick=function(){ img.style.objectPosition='50% '+y0+'%'; salir(); };
+    btns.querySelector('#cov-ok').onclick=async function(){
+      var cp=(PROF&&PROF.cover_pos)||{}; var nuevo={x:cp.x||0,y:cp.y||0,z:cp.z||1,oy:Math.round(y*10)/10};
+      this.disabled=true; this.textContent=PT('Guardando…','Saving…');
+      var ok=await guardarPerfil({cover_pos:nuevo});
+      if(!ok) alert(PT('No se pudo guardar.','Could not save it.'));
+      salir();
+    };
+  };
+
+  /* ── el menú de la foto: cambiarla, recolocarla o quitarla ── */
+  window.fotoMenu=function(kind){
+    var ancha=(kind==='cover');
+    var c=(D&&D.client)||{};
+    var tiene=ancha?!!c.cover_url:!!c.photo_url;
+    var src=PROF?(ancha?PROF.cover_src:PROF.photo_src):null;
+    var ov=modal(ancha?PT('Tu portada','Your cover'):PT('Tu foto','Your photo'),
+      '<button class="btn pri w" id="fm-new">'+svg('cam',16)+' '+(tiene?PT('Elegir otra foto','Pick another photo'):PT('Subir una foto','Upload a photo'))+'</button>'+
+      (tiene&&src?('<button class="btn w" id="fm-crop" style="margin-top:9px">'+svg('search',16)+' '+PT('Volver a encuadrarla','Frame it again')+'</button>'):'')+
+      (tiene&&ancha?('<button class="btn w" id="fm-move" style="margin-top:9px">'+svg('move',16)+' '+PT('Subirla o bajarla','Move it up or down')+'</button>'):'')+
+      (tiene?('<button class="btn w" id="fm-del" style="margin-top:9px;color:#b91c1c;border-color:#fecaca">'+svg('trash',15)+' '+PT('Quitarla','Remove it')+'</button>'):'')+
+      (tiene&&!src?('<p class="muted" style="margin:12px 0 0;font-size:12.5px">'+PT('Para recolocarla sin perder calidad, vuelve a subirla: desde ahora guardamos el original.','To move it without losing quality, upload it again: from now on we keep the original.')+'</p>'):''), 380);
+
+    ov.querySelector('#fm-new').onclick=function(){
+      ov.close();
+      pickPhoto(async function(url, srcUrl, pos){
+        var r=await api({action:'save_photo',kind:ancha?'cover':'avatar',url:url});
+        if(!r||!r.ok){ alert(PT('No se pudo guardar la foto.','Could not save the photo.')); return; }
+        var patch={}; patch[ancha?'cover_src':'photo_src']=srcUrl||null;
+        patch[ancha?'cover_pos':'photo_pos']=ancha?{x:pos.x,y:pos.y,z:pos.z,oy:50}:pos;
+        await guardarPerfil(patch);
+        load();
+      }, {ancha:ancha, original:true});
+    };
+    var cr=ov.querySelector('#fm-crop');
+    if(cr) cr.onclick=function(){
+      ov.close();
+      var pos=(PROF&&(ancha?PROF.cover_pos:PROF.photo_pos))||null;
+      recortarOtraVez(src, pos, async function(url, pos2){
+        var r=await api({action:'save_photo',kind:ancha?'cover':'avatar',url:url});
+        if(!r||!r.ok){ alert(PT('No se pudo guardar la foto.','Could not save the photo.')); return; }
+        var patch={}; patch[ancha?'cover_pos':'photo_pos']=ancha?{x:pos2.x,y:pos2.y,z:pos2.z,oy:50}:pos2;
+        await guardarPerfil(patch);
+        load();
+      }, {ancha:ancha});
+    };
+    var mv=ov.querySelector('#fm-move');
+    if(mv) mv.onclick=function(){ ov.close(); coverMove(); };
+    var dl=ov.querySelector('#fm-del');
+    if(dl) dl.onclick=async function(){
+      if(!confirm(ancha?PT('¿Quitar tu portada?','Remove your cover?'):PT('¿Quitar tu foto?','Remove your photo?'))) return;
+      this.disabled=true;
+      var r=await api({action:'save_photo',kind:ancha?'cover':'avatar',url:''});
+      var patch={}; patch[ancha?'cover_src':'photo_src']=null; patch[ancha?'cover_pos':'photo_pos']=null;
+      await guardarPerfil(patch);
+      ov.close();
+      if(r&&r.ok) load(); else alert(PT('No se pudo quitar.','Could not remove it.'));
+    };
+  };
+
+  /* ── quién ve su perfil ── */
+  // Lo que ve un extraño se pregunta como un extraño: sin su sesión, a la misma
+  // vista pública. Si algo no sale aquí, no es público de verdad.
+  async function perfilPublico(cid){
+    try{
+      var r=await fetch(SUPA+'/rest/v1/public_profiles?select=*&id=eq.'+encodeURIComponent(cid),{headers:{'apikey':ANON}});
+      var j=await r.json();
+      return (Array.isArray(j)&&j[0])?j[0]:null;
+    }catch(e){ return null; }
+  }
+  function pvHtml(p){
+    if(!p) return '<p class="pvempty">'+PT('Nadie puede ver tu perfil ahora mismo.','Nobody can see your profile right now.')+'</p>';
+    var loc=[p.city,p.state].filter(Boolean).join(', ');
+    var ins=(p.badges||[]).slice(0,6).map(function(b){ return '<span class="bdg">'+esc(PLANG==='en'?(b.name_en||b.name_es):(b.name_es||b.name_en))+'</span>'; }).join('');
+    var mas=(p.pets||[]).map(function(m){ return '<span class="bdg">'+svg('paw',13)+' '+esc(m.name||'')+(m.breed?(' · '+esc(m.breed)):'')+'</span>'; }).join('');
+    var fts=(p.photos||[]).slice(0,6).map(function(f){ return '<img src="'+esc(f.url)+'" alt="" style="width:52px;height:52px;object-fit:cover;border-radius:9px">'; }).join('');
+    return '<div class="pvcard">'+
+      '<div class="pvtop">'+(p.cover_url?('<img src="'+esc(p.cover_url)+'" alt="">'):'')+'</div>'+
+      '<div class="pvin">'+
+        (p.photo_url?('<img class="pvav" src="'+esc(p.photo_url)+'" alt="">'):'<div class="pvav"></div>')+
+        '<div class="pvnm">'+esc(p.name||'')+'</div>'+
+        (loc?('<div class="sub">'+esc(loc)+'</div>'):'')+
+        (p.member_since?('<div class="sub">'+PT('Con nosotros desde ','With us since ')+esc(fmtD(String(p.member_since).slice(0,10)))+'</div>'):'')+
+        (p.about?('<p style="font-size:13px;color:var(--ink2);line-height:1.55;margin:11px 0 0;text-wrap:pretty">'+esc(p.about)+'</p>'):'')+
+        (mas?('<div class="bgrid">'+mas+'</div>'):'')+
+        (ins?('<div class="bgrid">'+ins+'</div>'):'')+
+        (fts?('<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:12px">'+fts+'</div>'):'')+
+      '</div></div>';
+  }
+
+  window.privacyEdit=function(){
+    if(!(D&&D.client&&D.client.id)){ alert(PT('Completa tu perfil antes de elegir qué se ve.','Complete your profile before choosing what shows.')); return; }
+    var p=privacidad();
+    var st={public:p.public===true};
+    PRIVCLAVES.forEach(function(k){ st[k]=(p[k]===true); });
+    // Primera vez: proponemos lo de toda la vida (menos el álbum, que ya se
+    // elige foto por foto). Lo ve encendido en pantalla y decide antes de guardar.
+    var virgen=!PRIVCLAVES.some(function(k){ return typeof p[k]!=='undefined'; });
+    var tog=function(k,ic,col,label,nota){
+      return '<div class="ptog'+(st[k]?' on':'')+'" data-k="'+k+'"><span class="lt">'+
+        '<span class="ic" style="background:var(--paper);color:'+col+'">'+svg(ic,16,2)+'</span>'+
+        '<span><b style="font-size:13.5px">'+esc(label)+'</b>'+(nota?('<br><span class="muted" style="font-size:12px;font-weight:600">'+esc(nota)+'</span>'):'')+'</span>'+
+      '</span><span class="sw"></span></div>';
+    };
+    var nunca=[['mail',PT('Tu correo','Your email')],['card',PT('Tus pagos, planes y contratos','Your payments, plans and contracts')],
+               ['home',PT('Tu dirección y tu teléfono','Your address and phone')],['calendar',PT('Tus citas y tus recibos','Your appointments and receipts')],
+               ['book',PT('Los papeles de tu cachorro','Your puppy\'s paperwork')]];
+    var ov=modal(PT('Quién ve tu perfil','Who sees your profile'),
+      '<div class="privmaster'+(st.public?' on':'')+'" id="pv-master">'+
+        '<span class="ic">'+svg(st.public?'globe':'lock',19,1.9)+'</span>'+
+        '<span style="flex:1"><b style="font-size:14.5px" id="pv-mt"></b><br><span class="muted" style="font-size:12.5px" id="pv-ms"></span></span>'+
+        '<span class="sw"></span></div>'+
+      '<div id="pv-list"'+(st.public?'':' style="display:none"')+'>'+
+        '<p class="muted" style="margin:0 0 10px;font-size:12.5px">'+PT('Marca lo que quieras enseñar. Lo que dejes apagado no sale, aunque alguien entre a tu perfil.','Turn on what you want to show. Anything left off never shows, even if someone opens your profile.')+'</p>'+
+        tog('photo','cam','#C2521E',PT('Mi foto','My photo'))+
+        tog('cover','image','#2563EB',PT('Mi portada','My cover'))+
+        tog('city','home','#12A47A',PT('De dónde soy','Where I am from'),PT('Ciudad y estado','City and state'))+
+        tog('about','pen','#7C3AED',PT('Sobre mí','About me'))+
+        tog('pets','paw','#E83860',PT('Mis mascotas','My pets'),PT('Nombre, raza y foto','Name, breed and photo'))+
+        tog('badges','trophy','#F5A623',PT('Mis insignias','My badges'))+
+        tog('photos','images','#2563EB',PT('Las fotos que comparto','The photos I share'),PT('Solo las que marcaste en tu álbum','Only the ones you marked in your album'))+
+        tog('since','calendar','#12A47A',PT('Desde cuándo estoy con ustedes','How long I have been with you'))+
+      '</div>'+
+      '<div class="privnever"><div style="font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--soft);margin-bottom:7px">'+PT('Esto no se publica nunca','This is never published')+'</div><ul style="margin:0;padding:0">'+
+        nunca.map(function(n){ return '<li>'+svg('lock',13,2)+esc(n[1])+'</li>'; }).join('')+
+      '</ul></div>'+
+      '<button class="btn pri w" id="pv-save" style="margin-top:16px">'+PT('Guardar','Save')+'</button>'+
+      '<div id="pv-msg"></div><div id="pv-prev" style="margin-top:14px"></div>', 520);
+
+    var master=ov.querySelector('#pv-master'), lista=ov.querySelector('#pv-list');
+    function pintaMaster(){
+      master.classList.toggle('on',st.public);
+      master.querySelector('.ic').innerHTML=svg(st.public?'globe':'lock',19,1.9);
+      ov.querySelector('#pv-mt').textContent=st.public?PT('Perfil público','Public profile'):PT('Perfil privado','Private profile');
+      ov.querySelector('#pv-ms').textContent=st.public
+        ? PT('Cualquiera que abra tu perfil ve lo que marques abajo.','Anyone who opens your profile sees what you turn on below.')
+        : PT('Solo tú y el equipo de BrightPuppy. Nadie más.','Only you and the BrightPuppy team. Nobody else.');
+      lista.style.display=st.public?'':'none';
+    }
+    pintaMaster();
+    master.onclick=function(){
+      st.public=!st.public;
+      if(st.public && virgen){
+        virgen=false;
+        ['photo','cover','city','about','pets','badges','since'].forEach(function(k){ st[k]=true; });
+        Array.prototype.forEach.call(ov.querySelectorAll('.ptog[data-k]'), function(t){ t.classList.toggle('on', !!st[t.getAttribute('data-k')]); });
+      }
+      pintaMaster();
+    };
+    Array.prototype.forEach.call(ov.querySelectorAll('.ptog[data-k]'), function(t){
+      t.onclick=function(){ var k=t.getAttribute('data-k'); st[k]=!st[k]; t.classList.toggle('on',st[k]); };
+    });
+
+    ov.querySelector('#pv-save').onclick=async function(){
+      var b=this, m=ov.querySelector('#pv-msg'), prev=ov.querySelector('#pv-prev');
+      b.disabled=true; b.textContent=PT('Guardando…','Saving…');
+      var nuevo={public:!!st.public};
+      PRIVCLAVES.forEach(function(k){ nuevo[k]=!!(st.public&&st[k]); });
+      var ok=await guardarPerfil({privacy:nuevo});
+      b.disabled=false; b.textContent=PT('Guardar','Save');
+      if(!ok){ m.className='msg err'; m.textContent=PT('No se pudo guardar.','Could not save.'); return; }
+      m.className='msg ok'; m.textContent=PT('Guardado.','Saved.');
+      pintarPrivEstado();
+      if(!nuevo.public){ prev.innerHTML='<p class="pvempty">'+PT('Tu perfil está en privado: nadie ve nada de esto.','Your profile is private: nobody sees any of this.')+'</p>'; return; }
+      prev.innerHTML='<div class="center"><div class="spin"></div></div>';
+      var pp=await perfilPublico(D&&D.client&&D.client.id);
+      prev.innerHTML='<div style="font-size:11.5px;font-weight:800;letter-spacing:.07em;text-transform:uppercase;color:var(--soft);margin-bottom:8px">'+PT('Así te ven','This is how they see you')+'</div>'+pvHtml(pp);
+    };
+  };
+
   /* ═══ PERFIL ═══ */
   window.profileEdit=function(){
     var c=(D&&D.client)||{};
@@ -1128,12 +1489,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     };
   };
 
-  window.setPhoto=function(kind){
-    pickPhoto(async function(url){
-      var r=await api({action:'save_photo',kind:kind,url:url});
-      if(r&&r.ok) load(); else alert(PT('No se pudo guardar la foto.','Could not save the photo.'));
-    });
-  };
+  window.setPhoto=function(kind){ fotoMenu(kind); };   // se queda por compatibilidad
 
   /* ═══ AGREGAR SERVICIOS a una cita ya hecha (incluye Pickup & Delivery) ═══ */
   window.addServices=function(gid){
@@ -1542,6 +1898,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<div class="sntit">'+PT('Mi cuenta','My account')+'</div>'+
       '<button type="button" class="snl" onclick="goTab(\'cuenta\')">'+svg('mail',17)+PT('Mis datos','My details')+'</button>'+
       '<button type="button" class="snl" onclick="profileEdit()">'+svg('pen',17)+PT('Editar mi perfil','Edit my profile')+'</button>'+
+      '<button type="button" class="snl" onclick="privacyEdit()">'+svg('lock',17)+PT('Quién ve mi perfil','Who sees my profile')+'</button>'+
       '<div class="snsep"></div>'+
       '<div class="sntit">'+PT('BrightPuppy','BrightPuppy')+'</div>'+
       items.map(function(i){
@@ -1684,6 +2041,14 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<p class="muted" style="margin:7px 0 14px">'+PT('Tus fotos son tuyas. Si quieres, puedes marcar alguna para que se vea en B Social \u2014 el resto no sale de aqu\u00ed.','Your photos are yours. You can mark one to show on B Social \u2014 the rest never leaves this page.')+'</p>'+
       '<div id="alb-host"><div class="center"><div class="spin"></div></div></div></div>';
   }
+  function pintarPrivEstado(){
+    var el=document.getElementById('priv-estado'); if(!el) return;
+    if(!esPublico()){ el.textContent=PT('Tu perfil está en privado. Solo tú y el equipo lo ven.','Your profile is private. Only you and the team see it.'); return; }
+    var p=privacidad(), n=PRIVCLAVES.filter(function(k){ return p[k]===true; }).length;
+    el.textContent=PT('Tu perfil es público y enseñas '+n+' cosa'+(n===1?'':'s')+'. Tu correo, tu teléfono y tus pagos nunca.',
+                      'Your profile is public and you show '+n+' thing'+(n===1?'':'s')+'. Never your email, phone or payments.');
+  }
+
   function pintarAlbum(){
     var host=document.getElementById('alb-host'); if(!host) return;
     var fs2=ALBUM||[];
@@ -2072,6 +2437,9 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<div class="card"><div class="card-head">'+hIco('lock','#7C3AED')+'<div class="ttl">'+PT('Tu llave de entrada','Your sign-in key')+'</div></div>'+
       '<p class="muted" style="margin:2px 0 14px">'+PT('Ponte una contraseña y la próxima vez entras de una, sin pasar por el correo. Y si prefieres, siempre está Google.','Set a password and next time you\'re in with one tap, no email trip. Or just use Google, always.')+'</p>'+
       '<button class="btn pri w" onclick="setPassword()">'+svg('check',16)+' '+PT('Crear o cambiar mi contraseña','Set or change my password')+'</button></div>'+
+      '<div class="card"><div class="card-head">'+hIco('eye','#12A47A')+'<div class="ttl">'+PT('Quién ve tu perfil','Who sees your profile')+'</div></div>'+
+      '<p class="muted" style="margin:2px 0 14px" id="priv-estado"></p>'+
+      '<button class="btn w" onclick="privacyEdit()">'+svg('lock',16)+' '+PT('Abrir mi privacidad','Open my privacy')+'</button></div>'+
       '</div>';
 
     if(d.email_opted_out){
@@ -2201,7 +2569,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 
     var html='<div class="idcard rise"><div class="rainbow"></div>'+
       '<div class="av">'+(c.photo_url?('<img src="'+esc(c.photo_url)+'" alt="">'):esc(initials))+
-        '<button class="pen" onclick="setPhoto(\'avatar\')" title="'+PT('Cambiar foto','Change photo')+'">'+svg('cam',14,2)+'</button></div>'+
+        '<button class="pen" onclick="fotoMenu(\'avatar\')" title="'+PT('Cambiar foto','Change photo')+'">'+svg('cam',14,2)+'</button></div>'+
       '<h1 class="nm">'+PT('Hola, ','Hi, ')+esc(String(name||'').split(' ')[0]||name)+'</h1>'+
       '<div class="sub">'+esc(d.email)+(loc?(' · '+esc(loc)):'')+'</div>'+
       naLineHtml+
@@ -2240,7 +2608,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<div class="pane" data-p="cuenta">'+paneCuenta(d)+'</div>';
 
     // Menú a la izquierda, lo suyo al centro.
-    root.innerHTML='<div class="shell">'+sidenavHtml()+'<div class="main"><div class="topband"></div>'+html+'</div></div>';
+    root.innerHTML='<div class="shell">'+sidenavHtml()+'<div class="main">'+coverHtml(c)+html+'</div></div>';
     videoDelCliente(d);
     loadLoyalty(); // Puntos B (solo miembros; no-op si no hay tarjeta)
 
@@ -2371,6 +2739,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       }
       _ultimo=Date.now();
       render(d); _pintado=true; guardarCache(d);
+      // La portada y la privacidad van por su cuenta (RLS), así que llegan solas.
+      cargarPerfil().then(function(){ pintarPortada(); pintarPrivEstado(); });
     }catch(e){
       if(_pintado) return;
       root.innerHTML='<div class="card"><div class="msg err">'+PT('No pudimos cargar tu perfil. Intenta de nuevo.','We could not load your profile. Try again.')+'</div></div>';
