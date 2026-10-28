@@ -54,10 +54,12 @@ header .brand img{height:28px}
 /* ── el perfil: menú pegado a la izquierda, lo tuyo al centro, lo suyo a la derecha ── */
 /* La portada cruza el centro y la derecha; el menú sube hasta su altura. */
 .shell{display:grid;grid-template-columns:232px minmax(0,1fr);gap:0 24px;align-items:start}
-.shell>.sidenav{grid-column:1;grid-row:1/span 2}
-.shell>.cover{grid-column:2/-1;grid-row:1}
+/* La tarjeta del centro sube 34px sobre la portada; el menu y la columna de la
+   derecha suben lo mismo para empezar los tres a la misma altura. */
+.shell>.sidenav{grid-column:1;grid-row:2;margin-top:-34px}
+.shell>.cover{grid-column:2;grid-row:1}
 .shell>.main{grid-column:2;grid-row:2}
-.shell>.railr{grid-column:3;grid-row:2}
+.shell>.railr{grid-column:3;grid-row:2;margin-top:-34px}
 .shell.tres{grid-template-columns:232px minmax(0,1fr) 290px}
 /* El wrap lo centra a 1140 y aquí estorba: el perfil se estira hasta los bordes
    (igual que la cabecera) y para de crecer en 1540. */
@@ -73,6 +75,11 @@ header .brand img{height:28px}
 .rpet .n{font-size:13.5px;font-weight:800;line-height:1.25}
 .rpet .b{font-size:12px;color:var(--ink2);line-height:1.3}
 .rcard .bgrid{margin-top:0}
+.rlink{display:flex;align-items:center;gap:10px;padding:9px 8px;border-radius:11px;cursor:pointer;
+  font-size:13.5px;font-weight:700;color:var(--ink);text-decoration:none;transition:background .15s,color .15s}
+.rlink:hover{background:var(--paper);color:var(--orange2)}
+.rlink svg{flex-shrink:0;opacity:.72}
+.rlink:hover svg{opacity:1}
 .sidenav{position:sticky;top:16px;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);
   box-shadow:var(--shadow);padding:15px 12px 13px}
 .sntit{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);padding:0 10px 8px}
@@ -94,6 +101,7 @@ header .brand img{height:28px}
   .shell>.main{grid-column:1;grid-row:2}
   .shell>.railr{grid-column:1;grid-row:3;position:static;margin-top:22px}
   .shell>.sidenav{grid-column:1;grid-row:4;position:static;margin-top:22px}
+  .shell>.railr{margin-top:22px}
 }
 
 /* ── el álbum ── */
@@ -140,7 +148,7 @@ header .brand img{height:28px}
 /* ── portada y avatar ── */
 /* La banda de arriba es su portada. Sin foto se queda el degradado de siempre.
    El avatar NO se recorta: la tarjeta no tiene overflow:hidden y cabe completo. */
-.cover{position:relative;height:clamp(190px,20vw,300px);border-radius:0 0 26px 26px;overflow:hidden;
+.cover{position:relative;height:clamp(180px,15vw,215px);border-radius:0 0 26px 26px;overflow:hidden;
   border:1px solid var(--line);border-top:none;background:linear-gradient(135deg,#FFE9D2,#FFD9E4 45%,#E4E7FF)}
 .cover>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block}
 /* Mientras la coloca: se arrastra con el dedo y el borde lo recuerda. */
@@ -408,7 +416,7 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 @media(max-width:640px){
   .acct{grid-template-columns:1fr}
   .wrap{padding:0 12px 70px}
-  .cover{height:clamp(165px,44vw,215px);border-radius:0 0 20px 20px}
+  .cover{height:clamp(150px,40vw,195px);border-radius:0 0 20px 20px}
   .covbtns{right:10px;bottom:34px}
   /* En el móvil manda la foto: del chip se queda el icono. */
   .covbtns .camchip{padding:10px;gap:0}
@@ -1916,6 +1924,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       ['/solicitud', 'pen', PT('Solicitar un cachorro','Request a puppy')]
     ];
     return '<aside class="sidenav">'+
+      '<a class="snl" href="/social">'+svg('users',17)+'<span class="snsocial">'+PT('Ir a B Social','Go to B Social')+'</span></a>'+
+      '<div class="snsep"></div>'+
       '<div class="sntit">'+PT('Mi cuenta','My account')+'</div>'+
       '<button type="button" class="snl" onclick="goTab(\'cuenta\')">'+svg('mail',17)+PT('Mis datos','My details')+'</button>'+
       '<button type="button" class="snl" onclick="profileEdit()">'+svg('pen',17)+PT('Editar mi perfil','Edit my profile')+'</button>'+
@@ -1925,7 +1935,6 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       items.map(function(i){
         return '<a class="snl" href="'+i[0]+'">'+svg(i[1],17)+esc(i[2])+'</a>';
       }).join('')+
-      '<a class="snl" href="/social">'+svg('users',17)+'<span class="snsocial">B Social</span></a>'+
       '</aside>';
   }
 
@@ -2702,6 +2711,14 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         pups.map(function(p){ var f=p.photo_url||((p.photos||[])[0]||''); return fila(p.name,p.breed,f,'goTab(\'cachorro\')'); }).join('')+
         '</div>';
     }
+    // Atajos: lo que se hace DENTRO del portal y las dos paradas que mas
+    // preguntan. El menu de la izquierda lleva fuera; esto es para aqui.
+    out+='<div class="rcard"><div class="rt">'+PT('Atajos','Shortcuts')+'</div>'+
+      '<a class="rlink" href="/grooming">'+svg('scissors',17)+PT('Reservar un baño','Book a bath')+'</a>'+
+      '<div class="rlink" onclick="goTab(\'album\');albumAdd()">'+svg('cam',17)+PT('Subir una foto','Upload a photo')+'</div>'+
+      '<a class="rlink" href="/media#guias">'+svg('book',17)+PT('Guías en video','Video guides')+'</a>'+
+      '<a class="rlink" href="/mercado">'+svg('tag',17)+PT('Lo que recomendamos','What we recommend')+'</a>'+
+      '</div>';
     var ins=badgesHtml(d);
     if(ins) out+='<div class="rcard"><div class="rt">'+PT('Tus insignias','Your badges')+'</div>'+ins+'</div>';
     return out;
