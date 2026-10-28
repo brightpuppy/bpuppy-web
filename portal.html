@@ -51,9 +51,28 @@ header .brand img{height:28px}
 
 .wrap{max-width:1140px;margin:0 auto;padding:0 16px 80px}
 
-/* ── el perfil: menú a la izquierda, lo tuyo al centro ── */
-.shell{display:grid;grid-template-columns:232px minmax(0,1fr);gap:24px;align-items:start}
+/* ── el perfil: menú pegado a la izquierda, lo tuyo al centro, lo suyo a la derecha ── */
+/* La portada cruza el centro y la derecha; el menú sube hasta su altura. */
+.shell{display:grid;grid-template-columns:232px minmax(0,1fr);gap:0 24px;align-items:start}
+.shell>.sidenav{grid-column:1;grid-row:1/span 2}
+.shell>.cover{grid-column:2/-1;grid-row:1}
+.shell>.main{grid-column:2;grid-row:2}
+.shell>.railr{grid-column:3;grid-row:2}
+.shell.tres{grid-template-columns:232px minmax(0,1fr) 290px}
+/* El wrap lo centra a 1140 y aquí estorba: el perfil se estira hasta los bordes
+   (igual que la cabecera) y para de crecer en 1540. */
+@media(min-width:901px){ .shell{margin-inline:min(0px, max(calc(570px - 50vw), -200px))} }
 .main{min-width:0}
+.railr{display:flex;flex-direction:column;gap:14px;position:sticky;top:16px}
+.rcard{background:var(--bg);border:1px solid var(--line);border-radius:var(--r);box-shadow:var(--shadow);padding:15px 16px 16px}
+.rcard .rt{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);margin-bottom:10px}
+.rpet{display:flex;align-items:center;gap:11px;padding:7px;border-radius:12px;cursor:pointer;transition:background .15s}
+.rpet:hover{background:var(--paper)}
+.rpet>img,.rpet>.ph{width:42px;height:42px;border-radius:12px;flex-shrink:0;object-fit:cover;
+  background:var(--paper);display:grid;place-items:center;color:var(--orange)}
+.rpet .n{font-size:13.5px;font-weight:800;line-height:1.25}
+.rpet .b{font-size:12px;color:var(--ink2);line-height:1.3}
+.rcard .bgrid{margin-top:0}
 .sidenav{position:sticky;top:16px;background:var(--bg);border:1px solid var(--line);border-radius:var(--r);
   box-shadow:var(--shadow);padding:15px 12px 13px}
 .sntit{font-size:10.5px;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:var(--soft);padding:0 10px 8px}
@@ -70,9 +89,11 @@ header .brand img{height:28px}
   background-size:300% 100%;-webkit-background-clip:text;background-clip:text;color:transparent;
   animation:slide 7s linear infinite;font-weight:800}
 @media(max-width:900px){
-  .shell{grid-template-columns:1fr;gap:0}
-  .sidenav{position:static;order:2;margin-top:26px}
-  .main{order:1}
+  .shell,.shell.tres{grid-template-columns:1fr;gap:0;margin-inline:0}
+  .shell>.cover{grid-column:1;grid-row:1}
+  .shell>.main{grid-column:1;grid-row:2}
+  .shell>.railr{grid-column:1;grid-row:3;position:static;margin-top:22px}
+  .shell>.sidenav{grid-column:1;grid-row:4;position:static;margin-top:22px}
 }
 
 /* ── el álbum ── */
@@ -119,14 +140,14 @@ header .brand img{height:28px}
 /* ── portada y avatar ── */
 /* La banda de arriba es su portada. Sin foto se queda el degradado de siempre.
    El avatar NO se recorta: la tarjeta no tiene overflow:hidden y cabe completo. */
-.cover{position:relative;height:172px;border-radius:0 0 26px 26px;overflow:hidden;
+.cover{position:relative;height:clamp(190px,20vw,300px);border-radius:0 0 26px 26px;overflow:hidden;
   border:1px solid var(--line);border-top:none;background:linear-gradient(135deg,#FFE9D2,#FFD9E4 45%,#E4E7FF)}
 .cover>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;object-position:50% 50%;display:block}
 /* Mientras la coloca: se arrastra con el dedo y el borde lo recuerda. */
 .cover.mov{box-shadow:inset 0 0 0 2px var(--orange);touch-action:none}
 .cover.mov>img{cursor:grab}
 .cover.mov>img:active{cursor:grabbing}
-.covbtns{position:absolute;right:13px;bottom:13px;display:flex;gap:7px;z-index:2}
+.covbtns{position:absolute;right:14px;bottom:44px;display:flex;gap:7px;z-index:2}
 /* El chip nace con position:absolute para el visor de fotos: aqui va en fila. */
 .covbtns .camchip{position:static}
 .covhint{position:absolute;left:14px;top:12px;z-index:2;color:#fff;font-size:12.5px;font-weight:700;
@@ -387,8 +408,8 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
 @media(max-width:640px){
   .acct{grid-template-columns:1fr}
   .wrap{padding:0 12px 70px}
-  .cover{height:132px;border-radius:0 0 20px 20px}
-  .covbtns{right:9px;bottom:9px}
+  .cover{height:clamp(165px,44vw,215px);border-radius:0 0 20px 20px}
+  .covbtns{right:10px;bottom:34px}
   /* En el móvil manda la foto: del chip se queda el icono. */
   .covbtns .camchip{padding:10px;gap:0}
   .covbtns .camchip .t{display:none}
@@ -2580,7 +2601,6 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
         '<div class="stat" onclick="goTab(\'grooming\')" style="cursor:pointer"><b style="color:var(--violet)">'+ms.length+'</b><span>'+PT(ms.length===1?'PLAN':'PLANES',ms.length===1?'PLAN':'PLANS')+'</span></div>'+
         '<div class="stat" onclick="goTab(\'logros\')" style="cursor:pointer"><b style="color:var(--blue)">'+earned+'</b><span>'+PT('INSIGNIAS','BADGES')+'</span></div>'+
       '</div>'+
-      badgesHtml(d)+
       aboutBlockHtml+
       (profileComplete(c)?'':'<div class="nudge">'+PT('Completa tu perfil y desbloqueas la insignia <b>Perfil Completo</b>.','Complete your profile and unlock the <b>Complete Profile</b> badge.')+'</div>')+
       '</div>';
@@ -2608,7 +2628,10 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
       '<div class="pane" data-p="cuenta">'+paneCuenta(d)+'</div>';
 
     // Menú a la izquierda, lo suyo al centro.
-    root.innerHTML='<div class="shell">'+sidenavHtml()+'<div class="main">'+coverHtml(c)+html+'</div></div>';
+    var rail=railHtml(d);
+    root.innerHTML='<div class="shell'+(rail?' tres':'')+'">'+sidenavHtml()+coverHtml(c)+
+      '<div class="main">'+html+'</div>'+
+      (rail?('<aside class="railr">'+rail+'</aside>'):'')+'</div>';
     videoDelCliente(d);
     loadLoyalty(); // Puntos B (solo miembros; no-op si no hay tarjeta)
 
@@ -2657,6 +2680,33 @@ footer a{color:var(--orange2);text-decoration:none;font-weight:700}
     for(var i=0;i<need.length;i++){ if(!String(c[need[i]]||'').trim()) return false; }
     return true;
   }
+  /* ── la columna de la derecha: lo suyo de un vistazo ──
+     Sus mascotas y sus insignias. Las insignias se PINTAN AQUI y ya no en la
+     tarjeta del centro: la misma cosa dos veces no ayuda a nadie. */
+  function railHtml(d){
+    var out='';
+    var pets=(d.pets||[]).slice(0,6);
+    var fila=function(nombre,raza,foto,alPulsar){
+      return '<div class="rpet" onclick="'+alPulsar+'">'+
+        (foto?('<img src="'+esc(foto)+'" alt="">'):('<span class="ph">'+svg('paw',21,1.8)+'</span>'))+
+        '<div style="min-width:0"><div class="n">'+esc(nombre||PT('Sin nombre','No name'))+'</div>'+
+        (raza?('<div class="b">'+esc(raza)+'</div>'):'')+'</div></div>';
+    };
+    if(pets.length){
+      out+='<div class="rcard"><div class="rt">'+PT('Tus mascotas','Your pets')+'</div>'+
+        pets.map(function(p){ return fila(p.name,p.breed,p.photo_url,'goTab(\'mascotas\')'); }).join('')+
+        '</div>';
+    } else {
+      var pups=(d.puppies||[]).slice(0,4);
+      if(pups.length) out+='<div class="rcard"><div class="rt">'+PT('Tu cachorro','Your puppy')+'</div>'+
+        pups.map(function(p){ var f=p.photo_url||((p.photos||[])[0]||''); return fila(p.name,p.breed,f,'goTab(\'cachorro\')'); }).join('')+
+        '</div>';
+    }
+    var ins=badgesHtml(d);
+    if(ins) out+='<div class="rcard"><div class="rt">'+PT('Tus insignias','Your badges')+'</div>'+ins+'</div>';
+    return out;
+  }
+
   function badgesHtml(d){
     var all=d.badges_all||d.badges||[];
     if(!all.length) return '';
